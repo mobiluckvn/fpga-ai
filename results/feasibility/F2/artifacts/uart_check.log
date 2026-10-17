@@ -1,0 +1,20 @@
+# F2 uart_check
+Thời điểm: 2026-10-17 09:42:43 +0700
+Cổng sẽ thử: ['/dev/cu.usbserial-20250303170', '/dev/cu.usbserial-20250303171']
+Tham số: baud=115200 bytes=10240 block=64 seed=20261017 sweep=False
+--- Thử cổng /dev/cu.usbserial-20250303170 @ 115200 8N1 ---
+    Pha 1 KHÔNG ĐẠT: sau 5.14s không thấy dòng 'F2 OK'
+    (đã đóng /dev/cu.usbserial-20250303170)
+--- Thử cổng /dev/cu.usbserial-20250303171 @ 115200 8N1 ---
+    Pha 1 ĐẠT sau 0.20s: 'F2 OK 0084 rx=3C00 tx=4D7D dr=0000 er=00 ov=0 hw=01'
+    Mốc trước pha 2: 'F2 OK 0085 rx=3C00 tx=4DB2 dr=0000 er=00 ov=0 hw=01'
+    Pha 2 ĐẠT: 10240 byte echo khớp 100% (khối 64 byte), 1.951s => 5248 byte/s ≈ 52485 bit/s (trần lý thuyết một chiều 115200 bit/s)
+    Pha 3 dòng chẩn đoán sau bài kiểm: 'F2 OK 0086 rx=6400 tx=75E7 dr=0000 er=00 ov=0 hw=01'
+    Pha 3 ĐẠT: FPGA rx tăng đúng 10240; dr=0 er=0 ov=0; mức FIFO cao nhất hw=1/63
+    (đã đóng /dev/cu.usbserial-20250303171)
+
+## Kết quả
+  /dev/cu.usbserial-20250303170: không phải cổng UART của FPGA / không đạt
+  /dev/cu.usbserial-20250303171: ĐẠT
+
+F2_UART_PASS cổng=/dev/cu.usbserial-20250303171 byte_echo=10240 byte_sai=0 khối=64 thời_gian=1.951s tốc_độ=5248B/s fifo_hwm=1

@@ -1,0 +1,12 @@
+# Sai số baud UART, F2
+CLK          = 27000000 Hz (thạch anh 27 MHz, không PLL)
+baud đích    = 115200
+DIV          = round(27000000/115200) = 234
+baud thực tế = 27000000/234 = 115384.6154 Hz
+sai số       = +0.1603 %
+lệch tích luỹ sau 9,5 bit (giữa bit stop) = 0.0152 bit  (ngưỡng an toàn 0,5 bit)
+
+Các lựa chọn DIV lân cận:
+  DIV=233 -> 115879.83 baud, +0.5901 %
+  DIV=234 -> 115384.62 baud, +0.1603 %   <-- dùng
+  DIV=235 -> 114893.62 baud, -0.2660 %

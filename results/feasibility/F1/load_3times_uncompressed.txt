@@ -1,0 +1,36 @@
+### Nạp SRAM 3 lần, bitstream KHÔNG NÉN (gowin_pack không có -c) — Sat Oct 17 09:44:59 +07 2026
+### Cùng build/pnr.json với bản nén đã dùng khi người dùng xác nhận LED.
+### sha256 top.fs: d73013293885cd6e8ff96d3106186d13c8d081a6b010257f0bfa6383df9a5d9d
+---------- lần 1: 09:44:59 ----------
+Jtag frequency : requested 6.00MHz    -> real 6.00MHz   
+Parse file Parse build/top.fs: 
+Done
+DONE
+Erase SRAM Load SRAM Load SRAM: [===================================               ] 68.13%
+Load SRAM: [==================================================] 100.00%
+
+Done
+DONE
+exit=0
+---------- lần 2: 09:45:02 ----------
+Jtag frequency : requested 6.00MHz    -> real 6.00MHz   
+Parse file Parse build/top.fs: 
+Done
+DONE
+Erase SRAM Load SRAM Load SRAM: [===================================               ] 68.13%
+Load SRAM: [==================================================] 100.00%
+
+Done
+DONE
+exit=0
+---------- lần 3: 09:45:05 ----------
+Jtag frequency : requested 6.00MHz    -> real 6.00MHz   
+Parse file Parse build/top.fs: 
+Done
+DONE
+Erase SRAM Load SRAM Load SRAM: [===================================               ] 68.13%
+Load SRAM: [==================================================] 100.00%
+
+Done
+DONE
+exit=0

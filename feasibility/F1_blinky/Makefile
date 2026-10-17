@@ -5,7 +5,7 @@
 #   %-tangnano20k.json:       nextpnr-himbaechel --json $< --write $@ \
 #                               --device GW2AR-LV18QN88C8/I7 --vopt family=GW2A-18C --vopt cst=tangnano20k.cst
 #                             (NEXTPNR_FLAGS = --timing-allow-fail -r)
-#   %-tangnano20k.fs:         gowin_pack -c -d GW2A-18C -o $@ $<
+#   %-tangnano20k.fs:         gowin_pack -c -d GW2A-18C -o $@ $<   (ta bỏ -c, xem bên dưới)
 # Lưu ý: synth_gowin mặc định -family gw1n => BẮT BUỘC truyền -family gw2a cho GW2AR-18.
 # Ở đây KHÔNG dùng --timing-allow-fail: muốn biết timing thật có đạt 27 MHz hay không.
 #
@@ -55,7 +55,10 @@ $(BUILD)/pnr.json: $(BUILD)/$(TOP)-synth.json $(CST)
 	      --report $(BUILD)/report.json
 
 $(BUILD)/$(TOP).fs: $(BUILD)/pnr.json
-	gowin_pack -c -d $(FAMILY) -o $@ $<
+	# KHÔNG dùng -c (--compress): openFPGALoader v1.1.1 không parse được file .fs nén
+	# do apycula 0.35.dev5 sinh ra cho thiết kế F2 ("FsParser: checksum data is truncated",
+	# tái lập 2/2 lần). Bản không nén nạp bình thường. Xem docs/LOG.md mục F2.
+	gowin_pack -d $(FAMILY) -o $@ $<
 
 # ---------- nạp (CHỈ SRAM, không ghi flash) ----------
 load: $(BUILD)/$(TOP).fs

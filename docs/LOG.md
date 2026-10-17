@@ -2,6 +2,89 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — Cổng F2 (UART hai chiều) — ĐẠT
+
+- **Làm gì**: viết UART TX/RX 8N1 tự chia nhịp, testbench Icarus, build, nạp SRAM, kiểm 10.240 byte echo
+  qua cổng serial thật. Phát sinh hai vấn đề phải chẩn đoán, cả hai đã kết luận bằng số đo.
+
+### Thiết kế
+- `uart_tx.v`: thanh ghi dịch 10 bit (start + 8 dữ liệu LSB trước + stop), bộ chia DIV chu kỳ/bit.
+  Khoảng nghỉ giữa hai khung = 2 chu kỳ → chu kỳ khung 2.342 chu kỳ, **nhanh hơn** host (2.343,75) nên
+  không dồn ứ.
+- `uart_rx.v`: máy trạng thái IDLE→START→DATA→STOP, đồng bộ hoá chân vào 2 tầng, **kiểm lại bit start
+  ở giữa bit** (chống nhiễu), kiểm bit stop; byte sai bit stop bị bỏ và đếm vào `err_cnt`.
+- `top.v`: FIFO 64 byte cho echo (yosys ánh xạ thành 8× RAM16SDP4), trọng tài phát **ưu tiên echo**
+  rồi mới tới dòng định kỳ.
+- **Sai số baud**: DIV = round(27.000.000/115.200) = **234** → baud thực **115.384,62** (**+0,1603 %**).
+  Lệch tích luỹ tới giữa bit stop = 0,0152 bit (ngưỡng an toàn 0,5 bit). Chi tiết: `artifacts/baud_calc.txt`.
+- **Cửa sổ im lặng (khác kế hoạch, có chủ ý)**: dòng định kỳ chỉ phát khi đường RX im >125 ms.
+  Lý do: nếu dòng thông báo chen vào giữa luồng echo thì phía PC không thể tách byte echo khỏi byte
+  thông báo, phép kiểm "10.240 byte không sai byte nào" sẽ mất nghĩa. Nhờ vậy bài kiểm chia hai pha sạch.
+- **Dòng định kỳ mang theo chẩn đoán** (thêm vào khi gỡ lỗi, giữ lại vì rất hữu ích):
+  `F2 OK dddd rx=hhhh tx=hhhh dr=hhhh er=hh ov=h hw=hh` — số byte thu, số byte phát, số byte bị bỏ vì
+  FIFO đầy, số lỗi bit stop, cờ FIFO từng tràn, mức FIFO cao nhất. Vẫn bắt đầu bằng `F2 OK ` như kế hoạch.
+
+### Kết quả
+- `make sim` (Icarus): `F2_SIM_PASS` — 3 bài: giải mã đúng dòng định kỳ; echo 300 byte liên tục không sai
+  byte nào; dòng định kỳ quay lại sau khi RX im (kiểm cửa sổ QUIET).
+- Tổng hợp: **Fmax 187,48 MHz** @ ràng buộc 27 MHz. LUT4 883/20736 · DFF 236/15552 · ALU 386 ·
+  IOB 9/384 (clk + TX + RX + 6 LED) · **RAM16SDP4 8/648** (FIFO) · BSRAM 0. Không warning nào từ yosys/nextpnr.
+- **Cổng UART của FPGA = `/dev/cu.usbserial-20250303171`** (interface B của FT2232).
+  `...170` không trả dữ liệu — đó là interface A, dành cho JTAG. Quy tắc 9 (thử cả hai cổng) đã trả lời.
+- `scripts/uart_check.py` — ĐẠT cả ba pha, chạy lại 2/2 lần:
+  - Pha 1: nhận dòng `F2 OK 0085 rx=3C00 tx=4DB2 dr=0000 er=00 ov=0 hw=01` sau 0,20 s.
+  - Pha 2: **10.240 byte echo khớp 100 %, 0 byte sai**, khối 64 byte, 1,951 s → 5.248 byte/s
+    (≈52.485 bit/s; thấp hơn trần 115.200 bit/s vì theo nhịp gửi-rồi-chờ-echo từng khối).
+  - Pha 3: bộ đếm trong FPGA **rx tăng đúng 10.240**, `dr=0`, `er=0`, `ov=0`, FIFO cao nhất **1/63**.
+  - Log: `results/feasibility/F2/artifacts/uart_check.log` và `uart_check_sweep.log`.
+
+### Vấn đề 1 — bitstream nén không nạp được
+- Triệu chứng: `openFPGALoader -b tangnano20k build/top.fs` → `FsParser: checksum data is truncated`,
+  `Error: Failed to claim FPGA device: can't parse file`.
+- Đã thử: (a) sinh lại file nén hai lần → cùng kích thước 1.130.734 byte, cùng lỗi (tái lập 2/2);
+  (b) sinh bản **không nén** (`gowin_pack -d GW2A-18C` không có `-c`) → 4.618.782 byte, **nạp bình thường**.
+- Kết luận: `gowin_pack -c` của apycula 0.35.dev5 sinh file mà openFPGALoader v1.1.1 không parse được cho
+  thiết kế này (F1 nén lại nạp được → lỗi phụ thuộc thiết kế). **Đã bỏ `-c` khỏi Makefile của mọi cổng.**
+- Hệ quả: bitstream F1 cũng được build lại không nén và nạp SRAM 3/3 lần OK
+  (`results/feasibility/F1/load_3times_uncompressed.txt`); cùng `pnr.json` với bản nén mà người dùng
+  đã xác nhận LED chạy đúng.
+
+### Vấn đề 2 — mất byte khi host ghi khối lớn (lỗi NGOÀI FPGA)
+- Triệu chứng ban đầu: với khối 256 byte, echo sai từ offset 32; 10.240 byte chỉ về 833.
+- Chẩn đoán (3 hướng, theo quy tắc 2):
+  1. **Thêm bộ đếm vào FPGA** rồi đo: FPGA báo `rx` tăng ĐÚNG số byte đã gửi (67/128/256/1024/10240),
+     `dr=0` (không bỏ byte vì FIFO đầy), `er=0` (không lỗi bit stop), `ov=0`, mức FIFO cao nhất **1**.
+     Với n=67: `tx` tăng 120 = 67 byte echo + 53 byte một dòng thông báo → **FPGA phát đủ cả 67 byte**.
+     Kiểm tra nội dung: chỉ thiếu đúng byte thứ 33, các byte khác đúng thứ tự → mất byte, không sai khung.
+     ⇒ Lỗi nằm ở cầu USB/driver, không phải ở FPGA.
+  2. **Luồng đọc riêng trên host** (ghi 10.240 byte một lần, thread khác đọc liên tục):
+     host chỉ nhận 1.151/10.240 → **không cứu được**, nên nguyên nhân không phải host đọc chậm.
+  3. **Chia khối ghi**: quét 16/32/64/65/66/67/68/96/128/256 byte →
+     **≤66 byte nguyên vẹn, ≥67 byte mất byte**. Với khối 64: 10.240 byte, 0 sai.
+- Kết luận: giới hạn của cầu FT2232 + driver macOS khi host `write()` vượt một gói USB (64 byte).
+  Luồng đo chốt ở **khối 64 byte**.
+- **Ảnh hưởng tới các cổng sau**: kênh thu số đo của dự án là FPGA→PC (dòng CSV) — không bị ảnh hưởng.
+  Mọi script gửi dữ liệu PC→FPGA phải chia khối ≤64 byte. Cần ghi nhận: bài kiểm hiện tại chạy theo
+  nhịp gửi-chờ nên chỉ đạt ~53 kbit/s; **chưa đo thông lượng FPGA→PC liên tục ở full baud** — việc này
+  sẽ tự nhiên được kiểm ở F5–F7 khi firmware in dòng log dài.
+
+### Lỗi của chính tôi, đã sửa
+- Lần đầu đặt mốc bộ đếm `rx` cho pha 3 **trước** phần quét ngưỡng, nên pha 3 báo "rx tăng 15360,
+  kỳ vọng 10240" (đúng = 10.240 + 5.120 byte của phần quét). Đã sửa: lấy lại mốc ngay trước pha 2.
+- `msg_req` ban đầu bị hai `always` block cùng ghi (xung đột driver) → tách thành xung `msg_tick`
+  ở block hẹn giờ, còn `msg_req` thuộc block trọng tài.
+
+### Nguồn đã đối chiếu
+- Chân cắm: đã đối chiếu ở F1 (`uart_tx`=69, `uart_rx`=70 khớp giữa `uart/src/top.cst` của Sipeed và
+  `examples/tangnano20k.cst` của Apicula). Không đối chiếu lại.
+- `gowin_pack -h` cho ý nghĩa `-c, --compress`.
+
+### Việc tiếp theo / cần người dùng
+- Kit hiện đang chạy lại **F1 blinky** (bản không nén). Nếu anh nhìn thấy 6 LED vẫn đếm nhị phân như cũ
+  thì bản không nén cũng đã được xác nhận bằng mắt — chỉ cần nói "LED vẫn chạy", không phải làm gì thêm.
+- F3 (BSRAM 64 KB có khởi tạo) — đây là **rủi ro lớn nhất** của cả dự án. Không cần người dùng làm gì
+  ngoài giữ kit cắm nguyên.
+
 ## 2026-10-17 — Cổng F1 (Blinky bằng luồng mã nguồn mở) — ĐẠT
 - **Làm gì**: đối chiếu chân cắm với nguồn chính thức, viết `hw/tangnano20k.cst` và
   `feasibility/F1_blinky/` (top.v, tb_top.v, Makefile), mô phỏng, build, nạp SRAM, nhờ người dùng xem LED.
@@ -54,6 +137,8 @@ Mỗi phiên một mục, mới nhất ở trên cùng:
     (10.240 byte echo). Chưa biết trong hai cổng `cu.usbserial-2025030317{0,1}` cổng nào là UART của FPGA —
     script sẽ thử cả hai, như quy tắc 9.
   - Không cần người dùng làm gì ở F2 ngoài việc giữ kit cắm nguyên.
+- **Bổ sung sau F2**: bitstream của F1 đã được build lại **không nén** (xem mục F2, vấn đề 1) và
+  nạp SRAM 3/3 lần OK; số byte bitstream trong báo cáo đổi từ 730.982 (nén) sang 4.618.782 (không nén).
 
 ## 2026-10-17 — Cổng F0 (Môi trường trên Mac) — ĐẠT
 - **Làm gì**: dựng toàn bộ môi trường công cụ mã nguồn mở trên máy Mac, `git init`, xác nhận kit được nhận.
