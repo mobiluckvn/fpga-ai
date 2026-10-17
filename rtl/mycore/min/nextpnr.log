@@ -1,0 +1,247 @@
+Info: Using uarch 'gowin' for device 'GW2AR-LV18QN88C8/I7'
+
+Info: Cell O_sdram_clk not found
+Info: Cell O_sdram_cke not found
+Info: Cell O_sdram_cs_n not found
+Info: Cell O_sdram_cas_n not found
+Info: Cell O_sdram_ras_n not found
+Info: Cell O_sdram_wen_n not found
+Info: Cell O_sdram_dqm[0] not found
+Info: Cell O_sdram_dqm[1] not found
+Info: Cell O_sdram_dqm[2] not found
+Info: Cell O_sdram_dqm[3] not found
+Info: Cell O_sdram_addr[0] not found
+Info: Cell O_sdram_addr[1] not found
+Info: Cell O_sdram_addr[2] not found
+Info: Cell O_sdram_addr[3] not found
+Info: Cell O_sdram_addr[4] not found
+Info: Cell O_sdram_addr[5] not found
+Info: Cell O_sdram_addr[6] not found
+Info: Cell O_sdram_addr[7] not found
+Info: Cell O_sdram_addr[8] not found
+Info: Cell O_sdram_addr[9] not found
+Info: Cell O_sdram_addr[10] not found
+Info: Cell O_sdram_ba[0] not found
+Info: Cell O_sdram_ba[1] not found
+Info: Cell IO_sdram_dq[0] not found
+Info: Cell IO_sdram_dq[1] not found
+Info: Cell IO_sdram_dq[2] not found
+Info: Cell IO_sdram_dq[3] not found
+Info: Cell IO_sdram_dq[4] not found
+Info: Cell IO_sdram_dq[5] not found
+Info: Cell IO_sdram_dq[6] not found
+Info: Cell IO_sdram_dq[7] not found
+Info: Cell IO_sdram_dq[8] not found
+Info: Cell IO_sdram_dq[9] not found
+Info: Cell IO_sdram_dq[10] not found
+Info: Cell IO_sdram_dq[11] not found
+Info: Cell IO_sdram_dq[12] not found
+Info: Cell IO_sdram_dq[13] not found
+Info: Cell IO_sdram_dq[14] not found
+Info: Cell IO_sdram_dq[15] not found
+Info: Cell IO_sdram_dq[16] not found
+Info: Cell IO_sdram_dq[17] not found
+Info: Cell IO_sdram_dq[18] not found
+Info: Cell IO_sdram_dq[19] not found
+Info: Cell IO_sdram_dq[20] not found
+Info: Cell IO_sdram_dq[21] not found
+Info: Cell IO_sdram_dq[22] not found
+Info: Cell IO_sdram_dq[23] not found
+Info: Cell IO_sdram_dq[24] not found
+Info: Cell IO_sdram_dq[25] not found
+Info: Cell IO_sdram_dq[26] not found
+Info: Cell IO_sdram_dq[27] not found
+Info: Cell IO_sdram_dq[28] not found
+Info: Cell IO_sdram_dq[29] not found
+Info: Cell IO_sdram_dq[30] not found
+Info: Cell IO_sdram_dq[31] not found
+Info: Reading constraints...
+Info: Cell btn_s1 not found
+Info: Cell btn_s1 not found
+Info: Cell btn_s2 not found
+Info: Cell btn_s2 not found
+Info: Create constant nets...
+Info: Modify LUTs...
+Info: Pack IOBs...
+Info: Pack I3C IOs...
+Info: Pack MIPI IOs...
+Info: Pack diff IOBs...
+Info: Pack FFs into IO cells...
+Info: Pack IODELAY...
+Info: Pack Input Edge Monitors...
+Info: Pack IO logic...
+Info: Pack DESER16 logic...
+Info: Pack GSR...
+Info: Pack HCLK cells...
+Info: Pack DLLDLYs...
+Info: Pack wide LUTs...
+Info: Packed MUX2_LUT8:1, MUX2_LU7:0, MUX2_LUT6:1, MUX2_LUT5:3
+Info: Pack ALUs...
+Info: Pack SSRAMs...
+Info: Constrained 22 LUTFF pairs.
+Info: Pack PLL...
+Info: Pack ADC...
+Info: Pack GW JTAG...
+Info: Pack BSRAMs...
+Info: Pack DSP...
+Info: Pack INV...
+Info: Pack buffered nets...
+Info: Pack EMCU and UserFlash cells...
+Info: Pack UserFlash cells...
+Info: Pack DQCE cells...
+Info: Pack DCS cells...
+Info: Checksum: 0xa7d13963
+
+Info: Device utilisation:
+Info: 	                 VCC:       1/      1   100%
+Info: 	                 IOB:       9/    384     2%
+Info: 	                LUT4:     105/  20736     0%
+Info: 	            IOLOGICI:       0/    384     0%
+Info: 	            IOLOGICO:       0/    384     0%
+Info: 	           MUX2_LUT5:      13/  10368     0%
+Info: 	           MUX2_LUT6:       5/   5184     0%
+Info: 	           MUX2_LUT7:       2/   2592     0%
+Info: 	           MUX2_LUT8:       1/   2592     0%
+Info: 	                 ALU:      44/  15552     0%
+Info: 	                 GND:       1/      1   100%
+Info: 	                 DFF:      54/  15552     0%
+Info: 	           RAM16SDP4:       0/    648     0%
+Info: 	               BSRAM:       0/     46     0%
+Info: 	              ALU54D:       0/     24     0%
+Info: 	     MULTADDALU18X18:       0/     24     0%
+Info: 	        MULTALU18X18:       0/     24     0%
+Info: 	        MULTALU36X18:       0/     24     0%
+Info: 	           MULT36X36:       0/     12     0%
+Info: 	           MULT18X18:       0/     48     0%
+Info: 	             MULT9X9:       0/     96     0%
+Info: 	              PADD18:       0/     48     0%
+Info: 	               PADD9:       0/     96     0%
+Info: 	                 GSR:       1/      1   100%
+Info: 	                 OSC:       0/      1     0%
+Info: 	                rPLL:       0/      2     0%
+Info: 	             GW_JTAG:       0/      1     0%
+Info: 	                BUFG:       1/     24     4%
+Info: 	                DQCE:       0/     24     0%
+Info: 	                 DCS:       0/      8     0%
+Info: 	               DHCEN:       0/     24     0%
+Info: 	              CLKDIV:       0/      8     0%
+Info: 	             CLKDIV2:       0/     16     0%
+
+Info: Running custom HCLK placer...
+Info: Placed 0 cells based on constraints.
+Info: Creating initial analytic placement for 77 cells, random placement wirelen = 5213.
+Info:     at initial placer iter 0, wirelen = 349
+Info:     at initial placer iter 1, wirelen = 258
+Info:     at initial placer iter 2, wirelen = 283
+Info:     at initial placer iter 3, wirelen = 297
+Info: Running main analytical placer, max placement attempts per cell = 10000.
+Info:     at iteration #1, type ALL: wirelen solved = 280, spread = 456, legal = 499; time = 0.02s
+Info:     at iteration #2, type ALL: wirelen solved = 253, spread = 376, legal = 442; time = 0.01s
+Info:     at iteration #3, type ALL: wirelen solved = 247, spread = 428, legal = 574; time = 0.01s
+Info:     at iteration #4, type ALL: wirelen solved = 242, spread = 351, legal = 501; time = 0.01s
+Info:     at iteration #5, type ALL: wirelen solved = 254, spread = 373, legal = 544; time = 0.01s
+Info:     at iteration #6, type ALL: wirelen solved = 242, spread = 352, legal = 509; time = 0.01s
+Info:     at iteration #7, type ALL: wirelen solved = 248, spread = 395, legal = 548; time = 0.01s
+Info: HeAP Placer Time: 0.29s
+Info:   of which solving equations: 0.03s
+Info:   of which spreading cells: 0.04s
+Info:   of which strict legalisation: 0.01s
+
+Info: Running simulated annealing placer for refinement.
+Info:   at iteration #1: temp = 0.000000, timing cost = 5, wirelen = 442
+Info:   at iteration #5: temp = 0.000000, timing cost = 3, wirelen = 391
+Info:   at iteration #10: temp = 0.000000, timing cost = 2, wirelen = 379
+Info:   at iteration #10: temp = 0.000000, timing cost = 2, wirelen = 385 
+Info: SA placement time 0.08s
+
+Info: Max frequency for clock 'u_tx.clk': 324.68 MHz (PASS at 27.00 MHz)
+
+Info: Slack histogram:
+Info:  legend: times are in ps
+Info:          * represents 1 endpoint(s)
+Info:          + represents [1,1) endpoint(s)
+Info: [ 33957,  34050) |* 
+Info: [ 34050,  34143) | 
+Info: [ 34143,  34236) | 
+Info: [ 34236,  34329) | 
+Info: [ 34329,  34422) | 
+Info: [ 34422,  34515) |* 
+Info: [ 34515,  34608) | 
+Info: [ 34608,  34701) |*** 
+Info: [ 34701,  34794) | 
+Info: [ 34794,  34887) |** 
+Info: [ 34887,  34980) |* 
+Info: [ 34980,  35073) |* 
+Info: [ 35073,  35166) |**** 
+Info: [ 35166,  35259) |*** 
+Info: [ 35259,  35352) |*** 
+Info: [ 35352,  35445) |** 
+Info: [ 35445,  35538) |*** 
+Info: [ 35538,  35631) |*** 
+Info: [ 35631,  35724) |***** 
+Info: [ 35724,  35817) |**** 
+Info: Checksum: 0xec33de67
+Info: Routing globals...
+Info:     'u_tx.clk' net was routed.
+
+Info: Routing..
+Info: Setting up routing queue.
+Info: Routing 411 arcs.
+Info:            |   (re-)routed arcs  |   delta    | remaining|       time spent     |
+Info:    IterCnt |  w/ripup   wo/ripup |  w/r  wo/r |      arcs| batch(sec) total(sec)|
+Info:        414 |        3        331 |    3   331 |         0|       0.12       0.12|
+Info: Routing complete.
+Info: Router1 time 0.12s
+Info: Checksum: 0xa8b50749
+
+Info: Critical path report for clock 'u_tx.clk' (posedge -> posedge):
+Info:       type curr  total name
+Info:   clk-to-q  0.23  0.23 Source div_DFF_Q_20.Q
+Info:    routing  0.40  0.63 Net div[22] (4,3) -> (3,4)
+Info:                          Sink run_DFF_Q_D_MUX2_LUT6_O_S0_LUT4_F_3.I2
+Info:                          Defined in:
+Info:                               ../top_min.v:21.16-21.19
+Info:      logic  0.46  1.10 Source run_DFF_Q_D_MUX2_LUT6_O_S0_LUT4_F_3.F
+Info:    routing  0.64  1.74 Net run_DFF_Q_D_MUX2_LUT6_O_I1_MUX2_LUT5_O_S0[0] (3,4) -> (1,1)
+Info:                          Sink idx_DFFRE_Q_RESET_MUX2_LUT5_O_I1_LUT4_F.I0
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.55  2.29 Source idx_DFFRE_Q_RESET_MUX2_LUT5_O_I1_LUT4_F.F
+Info:    routing  0.00  2.29 Net idx_DFFRE_Q_RESET_MUX2_LUT5_O_I1 (1,1) -> (1,1)
+Info:                          Sink idx_DFFRE_Q_RESET_MUX2_LUT5_O.I1
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:151.13-151.15
+Info:      logic  0.27  2.56 Source idx_DFFRE_Q_RESET_MUX2_LUT5_O.O
+Info:    routing  0.40  2.96 Net idx_DFFRE_Q_RESET (1,1) -> (1,1)
+Info:                          Sink idx_DFFRE_Q_2.RESET
+Info:      setup  0.04  2.99 Source idx_DFFRE_Q_2.RESET
+Info: 1.54 ns logic, 1.45 ns routing
+
+Info: Max frequency for clock 'u_tx.clk': 334.00 MHz (PASS at 27.00 MHz)
+
+Info: Slack histogram:
+Info:  legend: times are in ps
+Info:          * represents 1 endpoint(s)
+Info:          + represents [1,1) endpoint(s)
+Info: [ 34043,  34133) |**** 
+Info: [ 34133,  34223) | 
+Info: [ 34223,  34313) | 
+Info: [ 34313,  34403) | 
+Info: [ 34403,  34493) | 
+Info: [ 34493,  34583) | 
+Info: [ 34583,  34673) | 
+Info: [ 34673,  34763) | 
+Info: [ 34763,  34853) |* 
+Info: [ 34853,  34943) |* 
+Info: [ 34943,  35033) |*** 
+Info: [ 35033,  35123) |***** 
+Info: [ 35123,  35213) |*** 
+Info: [ 35213,  35303) |*** 
+Info: [ 35303,  35393) |*** 
+Info: [ 35393,  35483) |** 
+Info: [ 35483,  35573) |**** 
+Info: [ 35573,  35663) | 
+Info: [ 35663,  35753) | 
+Info: [ 35753,  35843) |* 
+
+Info: Program finished normally.

@@ -28,7 +28,24 @@ DIV_UART   ?= 234
 FAST_ADDR  ?= 0
 BEACON     ?= 0
 
-.PHONY: all rvtests archive clean
+.PHONY: all rvtests archive clean min build-min load-min
+# ---------------- thiết kế tối giản để khoanh vùng (cổng B3) ----------------
+min/top-synth.json: top_min.v ../uart/uart_tx.v
+	@mkdir -p min
+	cd min && yosys -l yosys.log -p "read_verilog ../top_min.v ../../uart/uart_tx.v; \
+	    synth_gowin -top top -family $(YOSYS_FAM) -nodsp -json top-synth.json -setundef"
+
+min/pnr.json: min/top-synth.json $(CST)
+	nextpnr-himbaechel -l min/nextpnr.log --json $< --write $@ \
+	    --device "$(DEVICE)" --vopt family=$(FAMILY) --vopt cst=$(CST) \
+	    --freq $(FREQ) --report min/report.json
+
+min/top.fs: min/pnr.json
+	gowin_pack -d $(FAMILY) -o $@ $<
+
+build-min: min/top.fs
+load-min: min/top.fs
+	openFPGALoader -b $(BOARD) $< 2>&1 | tee -a min/load.log
 all: build-bv0 build-bv1
 
 # ---------------- mô phỏng dùng chung ----------------
@@ -91,4 +108,4 @@ archive:
 	@for v in bv0 bv1; do [ -d $$v ] && RESULTS_BASE=results/branch_b sh ../../scripts/archive_gate.sh core/$$v $$v; done
 
 clean:
-	rm -rf bv0 bv1 obj_dir Vsoc_b rvt verilator.log
+	rm -rf bv0 bv1 min obj_dir Vsoc_b Vsoc_b0 rvt rvt0 verilator.log

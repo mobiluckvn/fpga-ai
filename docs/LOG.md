@@ -2,10 +2,25 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
-## 2026-10-17 — NHÁNH B cổng B3: KHÔNG ĐẠT, DỪNG THEO QUY TẮC — lõi im lặng hoàn toàn trên kit
+## 2026-10-17 — NHÁNH B cổng B3: TẠM HOÃN, KHÔNG PHẢI KHÔNG ĐẠT — đường UART của kit đã chết
 
-B2 đã ĐẠT (xem mục dưới). B3 = đưa lõi lên kit. **Chưa đạt.** Theo quy tắc 2 của CLAUDE.md
-(tối đa 3 hướng sửa rồi dừng, ghi log, hỏi người dùng), tôi dừng và ghi lại tại đây.
+> **SỬA KẾT LUẬN.** Mục này ban đầu ghi "B3 KHÔNG ĐẠT". Sai. Sau khi khoanh vùng theo hướng người
+> dùng chọn, phép **đối chứng** cho kết quả quyết định: nạp lại bitstream **nhánh A đã biết chạy**
+> (`v1dc/top.fs`) thì kit **cũng không phát byte nào**, trên **cả hai** cổng serial. Vậy đường UART
+> của kit đã chết, và **mọi phép đo nhánh B từ đầu buổi B3 đều vô giá trị** — không kết luận được gì
+> về lõi. Cần người dùng rút/cắm lại cáp USB rồi đo lại.
+>
+> **Bài học phương pháp, đáng ghi vào luận văn**: khi một phép đo trả về "không có gì", việc ĐẦU TIÊN
+> phải làm là chạy **đối chứng bằng một cấu hình đã biết chạy**, trước khi sửa thiết kế. Tôi đã bỏ
+> qua bước đó và sửa thiết kế bốn lần trên một đường đo đã hỏng. Quy tắc "tối đa 3 hướng sửa rồi
+> dừng" trong CLAUDE.md có tác dụng, nhưng nó không cứu được việc chọn SAI đối tượng để sửa.
+>
+> Phần ghi chép bên dưới giữ nguyên vì các bằng chứng kỹ thuật trong đó vẫn đúng và vẫn hữu ích
+> (hai lỗi thật về xung nhịp, phát hiện nextpnr không ràng buộc đường tới BSRAM).
+
+## (ghi chép gốc) NHÁNH B cổng B3 — triệu chứng và những gì đã kiểm
+
+B2 đã ĐẠT (xem mục dưới). B3 = đưa lõi lên kit.
 
 ### Triệu chứng
 Bitstream nạp thành công (`openFPGALoader`: `Done Final`, thanh ghi trạng thái `0x00006020`),
@@ -50,7 +65,17 @@ Thiết kế 1 chu kỳ/lệnh của tôi đặt cả giải mã + tệp thanh g
 sẵn biến thể `FAST_ADDR=0` (ghi thanh ghi địa chỉ, mọi đường là thanh ghi→thanh ghi): mô phỏng
 3.750.362 chu kỳ, vẫn nhanh hơn A-V0 **2,40×**.
 
-### Phương án đề xuất (chờ người dùng quyết)
+### Khoanh vùng bằng thiết kế tối giản (hướng người dùng đã chọn)
+Dựng `rtl/mycore/top_min.v` — **chỉ** một bộ đếm + `uart_tx` phát "MIN\r\n" mỗi 0,2 s + một LED nhấp
+nháy. Không lõi, không RAM 64 KB, không DSP; dùng đúng cùng Makefile, cùng `.cst`, cùng lệnh công cụ.
+Fmax 334 MHz. Ràng buộc chân khớp hết (log nextpnr chỉ báo `btn_s1`/`btn_s2 not found`, **giống hệt**
+nhánh A). **Bản tối giản cũng im.**
+
+→ Lúc này mới chạy phép đối chứng: nạp lại `experiment/m1s/v1dc/top.fs` (bitstream nhánh A đã đo
+thành công vài phút trước) → **cũng 0 byte**, trên cả `...303170` và `...303171`. Kết luận: đường UART
+của kit chết, không phải thiết kế.
+
+### Phương án đề xuất (đã không còn cần thiết — xem phần sửa kết luận ở đầu mục)
 1. **Chia nhỏ để khoanh vùng**: dựng từ cùng Makefile một top **tối giản** (chỉ đèn hiệu UART, không
    có lõi). Nếu nó cũng im → lỗi ở thiết lập build trong `rtl/mycore`; nếu nó chạy → lỗi ở `soc_b`.
    Rẻ nhất (~6 phút), thu hẹp mạnh nhất.
