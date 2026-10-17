@@ -8,9 +8,13 @@
  *   Dense 400->10 + bias (int32) -> argmax    -> 10            4.000 MAC
  *                                                tổng        192.064 MAC
  *
- * Hai biến thể, chọn bằng cờ biên dịch:
- *   (mặc định)  A-V0: mọi lớp bằng C thẳng
- *   USE_DOT4    A-V2: conv2 và dense dùng lệnh tùy biến DOT4 (4 MAC/lệnh)
+ * Bốn biến thể, chọn bằng hai cờ biên dịch độc lập (bảng 2x2):
+ *   (không cờ)              A-V0      : C thẳng, không lệnh tùy biến
+ *   OPT_KERNELS             A-V1      : C đã tối ưu (bung vòng, con trỏ chạy, trọng số
+ *                                       giữ trong thanh ghi), không lệnh tùy biến
+ *   USE_DOT4                A-V2      : C thẳng + DOT4 ở conv2/dense
+ *   OPT_KERNELS + USE_DOT4  A-V1+DOT4 : C tối ưu + DOT4
+ * Nhờ 2x2 này mới tách được "nhanh nhờ code tốt" khỏi "nhanh nhờ lệnh tùy biến".
  *
  * Vì sao conv1 KHÔNG dùng DOT4: DOT4 nạp 4 byte liền nhau bằng `lw` và cần địa chỉ
  * thẳng hàng 4 byte (lõi bật CATCH_MISALIGN). Với channels-last, conv2 có Cin=8 nên
@@ -45,7 +49,11 @@
 #define RUN_IMGS M1S_NIMG
 #endif
 
-#ifdef USE_DOT4
+#if defined(OPT_KERNELS) && defined(USE_DOT4)
+#define VARIANT "A-V1+DOT4"
+#elif defined(OPT_KERNELS)
+#define VARIANT "A-V1"
+#elif defined(USE_DOT4)
 #define VARIANT "A-V2"
 #else
 #define VARIANT "A-V0"
@@ -65,6 +73,22 @@ static inline i32 dot4(u32 a, u32 b)
     __asm__ (".insn r 0x0B, 0, 0, %0, %1, %2" : "=r"(r) : "r"(a), "r"(b));
     return r;
 }
+#endif
+
+/* ---------- cộng dồn 8 kênh vào liền địa chỉ ----------
+ * Dùng cho conv2 (Cin = 8, channels-last). Hai bản cho cùng một phép tính, nên
+ * CRC32 của a2 phải giống nhau ở mọi biến thể.
+ */
+#ifdef USE_DOT4
+#define MAC8(XP, WP)  (dot4(((const u32 *)(const void *)(XP))[0],                  \
+                            ((const u32 *)(const void *)(WP))[0])                  \
+                     + dot4(((const u32 *)(const void *)(XP))[1],                  \
+                            ((const u32 *)(const void *)(WP))[1]))
+#else
+#define MAC8(XP, WP)  ( (i32)(XP)[0] * (i32)(WP)[0] + (i32)(XP)[1] * (i32)(WP)[1]  \
+                      + (i32)(XP)[2] * (i32)(WP)[2] + (i32)(XP)[3] * (i32)(WP)[3]  \
+                      + (i32)(XP)[4] * (i32)(WP)[4] + (i32)(XP)[5] * (i32)(WP)[5]  \
+                      + (i32)(XP)[6] * (i32)(WP)[6] + (i32)(XP)[7] * (i32)(WP)[7] )
 #endif
 
 /* ---------- xuất UART ---------- */
@@ -166,6 +190,33 @@ static i8  p2[M1S_POOL2 * M1S_POOL2 * M1S_C2] __attribute__((aligned(4)));  /* 5
 static i32 logit[M1S_NCLS];
 
 /* ---------- lớp 1: Conv 3x3, 1 -> 8 kênh ---------- */
+#ifdef OPT_KERNELS
+/* Tối ưu: vòng kênh ra ở NGOÀI nên 9 trọng số + bias nằm trong thanh ghi suốt cả mặt
+ * 26x26; 9 phép nhân dùng offset HẰNG SỐ từ một con trỏ hàng duy nhất (28, 56 là
+ * bước hàng của ảnh 28x28); con trỏ ra chạy đều bước 8 byte. Toán học không đổi. */
+static __attribute__((noinline)) void conv1(const i8 *img)
+{
+    int oc, y, x;
+    for (oc = 0; oc < M1S_C1; oc++) {
+        const i8 *w = &m1s_w1[oc * 9];
+        const i32 w0 = w[0], w1 = w[1], w2 = w[2];
+        const i32 w3 = w[3], w4 = w[4], w5 = w[5];
+        const i32 w6 = w[6], w7 = w[7], w8 = w[8];
+        const i32 bias = m1s_b1[oc];
+        i8 *o = &a1[oc];
+        for (y = 0; y < M1S_OUT1; y++) {
+            const i8 *r = &img[y * M1S_IMG];
+            for (x = 0; x < M1S_OUT1; x++, r++, o += M1S_C1) {
+                i32 acc = bias
+                        + (i32)r[0]  * w0 + (i32)r[1]  * w1 + (i32)r[2]  * w2
+                        + (i32)r[28] * w3 + (i32)r[29] * w4 + (i32)r[30] * w5
+                        + (i32)r[56] * w6 + (i32)r[57] * w7 + (i32)r[58] * w8;
+                *o = requant(acc, M1S_M0_1, M1S_SH_1);
+            }
+        }
+    }
+}
+#else
 static __attribute__((noinline)) void conv1(const i8 *img)
 {
     int y, x, oc, ky, kx;
@@ -185,6 +236,7 @@ static __attribute__((noinline)) void conv1(const i8 *img)
         }
     }
 }
+#endif
 
 /* ---------- lớp 2: MaxPool 2x2 trên 26x26x8 -> 13x13x8 ---------- */
 static __attribute__((noinline)) void pool1(void)
@@ -207,6 +259,35 @@ static __attribute__((noinline)) void pool1(void)
 }
 
 /* ---------- lớp 3: Conv 3x3, 8 -> 16 kênh ---------- */
+#ifdef OPT_KERNELS
+/* Tối ưu: bung hết 9 vị trí kernel bằng offset HẰNG SỐ từ một con trỏ gốc
+ * (bước hàng của p1 là 13*8 = 104 byte), mỗi vị trí gọi MAC8 cộng dồn 8 kênh vào.
+ * Toán học không đổi; chỉ bỏ phần tính chỉ số trong vòng lặp. */
+static __attribute__((noinline)) void conv2(void)
+{
+    int y, x, oc;
+    for (y = 0; y < M1S_OUT2; y++) {
+        for (x = 0; x < M1S_OUT2; x++) {
+            const i8 *base = &p1[(y * M1S_POOL1 + x) * M1S_C1];
+            i8 *o = &a2[(y * M1S_OUT2 + x) * M1S_C2];
+            for (oc = 0; oc < M1S_C2; oc++) {
+                const i8 *w = &m1s_w2[oc * 9 * M1S_C1];
+                i32 acc = m1s_b2[oc]
+                        + MAC8(base +   0, w +  0)
+                        + MAC8(base +   8, w +  8)
+                        + MAC8(base +  16, w + 16)
+                        + MAC8(base + 104, w + 24)
+                        + MAC8(base + 112, w + 32)
+                        + MAC8(base + 120, w + 40)
+                        + MAC8(base + 208, w + 48)
+                        + MAC8(base + 216, w + 56)
+                        + MAC8(base + 224, w + 64);
+                o[oc] = requant(acc, M1S_M0_2, M1S_SH_2);
+            }
+        }
+    }
+}
+#else
 static __attribute__((noinline)) void conv2(void)
 {
     int y, x, oc, ky, kx;
@@ -218,16 +299,7 @@ static __attribute__((noinline)) void conv2(void)
                     for (kx = 0; kx < 3; kx++) {
                         const i8 *xp = &p1[((y + ky) * M1S_POOL1 + (x + kx)) * M1S_C1];
                         const i8 *wp = &m1s_w2[((oc * 3 + ky) * 3 + kx) * M1S_C1];
-#ifdef USE_DOT4
-                        const u32 *xw = (const u32 *)(const void *)xp;
-                        const u32 *ww = (const u32 *)(const void *)wp;
-                        acc += dot4(xw[0], ww[0]);
-                        acc += dot4(xw[1], ww[1]);
-#else
-                        int ic;
-                        for (ic = 0; ic < M1S_C1; ic++)
-                            acc += (i32)xp[ic] * (i32)wp[ic];
-#endif
+                        acc += MAC8(xp, wp);
                     }
                 }
                 a2[(y * M1S_OUT2 + x) * M1S_C2 + oc] =
@@ -236,6 +308,7 @@ static __attribute__((noinline)) void conv2(void)
         }
     }
 }
+#endif
 
 /* ---------- lớp 4: MaxPool 2x2 trên 11x11x16 -> 5x5x16 (lấy sàn) ---------- */
 static __attribute__((noinline)) void pool2(void)
@@ -260,6 +333,21 @@ static __attribute__((noinline)) void pool2(void)
 /* ---------- lớp 5: Dense 400 -> 10, giữ int32 ---------- */
 #define NFLAT (M1S_POOL2 * M1S_POOL2 * M1S_C2)
 
+#ifdef OPT_KERNELS
+/* Tối ưu: bung vòng trong theo bước 8 (400 = 50*8), con trỏ chạy. */
+static __attribute__((noinline)) void dense(void)
+{
+    int c, i;
+    for (c = 0; c < M1S_NCLS; c++) {
+        const i8 *w = &m1s_w3[c * NFLAT];
+        const i8 *xp = p2;
+        i32 acc = m1s_b3[c];
+        for (i = 0; i < NFLAT / 8; i++, xp += 8, w += 8)
+            acc += MAC8(xp, w);
+        logit[c] = acc;
+    }
+}
+#else
 static __attribute__((noinline)) void dense(void)
 {
     int c;
@@ -280,6 +368,7 @@ static __attribute__((noinline)) void dense(void)
         logit[c] = acc;
     }
 }
+#endif
 
 int main(void)
 {

@@ -2,6 +2,83 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — A-V1 (tối ưu phần mềm) + bảng 2×2 đầy đủ · KẾT QUẢ CHÍNH CỦA THÍ NGHIỆM
+
+Tôi tự chọn làm A-V1 trước A-V3, vì đó là khoảng trống **khoa học** lớn nhất: không có nhóm đối chứng
+phần mềm thì phản biện sẽ hỏi ngay *"2,11× là nhờ lệnh tùy biến hay chỉ nhờ code tốt hơn?"* — và phát
+hiện `noinline` (1,76× miễn phí) ở phiên trước cho thấy câu hỏi đó rất chính đáng.
+
+Làm thành **bảng 2×2** trên cùng một `main.c`, hai cờ biên dịch độc lập (`OPT_KERNELS`, `USE_DOT4`):
+A-V0 / A-V1 / A-V2 / A-V1+DOT4.
+
+### Tối ưu phần mềm của A-V1 (không đổi một phép toán nào)
+- **conv1**: đưa vòng kênh ra ra NGOÀI → 9 trọng số + bias nằm trong thanh ghi suốt cả mặt 26×26;
+  9 phép nhân dùng **offset hằng số** (28, 56 là bước hàng ảnh) từ một con trỏ hàng; con trỏ ra chạy
+  đều bước 8 byte. → 71,74 **→ 32,88** chu kỳ/MAC.
+- **conv2**: bung hết 9 vị trí kernel bằng offset hằng số từ một con trỏ gốc (bước hàng `p1` = 104 byte),
+  mỗi vị trí gọi macro `MAC8`. → 58,50 **→ 30,13** chu kỳ/MAC.
+- **dense**: bung vòng trong bước 8. → 48,14 **→ 31,56** chu kỳ/MAC.
+- `MAC8` có hai bản (8 phép nhân, hoặc 2 lệnh DOT4) nên bật/tắt DOT4 không cần sửa cấu trúc vòng lặp.
+
+### Số đo trên kit (trung vị 10 ảnh, 27 MHz) — cả 4 biến thể ĐẠT
+| Lớp | A-V0 | A-V1 | A-V2 | A-V1+DOT4 |
+|---|---:|---:|---:|---:|
+| conv1 | 3.491.721 | 1.600.258 | 3.491.721 | 1.600.258 |
+| pool1 | 225.600 | 225.600 | 225.600 | 225.600 |
+| conv2 | 8.153.979 | 4.199.609 | 1.924.815 | **986.226** |
+| pool2 | 65.921 | 65.921 | 65.921 | 65.921 |
+| dense | 192.552 | 126.224 | 48.552 | **39.052** |
+| **TỔNG** | **12.129.818** | **6.217.657** | **5.756.654** | **2.917.102** |
+| lệnh | 1.864.264 | 911.920 | 912.832 | **460.794** |
+| ms @27 MHz | 449,3 | 230,3 | 213,2 | **108,0** |
+| chu kỳ/MAC | 63,16 | 32,37 | 29,97 | **15,19** |
+| tăng tốc so A-V0 | 1,00× | **1,95×** | **2,11×** | **4,16×** |
+
+### KẾT QUẢ QUAN TRỌNG NHẤT: hai tối ưu nhân được với nhau
+| Nguồn | Hệ số |
+|---|---|
+| Tối ưu phần mềm một mình (A-V0→A-V1) | **1,95×** |
+| DOT4 trên C thẳng (A-V0→A-V2) | 2,11× |
+| **DOT4 thêm vào C đã tối ưu** (A-V1→A-V1+DOT4) | **2,13×** |
+| Cả hai | **4,16×** |
+| Tích hai hệ số riêng | 1,95 × 2,13 = **4,16×** |
+
+Tích **đúng bằng** số đo. Nghĩa là lợi ích của lệnh tùy biến **không biến mất khi phần mềm đã tối ưu**
+(2,13× so với 2,11×). Lý do: hai tối ưu cắt hai phần khác nhau — phần mềm bỏ **tính chỉ số**
+(thấy rõ ở conv1: 71,74 → 32,88 mà không có lệnh mới nào), DOT4 bỏ **nhân-cộng** (conv2 trên nền đã
+tối ưu: 30,13 → 7,08). Đây là câu trả lời trực tiếp cho phản biện "baseline code kém".
+
+### Tính đúng đắn
+Cả 4 biến thể, 2/2 lần đọc mỗi biến thể: **CRC32 200/200 khớp golden** (5 lớp × 10 ảnh × 4 biến thể),
+dự đoán **40/40** khớp golden và khớp nhãn, chu kỳ kit = Verilator **bằng tuyệt đối** cả 7 cột.
+`conv1`/`pool1`/`pool2` cho **đúng cùng số chu kỳ** trong từng cặp so sánh — bằng chứng mỗi cặp chỉ
+khác đúng một thứ.
+
+### Tài nguyên
+A-V0 và A-V1 dùng **cùng phần cứng** (LUT4 7.941, Fmax 71,76 MHz) — chỉ khác nội dung firmware trong
+BSRAM, nên **toàn bộ 1,95× của A-V1 là miễn phí về phần cứng**. A-V2/A-V1+DOT4: LUT4 8.065
+(**+124, +1,6 %**), +84 DFF, 4/48 MULT18X18, Fmax 71,89 MHz (**không giảm**).
+RAM: 27,5–29,3 KB / 65,5 KB; A-V1 tốn thêm ~1,7 KB `.text` vì bung vòng.
+
+### Nút cổ chai tiếp theo
+Trong A-V1+DOT4, **conv1 chiếm 54,9 %** thời gian và không dùng được DOT4 (`Cin=1` không có 4 giá trị
+liền nhau thẳng hàng 4 byte). Nếu conv2 + dense về 0 cũng chỉ nhanh thêm **1,54×**. Hướng tiếp:
+một lệnh phục vụ conv1 — DOT4 bản không cần thẳng hàng, hoặc lệnh nhân-cộng 3 phần tử theo hàng ảnh,
+hoặc đổi bố cục conv1 (nhân bản ảnh theo 4 pha dịch).
+**→ REQ của A-V3 nên nhắm vào conv1, không phải conv2.**
+
+### Một bài học vận hành
+Lần đo đầu script báo *"kit báo biến thể A-V2, mong đợi A-V0"*: tôi đã khởi động vòng đo thứ hai khi
+vòng đầu còn đang nạp kit, hai tiến trình tranh nhau cùng một kit. Phép kiểm **nhãn biến thể trong mỗi
+khối dữ liệu** đã chặn được một số đo sai. → Mỗi khối số đo nên tự khai báo nó thuộc biến thể nào;
+chi phí gần bằng không mà chặn được loại lỗi khó thấy nhất. Cũng đã đổi `--drain 0` → `--drain 2` cho
+M1-S vì mỗi khối mất ~5 giây nên xả 2 giây là an toàn.
+
+### Việc còn lại
+- **A-V3 (+REQ)** — chưa làm; theo số liệu trên nên nhắm vào conv1.
+- **Nhánh B** (lõi tự viết) — chưa làm.
+- Đo trên nhiều hơn 10 ảnh trên kit; đo công suất.
+
 ## 2026-10-17 — THÍ NGHIỆM CHÍNH: M1-S chạy đầy đủ trên kit, A-V0 và A-V2
 
 Lần đầu **một mô hình CNN hoàn chỉnh đã huấn luyện** chạy suy luận trên kit và đo được số chu kỳ.

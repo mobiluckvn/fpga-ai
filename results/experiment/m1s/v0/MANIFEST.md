@@ -1,7 +1,7 @@
 # Vật phẩm cổng m1s/v0
 
-- Ngày lưu: `2026-10-17 13:06:01 +0700`
-- Git commit lúc lưu: `339b4fb`
+- Ngày lưu: `2026-10-17 14:50:30 +0700`
+- Git commit lúc lưu: `c718706`
 - Thư mục build nguồn: `v0`
 - Máy: `Darwin 25.6.0 x86_64` · macOS `26.6.2`
 - File lớn hơn 524288 byte được lưu dạng `.gz` (giải nén: `gunzip -k <file>.gz`).
@@ -23,15 +23,15 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | File (như đã lưu) | Byte gốc | Byte lưu | SHA256 (nội dung gốc) |
 |---|---:|---:|---|
 | `artifacts/Vsoc` | 294592 | 294592 | `c4d0cf23d037848ef8b6e769f60e4d6ac437d21a33095e58cfbaeeb979a740f3` |
-| `artifacts/check.log` | 1656 | 1656 | `dffb9ad76978974837599c3aed8cfae0c97bd49d3ac707ade0466a8e0e7689ed` |
-| `artifacts/check_stdout.log` | 1656 | 1656 | `dffb9ad76978974837599c3aed8cfae0c97bd49d3ac707ade0466a8e0e7689ed` |
-| `artifacts/firmware.bin` | 18428 | 18428 | `d4956981d89eddbb6c92c6ef484b4fc11e76618887714240a7d9171fd5dcab5d` |
-| `artifacts/firmware.dis` | 208358 | 208358 | `eca825a27f8298b8056c20bcd8f380dfb207f6a194d63f3eaf871c75f91689f0` |
-| `artifacts/firmware.elf` | 23904 | 23904 | `11f9341b532b9569b9dc9bb9f80ac0b5c230123fdbd8d582659c09bbd00a3fe0` |
-| `artifacts/firmware.hex` | 147456 | 147456 | `0666da222408ef8402479fcebc3cab9061292d53766c63c801a2ae81b8a33cf6` |
-| `artifacts/firmware.map` | 3030 | 3030 | `46f3324569aa08cdddc3b6e339ff044b6c8cb6e6741c02ef776a8b8d9f140816` |
-| `artifacts/firmware.size.txt` | 217 | 217 | `23a14a10dfb7630f4550fbbeaeb016917ba7e3736870ed18bbb11f706436eaa0` |
-| `artifacts/load.log` | 345 | 345 | `02dd4bbe73225e0b204adcff53467758e7e05c4d02043377b1d205c83089b68a` |
+| `artifacts/check.log` | 1709 | 1709 | `9d68620b15f042199b1731ef98e833d274090fba8b692d7812c3882806756c80` |
+| `artifacts/check_stdout.log` | 1709 | 1709 | `9d68620b15f042199b1731ef98e833d274090fba8b692d7812c3882806756c80` |
+| `artifacts/firmware.bin` | 18456 | 18456 | `cf9d22492e5665ab4202c46eb12cf53f168fc9314f3d15536780f84789d4049b` |
+| `artifacts/firmware.dis` | 208698 | 208698 | `f4077b8de57b7e4b0612f0d75a857845b7c7c20b9a753831bcf64431b6978b38` |
+| `artifacts/firmware.elf` | 23932 | 23932 | `2083243b11f3f992093b377ef0aff61d13b5e78786d1809d7e3f862d9b04a770` |
+| `artifacts/firmware.hex` | 147456 | 147456 | `898703826c47699ca3a7e29accf90e7332da253b6ab20be57eda68bb8b2ee921` |
+| `artifacts/firmware.map` | 3030 | 3030 | `ddea2d2f60961e16d94b444fd791418fa81603281c54351472d383990213e1d7` |
+| `artifacts/firmware.size.txt` | 217 | 217 | `6515a171e81c5398bb2de08e6073725721e6dfc3e3f9ec3ab4355959b192db81` |
+| `artifacts/load.log` | 1380 | 1380 | `6de6aae6c15d4b7ca9ed31e00b7448f051735e0e14c0d89bda80e32d91ca81b1` |
 | `artifacts/nextpnr.log` | 68060 | 68060 | `e1dc8ce06b037fcb74301b49e0f7a7d501ac2d7a40c017e2866b93295bff35d4` |
 | `artifacts/pnr.json.gz` | 26307509 | 1177520 | `bfbfb5beaca58bba6eb536ab6142811a8f7c00da85a81af8fc4bc38ce77d332d` |
 | `artifacts/report.json` | 76523 | 76523 | `5e1008ee44ceb8231d1443c764198fc5aab89396c0e06a3f3d82a46476049f8d` |

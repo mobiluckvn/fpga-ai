@@ -48,17 +48,22 @@ trên kit**. Chi tiết: **[docs/KET_QUA_M1S.md](docs/KET_QUA_M1S.md)**.
 |---|---|---|
 | Độ chính xác (10.000 ảnh test MNIST) | **98,29 %** | **98,25 %** (chênh +0,04 điểm %) |
 
-| Biến thể | Mô tả | Chu kỳ/ảnh | @27 MHz | chu kỳ/MAC | Trạng thái |
-|---|---|---:|---:|---:|---|
-| A-V0 | kernel C thẳng | 12.129.818 | 449,3 ms | 63,16 | **ĐO XONG** |
-| A-V1 | + tối ưu phần mềm (đối chứng) | | | | chưa làm |
-| **A-V2** | **+ DOT4** | **5.756.654** | **213,2 ms** | **29,97** | **ĐO XONG — tăng tốc 2,11×** |
-| A-V3 | + DOT4 + REQ | | | | chưa làm |
+| Biến thể | Mô tả | Chu kỳ/ảnh | @27 MHz | chu kỳ/MAC | Tăng tốc |
+|---|---|---:|---:|---:|---:|
+| A-V0 | C thẳng | 12.129.818 | 449,3 ms | 63,16 | 1,00× |
+| **A-V1** | **+ tối ưu phần mềm** (đối chứng) | 6.217.657 | 230,3 ms | 32,37 | **1,95×** |
+| A-V2 | C thẳng + DOT4 | 5.756.654 | 213,2 ms | 29,97 | 2,11× |
+| **A-V1+DOT4** | **tối ưu phần mềm + DOT4** | **2.917.102** | **108,0 ms** | **15,19** | **4,16×** |
+| A-V3 | + lệnh REQ | | | | chưa làm |
 | B-V* | lõi tự viết | | | | chưa làm |
 
-A-V2 trả **+124 LUT4 (+1,6 %)** và **không giảm Fmax** để được 2,11×. Mọi số đo đều có:
-CRC32 từng lớp khớp golden Python, dự đoán khớp golden, và số chu kỳ trên kit **bằng tuyệt đối**
-số chu kỳ trong Verilator.
+**Kết quả quan trọng nhất**: hai tối ưu **nhân được với nhau** — 1,95× (phần mềm) × 2,13× (DOT4 thêm
+vào code đã tối ưu) = **4,16×**, đúng bằng số đo. Tức lợi ích của lệnh tùy biến **không biến mất khi
+phần mềm đã tối ưu**.
+
+DOT4 trả **+124 LUT4 (+1,6 %)** và **không giảm Fmax**; A-V1 thì **miễn phí hoàn toàn về phần cứng**
+(cùng bitstream với A-V0). Mọi số đo đều có: CRC32 từng lớp khớp golden Python (**200/200**), dự đoán
+khớp golden (**40/40**), và số chu kỳ trên kit **bằng tuyệt đối** số chu kỳ trong Verilator.
 
 ## Quy ước
 

@@ -1,0 +1,603 @@
+Info: Using uarch 'gowin' for device 'GW2AR-LV18QN88C8/I7'
+
+Info: Cell O_sdram_clk not found
+Info: Cell O_sdram_cke not found
+Info: Cell O_sdram_cs_n not found
+Info: Cell O_sdram_cas_n not found
+Info: Cell O_sdram_ras_n not found
+Info: Cell O_sdram_wen_n not found
+Info: Cell O_sdram_dqm[0] not found
+Info: Cell O_sdram_dqm[1] not found
+Info: Cell O_sdram_dqm[2] not found
+Info: Cell O_sdram_dqm[3] not found
+Info: Cell O_sdram_addr[0] not found
+Info: Cell O_sdram_addr[1] not found
+Info: Cell O_sdram_addr[2] not found
+Info: Cell O_sdram_addr[3] not found
+Info: Cell O_sdram_addr[4] not found
+Info: Cell O_sdram_addr[5] not found
+Info: Cell O_sdram_addr[6] not found
+Info: Cell O_sdram_addr[7] not found
+Info: Cell O_sdram_addr[8] not found
+Info: Cell O_sdram_addr[9] not found
+Info: Cell O_sdram_addr[10] not found
+Info: Cell O_sdram_ba[0] not found
+Info: Cell O_sdram_ba[1] not found
+Info: Cell IO_sdram_dq[0] not found
+Info: Cell IO_sdram_dq[1] not found
+Info: Cell IO_sdram_dq[2] not found
+Info: Cell IO_sdram_dq[3] not found
+Info: Cell IO_sdram_dq[4] not found
+Info: Cell IO_sdram_dq[5] not found
+Info: Cell IO_sdram_dq[6] not found
+Info: Cell IO_sdram_dq[7] not found
+Info: Cell IO_sdram_dq[8] not found
+Info: Cell IO_sdram_dq[9] not found
+Info: Cell IO_sdram_dq[10] not found
+Info: Cell IO_sdram_dq[11] not found
+Info: Cell IO_sdram_dq[12] not found
+Info: Cell IO_sdram_dq[13] not found
+Info: Cell IO_sdram_dq[14] not found
+Info: Cell IO_sdram_dq[15] not found
+Info: Cell IO_sdram_dq[16] not found
+Info: Cell IO_sdram_dq[17] not found
+Info: Cell IO_sdram_dq[18] not found
+Info: Cell IO_sdram_dq[19] not found
+Info: Cell IO_sdram_dq[20] not found
+Info: Cell IO_sdram_dq[21] not found
+Info: Cell IO_sdram_dq[22] not found
+Info: Cell IO_sdram_dq[23] not found
+Info: Cell IO_sdram_dq[24] not found
+Info: Cell IO_sdram_dq[25] not found
+Info: Cell IO_sdram_dq[26] not found
+Info: Cell IO_sdram_dq[27] not found
+Info: Cell IO_sdram_dq[28] not found
+Info: Cell IO_sdram_dq[29] not found
+Info: Cell IO_sdram_dq[30] not found
+Info: Cell IO_sdram_dq[31] not found
+Info: Reading constraints...
+Info: Cell btn_s1 not found
+Info: Cell btn_s1 not found
+Info: Cell btn_s2 not found
+Info: Cell btn_s2 not found
+Info: Create constant nets...
+Info: Modify LUTs...
+Info: Pack IOBs...
+Info: Pack I3C IOs...
+Info: Pack MIPI IOs...
+Info: Pack diff IOBs...
+Info: Pack FFs into IO cells...
+Info: Pack IODELAY...
+Info: Pack Input Edge Monitors...
+Info: Pack IO logic...
+Info: Pack DESER16 logic...
+Info: Pack GSR...
+Info: Pack HCLK cells...
+Info: Pack DLLDLYs...
+Info: Pack wide LUTs...
+Info: Packed MUX2_LUT8:79, MUX2_LU7:96, MUX2_LUT6:86, MUX2_LUT5:773
+Info: Pack ALUs...
+Info: Pack SSRAMs...
+Info: Constrained 536 LUTFF pairs.
+Info: Pack PLL...
+Info: Pack ADC...
+Info: Pack GW JTAG...
+Info: Pack BSRAMs...
+Info: Pack DSP...
+Info: Pack INV...
+Info: Pack buffered nets...
+Info: Pack EMCU and UserFlash cells...
+Info: Pack UserFlash cells...
+Info: Pack DQCE cells...
+Info: Pack DCS cells...
+Info: Checksum: 0x48140e7d
+
+Info: Device utilisation:
+Info: 	                 VCC:       1/      1   100%
+Info: 	                 IOB:       9/    384     2%
+Info: 	                LUT4:    8477/  20736    40%
+Info: 	            IOLOGICI:       0/    384     0%
+Info: 	            IOLOGICO:       0/    384     0%
+Info: 	           MUX2_LUT5:    1961/  10368    18%
+Info: 	           MUX2_LUT6:     594/   5184    11%
+Info: 	           MUX2_LUT7:     254/   2592     9%
+Info: 	           MUX2_LUT8:      79/   2592     3%
+Info: 	                 ALU:     754/  15552     4%
+Info: 	                 GND:       1/      1   100%
+Info: 	                 DFF:    1261/  15552     8%
+Info: 	           RAM16SDP4:      32/    648     4%
+Info: 	               BSRAM:      32/     46    69%
+Info: 	              ALU54D:       0/     24     0%
+Info: 	     MULTADDALU18X18:       0/     24     0%
+Info: 	        MULTALU18X18:       0/     24     0%
+Info: 	        MULTALU36X18:       0/     24     0%
+Info: 	           MULT36X36:       0/     12     0%
+Info: 	           MULT18X18:       0/     48     0%
+Info: 	             MULT9X9:       0/     96     0%
+Info: 	              PADD18:       0/     48     0%
+Info: 	               PADD9:       0/     96     0%
+Info: 	                 GSR:       1/      1   100%
+Info: 	                 OSC:       0/      1     0%
+Info: 	                rPLL:       0/      2     0%
+Info: 	             GW_JTAG:       0/      1     0%
+Info: 	                BUFG:       1/     24     4%
+Info: 	                DQCE:       0/     24     0%
+Info: 	                 DCS:       0/      8     0%
+Info: 	               DHCEN:       0/     24     0%
+Info: 	              CLKDIV:       0/      8     0%
+Info: 	             CLKDIV2:       0/     16     0%
+
+Info: Running custom HCLK placer...
+Info: Placed 0 cells based on constraints.
+Info: Creating initial analytic placement for 5201 cells, random placement wirelen = 315184.
+Info:     at initial placer iter 0, wirelen = 4329
+Info:     at initial placer iter 1, wirelen = 4240
+Info:     at initial placer iter 2, wirelen = 4217
+Info:     at initial placer iter 3, wirelen = 4242
+Info: Running main analytical placer, max placement attempts per cell = 22636356.
+Info:     at iteration #1, type ALL: wirelen solved = 4470, spread = 66531, legal = 136903; time = 5.07s
+Info:     at iteration #2, type ALL: wirelen solved = 6080, spread = 58467, legal = 113482; time = 1.84s
+Info:     at iteration #3, type ALL: wirelen solved = 11203, spread = 52227, legal = 101938; time = 2.05s
+Info:     at iteration #4, type ALL: wirelen solved = 14026, spread = 53197, legal = 101901; time = 1.99s
+Info:     at iteration #5, type ALL: wirelen solved = 15248, spread = 47468, legal = 95297; time = 1.93s
+Info:     at iteration #6, type ALL: wirelen solved = 17017, spread = 42501, legal = 76286; time = 1.04s
+Info:     at iteration #7, type ALL: wirelen solved = 18560, spread = 41342, legal = 75411; time = 1.19s
+Info:     at iteration #8, type ALL: wirelen solved = 19243, spread = 39969, legal = 84167; time = 1.73s
+Info:     at iteration #9, type ALL: wirelen solved = 20661, spread = 48026, legal = 91789; time = 1.83s
+Info:     at iteration #10, type ALL: wirelen solved = 22964, spread = 46658, legal = 89514; time = 2.10s
+Info:     at iteration #11, type ALL: wirelen solved = 24159, spread = 47558, legal = 82939; time = 1.54s
+Info:     at iteration #12, type ALL: wirelen solved = 25956, spread = 44905, legal = 86106; time = 1.30s
+Info: HeAP Placer Time: 25.33s
+Info:   of which solving equations: 3.18s
+Info:   of which spreading cells: 0.44s
+Info:   of which strict legalisation: 20.73s
+
+Info: Running simulated annealing placer for refinement.
+Info:   at iteration #1: temp = 0.000000, timing cost = 1691, wirelen = 75411
+Info:   at iteration #5: temp = 0.000000, timing cost = 686, wirelen = 43669
+Info:   at iteration #10: temp = 0.000000, timing cost = 940, wirelen = 38276
+Info:   at iteration #15: temp = 0.000000, timing cost = 1196, wirelen = 36829
+Info:   at iteration #20: temp = 0.000000, timing cost = 1081, wirelen = 36096
+Info:   at iteration #25: temp = 0.000000, timing cost = 993, wirelen = 35276
+Info:   at iteration #30: temp = 0.000000, timing cost = 995, wirelen = 35059
+Info:   at iteration #35: temp = 0.000000, timing cost = 984, wirelen = 34967
+Info:   at iteration #40: temp = 0.000000, timing cost = 990, wirelen = 34937
+Info:   at iteration #41: temp = 0.000000, timing cost = 984, wirelen = 34936 
+Info: SA placement time 54.56s
+
+Info: Max frequency for clock 'u_soc.clk': 62.90 MHz (PASS at 27.00 MHz)
+
+Info: Slack histogram:
+Info:  legend: times are in ps
+Info:          * represents 6 endpoint(s)
+Info:          + represents [1,6) endpoint(s)
+Info: [ 21138,  21920) |***+
+Info: [ 21920,  22702) |**+
+Info: [ 22702,  23484) |+
+Info: [ 23484,  24266) | 
+Info: [ 24266,  25048) |+
+Info: [ 25048,  25830) |+
+Info: [ 25830,  26612) |+
+Info: [ 26612,  27394) |+
+Info: [ 27394,  28176) |+
+Info: [ 28176,  28958) |*+
+Info: [ 28958,  29740) |*****+
+Info: [ 29740,  30522) |********+
+Info: [ 30522,  31304) |*********+
+Info: [ 31304,  32086) |*******+
+Info: [ 32086,  32868) |**********+
+Info: [ 32868,  33650) |**************+
+Info: [ 33650,  34432) |***************************************+
+Info: [ 34432,  35214) |***********************************************+
+Info: [ 35214,  35996) |******************************+
+Info: [ 35996,  36778) |************************************************************ 
+Info: Checksum: 0x9bcaddc8
+Info: Routing globals...
+Info:     'u_soc.clk' net was routed.
+Info:     'u_soc.cpu.dbg_mem_addr[3]' is routed using segments.
+Info:     'u_soc.cpu.dbg_mem_addr[6]' is routed using segments.
+Info:     'u_soc.hw_run_DFFRE_Q_CE_LUT4_F_I2[0]' is routed using segments.
+Info:     'u_soc.hw_run_DFFRE_Q_CE_LUT4_F_I2[1]' is routed using segments.
+Info:     'u_soc.cpu.dbg_mem_addr[7]' is routed using segments.
+Info:     'u_soc.cpu.dbg_mem_addr[9]' is routed using segments.
+Info:     'u_soc.cpu.dbg_mem_addr[2]' is routed using segments.
+Info:     'u_soc.cpu.dbg_mem_addr[8]' is routed using segments.
+Info:     'u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_61_D_LUT4_F_I2_LUT4_I3_F_LUT4_I3_F_LUT4_F_1_I3_LUT3_F_I2_LUT4_I3_F[0]' is routed using segments.
+Info:     'u_soc.cpu.latched_is_lh_LUT2_I1_F_LUT2_F_I1_LUT3_F_I2_LUT4_F_I3[0]' is routed using segments.
+Info:     'u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT3_F_I2_LUT3_F_I2_LUT4_I2_F_LUT4_F_I3[3]' is routed using segments.
+Info:     'u_soc.cpu.dbg_mem_wstrb_DFFE_Q_1_D_LUT4_F_I2_LUT4_F_I2[1]' is routed using segments.
+Info:     'u_soc.cpu.alu_out_q_DFF_Q_10_D_LUT4_F_I3[0]' is routed using segments.
+Info:     'u_soc.hw_run_DFFRE_Q_CE_LUT4_F_I2_LUT3_I2_F[2]' is routed using segments.
+Info:     'u_soc.cpu.instr_ecall_ebreak_DFFE_Q_D_LUT4_F_I3_LUT4_F_1_I3_LUT4_F_I3[1]' is routed using segments.
+Info:     'u_soc.cpu.genblk1.pcpi_mul.rs2[31]' is routed using segments.
+Info:     'u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT3_F_I2_LUT3_F_I2_LUT4_I2_F_LUT4_F_I3[2]' is routed using segments.
+Info:     'u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0[1]' is routed using segments.
+Info:     'u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0[0]' is routed using segments.
+Info:     'u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_53_D_ALU_SUM_I1_MUX2_LUT7_O_S0[0]' is routed using segments.
+Info:     'u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_6_D_ALU_SUM_I1_MUX2_LUT5_O_S0_LUT4_F_I0_LUT4_I0_F_LUT4_F_1_I0_LUT4_I0_F_LUT2_F_I1_LUT3_F_I2[0]' is routed using segments.
+Info:     'u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_D_ALU_SUM_I0_LUT3_F_I2_MUX2_LUT5_O_S0_LUT4_F_I3_LUT4_F_I2_LUT4_I2_F_LUT4_F_I3[0]' is routed using segments.
+Info:     'u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_D_ALU_SUM_I0_LUT3_F_I2_LUT4_F_I0_LUT4_I0_F_LUT4_F_1_I0_LUT3_I0_1_F_LUT3_F_I2_LUT3_F_I0_LUT3_I0_I2_LUT3_I1_I2_LUT4_F_I3_LUT4_I3_F_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_I3_LUT4_I3_F_LUT4_F_I3_LUT4_I3_F_LUT4_F_I3_LUT4_I3_F_LUT4_F_I3_LUT3_I2_F_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_I3_LUT3_I2_F_LUT4_F_I3_LUT3_I2_F_LUT3_F_I0_LUT4_I0_F_LUT3_F_1_I2_MUX2_LUT5_O_1_S0_LUT2_I0_F_LUT3_F_I1_LUT4_I1_F_LUT3_F_I2_LUT4_I2_F_LUT4_I3_F_LUT4_I3_F_LUT4_F_2_I3_LUT4_I3_F_LUT4_I3_F_LUT3_F_I2_LUT4_I2_F_LUT4_F_I1[1]' is routed using segments.
+
+Info: Routing..
+Info: Setting up routing queue.
+Info: Routing 40482 arcs.
+Info:            |   (re-)routed arcs  |   delta    | remaining|       time spent     |
+Info:    IterCnt |  w/ripup   wo/ripup |  w/r  wo/r |      arcs| batch(sec) total(sec)|
+Info:       1000 |       63        936 |   63   936 |     39675|       1.20       1.20|
+Info:       2000 |      121       1878 |   58   942 |     38851|       0.78       1.99|
+Info:       3000 |      167       2832 |   46   954 |     37950|       0.70       2.69|
+Info:       4000 |      219       3780 |   52   948 |     37067|       0.70       3.38|
+Info:       5000 |      263       4736 |   44   956 |     36140|       0.63       4.01|
+Info:       6000 |      293       5706 |   30   970 |     35198|       0.58       4.59|
+Info:       7000 |      323       6676 |   30   970 |     34247|       0.53       5.13|
+Info:       8000 |      371       7628 |   48   952 |     33378|       0.53       5.66|
+Info:       9000 |      431       8568 |   60   940 |     32492|       0.54       6.20|
+Info:      10000 |      491       9508 |   60   940 |     31628|       0.45       6.65|
+Info:      11000 |      586      10413 |   95   905 |     30895|       0.53       7.18|
+Info:      12000 |      679      11320 |   93   907 |     30173|       0.55       7.73|
+Info:      13000 |      785      12214 |  106   894 |     29549|       0.52       8.25|
+Info:      14000 |      848      13086 |   63   872 |     28726|       0.39       8.64|
+Info:      15000 |      901      13729 |   53   643 |     27875|       0.38       9.02|
+Info:      16000 |      921      14028 |   20   299 |     26919|       0.18       9.20|
+Info:      17000 |      956      14290 |   35   262 |     26001|       0.23       9.43|
+Info:      18000 |      976      14426 |   20   136 |     25048|       0.26       9.69|
+Info:      19000 |      995      14649 |   19   223 |     24089|       0.26       9.95|
+Info:      20000 |     1014      14880 |   19   231 |     23127|       0.26      10.21|
+Info:      21000 |     1032      15426 |   18   546 |     22154|       0.41      10.62|
+Info:      22000 |     1035      16198 |    3   772 |     21165|       0.41      11.03|
+Info:      23000 |     1037      17122 |    2   924 |     20167|       0.43      11.46|
+Info:      24000 |     1059      18038 |   22   916 |     19206|       0.79      12.25|
+Info:      25000 |     1066      18965 |    7   927 |     18231|       0.73      12.98|
+Info:      26000 |     1086      19863 |   20   898 |     17265|       0.76      13.74|
+Info:      27000 |     1096      20764 |   10   901 |     16277|       0.70      14.44|
+Info:      28000 |     1123      21670 |   27   906 |     15330|       0.74      15.18|
+Info:      29000 |     1149      22556 |   26   886 |     14396|       0.87      16.05|
+Info:      30000 |     1176      23459 |   27   903 |     13431|       0.93      16.98|
+Info:      31000 |     1219      24332 |   43   873 |     12530|       0.90      17.88|
+Info:      32000 |     1253      25229 |   34   897 |     11600|       0.81      18.68|
+Info:      33000 |     1311      26089 |   58   860 |     10739|       0.86      19.54|
+Info:      34000 |     1332      26990 |   21   901 |      9769|       0.87      20.42|
+Info:      35000 |     1376      27861 |   44   871 |      8828|       1.00      21.42|
+Info:      36000 |     1457      28715 |   81   854 |      8064|       1.10      22.52|
+Info:      37000 |     1520      29583 |   63   868 |      7168|       1.09      23.60|
+Info:      38000 |     1610      30428 |   90   845 |      6349|       1.19      24.79|
+Info:      39000 |     1709      31253 |   99   825 |      5517|       1.24      26.03|
+Info:      40000 |     1811      32077 |  102   824 |      4709|       1.33      27.37|
+Info:      41000 |     1906      32890 |   95   813 |      3872|       1.31      28.68|
+Info:      42000 |     2070      33677 |  164   787 |      3213|       1.37      30.05|
+Info:      43000 |     2232      34466 |  162   789 |      2520|       1.66      31.71|
+Info:      44000 |     2405      35234 |  173   768 |      1790|       1.69      33.39|
+Info:      45000 |     2635      35972 |  230   738 |      1344|       1.91      35.30|
+Info:      46000 |     2801      36747 |  166   775 |       640|       1.78      37.08|
+Info:      47000 |     3044      37475 |  243   728 |       173|       2.02      39.09|
+Info:      47257 |     3086      37686 |   42   211 |         0|       0.50      39.60|
+Info: Routing complete.
+Info: Router1 time 39.60s
+Info: Checksum: 0xb051978a
+
+Info: Critical path report for clock 'u_soc.clk' (posedge -> posedge):
+Info:       type curr  total name
+Info:   clk-to-q  0.23  0.23 Source u_soc.cpu.genblk1.pcpi_mul.rs2_DFFE_Q_15.Q
+Info:    routing  0.88  1.11 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT3_F_I0_MUX2_LUT5_S0_O_MUX2_LUT5_O_S0[1] (26,21) -> (21,19)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT4_F_I2_LUT4_F.I1
+Info:                          Defined in:
+Info:                               ../../../rtl/picorv32/picorv32.v:2342.18-2342.21
+Info:      logic  0.57  1.68 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT4_F_I2_LUT4_F.F
+Info:    routing  1.44  3.12 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0[1] (21,19) -> (6,3)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_MUX2_LUT5_O.S0
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.10  3.23 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_MUX2_LUT5_O.O
+Info:    routing  0.67  3.90 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F[0] (6,3) -> (6,3)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_F.I2
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.46  4.36 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_F.F
+Info:    routing  0.62  4.98 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F[4] (6,3) -> (10,3)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0.S0
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.10  5.08 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0.O
+Info:    routing  0.55  5.63 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O[4] (10,3) -> (9,2)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_1_F_MUX2_LUT5_I1_O_LUT4_F_1_I1_LUT4_I1_F_MUX2_LUT5_O.S0
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.10  5.73 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_1_F_MUX2_LUT5_I1_O_LUT4_F_1_I1_LUT4_I1_F_MUX2_LUT5_O.O
+Info:    routing  0.38  6.11 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_1_F_MUX2_LUT5_I1_O_LUT4_F_1_I1_LUT4_I1_F[5] (9,2) -> (8,2)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O_I0_MUX2_LUT5_O_I0_LUT4_F.I0
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.55  6.66 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O_I0_MUX2_LUT5_O_I0_LUT4_F.F
+Info:    routing  0.00  6.66 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O_I0_MUX2_LUT5_O_I0 (8,2) -> (8,2)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O_I0_MUX2_LUT5_O.I0
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:170.42-170.67
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:164.41-164.66
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:158.41-158.66
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:151.9-151.11
+Info:      logic  0.27  6.93 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O_I0_MUX2_LUT5_O.O
+Info:    routing  0.00  6.93 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O_I0 (8,2) -> (8,2)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O.I0
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:170.42-170.67
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:164.41-164.66
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:157.9-157.11
+Info:      logic  0.27  7.20 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O.O
+Info:    routing  0.00  7.20 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0_MUX2_LUT7_O_I0 (8,2) -> (8,2)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0_MUX2_LUT7_O.I0
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:170.42-170.67
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:163.9-163.11
+Info:      logic  0.27  7.46 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0_MUX2_LUT7_O.O
+Info:    routing  0.00  7.46 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_I0 (8,2) -> (7,2)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1.I0
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:169.9-169.11
+Info:      logic  0.27  7.73 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1.O
+Info:    routing  0.71  8.44 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_34_D_ALU_SUM_I1_MUX2_LUT6_O_S0[0] (7,2) -> (12,2)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_O_LUT4_F.I0
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.55  8.99 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_51_D_ALU_SUM_I1_LUT4_F_I3_MUX2_LUT8_O_I1_MUX2_LUT7_O_I1_MUX2_LUT6_O_S0_MUX2_LUT5_O_I1_LUT4_F_I0_LUT4_I0_1_F_LUT4_F_1_I3_LUT4_I3_F_MUX2_LUT7_O_S0_MUX2_LUT7_S0_O_LUT2_F_1_I0_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_I0_F_MUX2_LUT5_O_I1_LUT4_F_I2_LUT2_F_I1_LUT4_I1_F_MUX2_LUT5_O_I1_LUT4_F_I0_MUX2_LUT8_S0_O_LUT4_F_I3_LUT4_I3_F_LUT3_I1_F_LUT3_F_I2_LUT4_F_I3_LUT4_I3_F_LUT4_I3_F_MUX2_LUT5_I1_O_LUT4_F_1_I3_LUT4_I3_F_LUT4_F_2_I0_LUT3_I0_F_MUX2_LUT5_I0_O_MUX2_LUT5_O_S0_MUX2_LUT6_S0_O_MUX2_LUT7_I1_O_MUX2_LUT8_I1_O_LUT4_I3_F_MUX2_LUT5_O_I0_LUT4_F_I1_LUT4_I1_F_MUX2_LUT6_O_I0_MUX2_LUT5_O_I1_LUT4_F_I3_LUT2_F_I1_LUT4_I3_F_LUT2_F_I0_LUT4_I0_F_LUT4_F_I2_LUT3_I2_F_LUT4_F_I2_LUT4_I2_F_LUT2_F_1_I1_LUT3_I1_F_LUT4_I3_F_MUX2_LUT5_I0_O_MUX2_LUT7_S0_O_MUX2_LUT8_I1_O_LUT4_F.F
+Info:    routing  0.40  9.40 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_34_D_ALU_SUM_I1_MUX2_LUT6_O_S0[1] (12,2) -> (11,2)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM_I1_MUX2_LUT6_O_I1_MUX2_LUT5_O_I0_LUT4_F.I1
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.57  9.96 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM_I1_MUX2_LUT6_O_I1_MUX2_LUT5_O_I0_LUT4_F.F
+Info:    routing  0.00  9.96 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM_I1_MUX2_LUT6_O_I1_MUX2_LUT5_O_I0 (11,2) -> (11,2)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM_I1_MUX2_LUT6_O_I1_MUX2_LUT5_O.I0
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:159.41-159.66
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:151.9-151.11
+Info:      logic  0.27  10.23 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM_I1_MUX2_LUT6_O_I1_MUX2_LUT5_O.O
+Info:    routing  0.00  10.23 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM_I1_MUX2_LUT6_O_I1 (11,2) -> (11,2)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM_I1_MUX2_LUT6_O.I1
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_map.v:157.13-157.15
+Info:      logic  0.27  10.50 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM_I1_MUX2_LUT6_O.O
+Info:    routing  1.17  11.67 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM_I1 (11,2) -> (13,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM.I1
+Info:      logic  0.57  12.24 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM.COUT
+Info:    routing  0.00  12.24 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_35_D_ALU_SUM_COUT (13,15) -> (14,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_34_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.28 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_34_D_ALU_SUM.COUT
+Info:    routing  0.00  12.28 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_34_D_ALU_SUM_COUT (14,15) -> (14,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_33_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.31 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_33_D_ALU_SUM.COUT
+Info:    routing  0.00  12.31 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_33_D_ALU_SUM_COUT (14,15) -> (14,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_32_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.35 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_32_D_ALU_SUM.COUT
+Info:    routing  0.00  12.35 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_32_D_ALU_SUM_COUT (14,15) -> (14,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_31_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.38 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_31_D_ALU_SUM.COUT
+Info:    routing  0.00  12.38 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_31_D_ALU_SUM_COUT (14,15) -> (14,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_30_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.42 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_30_D_ALU_SUM.COUT
+Info:    routing  0.00  12.42 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_30_D_ALU_SUM_COUT (14,15) -> (14,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_29_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.45 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_29_D_ALU_SUM.COUT
+Info:    routing  0.00  12.45 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_29_D_ALU_SUM_COUT (14,15) -> (15,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_28_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.49 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_28_D_ALU_SUM.COUT
+Info:    routing  0.00  12.49 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_28_D_ALU_SUM_COUT (15,15) -> (15,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_27_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.52 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_27_D_ALU_SUM.COUT
+Info:    routing  0.00  12.52 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_27_D_ALU_SUM_COUT (15,15) -> (15,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_26_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.56 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_26_D_ALU_SUM.COUT
+Info:    routing  0.00  12.56 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_26_D_ALU_SUM_COUT (15,15) -> (15,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_25_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.59 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_25_D_ALU_SUM.COUT
+Info:    routing  0.00  12.59 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_25_D_ALU_SUM_COUT (15,15) -> (15,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_24_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.63 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_24_D_ALU_SUM.COUT
+Info:    routing  0.00  12.63 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_24_D_ALU_SUM_COUT (15,15) -> (15,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_23_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.66 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_23_D_ALU_SUM.COUT
+Info:    routing  0.00  12.66 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_23_D_ALU_SUM_COUT (15,15) -> (16,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_22_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.70 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_22_D_ALU_SUM.COUT
+Info:    routing  0.00  12.70 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_22_D_ALU_SUM_COUT (16,15) -> (16,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_21_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.73 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_21_D_ALU_SUM.COUT
+Info:    routing  0.00  12.73 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_21_D_ALU_SUM_COUT (16,15) -> (16,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_20_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.77 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_20_D_ALU_SUM.COUT
+Info:    routing  0.00  12.77 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_20_D_ALU_SUM_COUT (16,15) -> (16,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_19_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.80 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_19_D_ALU_SUM.COUT
+Info:    routing  0.00  12.80 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_19_D_ALU_SUM_COUT (16,15) -> (16,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_18_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.84 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_18_D_ALU_SUM.COUT
+Info:    routing  0.00  12.84 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_18_D_ALU_SUM_COUT (16,15) -> (16,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_17_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.87 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_17_D_ALU_SUM.COUT
+Info:    routing  0.00  12.87 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_17_D_ALU_SUM_COUT (16,15) -> (17,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_16_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.91 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_16_D_ALU_SUM.COUT
+Info:    routing  0.00  12.91 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_16_D_ALU_SUM_COUT (17,15) -> (17,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_15_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.94 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_15_D_ALU_SUM.COUT
+Info:    routing  0.00  12.94 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_15_D_ALU_SUM_COUT (17,15) -> (17,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_14_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  12.98 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_14_D_ALU_SUM.COUT
+Info:    routing  0.00  12.98 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_14_D_ALU_SUM_COUT (17,15) -> (17,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_13_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.01 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_13_D_ALU_SUM.COUT
+Info:    routing  0.00  13.01 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_13_D_ALU_SUM_COUT (17,15) -> (17,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_12_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.05 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_12_D_ALU_SUM.COUT
+Info:    routing  0.00  13.05 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_12_D_ALU_SUM_COUT (17,15) -> (17,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_11_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.08 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_11_D_ALU_SUM.COUT
+Info:    routing  0.00  13.08 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_11_D_ALU_SUM_COUT (17,15) -> (18,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_10_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.12 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_10_D_ALU_SUM.COUT
+Info:    routing  0.00  13.12 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_10_D_ALU_SUM_COUT (18,15) -> (18,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_9_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.15 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_9_D_ALU_SUM.COUT
+Info:    routing  0.00  13.15 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_9_D_ALU_SUM_COUT (18,15) -> (18,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_8_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.19 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_8_D_ALU_SUM.COUT
+Info:    routing  0.00  13.19 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_8_D_ALU_SUM_COUT (18,15) -> (18,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_7_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.22 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_7_D_ALU_SUM.COUT
+Info:    routing  0.00  13.22 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_7_D_ALU_SUM_COUT (18,15) -> (18,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_6_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.26 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_6_D_ALU_SUM.COUT
+Info:    routing  0.00  13.26 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_6_D_ALU_SUM_COUT (18,15) -> (18,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_5_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.29 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_5_D_ALU_SUM.COUT
+Info:    routing  0.00  13.29 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_5_D_ALU_SUM_COUT (18,15) -> (19,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_4_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.33 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_4_D_ALU_SUM.COUT
+Info:    routing  0.00  13.33 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_4_D_ALU_SUM_COUT (19,15) -> (19,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_3_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.36 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_3_D_ALU_SUM.COUT
+Info:    routing  0.00  13.36 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_3_D_ALU_SUM_COUT (19,15) -> (19,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_2_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.40 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_2_D_ALU_SUM.COUT
+Info:    routing  0.00  13.40 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_2_D_ALU_SUM_COUT (19,15) -> (19,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_1_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  13.43 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_1_D_ALU_SUM.COUT
+Info:    routing  0.00  13.43 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_1_D_ALU_SUM_COUT (19,15) -> (19,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_D_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.47  13.90 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_D_ALU_SUM.SUM
+Info:    routing  0.00  13.90 Net u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q_D (19,15) -> (19,15)
+Info:                          Sink u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q.D
+Info:      setup  0.04  13.94 Source u_soc.cpu.genblk1.pcpi_mul.rd_DFF_Q.D
+Info: 7.11 ns logic, 6.82 ns routing
+
+Info: Max frequency for clock 'u_soc.clk': 71.76 MHz (PASS at 27.00 MHz)
+
+Info: Slack histogram:
+Info:  legend: times are in ps
+Info:          * represents 7 endpoint(s)
+Info:          + represents [1,7) endpoint(s)
+Info: [ 23101,  23777) |**+
+Info: [ 23777,  24453) |**+
+Info: [ 24453,  25129) |+
+Info: [ 25129,  25805) |+
+Info: [ 25805,  26481) |+
+Info: [ 26481,  27157) |+
+Info: [ 27157,  27833) |+
+Info: [ 27833,  28509) |+
+Info: [ 28509,  29185) |+
+Info: [ 29185,  29861) |+
+Info: [ 29861,  30537) |+
+Info: [ 30537,  31213) |**********+
+Info: [ 31213,  31889) |*+
+Info: [ 31889,  32565) |*+
+Info: [ 32565,  33241) |*****+
+Info: [ 33241,  33917) |***********+
+Info: [ 33917,  34593) |*****************+
+Info: [ 34593,  35269) |************************************************** 
+Info: [ 35269,  35945) |************************************************************ 
+Info: [ 35945,  36621) |****************+
+
+Info: Program finished normally.
