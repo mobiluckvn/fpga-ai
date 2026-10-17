@@ -77,3 +77,14 @@ f7ae60f92e00ec6debd23a6088c31dbd2371eca3ffa0defaefb259924204aec6  t10k-labels-id
 - JTAG idcode `0x81b` → Gowin, family GW2A, model **GW2A(R)-18(C)**, irlength 8
 - Cổng serial: `/dev/cu.usbserial-20250303170` và `/dev/cu.usbserial-20250303171`
   (cả hai mở được @115200; chưa biết cổng nào là UART của FPGA — xác định ở F2)
+
+## riscv-tests (dùng cho nhánh B, cổng B0)
+- **riscv-tests**: `riscv-software-src/riscv-tests` commit **`d7e86f701b929b5d801f8cda1a4871ab05f452bb`**
+  Tải: `git clone --depth 1 https://github.com/riscv-software-src/riscv-tests.git rtl/mycore/tests/riscv-tests`
+  (thư mục này KHÔNG commit — xem `.gitignore`). Dùng `isa/rv32ui/*.S` (42 bài),
+  `isa/rv32um/*.S` (8 bài) và `isa/macros/scalar/test_macros.h`.
+- **Môi trường kiểm rút gọn**: `rtl/mycore/tests/riscv_test.h` lấy từ
+  `YosysHQ/picorv32` commit `ef203c2b0a3fb793280f5114941416c425c5b461`, file `tests/riscv_test.h`
+  (1.250 byte). PASS/FAIL báo bằng cách ghi ký tự vào 0x10000000 — đúng địa chỉ UART của `soc.v`.
+- Dịch bằng `riscv-none-elf-gcc -march=rv32im_zifencei -mabi=ilp32` (cần `_zifencei` để **dịch được**
+  bài `fence_i`; lõi không bắt buộc phải thực hiện lệnh đó).

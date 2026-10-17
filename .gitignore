@@ -27,3 +27,6 @@ obj_dir/
 # ---- NGOẠI LỆ: mọi thứ trong results/ đều phải được commit ----
 # Đây là bằng chứng của báo cáo: bitstream, netlist, log thô, CSV, manifest.
 !results/**
+
+# bản sao riscv-tests (ghim commit trong env/VERSIONS.md, tải lại bằng git clone)
+rtl/mycore/tests/riscv-tests/

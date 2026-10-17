@@ -2,6 +2,53 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — NHÁNH B, cổng B0: hạ tầng kiểm thử riscv-tests — ĐẠT
+
+Bắt đầu nhánh B. Kế hoạch nhánh B viết ra ở `docs/BRANCH_B_PLAN.md` (7 cổng B0–B6, tiêu chí từng
+cổng, rủi ro đã nhận diện). Lý do nhánh B đáng làm, lấy từ số đo chứ không từ cảm nhận: **IPC = 0,160**
+ở biến thể nhanh nhất của nhánh A, tức 6,26 chu kỳ mỗi lệnh — nguyên nhân thuộc **vi kiến trúc**
+(PicoRV32 không pipeline, bus `soc.v` 2 chu kỳ mỗi truy cập), thêm lệnh tùy biến không sửa được.
+
+### Quyết định phương pháp: kiểm hạ tầng trên lõi ĐÃ BIẾT ĐÚNG trước
+Cổng B0 không viết một dòng RTL nào của lõi mới. Nó chỉ dựng bộ kiểm và **chạy trên PicoRV32**.
+Lý do: nếu dùng một harness chưa được kiểm để xét lõi mới thì mỗi lần "KHÔNG ĐẠT" đều có hai cách
+giải thích, và sẽ mất rất nhiều thời gian để phân biệt lỗi lõi với lỗi harness.
+
+### Tập lệnh bắt buộc — đếm từ firmware thật
+`objdump` cả 6 bản firmware nhánh A: RV32I đầy đủ + `mul` (123 lần), `mulh` (12), `mulhu` (6),
+CSR `rdcycle`/`rdcycleh`/`rdinstret`, `fence` (15, coi như nop). **Không có `div`/`rem`** ở bất kỳ bản
+nào. Vẫn sẽ hiện thực `div divu rem remu mulhsu` để qua *trọn bộ* `rv32um`.
+
+### Kết quả B0
+`scripts/riscv_tests.sh` + `rtl/mycore/tests/{start_test.S, link_test.ld, riscv_test.h}`:
+mỗi bài kiểm là **một chương trình riêng** (`_start` → `mytest` → `mytest_ret` in "DONE"), nạp vào
+`firmware.hex`, chạy trên `soc.v` của F5. PASS/FAIL báo bằng ghi ký tự vào 0x10000000 — trùng đúng
+địa chỉ UART của SoC nên không phải sửa gì.
+
+| | |
+|---|---|
+| **RV32IM (48 bài: 40 `rv32ui` + 8 `rv32um`)** | **ĐẠT 48/48 trên PicoRV32** → harness đúng |
+| ngoài RV32IM: `ma_data` | KHÔNG ĐẠT — cần hỗ trợ truy cập lệch địa chỉ; PicoRV32 bật `CATCH_MISALIGN` |
+| ngoài RV32IM: `fence_i` | KHÔNG ĐẠT — cần Zifencei |
+
+`fence_i` không đạt **có bằng chứng từ mã nguồn**, không phải đoán: `picorv32.v:1088` giải mã
+`instr_fence <= (mem_rdata_q[6:0] == 7'b0001111 && !mem_rdata_q[14:12])` — chỉ nhận `funct3 == 0`,
+nên `fence.i` (`funct3 == 1`) là lệnh không hợp lệ → trap ở chu kỳ 1758.
+Lõi tự viết sẽ hiện thực `fence.i` (xả lệnh đã nạp trước) nên **có thể qua được bài này**, tức hơn
+PicoRV32 một bài — sẽ xác nhận bằng số đo ở B1, không hứa trước.
+
+### Cạm bẫy
+- `$CROSS gcc` trong shell script → `riscv-none-elf- gcc` (có khoảng trắng) → "command not found" cho
+  cả 49 bài. Phải viết `"${CROSS}gcc"`. Triệu chứng giống hệt "toolchain hỏng", rất dễ mất thời gian.
+- Lần đầu tất cả bài đều in `mytest..OK DONE` nhưng harness báo KHÔNG ĐẠT, vì tôi quên truyền
+  `TEST_FUNC_TXT` nên bài nào cũng tự gọi là "mytest". Dấu hiệu nhận ra: output đúng mà kết luận sai.
+- `sim_main.cpp` chỉ in khi gặp `\n`, mà `RVTEST_CODE_BEGIN` in tên bài **không có** `\n`. Nên một
+  bài trap giữa đường cho log **rỗng hoàn toàn** — không phải mất output, chỉ là chưa xả bộ đệm.
+  Harness của nhánh B sẽ xả phần dở khi kết thúc.
+
+Vật phẩm: `results/branch_b/B0/` (kết quả 50 bài trên PicoRV32 + log trap của `fence_i`/`ma_data`).
+Phiên bản ghim: `env/VERSIONS.md` (riscv-tests `d7e86f70`).
+
 ## 2026-10-17 — Chạy ĐỦ 10.000 ảnh test trên kit: 98,25 % là số ĐO, không phải số suy ra
 
 Lỗ hổng duy nhất còn lại của chương nhánh A: năm biến thể chỉ chạy **10 ảnh nhúng trong firmware**,
