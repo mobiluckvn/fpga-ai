@@ -1,0 +1,7 @@
+# F3 gen_pattern
+file            : build/pattern_check.hex (16384 từ 32 bit = 65536 byte)
+LFSR seed       : 0xACE12345, đa thức x^32+x^22+x^2+x^1+1
+mẫu thứ hai     : data2(a) = (a ^ 0xA5A5A5A5)
+từ đầu / cuối   : ace12345 ... 3ab4d900
+CRC32_ROM_EXPECT: C7CD86AA
+CRC32_RW_EXPECT : D63B5AB4

@@ -1,0 +1,7 @@
+Dong nhan duoc:
+  F3,ROM,C7CD86AA
+  F3,RW,D63B5AB4
+OK 1/2: CRC32 ROM = c7cd86aa khop ky vong (doc 16384 tu da khoi tao)
+OK 2/2: CRC32 RW  = d63b5ab4 khop ky vong (ghi roi doc lai 16384 tu)
+F3_SIM_PASS: BSRAM 64 KB khoi tao dung, doc/ghi dung
+tb_top.v:124: $finish called at 4002800000 (1ps)

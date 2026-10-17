@@ -2,6 +2,76 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — Cổng F3 (BSRAM 64 KB có khởi tạo) — ĐẠT, KHÔNG cần phương án dự phòng
+
+**Đây là rủi ro lớn nhất của cả dự án và nó đã được giải quyết.** Luồng mã nguồn mở suy luận được
+64 KB BSRAM có nội dung khởi tạo, nạp được nội dung vào bitstream, và kit đọc lại đúng từng bit.
+
+### Thiết kế
+- `scripts/gen_pattern.py`: sinh `pattern.hex` = 16.384 từ 32 bit (65.536 byte) từ LFSR Fibonacci 32 bit,
+  đa thức x^32+x^22+x^2+x^1+1, hạt giống **0xACE12345**. In CRC32 kỳ vọng (zlib: 0xEDB88320, init
+  0xFFFFFFFF, đảo cuối) trên dòng byte **little-endian của từng từ**.
+- `feasibility/F3_bsram/top.v`: `reg [31:0] mem [0:16383]` + `initial $readmemh("pattern.hex", mem)`,
+  một cổng, **đọc đồng bộ 1 chu kỳ**. Máy trạng thái 3 pha chạy một lần sau khi nạp bitstream:
+  (1) đọc toàn bộ → CRC32 → `crc_rom`; (2) ghi `data2(a) = a ^ 0xA5A5A5A5` vào toàn bộ;
+  (3) đọc lại toàn bộ → CRC32 → `crc_rw`. Sau đó cứ 1 giây in lại hai dòng
+  `F3,ROM,xxxxxxxx` và `F3,RW,xxxxxxxx` (CSV, kết thúc `\r\n`) để host bắt được bất kể lúc nào mở cổng.
+- `crc32.v`: hàm CRC32 một byte, bung 8 bước thành mạng XOR tổ hợp → 1 chu kỳ/byte.
+  Một lượt đọc hết 64 KB mất 6 chu kỳ/từ × 16.384 ≈ 98.304 chu kỳ ≈ 3,6 ms @27 MHz.
+- UART phát: dùng lại khối **đã kiểm chứng ở F2**, đặt tại `rtl/uart/uart_tx.v` (bản sao y nguyên của
+  `feasibility/F2_uart/uart_tx.v`, SHA256 giống nhau — xem `rtl/uart/README.md`). Làm vậy để F3, F5–F8
+  dùng cùng một khối, tránh phân nhánh; thư mục F2 vẫn giữ bản riêng làm hồ sơ của cổng đó.
+
+### Kết quả
+- `make sim` (Icarus, **mô phỏng đủ 16.384 từ, không rút gọn**): `F3_SIM_PASS`.
+  Hai dòng giải mã được: `F3,ROM,C7CD86AA` và `F3,RW,D63B5AB4`, khớp đúng CRC Python.
+- Tổng hợp: **BSRAM 32/46 (69,6 %)** — đúng như kế hoạch dự đoán (~32/46). **Còn dư 14 khối (30 %)**
+  cho các cổng sau. LUT4 865/20736 · DFF 207 · ALU 250 · IOB 8 (clk + TX + 6 LED) · MULT 0.
+- **Fmax = 157,36 MHz** @ ràng buộc 27 MHz → ĐẠT (dư ~5,8 lần).
+- Bitstream `top.fs` = 7.261.470 byte (không nén).
+- **Trên kit**: `scripts/f3_check.py --repeat 3` → **F3_PASS 3/3 lần đọc độc lập**:
+  `CRC_ROM=C7CD86AA`, `CRC_RW=D63B5AB4`, cả hai khớp giá trị Python tính lại tại chỗ
+  (script không hard-code CRC, nó gọi lại `gen_pattern.py`).
+  Log: `results/feasibility/F3/artifacts/f3_check.log`.
+
+### Phép phản chứng (tự thêm, không có trong kế hoạch)
+Vì đây là cổng quan trọng nhất, tôi kiểm thêm rằng nội dung đọc được **thật sự đến từ `pattern.hex`**
+chứ không phải trùng hợp:
+- Sinh lại `pattern.hex` với hạt giống **0x13572468** (CRC ROM kỳ vọng đổi thành **454701B8**,
+  CRC RW kỳ vọng **giữ nguyên D63B5AB4** vì mẫu RW không phụ thuộc hạt giống), build lại, nạp lại.
+- Kit báo đúng: `F3,ROM,454701B8` (đổi) và `F3,RW,D63B5AB4` (không đổi).
+- ⇒ Dữ liệu khởi tạo đi đúng đường `pattern.hex → yosys → gowin_pack → bitstream → BSRAM`.
+- Bằng chứng lưu ở `results/feasibility/F3/falsification/`. Sau đó đã khôi phục mẫu chuẩn
+  (`sha256 pattern.hex = 86ee138c…`, đối chiếu lại bằng `cmp` với bản sinh lại) và nạp lại bitstream chuẩn.
+
+### Vấn đề gặp phải
+1. **Lỗi lệch một ô khi ghi** (bắt được khi đọc lại code trước lúc mô phỏng, chưa kịp gây hậu quả):
+   ban đầu để `we`/`wdata` là thanh ghi, nên ở chu kỳ `we` có hiệu lực thì `addr` đã tăng 1 → ghi sai ô.
+   Sửa: `we` và `wdata` thành **tổ hợp** theo `st` và `addr` hiện tại.
+2. **Dữ liệu tồn trong bộ đệm driver khi đổi bitstream**: lần đọc đầu sau khi nạp bitstream mới vẫn trả
+   về dòng của bitstream **cũ** (đã thấy cả với dòng `F2 OK ...` lẫn `F3,ROM,C7CD86AA` cũ).
+   `reset_input_buffer()` của pyserial không đủ. Sửa: `f3_check.py` **đọc bỏ 1,5 s** trước khi thu
+   (tham số `--drain`). Sau khi sửa: 3/3 lần đọc đạt. Ghi nhận cho các cổng sau: **mọi script đọc UART
+   sau khi nạp bitstream mới phải xả bộ đệm trước.**
+3. Cảnh báo của yosys: 128 cảnh báo, chỉ 4 thông điệp khác nhau, tất cả phát sinh trong file techmap
+   của chính yosys (`share/yosys/gowin/brams_map.v:114`, dạng `Range select [34:27] out of bounds on
+   signal PORT_A_WR_DATA`), xuất hiện 32 lần = một lần mỗi khối BSRAM. Đó là các lane bit chẵn lẻ thứ 9
+   mà thiết kế 32 bit không dùng. **Không gây hậu quả**: pha RW (ghi rồi đọc lại toàn bộ 64 KB) cho CRC
+   đúng từng bit, tức đường ghi 32 bit hoàn toàn nguyên vẹn.
+
+### Nguồn đã đối chiếu
+- Chân cắm: đã đối chiếu ở F1, không làm lại.
+- Khả năng khởi tạo BSRAM của luồng: `YosysHQ/apicula` có sẵn các ví dụ `bsram-pROM-tangnano20k`,
+  `bsram-SP-tangnano20k`, `bsram-SDPB`, `bsram-DPB` trong `examples/Makefile` (đã xem ở F1) → luồng
+  được thiết kế để làm việc này. Ở đây ta dùng cách **để yosys tự suy luận** từ `$readmemh`
+  (phương án chính của kế hoạch), nên không cần tới phương án dự phòng (b) là gọi primitive SP/SDPB
+  trực tiếp.
+
+### Việc tiếp theo / cần người dùng
+- F4 (khối nhân DSP): hai biến thể DSP và LUT, so với giá trị Python, ghi LUT/FF/MULT/Fmax từng biến thể.
+  Chip có sẵn MULT18X18 48, MULT9X9 96 (số từ report.json của F1). Không cần người dùng làm gì.
+- Kit đang chạy bitstream F3 chuẩn, mỗi giây in hai dòng CRC.
+
 ## 2026-10-17 — Cổng F2 (UART hai chiều) — ĐẠT
 
 - **Làm gì**: viết UART TX/RX 8N1 tự chia nhịp, testbench Icarus, build, nạp SRAM, kiểm 10.240 byte echo

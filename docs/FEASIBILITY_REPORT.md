@@ -9,7 +9,7 @@ Ngày bắt đầu: 2026-10-17 · Máy: Mac Intel (x86_64, macOS 26.6.2 build 25
 | F0 Môi trường | **ĐẠT** | OSS CAD Suite 20261016 (yosys 0.70+145, nextpnr-himbaechel 0.11.1-63, apycula 0.35.dev5, openFPGALoader 1.1.1, verilator 5.053, iverilog 14.0); riscv-none-elf-gcc 15.2.0; JTAG idcode 0x81b = GW2A(R)-18(C); 2 cổng serial | không | results/feasibility/F0/ |
 | F1 Blinky | **ĐẠT** | Fmax: 347,58 MHz (ràng buộc 27) · LUT4 30/20736 · DFF 30/15552 · IOB 7/384 · bitstream 4.618.782 byte (không nén) · nạp SRAM 3/3 lần OK · người dùng xác nhận LED chạy đúng tốc độ | bỏ `gowin_pack -c` | results/feasibility/F1/ |
 | F2 UART | **ĐẠT** | Sai số baud: +0,1603 % (DIV=234 → 115.384,62 baud); byte lỗi: **0/10.240** · cổng UART = `/dev/cu.usbserial-20250303171` · Fmax 187,48 MHz · bộ đếm FPGA: rx+10.240, dr=0, er=0, ov=0, FIFO hwm 1/63 · 5.248 B/s | khối ghi của host ≤66 byte (giới hạn cầu FT2232/macOS, không phải của FPGA) | results/feasibility/F2/ |
-| F3 BSRAM 64 KB | | Khối BSRAM: /46; Fmax: | | results/feasibility/F3/ |
+| F3 BSRAM 64 KB | **ĐẠT** | Khối BSRAM: **32/46** (69,6 %); Fmax: **157,36 MHz** · CRC32 ROM=C7CD86AA và RW=D63B5AB4 **khớp Python 3/3 lần đọc** · thêm phép phản chứng: đổi hạt giống LFSR → CRC ROM đổi đúng thành 454701B8, CRC RW giữ nguyên | **không** | results/feasibility/F3/ |
 | F4 DSP | | LUT/DSP (DSP): ; (LUT): | | results/feasibility/F4/ |
 | F5 SoC PicoRV32 | | loop kit = sim? ; .text: | | results/feasibility/F5/ |
 | F6 Đo lường | | overhead: ; offset hw: | | results/feasibility/F6/ |
@@ -22,6 +22,7 @@ Ngày bắt đầu: 2026-10-17 · Máy: Mac Intel (x86_64, macOS 26.6.2 build 25
 |---|---|---|---|---|---|
 | F1 Blinky | 30 | 30 | 0 | 0 | 347,58 |
 | F2 UART | 883 | 236 | 0 (8× RAM16SDP4 cho FIFO) | 0 | 187,48 |
+| F3 BSRAM 64 KB | 865 | 207 | **32/46** | 0 | 157,36 |
 | F3 | | | | | |
 | F4-DSP | | | | | |
 | F4-LUT | | | | | |
@@ -58,6 +59,12 @@ Ngày bắt đầu: 2026-10-17 · Máy: Mac Intel (x86_64, macOS 26.6.2 build 25
 ## Tài nguyên tổng của chip (từ report.json của nextpnr, dùng để lập ngân sách các cổng sau)
 LUT4 20.736 · DFF 15.552 · ALU 15.552 · IOB 384 · **BSRAM 46** · MULT9X9 96 · **MULT18X18 48** ·
 MULT36X36 12 · MULTALU18X18 24 · MULTADDALU18X18 24 · ALU54D 24 · rPLL 2 · BUFG 24 · RAM16SDP4 648
+
+## Ghi chú quan trọng sau F3
+Rủi ro lớn nhất của dự án (BSRAM 64 KB có khởi tạo sẵn qua luồng mã nguồn mở) đã được **giải quyết, không
+phải dùng phương án dự phòng nào** trong bốn phương án (a)–(d) của FEASIBILITY_PLAN. Yosys tự suy luận
+`$readmemh` + `reg [31:0] mem[0:16383]` thành 32 khối BSRAM có nội dung khởi tạo, gowin_pack nạp nội dung
+đó vào bitstream, và kit đọc lại đúng từng bit. Còn **14/46 khối BSRAM (30 %) dư** cho các cổng sau.
 
 ## Kết luận
 Go / Go có điều kiện / No-Go: ____

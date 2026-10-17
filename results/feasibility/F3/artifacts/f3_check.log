@@ -1,0 +1,32 @@
+# F3 check
+Thời điểm: 2026-10-17 10:00:07 +0700
+Số từ: 16384 (65536 byte = 64 KB)
+Từ đầu/cuối của mẫu: ace12345 ... 3ab4d900
+CRC32 kỳ vọng (Python, zlib): ROM=C7CD86AA  RW=D63B5AB4
+Cổng sẽ thử: ['/dev/cu.usbserial-20250303170', '/dev/cu.usbserial-20250303171']
+== Lần đọc 1/3 ==
+--- Thử cổng /dev/cu.usbserial-20250303170 @ 115200 8N1 ---
+    KHÔNG ĐẠT: sau 6.06s không thấy dòng F3,...
+    (đã đóng /dev/cu.usbserial-20250303170)
+--- Thử cổng /dev/cu.usbserial-20250303171 @ 115200 8N1 ---
+    (xả 219 byte tồn trong bộ đệm trước khi đọc)
+    Các dòng thô nhận được (2): ['F3,ROM,C7CD86AA', 'F3,RW,D63B5AB4']
+    ĐẠT: CRC ROM = C7CD86AA khớp Python
+    ĐẠT: CRC RW = D63B5AB4 khớp Python
+    (đã đóng /dev/cu.usbserial-20250303171)
+== Lần đọc 2/3 ==
+--- Thử cổng /dev/cu.usbserial-20250303171 @ 115200 8N1 ---
+    (xả 66 byte tồn trong bộ đệm trước khi đọc)
+    Các dòng thô nhận được (2): ['F3,ROM,C7CD86AA', 'F3,RW,D63B5AB4']
+    ĐẠT: CRC ROM = C7CD86AA khớp Python
+    ĐẠT: CRC RW = D63B5AB4 khớp Python
+    (đã đóng /dev/cu.usbserial-20250303171)
+== Lần đọc 3/3 ==
+--- Thử cổng /dev/cu.usbserial-20250303171 @ 115200 8N1 ---
+    (xả 66 byte tồn trong bộ đệm trước khi đọc)
+    Các dòng thô nhận được (2): ['F3,ROM,C7CD86AA', 'F3,RW,D63B5AB4']
+    ĐẠT: CRC ROM = C7CD86AA khớp Python
+    ĐẠT: CRC RW = D63B5AB4 khớp Python
+    (đã đóng /dev/cu.usbserial-20250303171)
+
+F3_PASS cổng=/dev/cu.usbserial-20250303171 CRC_ROM=C7CD86AA CRC_RW=D63B5AB4 lần_đọc_đạt=3/3
