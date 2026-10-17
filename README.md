@@ -84,7 +84,7 @@ nào, vượt bản tối ưu hết mức *có* lệnh tùy biến trên PicoRV3
 một chút** — DOT4 cho **2,31×** trên lõi tự viết (gắn thẳng vào tầng thực thi, 1 chu kỳ) so với
 **2,13×** trên PicoRV32 (qua PCPI, 2 chu kỳ). Nhanh nhất của cả dự án: **487.888 chu kỳ = 18,1 ms =
 2,54 chu kỳ/MAC = 55,3 ảnh/giây**, tức **18,4×** so với A-V0. Phân rã: 1,45× (phần mềm, miễn phí)
-× 4,26× (vi kiến trúc, **còn tiết kiệm 58,8 % LUT4**) × 2,31× (DOT4, +1.122 LUT4) × 1,29× (bố cục,
+× 4,26× (vi kiến trúc, **còn dùng ít LUT4 hơn ~2,4 lần**) × 2,31× (DOT4) × 1,29× (bố cục,
 miễn phí). **Vi kiến trúc đóng góp gần gấp đôi lệnh tùy biến.**
 
 **Kết quả quan trọng nhất**: lệnh tùy biến cho lợi ích **LỚN HƠN** khi phần mềm đã tối ưu —
@@ -100,7 +100,7 @@ có thể nằm ở **bố cục** chứ không ở bản thân lệnh.
 **Cơ hội còn lại, đã đo**: requantize tốn **49,6 chu kỳ/lần** × 7.344 lần/ảnh = **14,9 %** thời gian
 → một lệnh `REQ` cho thêm **~1,17×** (→ ~78 ms). Đáng làm, nhưng nhỏ hơn DOT4 nhiều.
 
-DOT4 trả **+124 LUT4 (+1,6 %)** và **không giảm Fmax**; A-V1 và bước +C1 thì **miễn phí hoàn toàn về
+DOT4 trả **4 khối MULT18X18** và **không giảm Fmax**; A-V1 và bước +C1 thì **miễn phí hoàn toàn về
 phần cứng** (cùng bitstream). Mọi số đo đều có: CRC32 từng lớp khớp golden Python (**250/250**), dự
 đoán khớp golden (**50/50**), và số chu kỳ trên kit **bằng tuyệt đối** số chu kỳ trong Verilator; cộng
 thêm **10.000/10.000** CRC logit khớp golden ở lần chạy đủ tập test.

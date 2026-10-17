@@ -21,7 +21,10 @@ module soc #(
     parameter         HEXFILE    = "firmware.hex",
     // WITH_DOT4 = 1: bật PCPI ngoài và gắn khối pcpi_dot4 (dùng ở F8).
     // Mặc định 0 -> lõi và netlist giống hệt F5/F6/F7.
-    parameter integer WITH_DOT4  = 0
+    parameter integer WITH_DOT4  = 0,
+    // WITH_REQ = 1: khối PCPI giải mã thêm lệnh REQ (biến thể A-V3).
+    // Mặc định 0 -> mọi build cũ (F5..F8, A-V0..A-V1+DOT4+C1) không đổi.
+    parameter integer WITH_REQ   = 0
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -59,7 +62,7 @@ module soc #(
 
     generate
         if (WITH_DOT4) begin : g_dot4
-            pcpi_dot4 u_dot4 (
+            pcpi_dot4 #(.WITH_REQ(WITH_REQ)) u_dot4 (
                 .clk(clk), .resetn(resetn),
                 .pcpi_valid(pcpi_valid), .pcpi_insn(pcpi_insn),
                 .pcpi_rs1(pcpi_rs1), .pcpi_rs2(pcpi_rs2),

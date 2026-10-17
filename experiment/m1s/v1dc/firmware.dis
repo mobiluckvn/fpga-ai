@@ -725,7 +725,7 @@ Disassembly of section .text:
      ae4:	10000737          	lui	a4,0x10000
      ae8:	000027b7          	lui	a5,0x2
      aec:	00470713          	addi	a4,a4,4 # 10000004 <__bss_end+0xfff80b0>
-     af0:	03300613          	li	a2,51
+     af0:	03200613          	li	a2,50
      af4:	86078693          	addi	a3,a5,-1952 # 1860 <main+0xeec>
      af8:	100005b7          	lui	a1,0x10000
      afc:	00168693          	addi	a3,a3,1
@@ -791,7 +791,7 @@ Disassembly of section .text:
      bec:	10000737          	lui	a4,0x10000
      bf0:	000027b7          	lui	a5,0x2
      bf4:	00470713          	addi	a4,a4,4 # 10000004 <__bss_end+0xfff80b0>
-     bf8:	03600613          	li	a2,54
+     bf8:	06300613          	li	a2,99
      bfc:	88478693          	addi	a3,a5,-1916 # 1884 <main+0xf10>
      c00:	100005b7          	lui	a1,0x10000
      c04:	00168693          	addi	a3,a3,1
@@ -1586,9 +1586,10 @@ Disassembly of section .text:
     1856:	65682c53          	.insn	4, 0x65682c53
     185a:	6c6c                	.insn	2, 0x6c6c
     185c:	00002c6f          	jal	s8,385c <m1s_imgs+0x195c>
-    1860:	34653433          	.insn	4, 0x34653433
-    1864:	6534                	.insn	2, 0x6534
-    1866:	0061                	.insn	2, 0x0061
+    1860:	3332                	.insn	2, 0x3332
+    1862:	3239                	.insn	2, 0x3239
+    1864:	6531                	.insn	2, 0x6531
+    1866:	0065                	.insn	2, 0x0065
     1868:	2d41                	.insn	2, 0x2d41
     186a:	3156                	.insn	2, 0x3156
     186c:	544f442b          	.insn	4, 0x544f442b
@@ -1599,11 +1600,12 @@ Disassembly of section .text:
     187a:	72732c53          	.insn	4, 0x72732c53
     187e:	00002c63          	.insn	4, 0x2c63
     1882:	0000                	.insn	2, 0x0000
-    1884:	3436                	.insn	2, 0x3436
-    1886:	64316637          	lui	a2,0x64316
-    188a:	3730                	.insn	2, 0x3730
-    188c:	6131                	.insn	2, 0x6131
-    188e:	00006163          	bltu	zero,zero,1890 <main+0xf1c>
+    1884:	36393363          	.insn	4, 0x36393363
+    1888:	6236                	.insn	2, 0x6236
+    188a:	3030                	.insn	2, 0x3030
+    188c:	3131                	.insn	2, 0x3131
+    188e:	6664                	.insn	2, 0x6664
+    1890:	0000                	.insn	2, 0x0000
     1892:	0000                	.insn	2, 0x0000
     1894:	314d                	.insn	2, 0x314d
     1896:	6d692c53          	.insn	4, 0x6d692c53
@@ -3457,7 +3459,7 @@ Disassembly of section .text:
     3dfa:	f304                	.insn	2, 0xf304
     3dfc:	fef1                	.insn	2, 0xfef1
     3dfe:	0004e803          	.insn	4, 0x0004e803
-    3e02:	f5060803          	lb	a6,-176(a2) # 64315f50 <__bss_end+0x6430dffc>
+    3e02:	f5060803          	lb	a6,-176(a2)
     3e06:	0008                	.insn	2, 0x0008
     3e08:	04ff 0a0f 0406 fc01 	.insn	10, 0xf315fc0104060a0f04ff
     3e10:	f315 

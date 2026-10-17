@@ -38,7 +38,8 @@ module mycore #(
     // FAST_ADDR=0: ghi thanh ghi địa chỉ -> mọi đường đều thanh ghi->thanh ghi, chạy
     //   được trên kit, trả giá 1 chu kỳ thêm cho MỖI truy cập bộ nhớ (kể cả nạp lệnh).
     parameter        FAST_ADDR   = 1,
-    parameter        WITH_DOT4   = 0
+    parameter        WITH_DOT4   = 0,
+    parameter        WITH_REQ    = 0
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -165,6 +166,21 @@ module mycore #(
 
     wire is_dot4 = (WITH_DOT4 != 0) && (opc == OP_CUSTOM)
                 && (f3 == 3'b000) && (f7 == 7'b0000000);
+
+    // ---------------- lệnh tùy biến REQ (cổng B5) ----------------
+    // Thay cả hàm requant() kiểu gemmlowp bằng MỘT lệnh:
+    //   custom-0, funct3 = 001, funct7 = số bit dịch (hằng số lúc biên dịch)
+    //   rd = clamp( RoundingDivideByPOT( SatRoundingDoublingHighMul(ReLU(rs1), rs2),
+    //                                    funct7 ), 0, 127 )
+    //
+    // Dùng LẠI bộ nhân 32x32 của khối nhân/chia (4 x MULT18X18) nên chỉ thêm phần
+    // cộng/dịch/so sánh. Đi qua trạng thái S_MD như lệnh `mul` -> **2 chu kỳ**.
+    //
+    // Vì sao phép nhân KHÔNG DẤU là đủ và vẫn đúng từng bit so với mã C có dấu:
+    // ReLU đặt acc >= 0, còn m0 từ quantize_multiplier luôn nằm trong [2^30, 2^31)
+    // nên dương. Hai toán hạng không âm -> tích không dấu trùng tích có dấu, và
+    // nhánh `nudge` âm cùng trường hợp đặc biệt 0x80000000 không bao giờ chạy tới.
+    wire is_req = (WITH_REQ != 0) && (opc == OP_CUSTOM) && (f3 == 3'b001);
 
     // ---------------- rẽ nhánh ----------------
     reg br_take;
@@ -346,8 +362,21 @@ module mycore #(
     wire [31:0] quo_fin = q_neg ? (~quo + 32'd1) : quo;
     wire [31:0] rmd_fin = r_neg ? (~rmd + 32'd1) : rmd;
 
+    // REQ: (ab + 2^30) >> 31, rồi chia-làm-tròn theo luỹ thừa 2, rồi kẹp [0,127]
+    reg  [4:0]  req_sh;
+    reg         md_is_req;
+    wire [63:0] req_t64  = prod_u + 64'h0000_0000_4000_0000;
+    wire [31:0] req_t    = req_t64[62:31];
+    wire [31:0] req_mask = (32'd1 << req_sh) - 32'd1;
+    wire [31:0] req_rem  = req_t & req_mask;
+    wire [31:0] req_thr  = req_mask >> 1;
+    wire [31:0] req_q    = (req_t >> req_sh) + ((req_rem > req_thr) ? 32'd1 : 32'd0);
+    wire [31:0] req_val  = (req_q > 32'd127) ? 32'd127 : req_q;
+
     reg [31:0] md_res;
     always @(*) begin
+      if (md_is_req) md_res = req_val;
+      else
         case (md_f3)
             3'b000:  md_res = prod_u[31:0];                 // mul
             3'b001:  md_res = prod_s[63:32];                // mulh
@@ -361,7 +390,8 @@ module mycore #(
     end
 
     // ---------------- phân loại lệnh ----------------
-    wire is_muldiv = (opc == OP_OP) && (f7 == 7'b0000001) && (WITH_MULDIV != 0);
+    wire is_muldiv = ((opc == OP_OP) && (f7 == 7'b0000001) && (WITH_MULDIV != 0))
+                  || is_req;
     wire is_csr    = (opc == OP_SYSTEM) && (f3 != 3'b000);
     wire is_sys0   = (opc == OP_SYSTEM) && (f3 == 3'b000);   // ecall / ebreak / mret...
 
@@ -377,7 +407,7 @@ module mycore #(
                                    (f7 == 7'b0000001 && (WITH_MULDIV != 0)));
             OP_MISC:   illegal = 1'b0;                       // fence, fence.i = nop
             OP_SYSTEM: illegal = is_csr ? !csr_ok : 1'b0;
-            OP_CUSTOM: illegal = !is_dot4;
+            OP_CUSTOM: illegal = !(is_dot4 || is_req);
             default:   illegal = 1'b1;
         endcase
     end
@@ -407,6 +437,7 @@ module mycore #(
             OP_OP:          begin wb_en = 1'b1; wb_val = alu_r; end
             OP_SYSTEM:      begin wb_en = is_csr; wb_val = csr_val; end
             OP_CUSTOM:      begin wb_en = is_dot4; wb_val = dot4_val; end
+                            /* REQ đi qua S_MD, không ghi về ở đây */
             default:        begin wb_en = 1'b0; end
         endcase
     end
@@ -493,6 +524,7 @@ module mycore #(
             cnt_instret <= 64'd0;
             ld_is       <= 1'b0;
             md_cnt      <= 6'd0;
+            md_is_req   <= 1'b0;
             addr_r      <= RESET_PC;
             wstrb_r     <= 4'b0000;
             wdata_r     <= 32'd0;
@@ -522,13 +554,15 @@ module mycore #(
                             state   <= S_MEM;
                         end
                     end else if (is_muldiv) begin
-                        md_a   <= rv1;
+                        md_a   <= is_req ? (rv1[31] ? 32'd0 : rv1) : rv1;  /* ReLU trong REQ */
                         md_b   <= rv2;
                         md_f3  <= f3;
                         md_rd  <= rd;
-                        md_is_div <= f3[2];
+                        md_is_req <= is_req;
+                        md_is_div <= is_req ? 1'b0 : f3[2];
+                        req_sh <= f7[4:0];
                         pc_ret <= next_pc;
-                        if (f3[2]) begin
+                        if (!is_req && f3[2]) begin
                             // chia: 32 bước dịch-trừ trên trị tuyệt đối
                             q_neg <= (f3 == 3'b100) && (rv1[31] ^ rv2[31]) && (rv2 != 32'd0);
                             r_neg <= (f3 == 3'b110) && rv1[31];
@@ -546,7 +580,7 @@ module mycore #(
                                 md_cnt <= 6'd32;
                             end
                         end else begin
-                            md_cnt <= 6'd0;                // nhân: kết quả có ngay ở S_MD
+                            md_cnt <= 6'd0;                // nhân / REQ: kết quả có ngay ở S_MD
                         end
                         state <= S_MD;
                     end else begin

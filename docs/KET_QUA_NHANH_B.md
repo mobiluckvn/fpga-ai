@@ -286,6 +286,45 @@ bất kỳ, cả thiết kế im lặng, **không một cảnh báo nào**. Ràn
 xung nhịp **trực tiếp**. (Chia xung nhịp trên vải FPGA cũng sai: nextpnr báo
 `Hold/min time violation`; muốn hạ tần số phải dùng `rPLL`.)
 
+## 6b. Cảnh báo về số đo tài nguyên: hiệu hai lần tổng hợp KHÔNG đáng tin
+
+Khi dựng biến thể REQ cho nhánh A, tôi gặp một kết quả **vô lý**: thêm lệnh REQ (thêm logic + 4 DSP)
+mà tổng LUT4 lại **giảm 1.545**:
+
+| | A-V1+DOT4+C1 | A-V3 (thêm REQ) | chênh |
+|---|---:|---:|---:|
+| LUT4 | 8.054 | **6.509** | **−1.545** |
+| MUX2_LUT5 | 1.946 | 655 | −1.291 |
+| MUX2_LUT6/7/8 | 595 / 256 / 80 | 49 / 12 / 3 | −867 |
+| ALU (chuỗi nhớ) | 774 | 972 | +198 |
+| MULT18X18 | 4 | **8** | +4 |
+| DFF | 1.153 | 1.173 | +20 |
+
+Đã cô lập nguyên nhân: chạy **yosys hai lần, khác đúng một tham số** `WITH_REQ` (0 và 1), cùng mọi
+file nguồn, cho đúng cùng khác biệt đó. Nên nó **không phải nhiễu giữa các lần chạy** (yosys gần như
+tất định: hai lần chạy cùng tham số lệch ~10 cell) mà là **ABC chọn cách phủ (mapping) khác hẳn** khi
+netlist thay đổi. Dấu hiệu rõ: khối logic chuyển từ các cấu trúc MUX2_LUT5..8 rộng sang LUT3 + chuỗi
+nhớ ALU. Số thanh ghi **tăng** 20 (đúng bằng `is_req` + `req_sh` + đệm), nên **không có khối nào bị
+xoá mất** — mạch vẫn đủ, chỉ được phủ khác.
+
+**Hệ quả cho cách đọc mọi số tài nguyên trong tài liệu này và `docs/KET_QUA_M1S.md`:**
+
+| Khẳng định | Còn vững? |
+|---|---|
+| Số **BSRAM** (32/46 ở mọi biến thể) | ✅ chính xác |
+| Số **MULT18X18** (4 cho mỗi DOT4 kiểu DSP, 4 cho REQ) | ✅ chính xác — đã truy từng instance về đúng dòng mã trong netlist |
+| **Fmax** ≥ 2× yêu cầu 27 MHz ở mọi biến thể | ✅ vững (biên 1,99–2,80×) |
+| mycore nhỏ hơn PicoRV32 **khoảng 2,4×** (3.235 so với 7.941–8.065 LUT4) | ✅ vững — khoảng cách lớn hơn biên độ dao động nhiều lần |
+| "DOT4 trên nhánh A tốn **+124 LUT4**" (7.941 → 8.065) | ❌ **KHÔNG kết luận được** — nhỏ hơn biên độ dao động phủ (1.545) |
+| "DOT4 trên nhánh B tốn **+1.122 LUT4**" (3.235 → 4.357) | ⚠️ cùng bậc với biên độ dao động; chỉ nên coi là **ước lượng** |
+| "REQ trên nhánh B tốn **+716 LUT4**" (4.357 → 5.073) | ⚠️ như trên |
+
+**Bài học phương pháp**: trên luồng mã nguồn mở này, **không thể đo chi phí phần cứng nhỏ của một lệnh
+tùy biến bằng cách trừ hai lần tổng hợp**. Muốn con số đáng tin thì phải tổng hợp **riêng chính khối
+đó** như một thiết kế độc lập (out-of-context), hoặc đếm trực tiếp các primitive đặc thù (DSP, BSRAM)
+như đã làm ở trên. Tôi giữ lại các con số tuyệt đối đã đo và **gỡ bỏ các kết luận về hiệu số** nằm
+dưới biên độ dao động.
+
 ## 7. Bài học phương pháp đắt nhất của cổng này
 
 Cổng B3 ban đầu bị kết luận **sai** là "KHÔNG ĐẠT": kit không phát byte nào, và tôi sửa thiết kế bốn

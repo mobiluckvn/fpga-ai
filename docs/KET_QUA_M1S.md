@@ -322,11 +322,19 @@ máy của cả năm lớp tính toán giống hệt bản `v1dc`, nên kết qu
 |---|---:|---:|---:|---:|---:|
 | A-V0, A-V1 (không DOT4) | 7.941 (38,3 %) | 1.069 | 32/46 | 0 | 71,76 |
 | A-V2, A-V1+DOT4, A-V1+DOT4+C1 (có DOT4) | 8.065 (38,9 %) | 1.153 | 32/46 | 4/48 | 71,89 |
-| **Chi phí của DOT4** | **+124 (+1,6 %)** | +84 | 0 | +4 | **+0,13** |
+| **Hiệu hai lần tổng hợp** | +124 (+1,6 %) | +84 | 0 | **+4** | +0,13 |
+
+> **Đọc bảng này cẩn thận.** Hiệu **+124 LUT4** KHÔNG đo được chi phí của DOT4: xem
+> `docs/KET_QUA_NHANH_B.md` mục 6b — đổi đúng một tham số tổng hợp đã được chứng minh làm tổng LUT4
+> xê dịch tới **1.545** vì ABC chọn cách phủ khác, nên mọi hiệu số nhỏ hơn con số đó **không kết luận
+> được**. Hai điều VẪN chính xác và đáng dùng: **+4 MULT18X18** (đã truy từng instance về đúng dòng mã
+> trong netlist) và **Fmax không giảm**. Chi phí LUT thật của DOT4 muốn biết thì phải tổng hợp riêng
+> khối đó ngoài ngữ cảnh.
 
 Ba biến thể có DOT4 dùng **cùng một bitstream về mặt phần cứng** — chỉ khác nội dung firmware trong
 BSRAM. Tương tự A-V0 và A-V1. Nghĩa là: **toàn bộ 1,45× của A-V1 và 1,19× của bước +C1 là miễn phí
-về phần cứng**; chỉ 2,13× của DOT4 phải trả **+124 LUT4 (+1,6 %)** và **không giảm Fmax**.
+về phần cứng**; DOT4 phải trả **4 khối MULT18X18** và **không giảm Fmax** (chi phí LUT: xem cảnh báo
+ở trên — hiệu hai lần tổng hợp không đo được nó).
 Biên Fmax so với 27 MHz vẫn là **2,66 lần**.
 
 **Bộ nhớ** (RAM 65.536 byte): A-V0 27.592 (42,1 %) · A-V1 29.272 (44,7 %) · A-V2 27.488 (41,9 %) ·

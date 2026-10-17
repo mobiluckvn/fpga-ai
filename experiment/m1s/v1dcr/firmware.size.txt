@@ -1,0 +1,9 @@
+v1dcr/firmware.elf  :
+section              size    addr
+.text               19040       0
+.bss                12816   19040
+.riscv.attributes      42       0
+.comment               51       0
+Total               31949
+
+

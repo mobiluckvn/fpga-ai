@@ -21,7 +21,11 @@
 //
 // |rd| <= 4 * 128 * 128 = 65.536 nên 18 bit có dấu là đủ (±131.072).
 
-module pcpi_dot4 (
+module pcpi_dot4 #(
+    // WITH_REQ = 1: module này giải mã THÊM lệnh REQ (custom-0, funct3 = 001).
+    // Mặc định 0 -> hành vi giống hệt bản dùng ở cổng F8, không ảnh hưởng số đo cũ.
+    parameter integer WITH_REQ = 0
+) (
     input  wire        clk,
     input  wire        resetn,
 
@@ -42,8 +46,18 @@ module pcpi_dot4 (
 
     reg [31:0] a_q = 32'd0;
     reg [31:0] b_q = 32'd0;
+    // ---------------- lệnh REQ (biến thể A-V3) ----------------
+    // rd = clamp(rdiv_pot(sat_rdhmul(ReLU(rs1), rs2), funct7), 0, 127)
+    // Vì ReLU đặt acc >= 0 và m0 luôn dương, phép nhân KHÔNG DẤU là đủ và vẫn
+    // đúng từng bit so với hàm requant() trong firmware (xem experiment/m1s/main.c).
+    wire insn_req = (WITH_REQ != 0) && resetn && pcpi_valid
+                 && (pcpi_insn[6:0]   == 7'b0001011)   // custom-0
+                 && (pcpi_insn[14:12] == 3'b001);
+
     reg [1:0]  active = 2'b00;
     reg [31:0] rd_q = 32'd0;
+    reg [4:0]  req_sh = 5'd0;
+    reg        is_req = 1'b0;
 
     // ---------------- bốn phép nhân int8 ----------------
 `ifdef PCPI_DOT4_DSP
@@ -104,17 +118,68 @@ module pcpi_dot4 (
     wire signed [17:0] dot = p0 + p1 + p2 + p3;
 
     // ---------------- bắt tay PCPI ----------------
+    // ---------------- phép nhân 32x32 -> 64 cho REQ ----------------
+    // Dùng CÙNG cách như nhánh B: 4 phép 16x16 không dấu ghép lại. Ở bản DSP thì
+    // gọi MULT18X18 trực tiếp (bài học F4: DSP do yosys suy luận cho kết quả SAI
+    // trên kit); ở bản mặc định dùng toán tử `*` cho mô phỏng và cho build -nodsp.
+    wire [63:0] rq_prod;
+`ifdef PCPI_DOT4_DSP
+    wire [35:0] q00, q01, q10, q11;
+    MULT18X18 r00 (.A({2'b00, a_q[15:0]}),  .B({2'b00, b_q[15:0]}),
+        .SIA({18{gnd_dsp}}), .SIB({18{gnd_dsp}}), .ASIGN(gnd_dsp), .BSIGN(gnd_dsp),
+        .ASEL(gnd_dsp), .BSEL(gnd_dsp), .CE(1'b1), .CLK(clk), .RESET(gnd_dsp),
+        .SOA(), .SOB(), .DOUT(q00));
+    defparam r00.AREG=1'b0; defparam r00.BREG=1'b0; defparam r00.OUT_REG=1'b0;
+    defparam r00.PIPE_REG=1'b0; defparam r00.ASIGN_REG=1'b0; defparam r00.BSIGN_REG=1'b0;
+    defparam r00.SOA_REG=1'b0; defparam r00.MULT_RESET_MODE="SYNC";
+    MULT18X18 r01 (.A({2'b00, a_q[15:0]}),  .B({2'b00, b_q[31:16]}),
+        .SIA({18{gnd_dsp}}), .SIB({18{gnd_dsp}}), .ASIGN(gnd_dsp), .BSIGN(gnd_dsp),
+        .ASEL(gnd_dsp), .BSEL(gnd_dsp), .CE(1'b1), .CLK(clk), .RESET(gnd_dsp),
+        .SOA(), .SOB(), .DOUT(q01));
+    defparam r01.AREG=1'b0; defparam r01.BREG=1'b0; defparam r01.OUT_REG=1'b0;
+    defparam r01.PIPE_REG=1'b0; defparam r01.ASIGN_REG=1'b0; defparam r01.BSIGN_REG=1'b0;
+    defparam r01.SOA_REG=1'b0; defparam r01.MULT_RESET_MODE="SYNC";
+    MULT18X18 r10 (.A({2'b00, a_q[31:16]}), .B({2'b00, b_q[15:0]}),
+        .SIA({18{gnd_dsp}}), .SIB({18{gnd_dsp}}), .ASIGN(gnd_dsp), .BSIGN(gnd_dsp),
+        .ASEL(gnd_dsp), .BSEL(gnd_dsp), .CE(1'b1), .CLK(clk), .RESET(gnd_dsp),
+        .SOA(), .SOB(), .DOUT(q10));
+    defparam r10.AREG=1'b0; defparam r10.BREG=1'b0; defparam r10.OUT_REG=1'b0;
+    defparam r10.PIPE_REG=1'b0; defparam r10.ASIGN_REG=1'b0; defparam r10.BSIGN_REG=1'b0;
+    defparam r10.SOA_REG=1'b0; defparam r10.MULT_RESET_MODE="SYNC";
+    MULT18X18 r11 (.A({2'b00, a_q[31:16]}), .B({2'b00, b_q[31:16]}),
+        .SIA({18{gnd_dsp}}), .SIB({18{gnd_dsp}}), .ASIGN(gnd_dsp), .BSIGN(gnd_dsp),
+        .ASEL(gnd_dsp), .BSEL(gnd_dsp), .CE(1'b1), .CLK(clk), .RESET(gnd_dsp),
+        .SOA(), .SOB(), .DOUT(q11));
+    defparam r11.AREG=1'b0; defparam r11.BREG=1'b0; defparam r11.OUT_REG=1'b0;
+    defparam r11.PIPE_REG=1'b0; defparam r11.ASIGN_REG=1'b0; defparam r11.BSIGN_REG=1'b0;
+    defparam r11.SOA_REG=1'b0; defparam r11.MULT_RESET_MODE="SYNC";
+    assign rq_prod = {32'd0, q00[31:0]} + {16'd0, q01[31:0], 16'd0}
+                   + {16'd0, q10[31:0], 16'd0} + {q11[31:0], 32'd0};
+`else
+    assign rq_prod = a_q * b_q;
+`endif
+
+    wire [63:0] rq_t64  = rq_prod + 64'h0000_0000_4000_0000;
+    wire [31:0] rq_t    = rq_t64[62:31];
+    wire [31:0] rq_mask = (32'd1 << req_sh) - 32'd1;
+    wire [31:0] rq_rem  = rq_t & rq_mask;
+    wire [31:0] rq_thr  = rq_mask >> 1;
+    wire [31:0] rq_qv   = (rq_t >> req_sh) + ((rq_rem > rq_thr) ? 32'd1 : 32'd0);
+    wire [31:0] req_val = (rq_qv > 32'd127) ? 32'd127 : rq_qv;
+
     always @(posedge clk) begin
-        if (insn_dot4 && !active[0] && !active[1]) begin
-            a_q       <= pcpi_rs1;
+        if ((insn_dot4 || insn_req) && !active[0] && !active[1]) begin
+            a_q       <= (insn_req && pcpi_rs1[31]) ? 32'd0 : pcpi_rs1;  /* ReLU */
             b_q       <= pcpi_rs2;
+            is_req    <= insn_req;
+            req_sh    <= pcpi_insn[29:25];      /* funct7[4:0] = số bit dịch */
             active[0] <= 1'b1;
         end else begin
             active[0] <= 1'b0;
         end
 
         if (active[0])
-            rd_q <= {{14{dot[17]}}, dot};     // mở rộng dấu 18 -> 32 bit
+            rd_q <= is_req ? req_val : {{14{dot[17]}}, dot};  // REQ, hoặc DOT4 mở rộng dấu
 
         active[1] <= active[0];
 
