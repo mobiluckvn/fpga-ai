@@ -2,6 +2,61 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — A-V1+DOT4+C1: gỡ nút cổ chai conv1 bằng BỐ CỤC, và định lượng lệnh REQ
+
+Số liệu của bảng 2×2 chỉ đúng một chỗ để đánh tiếp: ở biến thể nhanh nhất (A-V1+DOT4), **conv1 chiếm
+54,9 %** thời gian và **không dùng được DOT4** — vì `Cin=1`, 4 pixel liền nhau theo hàng thì có,
+nhưng địa chỉ của chúng không chia hết 4 nên không nạp được bằng một `lw`. Nếu conv2 và dense có về 0
+thì tổng cũng chỉ nhanh thêm 1,54× (Amdahl). Nên tôi làm conv1 trước REQ.
+
+### Cách gỡ: không thêm một cổng logic nào
+- Giữ **4 bản sao ảnh dịch 0/1/2/3 byte**, mỗi hàng đệm lên `PHS=32` byte:
+  `ph[p][y][j] = img[y][j − p]`. Giá trị `img[y][x]` nằm ở offset `x + p`; chọn `p = (−x) & 3` thì
+  `x + p` chia hết 4 → mọi lần đọc đều thẳng hàng. `x ≤ 25` nên offset xa nhất là 31 < 32, không tràn hàng.
+- Trọng số conv1 nhân bản thành nhóm 4 với **tap thứ 4 = 0** (`w1x[oc][ky][0..3]`). Phép toán không
+  đổi (cộng thêm `0 × pixel`), nên kết quả **vẫn khớp golden từng bit**.
+- conv1 còn **3 lệnh DOT4** cho 3 hàng kernel, thay cho 9 phép nhân vô hướng.
+- Chi phí: `.bss` **+3.584 byte**, sao chép **3.136 byte/ảnh** (đã tính trong số đo).
+
+### Kết quả (trung vị 10 ảnh, kit, 27 MHz)
+| | conv1 | TỔNG | ms | chu kỳ/MAC |
+|---|---:|---:|---:|---:|
+| A-V1+DOT4 | 1.600.258 | 2.917.102 | 108,0 | 15,19 |
+| **A-V1+DOT4+C1** | **1.133.668** | **2.450.517** | **90,8** | **12,76** |
+
+→ conv1 nhanh **1,41×**, tổng nhanh **1,19×**, tăng tốc tích luỹ so A-V0 lên **4,95×**; số lệnh
+460.794 → **391.278**. Tài nguyên FPGA **không đổi** (cùng bitstream với A-V1+DOT4: LUT4 8.065,
+4 MULT18X18, Fmax 71,89 MHz) — đây là lợi ích **miễn phí về phần cứng**. RAM 32.368/65.536 (49,4 %).
+
+Kiểm tính đúng đắn: CRC32 5 lớp × 10 ảnh khớp golden, dự đoán khớp golden và khớp nhãn thật, số chu
+kỳ kit = Verilator **bằng tuyệt đối** — lặp 2/2 lần đọc độc lập.
+
+### Đo chi phí requantize (cơ sở cho lệnh REQ)
+Hai vòng lặp 20.000 bước giống hệt nhau, khác đúng một thứ; toán hạng phụ thuộc biến đếm để GCC
+không nhấc phép tính ra ngoài vòng (bài học từ F8):
+`1.671.265 − 680.007 = 991.258` chu kỳ cho 20.000 lần → **49,6 chu kỳ/requantize**.
+Mỗi ảnh requantize 7.344 giá trị (conv1 5.408 + conv2 1.936) → **363.990 chu kỳ = 14,9 %** của
+A-V1+DOT4+C1. Một lệnh `REQ` ~1 chu kỳ sẽ cho **~78 ms, thêm 1,17×**.
+
+**Kết luận cho kế hoạch**: REQ đáng làm nhưng không phải đòn lớn nhất. Đòn lớn hơn là giảm **số lệnh
+trên mỗi giá trị đầu ra của conv1** (chỉ 9 MAC/đầu ra để chia sẻ chi phí cố định, so với 72 ở conv2)
+— ví dụ tính nhiều kênh ra cùng lúc để dùng lại 3 từ ảnh đã nạp.
+
+### Ghi nhận trung thực một lệch nhỏ
+Thêm phần đo requantize (`REQ_BENCH`) vào bản v1dc làm mã `dense` dài thêm 4 byte (0x78 → 0x7c) và
+tốn thêm **5 chu kỳ** (39.052 → 39.057). Đã kiểm `conv2`, `pool1`, `pool2` có kích thước mã **giống
+hệt**, nên so sánh conv1 — thứ đang xét — không bị ảnh hưởng. Không làm tròn con số này đi.
+
+### Cạm bẫy mới gặp
+- `scripts/archive_gate.sh` ghi cứng `results/feasibility/` → thí nghiệm chính bị lưu sai chỗ; thêm
+  biến môi trường `RESULTS_BASE` (thí nghiệm chính dùng `results/experiment`).
+- Có lúc **hai tiến trình cùng điều khiển kit** (tôi mở vòng đo thứ hai khi vòng trước chưa xong) →
+  số đọc sai. Phép kiểm nhãn biến thể trong từng block bắt được ngay ("kit báo A-V2, mong đợi A-V0").
+  Quy tắc: **nạp và đo tuần tự**, không song song.
+
+Vật phẩm: `results/experiment/m1s/` (6 archive + `m1s.csv` + log thô). Tài liệu:
+`docs/KET_QUA_M1S.md`.
+
 ## 2026-10-17 — A-V1 (tối ưu phần mềm) + bảng 2×2 đầy đủ · KẾT QUẢ CHÍNH CỦA THÍ NGHIỆM
 
 Tôi tự chọn làm A-V1 trước A-V3, vì đó là khoảng trống **khoa học** lớn nhất: không có nhóm đối chứng

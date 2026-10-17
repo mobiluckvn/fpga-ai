@@ -42,7 +42,7 @@ một cặp `(M0, shift)` và một lần làm tròn.
 
 ---
 
-## 2. Bốn biến thể đã đo — bảng 2×2
+## 2. Năm biến thể đã đo — bảng 2×2 + một bước bố cục
 
 Hai tối ưu **độc lập nhau**, bật/tắt bằng hai cờ biên dịch trên **cùng một file `main.c`**:
 
@@ -50,6 +50,9 @@ Hai tối ưu **độc lập nhau**, bật/tắt bằng hai cờ biên dịch tr
 |---|---|---|
 | **C thẳng** | **A-V0** | **A-V2** |
 | **C đã tối ưu** (`OPT_KERNELS`) | **A-V1** | **A-V1+DOT4** |
+
+Thêm một biến thể thứ năm: **A-V1+DOT4+C1** (`CONV1_DOT4`) — gỡ nút cổ chai conv1 bằng **bố cục dữ
+liệu**, không thêm phần cứng. Xem mục 3.
 
 Bảng 2×2 này là để trả lời câu hỏi mà bất kỳ phản biện nào cũng sẽ hỏi: *tăng tốc đến từ lệnh tùy
 biến, hay chỉ từ việc viết code tốt hơn?*
@@ -74,19 +77,19 @@ conv1 chiếm 48.672/192.064 = **25,3 % số MAC** nhưng **28,8 % thời gian**
 
 ## 3. Số đo trên kit (trung vị trên 10 ảnh, 27 MHz)
 
-| Lớp | MAC | A-V0 | A-V1 | A-V2 | **A-V1+DOT4** |
-|---|---:|---:|---:|---:|---:|
-| conv1 | 48.672 | 3.491.721 | 1.600.258 | 3.491.721 | 1.600.258 |
-| pool1 | — | 225.600 | 225.600 | 225.600 | 225.600 |
-| conv2 | 139.392 | 8.153.979 | 4.199.609 | 1.924.815 | **986.226** |
-| pool2 | — | 65.921 | 65.921 | 65.921 | 65.921 |
-| dense | 4.000 | 192.552 | 126.224 | 48.552 | **39.052** |
-| **TỔNG** | **192.064** | **12.129.818** | **6.217.657** | **5.756.654** | **2.917.102** |
-| Số lệnh | | 1.864.264 | 911.920 | 912.832 | **460.794** |
-| **Thời gian @27 MHz** | | **449,3 ms** | **230,3 ms** | **213,2 ms** | **108,0 ms** |
-| chu kỳ/MAC | | 63,16 | 32,37 | 29,97 | **15,19** |
-| Ảnh/giây | | 2,23 | 4,34 | 4,69 | **9,26** |
-| **Tăng tốc so A-V0** | | 1,00× | **1,95×** | **2,11×** | **4,16×** |
+| Lớp | MAC | A-V0 | A-V1 | A-V2 | A-V1+DOT4 | **A-V1+DOT4+C1** |
+|---|---:|---:|---:|---:|---:|---:|
+| conv1 | 48.672 | 3.491.721 | 1.600.258 | 3.491.721 | 1.600.258 | **1.133.668** |
+| pool1 | — | 225.600 | 225.600 | 225.600 | 225.600 | 225.600 |
+| conv2 | 139.392 | 8.153.979 | 4.199.609 | 1.924.815 | 986.226 | 986.226 |
+| pool2 | — | 65.921 | 65.921 | 65.921 | 65.921 | 65.921 |
+| dense | 4.000 | 192.552 | 126.224 | 48.552 | 39.052 | 39.057 |
+| **TỔNG** | **192.064** | **12.129.818** | **6.217.657** | **5.756.654** | **2.917.102** | **2.450.517** |
+| Số lệnh | | 1.864.264 | 911.920 | 912.832 | 460.794 | **391.278** |
+| **Thời gian @27 MHz** | | **449,3 ms** | **230,3 ms** | **213,2 ms** | **108,0 ms** | **90,8 ms** |
+| chu kỳ/MAC | | 63,16 | 32,37 | 29,97 | 15,19 | **12,76** |
+| Ảnh/giây | | 2,23 | 4,34 | 4,69 | 9,26 | **11,02** |
+| **Tăng tốc so A-V0** | | 1,00× | **1,95×** | **2,11×** | **4,16×** | **4,95×** |
 
 ### Kết quả quan trọng nhất: hai tối ưu gần như nhân được với nhau
 
@@ -97,48 +100,83 @@ conv1 chiếm 48.672/192.064 = **25,3 % số MAC** nhưng **28,8 % thời gian**
 | **DOT4 thêm vào C đã tối ưu** (A-V1 → A-V1+DOT4) | **2,13×** |
 | Cả hai (A-V0 → A-V1+DOT4) | **4,16×** |
 | Tích của hai hệ số riêng | 1,95 × 2,13 = **4,16×** |
+| **+ phủ DOT4 cho conv1 bằng bố cục** (→ A-V1+DOT4+C1) | **4,95×** |
 
 Tích đúng bằng số đo. Nghĩa là **lợi ích của lệnh tùy biến không biến mất khi phần mềm đã được tối
 ưu** (2,13× so với 2,11×) — đây là câu trả lời cho phản biện "tăng tốc chỉ nhờ baseline code kém".
 Hai tối ưu tác động vào hai thứ khác nhau: tối ưu phần mềm bỏ phần **tính chỉ số**, DOT4 bỏ phần
 **nhân-cộng**.
 
+### Gỡ nút cổ chai conv1 bằng bố cục, không thêm phần cứng (A-V1+DOT4+C1)
+
+Ở A-V1+DOT4, conv1 chiếm 54,9 % thời gian và **không dùng được DOT4** vì `Cin=1`: không có 4 giá trị
+int8 liền nhau mà địa chỉ lại thẳng hàng 4 byte. Cách gỡ **không cần lệnh mới nào**:
+
+- Tạo **4 bản sao ảnh dịch 0/1/2/3 byte**, mỗi hàng đệm lên 32 byte:
+  `ph[p][y][j] = img[y][j − p]`. Khi đó `img[y][x]` nằm ở offset `x + p`, nên chọn
+  `p = (−x) & 3` thì địa chỉ luôn chia hết 4. Với `x ≤ 25`, offset đọc xa nhất là 31 < 32 nên không
+  tràn hàng.
+- Trọng số nhân bản thành nhóm 4 với **tap thứ 4 = 0**. Phép toán không đổi (nhân 0), nên CRC vẫn
+  khớp golden từng bit.
+- conv1 còn **3 lệnh DOT4** cho 3 hàng thay vì 9 phép nhân vô hướng.
+- Chi phí: **3.584 byte `.bss`** cho 4 bộ đệm + **3.136 byte sao chép mỗi ảnh**.
+
+Kết quả: conv1 **1.600.258 → 1.133.668** chu kỳ (1,41×), tổng **2.917.102 → 2.450.517** (1,19×),
+đưa tăng tốc tích luỹ lên **4,95×**. conv1 từ 32,88 xuống **23,29 chu kỳ/MAC**.
+
 ### Chu kỳ/MAC từng lớp
-| Lớp | A-V0 | A-V1 | A-V2 | A-V1+DOT4 |
-|---|---:|---:|---:|---:|
-| conv1 (Cin=1, không dùng được DOT4) | 71,74 | **32,88** | 71,74 | **32,88** |
-| conv2 (Cin=8) | 58,50 | 30,13 | 13,81 | **7,08** |
-| dense | 48,14 | 31,56 | 12,14 | **9,76** |
+| Lớp | A-V0 | A-V1 | A-V2 | A-V1+DOT4 | A-V1+DOT4+C1 |
+|---|---:|---:|---:|---:|---:|
+| conv1 (Cin=1) | 71,74 | 32,88 | 71,74 | 32,88 | **23,29** |
+| conv2 (Cin=8) | 58,50 | 30,13 | 13,81 | **7,08** | 7,08 |
+| dense | 48,14 | 31,56 | 12,14 | **9,76** | 9,76 |
+
+### Chi phí của requantize — đo trực tiếp
+Hai vòng lặp giống hệt nhau, khác đúng một thứ (requantize so với chỉ `clamp`), toán hạng phụ thuộc
+biến đếm để trình biên dịch không nhấc ra ngoài vòng:
+
+| | 20.000 lần |
+|---|---:|
+| vòng có requantize | 1.671.265 chu kỳ |
+| vòng chỉ clamp | 680.007 chu kỳ |
+| **requantize** | **49,6 chu kỳ/lần** |
+
+Mỗi ảnh cần requantize **7.344 giá trị** (conv1 5.408 + conv2 1.936) → **363.990 chu kỳ = 14,9 %**
+thời gian của A-V1+DOT4+C1. Nếu một lệnh `REQ` làm requantize trong ~1 chu kỳ thì tiết kiệm
+~356.600 chu kỳ → **~78 ms, thêm 1,17×**. Đây là cơ sở định lượng cho lệnh REQ trong kế hoạch,
+và nó cho thấy REQ đáng làm nhưng **không phải đòn lớn nhất còn lại**.
 
 ### Tính đúng đắn — điều kiện để ghi nhận số đo
-Cả **bốn** biến thể, lặp lại 2/2 lần đọc độc lập mỗi biến thể:
+Cả **năm** biến thể, lặp lại 2/2 lần đọc độc lập mỗi biến thể:
 
 | Kiểm tra | Kết quả |
 |---|---|
-| CRC32 từng lớp (a1, p1, a2, p2, logit) trên kit = golden Python | **200/200 khớp** (5 lớp × 10 ảnh × 4 biến thể) |
-| Dự đoán trên kit = dự đoán golden | **40/40** |
-| Dự đoán trên kit = nhãn thật | **40/40** |
-| Số chu kỳ trên kit = số chu kỳ trong Verilator | **bằng tuyệt đối**, cả 7 cột × 10 ảnh × 4 biến thể |
+| CRC32 từng lớp (a1, p1, a2, p2, logit) trên kit = golden Python | **250/250 khớp** (5 lớp × 10 ảnh × 5 biến thể) |
+| Dự đoán trên kit = dự đoán golden | **50/50** |
+| Dự đoán trên kit = nhãn thật | **50/50** |
+| Số chu kỳ trên kit = số chu kỳ trong Verilator | **bằng tuyệt đối**, cả 7 cột × 10 ảnh × 5 biến thể |
 
 `conv1`, `pool1`, `pool2` cho **đúng cùng số chu kỳ** ở A-V0/A-V2 và ở A-V1/A-V1+DOT4 — bằng chứng
-rằng mỗi cặp so sánh chỉ khác đúng một thứ.
+rằng mỗi cặp so sánh chỉ khác đúng một thứ. (Ngoại lệ nhỏ: `dense` ở A-V1+DOT4+C1 là 39.057 so với
+39.052, lệch 5 chu kỳ, vì bản này còn biên dịch thêm phần đo requantize làm mã `dense` dài thêm
+4 byte. Đã kiểm `conv2`, `pool1`, `pool2` có kích thước mã giống hệt.)
 
 ## 4. Tài nguyên FPGA
 
 | Thiết kế | LUT4 | DFF | BSRAM | MULT18X18 | Fmax (MHz) |
 |---|---:|---:|---:|---:|---:|
-| A-V0 và A-V1 (không DOT4) | 7.941 (38,3 %) | 1.069 | 32/46 | 0 | 71,76 |
-| A-V2 và A-V1+DOT4 (có DOT4) | 8.065 (38,9 %) | 1.153 | 32/46 | 4/48 | 71,89 |
+| A-V0, A-V1 (không DOT4) | 7.941 (38,3 %) | 1.069 | 32/46 | 0 | 71,76 |
+| A-V2, A-V1+DOT4, A-V1+DOT4+C1 (có DOT4) | 8.065 (38,9 %) | 1.153 | 32/46 | 4/48 | 71,89 |
 | **Chi phí của DOT4** | **+124 (+1,6 %)** | +84 | 0 | +4 | **+0,13** |
 
-A-V0 và A-V1 dùng **cùng một bitstream về mặt phần cứng** (chỉ khác nội dung firmware trong BSRAM),
-nên tài nguyên giống hệt — tức **toàn bộ 1,95× của A-V1 là miễn phí về phần cứng**.
-
-Thêm một lệnh tùy biến cho **2,13× nữa** với giá **+124 LUT4 (+1,6 %)** và **không giảm Fmax**.
+Ba biến thể có DOT4 dùng **cùng một bitstream về mặt phần cứng** — chỉ khác nội dung firmware trong
+BSRAM. Tương tự A-V0 và A-V1. Nghĩa là: **toàn bộ 1,95× của A-V1 và 1,19× của bước +C1 là miễn phí
+về phần cứng**; chỉ 2,13× của DOT4 phải trả **+124 LUT4 (+1,6 %)** và **không giảm Fmax**.
 Biên Fmax so với 27 MHz vẫn là **2,66 lần**.
 
 **Bộ nhớ** (RAM 65.536 byte): A-V0 27.592 (42,1 %) · A-V1 29.272 (44,7 %) · A-V2 27.488 (41,9 %) ·
-A-V1+DOT4 27.792 (42,4 %). A-V1 tốn thêm ~1,7 KB `.text` vì bung vòng lặp. Còn dư ≥36 KB ở mọi biến thể.
+A-V1+DOT4 27.792 (42,4 %) · A-V1+DOT4+C1 **32.368 (49,4 %)**. Bản +C1 tốn thêm 3.584 byte cho
+4 bộ đệm pha dịch và ~1,2 KB `.text`. Còn dư ≥33 KB ở mọi biến thể.
 
 ## 5. Nhận xét
 
@@ -148,11 +186,16 @@ chỉ số (thấy rõ ở conv1: 71,74 → 32,88 chu kỳ/MAC mà không có l�
 (conv2: 30,13 → 7,08 chu kỳ/MAC trên nền đã tối ưu). **Đây là kết quả đáng giá nhất của thí nghiệm**:
 nó bảo vệ kết luận khỏi phản biện "baseline code kém".
 
-**2. Nút cổ chai đã dịch sang conv1, đúng như dự báo ở F8.** Trong A-V1+DOT4, conv1 chiếm **54,9 %**
-thời gian và **không dùng được DOT4** vì `Cin=1` không có 4 giá trị liền nhau thẳng hàng. Nếu conv2
-và dense về 0 thì cũng chỉ nhanh thêm **1,54×**. Hướng đi tiếp rõ ràng: một lệnh phục vụ conv1 —
-ví dụ DOT4 phiên bản đọc toán hạng **không cần thẳng hàng**, hoặc một lệnh nhân-cộng 3 phần tử theo
-hàng ảnh, hoặc đổi bố cục conv1 (nhân bản ảnh theo 4 pha dịch) để có 4 phần tử liền địa chỉ.
+**2. Nút cổ chai conv1 gỡ được bằng BỐ CỤC, không cần phần cứng mới.** Ở A-V1+DOT4, conv1 chiếm
+54,9 % thời gian và bị chặn bởi yêu cầu thẳng hàng 4 byte của `DOT4`. Bốn bản sao ảnh dịch
+0/1/2/3 byte (3.584 byte `.bss`) gỡ được hạn chế đó và cho thêm **1,19×**, đưa tổng lên **4,95×**
+(mục 3). → **Giới hạn của một lệnh tùy biến có thể nằm ở bố cục dữ liệu chứ không ở bản thân lệnh.**
+Đây là kết luận đáng đưa vào luận văn: trước khi thiết kế thêm phần cứng, hãy kiểm xem bố cục đã cho
+lệnh hiện có dùng hết chưa.
+
+Sau bước đó, conv1 vẫn là lớp tốn nhất (1.133.668 chu kỳ = 46,3 % tổng) vì mỗi giá trị đầu ra chỉ có
+9 MAC để chia sẻ chi phí cố định (requantize, lưu kết quả, vòng lặp), còn conv2 có 72 MAC mỗi giá trị
+đầu ra. Đó là lý do conv1 đạt 23,29 chu kỳ/MAC trong khi conv2 đạt 7,08.
 
 **3. Ước tính ở F7 khá sát.** F7 ngoại suy từ chu kỳ/MAC của conv1 ra **≈516 ms** cho M1-S. Số đo thật
 của A-V0 là **449,3 ms** — ước tính **cao hơn 15 %**, lệch theo hướng an toàn, và đúng lý do F7 đã nêu:
@@ -174,9 +217,15 @@ một kit. Phép kiểm nhãn biến thể trong mỗi khối dữ liệu đã c
 đo nên tự khai báo nó thuộc biến thể nào**; chi phí gần như bằng không mà chặn được loại lỗi khó thấy
 nhất.
 
-**6. Những gì phần này chưa làm.** Chỉ đo 10 ảnh trên kit (độ chính xác 98,25 % là của golden Python
-trên đủ 10.000 ảnh, không phải của kit trên 10.000 ảnh). Chưa làm **A-V3 (+REQ)** — theo số liệu trên,
-REQ nên nhắm vào conv1 chứ không phải conv2. Chưa làm **nhánh B** (lõi tự viết). Chưa đo công suất.
+**6. Lệnh REQ: đã định lượng được giá trị, và nó không lớn.** Đo trực tiếp: requantize tốn
+**49,6 chu kỳ/lần**, mỗi ảnh cần 7.344 lần → **14,9 %** thời gian của biến thể nhanh nhất. Một lệnh
+`REQ` làm việc đó trong ~1 chu kỳ sẽ cho thêm **~1,17×** (90,8 → ~78 ms). Đáng làm, nhưng nhỏ hơn
+nhiều so với DOT4 (2,13×). **Đòn lớn hơn còn lại là giảm số lệnh trên mỗi giá trị đầu ra của conv1**
+— ví dụ tính nhiều kênh ra cùng lúc để dùng lại 3 từ ảnh đã nạp, hoặc một lệnh nhân-cộng rộng hơn.
+
+**7. Những gì phần này chưa làm.** Chỉ đo 10 ảnh trên kit (độ chính xác 98,25 % là của golden Python
+trên đủ 10.000 ảnh, không phải của kit trên 10.000 ảnh). Chưa hiện thực **REQ**. Chưa làm **nhánh B**
+(lõi tự viết). Chưa đo công suất.
 
 ## 6. Cách chạy lại
 
@@ -187,12 +236,12 @@ source env/setup_env.sh
 cd model && ../.venv-model/bin/python train_m1s.py      # ~35 s, in độ chính xác float
 ../.venv-model/bin/python quantize_m1s.py               # ~90 s, sinh fw/weights.h
 
-# 2. Bốn biến thể. Mỗi biến thể cần bitstream riêng vì firmware nằm trong nội dung
+# 2. Năm biến thể. Mỗi biến thể cần bitstream riêng vì firmware nằm trong nội dung
 #    khởi tạo BSRAM. Build mất ~5 phút mỗi bản.
 cd ../experiment/m1s
-for v in v0 v1 v2 v1d; do make fw-$v sim-$v build-$v; done
+for v in v0 v1 v2 v1d v1dc; do make fw-$v sim-$v build-$v; done
 # Nạp và đo TUẦN TỰ — đừng chạy song song, hai tiến trình sẽ tranh nhau cùng một kit:
-for v in v0 v1 v2 v1d; do make load-$v check-$v; done
+for v in v0 v1 v2 v1d v1dc; do make load-$v check-$v; done
 make archive
 ```
 
@@ -202,6 +251,7 @@ make archive
 | `v1/` | A-V1 | `-DOPT_KERNELS` |
 | `v2/` | A-V2 | `-DUSE_DOT4` |
 | `v1d/` | A-V1+DOT4 | `-DOPT_KERNELS -DUSE_DOT4` |
+| `v1dc/` | A-V1+DOT4+C1 | `-DOPT_KERNELS -DUSE_DOT4 -DCONV1_DOT4 -DREQ_BENCH` |
 
 PyTorch nằm trong venv riêng `.venv-model` (Python 3.12 + torch 2.2.2 + numpy 1.26.4): Python 3.14
 của `.venv` chính **không có** wheel torch cho macOS x86_64, và torch 2.2.2 là bản cuối còn wheel cho

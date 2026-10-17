@@ -16,6 +16,13 @@
  *   OPT_KERNELS + USE_DOT4  A-V1+DOT4 : C tối ưu + DOT4
  * Nhờ 2x2 này mới tách được "nhanh nhờ code tốt" khỏi "nhanh nhờ lệnh tùy biến".
  *
+ * Thêm một biến thể thứ năm:
+ *   OPT_KERNELS + USE_DOT4 + CONV1_DOT4   A-V1+DOT4+C1
+ * Nó gỡ nút cổ chai conv1 bằng BỐ CỤC, không thêm phần cứng: tạo 4 bản sao ảnh dịch
+ * 0/1/2/3 byte, mỗi hàng đệm lên 32 byte, nên với mọi x luôn có một bản mà địa chỉ
+ * &img[y][x] thẳng hàng 4 byte -> conv1 dùng được DOT4 (3 lệnh cho 3 hàng, tap thứ 4
+ * có trọng số 0). Chi phí: 3.584 byte .bss và 3.136 byte sao chép mỗi ảnh.
+ *
  * Vì sao conv1 KHÔNG dùng DOT4: DOT4 nạp 4 byte liền nhau bằng `lw` và cần địa chỉ
  * thẳng hàng 4 byte (lõi bật CATCH_MISALIGN). Với channels-last, conv2 có Cin=8 nên
  * 4 kênh vào liền nhau luôn thẳng hàng; conv1 có Cin=1 nên không có 4 giá trị liền
@@ -49,7 +56,9 @@
 #define RUN_IMGS M1S_NIMG
 #endif
 
-#if defined(OPT_KERNELS) && defined(USE_DOT4)
+#if defined(OPT_KERNELS) && defined(USE_DOT4) && defined(CONV1_DOT4)
+#define VARIANT "A-V1+DOT4+C1"
+#elif defined(OPT_KERNELS) && defined(USE_DOT4)
 #define VARIANT "A-V1+DOT4"
 #elif defined(OPT_KERNELS)
 #define VARIANT "A-V1"
@@ -190,7 +199,74 @@ static i8  p2[M1S_POOL2 * M1S_POOL2 * M1S_C2] __attribute__((aligned(4)));  /* 5
 static i32 logit[M1S_NCLS];
 
 /* ---------- lớp 1: Conv 3x3, 1 -> 8 kênh ---------- */
-#ifdef OPT_KERNELS
+#ifdef CONV1_DOT4
+/* Bố cục 4 pha dịch để conv1 dùng được DOT4.
+ *
+ * ph[p][y][j] = img[y][j - p]  (j < p thì 0) với bước hàng PHS = 32 byte.
+ * Vậy img[y][x] nằm ở offset (x + p); chọn p = (-x) & 3 thì (x + p) chia hết 4,
+ * tức &ph[p][y][x+p] luôn thẳng hàng 4 byte. Với x <= 25 thì offset lớn nhất đọc tới
+ * là (x+p)+3 <= 31 < PHS nên không tràn hàng.
+ * Trọng số nhân bản thành nhóm 4 với tap thứ 4 = 0, cũng thẳng hàng 4 byte.
+ * Phép toán KHÔNG đổi (tap thứ 4 nhân 0), nên CRC phải khớp golden y như các biến thể khác.
+ */
+#define PHS 32
+static i8 ph[4][M1S_IMG * PHS] __attribute__((aligned(4)));
+static i8 w1x[M1S_C1 * 3 * 4]  __attribute__((aligned(4)));   /* [oc][ky][0..3], tap3 = 0 */
+
+static __attribute__((noinline)) void conv1_prep(const i8 *img)
+{
+    int p, y, x, oc, ky;
+    for (p = 0; p < 4; p++) {
+        for (y = 0; y < M1S_IMG; y++) {
+            i8 *d = &ph[p][y * PHS];
+            const i8 *s = &img[y * M1S_IMG];
+            for (x = 0; x < p; x++)
+                d[x] = 0;
+            for (x = 0; x < M1S_IMG; x++)
+                d[p + x] = s[x];
+            for (x = p + M1S_IMG; x < PHS; x++)
+                d[x] = 0;
+        }
+    }
+    for (oc = 0; oc < M1S_C1; oc++) {
+        for (ky = 0; ky < 3; ky++) {
+            i8 *d = &w1x[(oc * 3 + ky) * 4];
+            const i8 *s = &m1s_w1[oc * 9 + ky * 3];
+            d[0] = s[0];
+            d[1] = s[1];
+            d[2] = s[2];
+            d[3] = 0;
+        }
+    }
+}
+
+static __attribute__((noinline)) void conv1(const i8 *img)
+{
+    int oc, p, y, x;
+    conv1_prep(img);
+    for (oc = 0; oc < M1S_C1; oc++) {
+        const u32 *wr = (const u32 *)(const void *)&w1x[oc * 12];
+        const u32 wr0 = wr[0], wr1 = wr[1], wr2 = wr[2];
+        const i32 bias = m1s_b1[oc];
+        for (p = 0; p < 4; p++) {
+            const int x0 = (4 - p) & 3;          /* x nhỏ nhất của pha này */
+            for (y = 0; y < M1S_OUT1; y++) {
+                const u32 *r = (const u32 *)(const void *)&ph[p][y * PHS + x0 + p];
+                i8 *o = &a1[(y * M1S_OUT1 + x0) * M1S_C1 + oc];
+                for (x = x0; x < M1S_OUT1; x += 4) {
+                    i32 acc = bias
+                            + dot4(r[0],            wr0)
+                            + dot4(r[PHS / 4],      wr1)
+                            + dot4(r[2 * (PHS / 4)], wr2);
+                    *o = requant(acc, M1S_M0_1, M1S_SH_1);
+                    r += 1;                       /* +4 byte = x += 4 */
+                    o += 4 * M1S_C1;
+                }
+            }
+        }
+    }
+}
+#elif defined(OPT_KERNELS)
 /* Tối ưu: vòng kênh ra ở NGOÀI nên 9 trọng số + bias nằm trong thanh ghi suốt cả mặt
  * 26x26; 9 phép nhân dùng offset HẰNG SỐ từ một con trỏ hàng duy nhất (28, 56 là
  * bước hàng của ảnh 28x28); con trỏ ra chạy đều bước 8 byte. Toán học không đổi. */
@@ -370,6 +446,39 @@ static __attribute__((noinline)) void dense(void)
 }
 #endif
 
+#ifdef REQ_BENCH
+/* Đo riêng chi phí của requantize: hai vòng giống hệt, khác đúng một thứ.
+ * Toán hạng phụ thuộc biến đếm để GCC không nhấc ra ngoài vòng (bài học ở F8).
+ */
+static volatile i32 req_sink;
+
+static __attribute__((noinline)) u32 bench_requant(u32 n)
+{
+    u32 t0, t1, i;
+    i32 s = 0;
+    t0 = rdcycle();
+    for (i = 0; i < n; i++)
+        s += requant((i32)(i * 7u + 1u), M1S_M0_1, M1S_SH_1);
+    t1 = rdcycle();
+    req_sink = s;
+    return t1 - t0;
+}
+
+static __attribute__((noinline)) u32 bench_clamp(u32 n)
+{
+    u32 t0, t1, i;
+    i32 s = 0;
+    t0 = rdcycle();
+    for (i = 0; i < n; i++) {
+        i32 v = (i32)(i * 7u + 1u);
+        s += (v > 127) ? 127 : v;          /* cùng cấu trúc vòng, bỏ requantize */
+    }
+    t1 = rdcycle();
+    req_sink = s;
+    return t1 - t0;
+}
+#endif
+
 int main(void)
 {
     u32 n_label_ok = 0, n_pred_ok = 0, n_crc_ok = 0;
@@ -455,6 +564,17 @@ int main(void)
             put_hex32(cr_lg); eol();
         }
 
+#ifdef REQ_BENCH
+        {
+            u32 nb = 20000u;
+            u32 cr = bench_requant(nb);
+            u32 cc = bench_clamp(nb);
+            puts_("M1S,req,");
+            put_u32(nb); putch(',');
+            put_u32(cr); putch(',');
+            put_u32(cc); eol();
+        }
+#endif
         puts_("M1S,sum,");
         put_u32((u32)RUN_IMGS); putch(',');
         put_u32(n_label_ok);    putch(',');

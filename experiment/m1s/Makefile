@@ -36,7 +36,7 @@ CST        := ../../hw/tangnano20k.cst
 UART_PORT  ?= /dev/cu.usbserial-20250303171
 
 .PHONY: all weights clean archive
-all: build-v0 build-v1 build-v2 build-v1d
+all: build-v0 build-v1 build-v2 build-v1d build-v1dc
 
 weights: $(FWDIR)/weights.h
 $(FWDIR)/weights.h:
@@ -252,17 +252,69 @@ check-v1d:
 	    --port $(UART_PORT) --drain 2 --repeat 2 \
 	    --log v1d/check.log 2>&1 | tee v1d/check_stdout.log
 
+# ============================ A-V1+DOT4+C1 ============================
+.PHONY: fw-v1dc sim-v1dc build-v1dc load-v1dc check-v1dc
+fw-v1dc: v1dc/firmware.hex
+
+v1dc/firmware.elf: main.c $(FWDIR)/weights.h $(FWDIR)/start.S $(FWDIR)/link.ld $(FWDIR)/soc.h
+	@mkdir -p v1dc
+	$(CROSS)gcc $(CFLAGS) -DUSE_DOT4 -DOPT_KERNELS -DCONV1_DOT4 -DREQ_BENCH $(LDF) -Wl,-Map=v1dc/firmware.map -o $@ \
+	    $(FWDIR)/start.S main.c
+	$(CROSS)objdump -D $@ > v1dc/firmware.dis
+	@echo "--- kích thước A-V1+DOT4+C1 (RAM 65536 byte) ---"
+	$(CROSS)size -A $@ | tee v1dc/firmware.size.txt
+
+v1dc/firmware.hex: v1dc/firmware.elf
+	$(CROSS)objcopy -O binary $< v1dc/firmware.bin
+	python3 ../../scripts/bin2hex.py v1dc/firmware.bin $@ --words 16384
+
+sim-v1dc: v1dc/Vsoc_f8 v1dc/firmware.hex
+	cd v1dc && ./Vsoc_f8 --stop-on "M1S,done" 2>&1 | tee sim.log
+	@grep -q "M1S,done" v1dc/sim.log || (echo "SIM KHONG DAT"; exit 1)
+
+v1dc/Vsoc_f8: $(F8)/soc_f8.v $(CORE) $(F8)/sim_main.cpp v1dc/firmware.hex
+	@mkdir -p v1dc
+	verilator --cc --exe --build -j 0 -O2 -Wno-fatal -CFLAGS "$(TN20K_CXX_INC)" \
+	    --top-module soc_f8 -Mdir v1dc/obj_dir -o ../Vsoc_f8 \
+	    $(F8)/soc_f8.v $(CORE) $(F8)/sim_main.cpp 2>&1 | tee v1dc/verilator.log
+
+build-v1dc: v1dc/top.fs
+
+v1dc/top-synth.json: $(F8)/top_f8.v $(CORE) v1dc/firmware.hex
+	@mkdir -p v1dc
+	cd v1dc && yosys -l yosys.log -p "read_verilog -DPCPI_DOT4_DSP ../$(F8)/top_f8.v \
+	    ../$(F5)/soc.v ../../../rtl/picorv32/picorv32.v ../../../rtl/uart/uart_tx.v \
+	    ../../../rtl/uart/uart_rx.v ../../../rtl/ext/pcpi_dot4.v; \
+	    synth_gowin -top top -family $(YOSYS_FAM) -nodsp -json top-synth.json -setundef"
+
+v1dc/pnr.json: v1dc/top-synth.json $(CST)
+	nextpnr-himbaechel -l v1dc/nextpnr.log --json $< --write $@ \
+	    --device "$(DEVICE)" --vopt family=$(FAMILY) --vopt cst=$(CST) \
+	    --freq $(FREQ) --report v1dc/report.json
+
+v1dc/top.fs: v1dc/pnr.json
+	gowin_pack -d $(FAMILY) -o $@ $<
+
+load-v1dc: v1dc/top.fs
+	openFPGALoader -b $(BOARD) $< 2>&1 | tee -a v1dc/load.log
+
+check-v1dc:
+	python3 ../../scripts/m1s_check.py --variant A-V1+DOT4+C1 --sim-log v1dc/sim.log \
+	    --size v1dc/firmware.size.txt --csv $(RESULTS)/m1s.csv --append \
+	    --port $(UART_PORT) --drain 2 --repeat 2 \
+	    --log v1dc/check.log 2>&1 | tee v1dc/check_stdout.log
+
 # ============================ chung ============================
 archive:
 	@mkdir -p $(RESULTS)
-	@for v in v0 v1 v2 v1d; do \
+	@for v in v0 v1 v2 v1d v1dc; do \
 	    if [ -f $$v/report.json ]; then \
 	        echo "===== $$v ====="; \
 	        python3 ../../scripts/pnr_report.py $$v/report.json | tee $$v/resources.txt; \
 	    fi; \
 	done
 	@RESULTS_BASE=results/experiment sh ../../scripts/archive_gate.sh m1s . main.c Makefile $(FWDIR)/weights.h
-	@for v in v0 v1 v2 v1d; do [ -d $$v ] && RESULTS_BASE=results/experiment sh ../../scripts/archive_gate.sh m1s/$$v $$v; done
+	@for v in v0 v1 v2 v1d v1dc; do [ -d $$v ] && RESULTS_BASE=results/experiment sh ../../scripts/archive_gate.sh m1s/$$v $$v; done
 
 clean:
-	rm -rf v0 v1 v2 v1d
+	rm -rf v0 v1 v2 v1d v1dc
