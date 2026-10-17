@@ -65,6 +65,7 @@ khớp golden Python từng bit**, 0 lần phải gửi lại trên 7,85 MB truy
 | B-V2 | lõi tự viết + DOT4, C thẳng | **1.169.073** | **43,3 ms** | **6,09** | **7,69×** |
 | B-V1+DOT4 | lõi tự viết + tối ưu PM + DOT4 | **631.153** | **23,4 ms** | **3,29** | **14,24×** |
 | **B-V1+DOT4+C1** | **+ bố cục 4 pha** | **487.888** | **18,1 ms** | **2,54** | **18,4×** |
+| B-V0r/B-V1r | lõi tự viết, địa chỉ bộ nhớ ghi thanh ghi | 3.750.662 / 2.713.280 | 138,9 / 100,5 ms | 19,53 / 14,13 | 2,40× / 3,31× |
 | B-V3 | lõi tự viết + REQ | | | | chưa làm |
 
 **Kết quả nhánh B**: lõi RISC-V tự viết (`rtl/mycore/`, 2 tầng, bộ nhớ 1 chu kỳ, không hình phạt rẽ

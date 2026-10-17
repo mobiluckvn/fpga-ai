@@ -1,13 +1,13 @@
 # M1-S check
-Thời điểm: 2026-10-17 19:32:38 +0700  ·  biến thể: A-V0
+Thời điểm: 2026-10-17 19:53:22 +0700  ·  biến thể: A-V0
 Độ chính xác mô hình (10.000 ảnh test): float 98.29% · int8 98.25%  (chênh +0.04 điểm %)
 Golden từ /Users/v/Documents/NCS/tinyml-riscv-tn20k/fw/weights.h: 10 ảnh thử, nhãn [7, 2, 1, 0, 4, 1, 4, 9, 5, 9], dự đoán golden [7, 2, 1, 0, 4, 1, 4, 9, 5, 9]
 Verilator: biến thể A-V0, tổng/ảnh [3750362, 3750666, 3749986, 3750790, 3750572, 3750042, 3750662, 3750380, 3750688, 3750706]
 == Lần đọc 1/2 ==
-    (xả 1310 byte tồn)
+    (xả 1197 byte tồn)
     ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
 == Lần đọc 2/2 ==
-    (xả 1310 byte tồn)
+    (xả 1401 byte tồn)
     ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
 
 ## Số đo trên kit (27 MHz)

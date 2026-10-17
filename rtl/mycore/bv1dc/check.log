@@ -1,10 +1,10 @@
 # M1-S check
-Thời điểm: 2026-10-17 19:31:54 +0700  ·  biến thể: A-V1+DOT4+C1
+Thời điểm: 2026-10-17 19:50:19 +0700  ·  biến thể: A-V1+DOT4+C1
 Độ chính xác mô hình (10.000 ảnh test): float 98.29% · int8 98.25%  (chênh +0.04 điểm %)
 Golden từ /Users/v/Documents/NCS/tinyml-riscv-tn20k/fw/weights.h: 10 ảnh thử, nhãn [7, 2, 1, 0, 4, 1, 4, 9, 5, 9], dự đoán golden [7, 2, 1, 0, 4, 1, 4, 9, 5, 9]
 Verilator: biến thể A-V1+DOT4+C1, tổng/ảnh [487738, 487890, 487550, 487952, 487843, 487578, 487888, 487747, 487901, 487910]
 == Lần đọc 1/2 ==
-    (xả 4482 byte tồn)
+    (xả 4534 byte tồn)
     ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
 == Lần đọc 2/2 ==
     (xả 4626 byte tồn)

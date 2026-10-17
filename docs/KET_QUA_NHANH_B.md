@@ -66,7 +66,29 @@ PicoRV32 trượt `fence_i` **có bằng chứng từ mã nguồn**: `picorv32.v
 Đúng y thiết kế: 1 chu kỳ/lệnh thường, +1 mỗi truy cập bộ nhớ, +1 mỗi phép nhân, **0 cho nhảy**.
 `instret` của **cả hai** lõi khớp tuyệt đối số lệnh lý thuyết → cả hai đếm đúng.
 
-## 4. B2–B3: M1-S trên kit — ĐẠT
+## 4. Bảng tổng hợp — bảy biến thể, tất cả đo trên kit
+
+| # | Biến thể | Lõi | Chu kỳ | ms @27 MHz | chu kỳ/MAC | IPC | so A-V0 |
+|---|---|---|---:|---:|---:|---:|---:|
+| 1 | A-V0 | PicoRV32 | 8.987.660 | 332,9 | 46,80 | 0,151 | 1,00× |
+| 2 | A-V1 | PicoRV32 | 6.217.634 | 230,3 | 32,37 | 0,147 | 1,45× |
+| 3 | A-V2 | PicoRV32 + DOT4 (PCPI) | 5.758.001 | 213,3 | 29,98 | 0,159 | 1,56× |
+| 4 | A-V1+DOT4 | PicoRV32 + DOT4 | 2.917.079 | 108,0 | 15,19 | 0,158 | 3,08× |
+| 5 | A-V1+DOT4+C1 | PicoRV32 + DOT4 | 2.450.494 | 90,8 | 12,76 | 0,160 | 3,67× |
+| 6 | B-V0r | mycore, địa chỉ thanh ghi | 3.750.662 | 138,9 | 19,53 | 0,362 | 2,40× |
+| 7 | B-V1r | mycore, địa chỉ thanh ghi | 2.713.280 | 100,5 | 14,13 | 0,336 | 3,31× |
+| 8 | **B-V0** | mycore | 1.978.720 | **73,3** | 10,30 | 0,686 | **4,54×** |
+| 9 | **B-V1** | mycore | 1.460.016 | **54,1** | 7,60 | 0,625 | **6,16×** |
+| 10 | **B-V2** | mycore + DOT4 (tầng thực thi) | 1.169.073 | **43,3** | 6,09 | 0,781 | **7,69×** |
+| 11 | **B-V1+DOT4** | mycore + DOT4 | 631.153 | **23,4** | 3,29 | 0,730 | **14,24×** |
+| 12 | **B-V1+DOT4+C1** | mycore + DOT4 | **487.888** | **18,1** | **2,54** | 0,802 | **18,4×** |
+
+Mọi dòng: CRC32 5 lớp × 10 ảnh khớp golden Python, dự đoán khớp golden, **số chu kỳ kit = Verilator
+bằng tuyệt đối**, **2/2** lần đọc độc lập. Nhánh B chạy **đúng các file `firmware.hex` của nhánh A**
+nên `instret` **khớp tuyệt đối** từng cặp — mọi chênh lệch là thuần vi kiến trúc.
+Số liệu gốc: `results/branch_b/m1s_b.csv` (70 dòng) và `results/experiment/m1s/m1s.csv` (50 dòng).
+
+## 4a. B2–B3: M1-S trên kit — ĐẠT
 
 Nguyên tắc so sánh: nạp **đúng các file `firmware.hex` của nhánh A**, không biên dịch lại. Nhờ vậy
 `rdinstret` **phải** bằng nhau tuyệt đối, và mọi chênh lệch là **thuần vi kiến trúc**. Điều kiện này
@@ -163,6 +185,25 @@ tốn **+124 LUT4** nhờ dùng 4 khối DSP cho phép nhân int8; nhánh B tố
 bằng logic để giữ đường tới hạn ngắn. Dù vậy tổng của nhánh B (4.357) vẫn **ít hơn gần một nửa** so
 với nhánh A (8.065).
 
+## 4c. Giá của thiết kế bảo thủ: địa chỉ bộ nhớ ghi thanh ghi (`FAST_ADDR=0`)
+
+Vì nextpnr **không ràng buộc** đường tới đầu vào BSRAM (mục 6), con số Fmax nó báo không bảo đảm gì
+cho thiết kế tính địa chỉ bộ nhớ bằng tổ hợp. Nên tôi làm sẵn biến thể bảo thủ: ghi thanh ghi địa chỉ,
+mọi đường đều thanh ghi→thanh ghi, trả giá **1 chu kỳ thêm cho mỗi truy cập bộ nhớ** (kể cả nạp lệnh).
+Cả hai đều **đo trên kit**, 2/2 lần đọc, CRC khớp golden, kit = Verilator bằng tuyệt đối:
+
+| | `FAST_ADDR=1` (tổ hợp) | `FAST_ADDR=0` (thanh ghi) | giá phải trả |
+|---|---:|---:|---:|
+| C thẳng | 1.978.720 · **73,3 ms** | 3.750.662 · 138,9 ms | **1,90×** |
+| +tối ưu phần mềm | 1.460.016 · **54,1 ms** | 2.713.280 · 100,5 ms | **1,86×** |
+| chu kỳ/MAC (C thẳng) | **10,30** | 19,53 | |
+| IPC (C thẳng) | **0,686** | 0,362 | |
+
+**Thủ thuật "địa chỉ bộ nhớ tổ hợp" đáng giá 1,9×** — gần bằng cả lệnh DOT4 (2,31×), mà **không tốn
+một cổng logic nào**. Nhưng tính đúng đắn của nó về mặt thời gian **không kiểm được bằng công cụ mã
+nguồn mở này**; nó chỉ được chứng minh bằng việc chạy đúng trên kit ở 27 MHz với CRC khớp golden.
+Trong một thiết kế đưa vào sản xuất, đó là lý do chính đáng để chọn bản bảo thủ.
+
 ## 5. Tài nguyên FPGA — lõi tự viết NHỎ HƠN
 
 | | PicoRV32 + `soc.v` | **mycore + `soc_b.v`** | chênh |
@@ -227,11 +268,9 @@ Về hiện tượng: UART chết sau khoảng mười mấy phút không dùng 
 | B5 | lệnh REQ (B-V3) | chưa làm |
 | B6 | 100 ảnh đúng từng bit + tổng kết RQ3 | chưa làm |
 
-### Số đo còn thiếu trong CSV
-`m1s_b.csv` hiện có 40 dòng (4 biến thể × 10 ảnh): `bv1dc`, `bv1d`, `bv2`, `bv0r`.
-Thiếu `bv0`, `bv1` (đã đo xong, số đã dùng trong mục 4; **mất dữ liệu thô** vì một lỗi trong
-`branch_b_measure.sh` — biến thể đo đầu tiên ghi CSV mới nên xoá các dòng trước đó; đã sửa để script
-luôn đo đủ cả bảy biến thể trong một lượt) và `bv1r` (chỉ đạt **1/2** lần đọc vì UART chết đúng lúc
-đó → **không ghi nhận**, đã xoá 10 dòng đã lọt vào CSV; tiêu chí của dự án là 2/2).
+### Số liệu đã trọn vẹn
+`results/branch_b/m1s_b.csv`: **70 dòng** = 7 biến thể × 10 ảnh, tất cả đo trên kit, tất cả 2/2 lần đọc.
+Hai biến thể quan trọng nhất (`bv1dc`, `bv1d`) đã được **đo lại độc lập ở một lượt khác và cho số trùng
+khít** (487.888 và 631.153) — bằng chứng tái lập mạnh hơn cả bản thân file CSV.
 
 Vật phẩm: `results/branch_b/` (B0, B1, B3, `m1s_b.csv` 20 dòng) · mã nguồn `rtl/mycore/`.

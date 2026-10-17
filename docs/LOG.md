@@ -2,6 +2,37 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — Nhánh B: số liệu TRỌN VẸN, 7 biến thể × 10 ảnh trên kit
+
+Sau khi viết lại `scripts/branch_b_measure.sh` cho bền với sự cố, một lượt duy nhất đo xong **5 biến
+thể còn lại, không một lần UART chết** (trước đó chết sau 2 phép đo). CSV: **70 dòng**, 7 biến thể.
+
+### Hai thay đổi làm script bền — và có lẽ đã chữa luôn nguyên nhân
+1. **Không bao giờ ghi đè CSV.** Trước mỗi phép đo chỉ xoá các dòng *của chính biến thể đó* rồi ghi
+   nối; biến thể đã đủ 10 dòng thì bỏ qua. Nên chạy một phần vẫn tích luỹ, không mất gì. (Bản trước
+   ghi đè ở biến thể đầu tiên và đã làm mất số đo **hai lần**.)
+2. **Chỉ đối chứng ở đầu lượt và sau một phép đo THẤT BẠI**, không đối chứng sau mỗi lần thành công —
+   một phép đo thành công đã tự chứng minh đường đo sống (CRC khớp golden + kit = Verilator). Việc này
+   **giảm một nửa số lần nạp JTAG**, và lượt đo sau đó chạy liền 5 biến thể không hỏng, so với 2 trước
+   đây. Giả thuyết: chính hoạt động JTAG (libusb chiếm thiết bị) làm interface UART chết. Chưa chứng
+   minh được nhân quả, nhưng tương quan đủ mạnh để giữ cách làm này.
+
+### Giá của thiết kế bảo thủ — đo được
+| | `FAST_ADDR=1` (địa chỉ tổ hợp) | `FAST_ADDR=0` (ghi thanh ghi) | giá |
+|---|---:|---:|---:|
+| C thẳng | 1.978.720 · **73,3 ms** | 3.750.662 · 138,9 ms | **1,90×** |
+| +tối ưu phần mềm | 1.460.016 · **54,1 ms** | 2.713.280 · 100,5 ms | **1,86×** |
+
+**Thủ thuật "địa chỉ bộ nhớ tổ hợp" đáng giá 1,9× mà không tốn một cổng logic nào** — gần bằng cả lệnh
+DOT4 (2,31×). Nhưng tính đúng đắn về thời gian của nó **không kiểm được bằng công cụ mã nguồn mở này**
+(nextpnr không ràng buộc đường tới BSRAM); nó chỉ được chứng minh bằng chạy đúng trên kit với CRC khớp
+golden. Trong thiết kế đưa vào sản xuất, đó là lý do chính đáng để chọn bản bảo thủ.
+
+### Toàn cảnh: 12 cấu hình đã đo trên kit
+Nhanh nhất **B-V1+DOT4+C1: 487.888 chu kỳ = 18,1 ms = 2,54 chu kỳ/MAC = 55,3 ảnh/giây**, **18,4×** so
+với A-V0. Chậm nhất A-V0: 332,9 ms. Phân rã: 1,45× phần mềm (miễn phí) × 4,26× vi kiến trúc (tiết kiệm
+58,8 % LUT4) × 2,31× DOT4 (+1.122 LUT4) × 1,29× bố cục (miễn phí).
+
 ## 2026-10-17 — NHÁNH B cổng B4 ĐẠT: DOT4 trong tầng thực thi — 18,1 ms, và RQ3 có câu trả lời
 
 Gắn DOT4 **thẳng vào tầng thực thi** của lõi tự viết (không qua PCPI): toán hạng từ tệp thanh ghi,
