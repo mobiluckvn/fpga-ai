@@ -11,7 +11,7 @@ Ngày bắt đầu: 2026-10-17 · Máy: Mac Intel (x86_64, macOS 26.6.2 build 25
 | F2 UART | **ĐẠT** | Sai số baud: +0,1603 % (DIV=234 → 115.384,62 baud); byte lỗi: **0/10.240** · cổng UART = `/dev/cu.usbserial-20250303171` · Fmax 187,48 MHz · bộ đếm FPGA: rx+10.240, dr=0, er=0, ov=0, FIFO hwm 1/63 · 5.248 B/s | khối ghi của host ≤66 byte (giới hạn cầu FT2232/macOS, không phải của FPGA) | results/feasibility/F2/ |
 | F3 BSRAM 64 KB | **ĐẠT** | Khối BSRAM: **32/46** (69,6 %); Fmax: **157,36 MHz** · CRC32 ROM=C7CD86AA và RW=D63B5AB4 **khớp Python 3/3 lần đọc** · thêm phép phản chứng: đổi hạt giống LFSR → CRC ROM đổi đúng thành 454701B8, CRC RW giữ nguyên | **không** | results/feasibility/F3/ |
 | F4 DSP | **ĐẠT có dự phòng** | acc=FEF834C3 khớp Python 3/3 lần với biến thể **PRM** (gọi trực tiếp MULT18X18) và **LUT**; **sai** với cả hai biến thể để yosys tự suy luận DSP. LUT4: PRM 811 / LUT 1764; Fmax: PRM 233,64 / LUT 73,08 MHz | **có**: không dùng DSP do yosys suy luận; phải gọi primitive MULT18X18 trực tiếp | results/feasibility/F4/ |
-| F5 SoC PicoRV32 | | loop kit = sim? ; .text: | | results/feasibility/F5/ |
+| F5 SoC PicoRV32 | **ĐẠT** | loop kit = sim? **CÓ, bằng tuyệt đối** (14.006 chu kỳ, 3/3 lần đọc; thêm 7 khoá nữa cũng khớp tuyệt đối) ; .text: **1.220 byte** · BSRAM 32/46 · LUT4 7.950/20.736 · Fmax 70,05 MHz | `synth_gowin -nodsp` (bắt buộc, do kết quả F4) | results/feasibility/F5/ |
 | F6 Đo lường | | overhead: ; offset hw: | | results/feasibility/F6/ |
 | F7 Kernel int8 | | chu kỳ/MAC (conv): | | results/feasibility/F7/ |
 | F8 DOT4 qua PCPI | | tăng tốc bài A: ; ΔLUT: ; ΔFmax: | | results/feasibility/F8/ |
@@ -28,7 +28,7 @@ Ngày bắt đầu: 2026-10-17 · Máy: Mac Intel (x86_64, macOS 26.6.2 build 25
 | F4-D18 (18 bit, SAI) | 815 | 291 | 0 | 4× MULT9X9 | 237,02 |
 | **F4-PRM (MULT18X18 trực tiếp, ĐÚNG)** | **811** | 291 | 0 | **4× MULT18X18** | **233,64** |
 | F4-LUT (-nodsp, ĐÚNG) | 1764 | 291 | 0 | 0 | 73,08 |
-| F5 SoC | | | | | |
+| F5 SoC | 7950 | 1069 | 32/46 | 0 (nhân 32×32 bằng LUT vì -nodsp) | 70,05 |
 | F8 SoC + DOT4 | | | | | |
 
 ## Số đo F7/F8 (kit, 27 MHz)
@@ -61,6 +61,17 @@ Ngày bắt đầu: 2026-10-17 · Máy: Mac Intel (x86_64, macOS 26.6.2 build 25
 ## Tài nguyên tổng của chip (từ report.json của nextpnr, dùng để lập ngân sách các cổng sau)
 LUT4 20.736 · DFF 15.552 · ALU 15.552 · IOB 384 · **BSRAM 46** · MULT9X9 96 · **MULT18X18 48** ·
 MULT36X36 12 · MULTALU18X18 24 · MULTADDALU18X18 24 · ALU54D 24 · rPLL 2 · BUFG 24 · RAM16SDP4 648
+
+## Ghi chú quan trọng sau F5 — nền tảng CPU đã có
+`F5,loop` trên kit **bằng tuyệt đối** Verilator (14.006 chu kỳ cho `busy_loop(1000)`), và 7 khoá khác
+cũng khớp tuyệt đối: `hello`, `loopn`, `hwc` (14.035), `instret` (2.004), `arith` (C91C7978),
+`ram` (EFEEC031), `done` — lặp lại 3/3 lần đọc độc lập. Nghĩa là:
+- Phương pháp đo chu kỳ bằng `rdcycle` cho cùng con số trên mô phỏng và phần cứng.
+- Chênh giữa bộ đếm phần cứng và `rdcycle` là **29 chu kỳ** (14.035 − 14.006) — F6 sẽ kiểm xem hằng
+  số này có giữ nguyên ở mọi độ dài đoạn đo hay không.
+- `arith` khớp ⇒ **lệnh MUL/DIV cho kết quả đúng trên kit**, tức việc buộc `-nodsp` (hệ quả của F4)
+  đã xử lý được rủi ro bộ nhân. Giá phải trả: LUT4 7.950/20.736 (38,3 %) và Fmax 70,05 MHz.
+- `ram` khớp ⇒ phần `.rodata` của firmware được nạp đúng vào BSRAM qua `$readmemh`.
 
 ## Ghi chú quan trọng sau F4 — cách dùng khối nhân
 Bảng chi tiết: `results/feasibility/F4/comparison.md`.

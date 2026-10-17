@@ -1,0 +1,63 @@
+# F5 check
+Thời điểm: 2026-10-17 10:49:10 +0700
+Verilator (build/sim.log):
+    F5,hello,d2a80f1
+    F5,cycle,76135
+    F5,loopn,1000
+    F5,loop,14006
+    F5,hwc,14035
+    F5,instret,2004
+    F5,arith,C91C7978
+    F5,ram,EFEEC031
+    F5,done,
+Cổng sẽ thử: ['/dev/cu.usbserial-20250303170', '/dev/cu.usbserial-20250303171']
+== Lần đọc 1/3 ==
+--- Thử cổng /dev/cu.usbserial-20250303170 ---
+    (đã đóng /dev/cu.usbserial-20250303170)
+    không thấy khối F5 đầy đủ (0 dòng thô)
+--- Thử cổng /dev/cu.usbserial-20250303171 ---
+    (xả 6950 byte tồn trong bộ đệm)
+    (đã đóng /dev/cu.usbserial-20250303171)
+    Kit:
+        F5,hello,d2a80f1
+        F5,cycle,396809983
+        F5,loopn,1000
+        F5,loop,14006
+        F5,hwc,14035
+        F5,instret,2004
+        F5,arith,C91C7978
+        F5,ram,EFEEC031
+        F5,done,
+    ĐẠT: khớp tuyệt đối 8 khoá: hello, loopn, loop, hwc, instret, arith, ram, done
+== Lần đọc 2/3 ==
+--- Thử cổng /dev/cu.usbserial-20250303171 ---
+    (xả 288 byte tồn trong bộ đệm)
+    (đã đóng /dev/cu.usbserial-20250303171)
+    Kit:
+        F5,hello,d2a80f1
+        F5,cycle,481827937
+        F5,loopn,1000
+        F5,loop,14006
+        F5,hwc,14035
+        F5,instret,2004
+        F5,arith,C91C7978
+        F5,ram,EFEEC031
+        F5,done,
+    ĐẠT: khớp tuyệt đối 8 khoá: hello, loopn, loop, hwc, instret, arith, ram, done
+== Lần đọc 3/3 ==
+--- Thử cổng /dev/cu.usbserial-20250303171 ---
+    (xả 288 byte tồn trong bộ đệm)
+    (đã đóng /dev/cu.usbserial-20250303171)
+    Kit:
+        F5,hello,d2a80f1
+        F5,cycle,566845891
+        F5,loopn,1000
+        F5,loop,14006
+        F5,hwc,14035
+        F5,instret,2004
+        F5,arith,C91C7978
+        F5,ram,EFEEC031
+        F5,done,
+    ĐẠT: khớp tuyệt đối 8 khoá: hello, loopn, loop, hwc, instret, arith, ram, done
+
+F5_PASS cổng=/dev/cu.usbserial-20250303171 loop=14006 hwc=14035 instret=2004 lần_đọc_đạt=3/3

@@ -30,7 +30,26 @@ else
   echo "CẢNH BÁO: không thấy $TNROOT/.venv — chạy: python3 -m venv .venv" >&2
 fi
 
-# 4) Thông số dùng chung cho luồng Gowin / Tang Nano 20K
+# 4) macOS: Command Line Tools trên máy này thiếu thư mục
+#    /Library/Developer/CommandLineTools/usr/include/c++/v1, nên clang++ không tìm được
+#    <cstddef> và Verilator không biên dịch được. libc++ vẫn có trong SDK, nên ta trỏ -I
+#    vào đó. Chỉ thêm khi thực sự cần (máy khác có thể bình thường).
+TN20K_CXX_INC=""
+if command -v clang++ >/dev/null 2>&1; then
+  if ! printf '#include <cstddef>\nint main(){return 0;}\n' \
+        | clang++ -x c++ -fsyntax-only - >/dev/null 2>&1; then
+    _sdk=$(xcrun --show-sdk-path 2>/dev/null)
+    if [ -n "$_sdk" ] && [ -d "$_sdk/usr/include/c++/v1" ]; then
+      TN20K_CXX_INC="-I$_sdk/usr/include/c++/v1"
+      echo "Ghi chú: CLT thiếu libc++ headers, dùng $TN20K_CXX_INC cho Verilator" >&2
+    else
+      echo "CẢNH BÁO: clang++ không tìm được <cstddef> và không thấy libc++ trong SDK" >&2
+    fi
+  fi
+fi
+export TN20K_CXX_INC
+
+# 5) Thông số dùng chung cho luồng Gowin / Tang Nano 20K
 export TN20K_DEVICE="GW2AR-LV18QN88C8/I7"   # chuỗi --device của nextpnr-himbaechel
 export TN20K_FAMILY="GW2A-18C"              # --vopt family= và gowin_pack -d
 export TN20K_BOARD="tangnano20k"            # openFPGALoader -b

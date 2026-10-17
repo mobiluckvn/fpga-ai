@@ -22,13 +22,30 @@ Nạp môi trường: `source env/setup_env.sh`.
 - Cài tại `~/tools/xpack-riscv-none-elf-gcc-15.2.0-1`
 - Đã thử biên dịch `-march=rv32im -mabi=ilp32`: sinh đúng lệnh `mul` (xem `results/feasibility/F0/gcc_test.txt`)
 
+## Trình biên dịch C++ của máy (cho Verilator)
+- Apple clang **21.0.0** (clang-2100.1.1.101), Command Line Tools **26.5.0**.
+- **Lỗi môi trường đã gặp ở F5**: `/Library/Developer/CommandLineTools/usr/include/c++/v1`
+  thiếu nội dung nên `clang++` không tìm được `<cstddef>` → Verilator không biên dịch được.
+  libc++ vẫn có trong SDK. `env/setup_env.sh` tự phát hiện và đặt
+  `TN20K_CXX_INC=-I$(xcrun --show-sdk-path)/usr/include/c++/v1`, Makefile của F5 truyền
+  cờ này cho verilator qua `-CFLAGS`.
+
 ## Python
 - python3 hệ thống: **3.14.7** → venv dự án tại `.venv`
 - numpy **2.5.4**, pyserial **3.5**
 - PyTorch: chưa cài (chỉ cài khi tới giai đoạn mô hình)
 
 ## Mã nguồn ngoài
-- picorv32: chưa lấy (sẽ ghi commit hash ở F5)
+- **picorv32**: `YosysHQ/picorv32` commit **`ef203c2b0a3fb793280f5114941416c425c5b461`**
+  (2026-09-07, "Merge pull request #296 from YosysHQ/krys/archiving").
+  File: `rtl/picorv32/picorv32.v`, 94.657 byte,
+  sha256 `0836050971b3c6cdd28ac3b1e5719a67fb645161912bef1e472e63995ceb0622`.
+  Tham số dùng ở F5 (đã đối chiếu README của picorv32 tại chính commit đó):
+  `ENABLE_COUNTERS=1, ENABLE_COUNTERS64=1, ENABLE_REGS_16_31=1, ENABLE_REGS_DUALPORT=1,
+  BARREL_SHIFTER=1, COMPRESSED_ISA=0, ENABLE_MUL=0, ENABLE_FAST_MUL=1, ENABLE_DIV=1,
+  ENABLE_IRQ=0, ENABLE_PCPI=0, PROGADDR_RESET=0x00000000, STACKADDR=0x00010000`.
+  README xác nhận: nếu đặt cả ENABLE_MUL và ENABLE_FAST_MUL thì ENABLE_MUL bị bỏ qua;
+  các lõi PCPI nội bộ (mul/div) hoạt động không cần ENABLE_PCPI.
 
 ## Thông số luồng Gowin đã xác nhận ở F0
 | Tham số | Giá trị | Nguồn xác nhận |

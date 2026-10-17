@@ -6,7 +6,8 @@
 #        scripts/archive_gate.sh F0 -            (dùng "-" khi cổng không có thư mục build)
 #
 # Sinh ra:
-#   results/feasibility/<GATE>/artifacts/   — bản sao mọi file trong BUILD_DIR và các file thêm.
+#   results/feasibility/<GATE>/artifacts/   — bản sao các file trong BUILD_DIR và các file thêm
+#                                             (bỏ thư mục obj_dir và file *.o/*.a/*.d của Verilator).
 #                                             File lớn hơn GZ_MIN byte được lưu dạng .gz.
 #   results/feasibility/<GATE>/MANIFEST.md  — ngày, commit, phiên bản công cụ,
 #                                             SHA256 của NỘI DUNG GỐC + kích thước lưu trữ.
@@ -35,7 +36,13 @@ mkdir -p "$ART"
 if [ "$BUILD" = "-" ]; then
     :   # cổng không có thư mục build (vd. F0: chỉ có log)
 elif [ -d "$BUILD" ]; then
-    find "$BUILD" -type f -exec cp -f {} "$ART"/ \;
+    # Bỏ file trung gian của Verilator/biên dịch: không phải vật phẩm, sinh lại được
+    # từ nguồn và làm phình thư mục kết quả.
+    find "$BUILD" -type f \
+        ! -path '*/obj_dir/*' \
+        ! -name '*.o' ! -name '*.a' ! -name '*.d' ! -name '*.dat' \
+        ! -name 'V*__pch.h.gch' \
+        -exec cp -f {} "$ART"/ \;
 else
     echo "CẢNH BÁO: không thấy thư mục build '$BUILD'" >&2
 fi

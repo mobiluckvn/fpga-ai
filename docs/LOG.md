@@ -2,6 +2,85 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — Cổng F5 (SoC PicoRV32 chạy firmware C) — ĐẠT
+
+Tiêu chí quan trọng nhất của cổng này — **`F5,loop` trên kit bằng TUYỆT ĐỐI Verilator** — đã đạt:
+**14.006 chu kỳ** cho `busy_loop(1000)`, lặp lại 3/3 lần đọc độc lập. Ngoài ra 7 khoá khác cũng
+khớp tuyệt đối.
+
+### Lõi và tham số (ghim ở env/VERSIONS.md)
+- `YosysHQ/picorv32` commit **`ef203c2b0a3fb793280f5114941416c425c5b461`** (2026-09-07),
+  `rtl/picorv32/picorv32.v`, sha256 `0836050971b3c6…`.
+- Tham số đã **đối chiếu README của picorv32 tại chính commit đó**:
+  `ENABLE_COUNTERS=1, ENABLE_COUNTERS64=1, ENABLE_REGS_16_31=1, ENABLE_REGS_DUALPORT=1,
+  BARREL_SHIFTER=1, COMPRESSED_ISA=0, ENABLE_MUL=0, ENABLE_FAST_MUL=1, ENABLE_DIV=1,
+  ENABLE_IRQ=0, ENABLE_PCPI=0, PROGADDR_RESET=0, STACKADDR=0x00010000`.
+  README xác nhận hai điều kế hoạch đã nêu: đặt cả `ENABLE_MUL` và `ENABLE_FAST_MUL` thì
+  `ENABLE_MUL` bị bỏ qua; các lõi PCPI nội bộ (mul/div) chạy không cần `ENABLE_PCPI`.
+
+### SoC (`feasibility/F5_soc/soc.v`)
+- Bản đồ bộ nhớ đúng như kế hoạch: RAM 64 KB tại 0x0000_0000; UART data 0x1000_0000,
+  status 0x1000_0004 (bit0 tx_busy, bit1 rx_valid); bộ đếm phần cứng ctrl 0x1000_0010 /
+  value 0x1000_0014; LED 0x1000_0020.
+- RAM: `reg [31:0] ram[0:16383]` + `$readmemh`, **ghi theo byte** theo `mem_wstrb`.
+  Đã kiểm trước khi viết: `share/yosys/gowin/brams.txt` khai báo `byte 9;` và `wrbe_separate;`
+  nên BSRAM của Gowin hỗ trợ ghi theo byte → kết quả: **BSRAM 32/46**, không rơi xuống LUTRAM.
+- Bus: mỗi truy cập **đúng 2 chu kỳ** (1 chu kỳ chờ) cho cả RAM và ngoại vi → số chu kỳ tất định,
+  giống nhau giữa Verilator và kit.
+- `dbg_tx_valid/dbg_tx_byte` chỉ dùng cho Verilator để in UART ra stdout ngay. **Khối `uart_tx` thật
+  vẫn được dùng ở cả hai môi trường**, nên `tx_busy` diễn ra y như nhau và không làm lệch số chu kỳ.
+
+### Firmware (`fw/`)
+- `start.S` đặt `sp = 0x00010000`, xoá `.bss`, gọi `main`; `_start` nằm **đúng tại địa chỉ 0**
+  (kiểm bằng `nm`: `00000000 T _start`) vì `PROGADDR_RESET = 0`.
+- `link.ld`: tất cả trong RAM 64 KB, `.text.start` được `KEEP` ở đầu.
+- `main.c` in các dòng CSV: `hello` (git hash nhúng lúc biên dịch), `cycle`, `loopn`, `loop`,
+  `hwc`, `instret`, `arith`, `ram`, `done`.
+- `busy_loop` viết bằng asm cố định (`addi` + `bnez`, đúng 2 lệnh/vòng) nên không phụ thuộc
+  mức tối ưu của trình biên dịch.
+- Kích thước: **`.text` = 1.220 byte**, `.bss` = 0 (log: `artifacts/firmware.size.txt`).
+- `scripts/bin2hex.py`: .bin → hex từ 32 bit little-endian, đệm 0 cho đủ 16.384 từ.
+
+### Số đo (kit = Verilator, khớp tuyệt đối 3/3 lần)
+| khoá | giá trị | ý nghĩa |
+|---|---|---|
+| `hello` | d2a80f1 | git hash nhúng trong firmware |
+| `loopn` | 1000 | số vòng của busy_loop |
+| **`loop`** | **14.006** | `rdcycle` sau − trước (≈14,0 chu kỳ/vòng = 7,0 chu kỳ/lệnh với 1 chu kỳ chờ) |
+| `hwc` | 14.035 | bộ đếm phần cứng cho cùng đoạn → **chênh 29 chu kỳ** so với `rdcycle` |
+| `instret` | 2.004 | 2.000 lệnh của vòng lặp + 4 lệnh ngoài |
+| `arith` | C91C7978 | tổng vài phép MUL/MULH/DIV/REM → **lệnh nhân/chia đúng trên kit** |
+| `ram` | EFEEC031 | tổng kiểm 8 từ `.rodata` → **`$readmemh` nạp firmware đúng** |
+
+Tài nguyên: **BSRAM 32/46** · LUT4 **7.950**/20.736 (38,3 %) · DFF 1.069 · ALU 754 ·
+RAM16SDP4 32 (tệp thanh ghi) · IOB 9 · **Fmax 70,05 MHz** @ ràng buộc 27 MHz.
+
+### Hai quyết định đáng ghi
+1. **Bắt buộc `synth_gowin -nodsp` cho SoC** — hệ quả trực tiếp của F4. `ENABLE_FAST_MUL=1` tạo bộ
+   nhân 32×32; nếu để yosys suy luận DSP thì lệnh `MUL` sẽ sai trên kit. Khoá `arith` khớp tuyệt đối
+   chứng minh cách này đúng. Giá phải trả: LUT4 lên 7.950 (38,3 %) và Fmax 70,05 MHz (vẫn dư 2,6 lần).
+   F8 vẫn dùng được DSP cho DOT4 vì đó là **gọi primitive trực tiếp**, `-nodsp` chỉ tắt phần *suy luận*.
+2. UART in ra stdout trong Verilator bằng cách **bắt lệnh ghi lên bus**, không giải mã dạng sóng chân TX
+   → mô phỏng nhanh mà vẫn giữ đúng thời gian của `uart_tx` thật.
+
+### Vấn đề gặp phải
+- **Verilator không biên dịch được trên máy này**: `fatal error: 'cstddef' file not found`.
+  Nguyên nhân: `/Library/Developer/CommandLineTools/usr/include/c++/v1` thiếu nội dung
+  (CLT 26.5.0), nên `clang++` không thấy libc++; `-isysroot` **không** cứu được vì clang chỉ tìm
+  libc++ trong đường của toolchain. Thư viện vẫn có trong SDK.
+  Cách khắc phục đã đưa vào `env/setup_env.sh`: tự thử biên dịch `#include <cstddef>`, nếu thất bại
+  thì đặt `TN20K_CXX_INC=-I$(xcrun --show-sdk-path)/usr/include/c++/v1`; Makefile của F5 truyền cờ
+  này cho verilator qua `-CFLAGS`. Các phiên sau không phải xử lý lại.
+- `scripts/archive_gate.sh` ban đầu lưu cả thư mục `obj_dir` của Verilator (42 file, 3,4 MB file .o/.a).
+  Đã lọc: bỏ `obj_dir/` và `*.o/*.a/*.d/*.dat`. Còn 21 file, 2,6 MB.
+
+### Việc tiếp theo / cần người dùng
+- F6 (độ tin cậy của phép đo). **Cổng này CẦN người dùng**: bước 4 của kế hoạch yêu cầu
+  rút/cắm nguồn kit 3 lần rồi nạp lại SRAM, để kiểm số đo có giống hệt qua các lần bật nguồn.
+  Tôi sẽ hỏi trước khi tới bước đó.
+- Dữ liệu sẵn có cho F6: chênh `hwc − loop` = **29 chu kỳ** ở độ dài 1.000 vòng; F6 sẽ kiểm hằng số
+  này ở các độ dài 10/100/1k/10k/100k.
+
 ## 2026-10-17 — Cổng F4 (khối nhân DSP) — ĐẠT CÓ DỰ PHÒNG
 
 Kết luận ngắn: **phép nhân int8 có dấu do yosys tự suy luận vào DSP cho kết quả SAI trên kit này.**

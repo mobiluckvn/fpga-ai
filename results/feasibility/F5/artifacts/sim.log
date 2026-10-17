@@ -1,0 +1,10 @@
+F5,hello,d2a80f1
+F5,cycle,76135
+F5,loopn,1000
+F5,loop,14006
+F5,hwc,14035
+F5,instret,2004
+F5,arith,C91C7978
+F5,ram,EFEEC031
+F5,done
+F5_SIM_OK: xong sau 345087 chu ky
