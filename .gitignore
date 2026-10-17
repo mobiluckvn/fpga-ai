@@ -1,5 +1,9 @@
 # Python
 .venv/
+.venv-model/
+
+# Dữ liệu MNIST thô (tải lại bằng lệnh trong docs/HUONG_DAN.md; SHA256 ở env/VERSIONS.md)
+model/data/*.gz
 __pycache__/
 *.pyc
 

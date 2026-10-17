@@ -6,7 +6,7 @@
 #        scripts/archive_gate.sh F0 -            (dùng "-" khi cổng không có thư mục build)
 #
 # Sinh ra:
-#   results/feasibility/<GATE>/artifacts/   — bản sao các file trong BUILD_DIR và các file thêm
+#   $RESULTS_BASE/<GATE>/artifacts/   (RESULTS_BASE mặc định = results/feasibility)   — bản sao các file trong BUILD_DIR và các file thêm
 #                                             (bỏ thư mục obj_dir và file *.o/*.a/*.d của Verilator).
 #                                             File lớn hơn GZ_MIN byte được lưu dạng .gz.
 #   results/feasibility/<GATE>/MANIFEST.md  — ngày, commit, phiên bản công cụ,
@@ -28,7 +28,10 @@ fi
 shift 2
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
-DEST="$ROOT/results/feasibility/$GATE"
+# RESULTS_BASE cho phép lưu ra ngoài results/feasibility (vd. results/experiment cho
+# giai đoạn thí nghiệm chính). Mặc định giữ nguyên hành vi cũ.
+: "${RESULTS_BASE:=results/feasibility}"
+DEST="$ROOT/$RESULTS_BASE/$GATE"
 ART="$DEST/artifacts"
 mkdir -p "$ART"
 
@@ -110,4 +113,4 @@ MAN="$DEST/MANIFEST.md"
 
 echo "Đã lưu vật phẩm $GATE vào $DEST"
 echo "  $(find "$DEST" -type f | wc -l | tr -d ' ') file, tổng $(du -sh "$DEST" | cut -f1)"
-echo "  manifest: results/feasibility/$GATE/MANIFEST.md"
+echo "  manifest: $RESULTS_BASE/$GATE/MANIFEST.md"

@@ -2,6 +2,90 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — THÍ NGHIỆM CHÍNH: M1-S chạy đầy đủ trên kit, A-V0 và A-V2
+
+Lần đầu **một mô hình CNN hoàn chỉnh đã huấn luyện** chạy suy luận trên kit và đo được số chu kỳ.
+Kết quả đầy đủ: `docs/KET_QUA_M1S.md`. Số liệu gốc: `results/experiment/m1s/m1s.csv`.
+
+### Mô hình
+- Huấn luyện M1-S bằng PyTorch (8 epoch, Adam, batch 128, seed 1234): **float 98,29 %** trên
+  10.000 ảnh test. Tham số 5.258 — khớp đúng con số của kế hoạch.
+- Lượng tử hoá int8 sau huấn luyện, đối xứng, zero-point = 0; hiệu chuẩn thang activation trên 512
+  ảnh train. requantize gemmlowp: lớp 1 `M0=1138411053, shift=8`; lớp 2 `M0=1108363094, shift=8`.
+  Dense **không** requantize (giữ int32 rồi argmax) → bỏ được một cặp (M0, shift) và một lần làm tròn.
+- **int8 98,25 %**, chênh float **+0,04 điểm %** — tiêu chí kế hoạch là ≤1 điểm → ĐẠT rất rộng.
+
+### Quyết định thiết kế quan trọng: bố cục channels-last
+`DOT4` nạp 4 byte liền nhau bằng `lw` nên **cần địa chỉ thẳng hàng 4 byte** (lõi bật
+`CATCH_MISALIGN`). Vì vậy activation lưu theo **[H][W][C]** và trọng số conv theo
+**[Cout][ky][kx][Cin]**: conv2 có `Cin=8` nên 4 kênh vào liền nhau luôn thẳng hàng, dùng đúng
+2 lệnh DOT4 cho mỗi vị trí kernel, không bỏ sót MAC nào. Hệ quả: `m1s_w3` phải **hoán vị cột** so
+với PyTorch (torch làm phẳng theo (C,H,W), ta theo (H,W,C)). Golden Python viết lại theo đúng bố cục
+này nên mọi CRC32 và thứ tự làm phẳng khớp firmware.
+
+**conv1 không dùng được DOT4** vì `Cin=1`: không có 4 giá trị liền nhau để cộng dồn mà vẫn thẳng hàng.
+conv1 chiếm 25,3 % số MAC nhưng 28,8 % thời gian A-V0 — và trở thành nút cổ chai của A-V2.
+
+### Số đo trên kit (trung vị 10 ảnh, 27 MHz)
+| Lớp | A-V0 | A-V2 | Tăng tốc | chu kỳ/MAC V0 → V2 |
+|---|---:|---:|---:|---|
+| conv1 | 3.491.721 | 3.491.721 | 1,00× | 71,74 → 71,74 |
+| pool1 | 225.621 | 225.621 | 1,00× | — |
+| conv2 | 8.153.979 | **1.924.815** | **4,24×** | 58,50 → 13,81 |
+| pool2 | 65.924 | 65.924 | 1,00× | — |
+| dense | 192.552 | **48.552** | **3,97×** | 48,14 → 12,14 |
+| **TỔNG** | **12.129.818** | **5.756.654** | **2,11×** | 63,16 → **29,97** |
+| thời gian | 449,3 ms | 213,2 ms | | |
+
+Tính đúng đắn, cả hai biến thể, 2/2 lần đọc: **CRC32 50/50 khớp golden** (5 lớp × 10 ảnh),
+dự đoán **10/10** khớp golden và khớp nhãn, số chu kỳ kit = Verilator **bằng tuyệt đối** cả 7 cột.
+
+Tài nguyên: A-V0 LUT4 7.941 / Fmax 71,76 MHz; A-V2 LUT4 8.065 / Fmax 71,89 MHz →
+DOT4 tốn **+124 LUT4 (+1,6 %)**, +84 DFF, 4/48 MULT18X18, **Fmax không giảm**.
+RAM 27.564/65.536 byte (42,1 %).
+
+### Ba phát hiện
+1. **Tăng tốc bị chặn bởi conv1, đúng dự báo ở F8.** Trong A-V2 conv1 chiếm 60,7 % thời gian.
+   Giới hạn Amdahl = 12.129.818/3.783.266 = **3,21×**; DOT4 đã cắt 6.373.164 trong 8.346.552 chu kỳ
+   có thể cắt = **76,4 %**. Muốn đi xa hơn phải nhắm vào conv1.
+2. **Ước tính ở F7 sát**: F7 ngoại suy ≈516 ms, thực đo A-V0 là **449,3 ms** → ước tính cao hơn 15 %,
+   lệch theo hướng an toàn. Nguyên nhân đúng như F7 đã nêu: conv2 có `Cin=8` nên chi phí/MAC *thấp hơn*
+   conv1 (58,50 so với 71,74) do chia sẻ được phần tính chỉ số.
+3. **Một cái bẫy của trình biên dịch, không liên quan phần cứng.** Ban đầu 5 lớp là hàm `static` gọi
+   một lần; GCC `-O2` nội suy hết vào `main` và tràn thanh ghi → A-V0 chạy **21.350.804** chu kỳ.
+   Thêm `__attribute__((noinline))` cho mỗi lớp đưa về **12.129.818** chu kỳ — **nhanh hơn 1,76 ×
+   mà không đổi một dòng thuật toán**. Tệ hơn: khi chưa có `noinline`, cấp phát thanh ghi của conv1
+   **thay đổi theo** việc conv2 dùng DOT4 hay không (3.803.170 so với 4.950.316 chu kỳ), làm phép so
+   sánh A-V0/A-V2 mất ý nghĩa. Sau khi sửa, conv1/pool1/pool2 có **kích thước mã giống hệt** và cho
+   **đúng cùng số chu kỳ** ở hai biến thể — đó là bằng chứng phép so sánh chỉ khác một thứ.
+   → **Quy tắc phương pháp: khi so hai biến thể tập lệnh, cố định ranh giới hàm và phải kiểm rằng các
+   lớp KHÔNG thay đổi cho ra đúng số chu kỳ cũ.**
+
+### Hạ tầng
+- `model/`: `mnist.py` (nạp idx.gz), `train_m1s.py`, `quantize_m1s.py`, `golden_m1s.py` (golden int8
+  đúng từng bit, có `test_requant_equiv()` kiểm bản vector hoá khớp bản vô hướng).
+- `fw/weights.h` sinh tự động: trọng số int8, bias int32, (M0, shift), 10 ảnh thử, nhãn, dự đoán
+  golden và **CRC32 golden của từng lớp** — firmware tự kiểm và host kiểm lại.
+- `experiment/m1s/`: firmware 5 lớp + Makefile hai biến thể, dùng lại SoC của F5 và khối DOT4 của F8.
+- `scripts/m1s_check.py`: đọc kit, đối chiếu golden (đọc lại từ `weights.h`, không hard-code) và
+  Verilator, ghi CSV.
+- `.venv-model` riêng (Python 3.12 + torch 2.2.2 + numpy 1.26.4): Python 3.14 không có wheel torch cho
+  macOS x86_64; torch 2.2.2 là bản cuối còn wheel và nó cần numpy < 2. Ghi rõ trong `env/VERSIONS.md`.
+- `scripts/archive_gate.sh` thêm `RESULTS_BASE` để lưu ra `results/experiment/`.
+
+### Hai lỗi script của tôi, đã sửa
+- `m1s_check.py` dùng regex `^M1S,([a-z]+),(.*)$` bắt buộc dấu phẩy thứ hai nên dòng `M1S,done`
+  không khớp và không bao giờ nhận ra khối đã đủ. Sửa thành `,?`.
+- `archive_gate.sh` hard-code `results/feasibility/` nên lưu nhầm vào
+  `results/feasibility/experiment/m1s`. Sửa bằng biến `RESULTS_BASE`.
+
+### Việc còn lại của thí nghiệm chính
+- **A-V1** (chỉ tối ưu phần mềm, nhóm đối chứng) — chưa làm. Lưu ý: phát hiện `noinline` ở trên thực
+  chất đã là một tối ưu phần mềm 1,76×, nên A-V1 cần định nghĩa lại cho rõ đâu là "đối chứng".
+- **A-V3** (+ lệnh REQ) — chưa làm. Theo số liệu trên, REQ nên nhắm vào conv1.
+- **B-V*** (lõi tự viết) — chưa làm.
+- Đo trên nhiều ảnh hơn 10 trên kit; đo công suất.
+
 ## 2026-10-17 — Cổng F8 (lệnh tùy biến DOT4 qua PCPI) — ĐẠT · GIAI ĐOẠN KHẢ THI HOÀN TẤT
 
 Cả ba tiêu chí đạt, cho **cả hai biến thể** bitstream, 3/3 lần đọc mỗi bản:

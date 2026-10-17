@@ -31,9 +31,26 @@ Nạp môi trường: `source env/setup_env.sh`.
   cờ này cho verilator qua `-CFLAGS`.
 
 ## Python
-- python3 hệ thống: **3.14.7** → venv dự án tại `.venv`
+- python3 hệ thống: **3.14.7** → venv dự án tại `.venv` (đo lường, script kiểm tra)
 - numpy **2.5.4**, pyserial **3.5**
-- PyTorch: chưa cài (chỉ cài khi tới giai đoạn mô hình)
+
+### venv riêng cho phần mô hình: `.venv-model`
+- **Python 3.12.13** (`brew python@3.12`) + **torch 2.2.2** + **numpy 1.26.4**
+- Vì sao phải tách: Python 3.14 **không có** wheel torch cho macOS x86_64
+  (`pip install torch` → "No matching distribution found"). torch **2.2.2** là bản cuối
+  còn wheel cho macOS x86_64, và nó biên dịch với NumPy 1.x nên **bắt buộc `numpy<2`**
+  (với numpy 2.5.4 thì `import torch` báo "A module that was compiled using NumPy 1.x
+  cannot be run in NumPy 2.5.4").
+- Dùng cho: `model/train_m1s.py`, `model/quantize_m1s.py`. Mọi script đo vẫn dùng `.venv`.
+
+## Dữ liệu MNIST (model/data/, 4 file idx.gz)
+Nguồn: `https://storage.googleapis.com/cvdf-datasets/mnist/`
+```
+440fcabf73cc546fa21475e81ea370265605f56be210a4024d2ca8f203523609  train-images-idx3-ubyte.gz
+3552534a0a558bbed6aed32b30c495cca23d567ec52cac8be1a0730e8010255c  train-labels-idx1-ubyte.gz
+8d422c7b0a1c1c79245a5bcf07fe86e33eeafee792b84584aec276f5a2dbc4e6  t10k-images-idx3-ubyte.gz
+f7ae60f92e00ec6debd23a6088c31dbd2371eca3ffa0defaefb259924204aec6  t10k-labels-idx1-ubyte.gz
+```
 
 ## Mã nguồn ngoài
 - **picorv32**: `YosysHQ/picorv32` commit **`ef203c2b0a3fb793280f5114941416c425c5b461`**

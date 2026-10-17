@@ -39,15 +39,26 @@ openFPGALoader --detect -b tangnano20k          # phải thấy GW2A(R)-18(C)
 cd feasibility/F5_soc && make fw sim build load f5check
 ```
 
-## Biến thể của thí nghiệm chính (chưa làm)
+## Thí nghiệm chính — M1-S đã chạy thật trên kit
 
-| Mã | Mô tả |
-|---|---|
-| A-V0 | PicoRV32 RV32IM, kernel C thẳng |
-| A-V1 | + tối ưu phần mềm (nhóm đối chứng) |
-| A-V2 | + DOT4 |
-| A-V3 | + DOT4 + REQ |
-| B-V* | lõi tự viết, các bước tương ứng |
+Mô hình M1-S (CNN int8, MNIST, 192.064 MAC) đã huấn luyện, lượng tử hoá và **chạy suy luận đầy đủ
+trên kit**. Chi tiết: **[docs/KET_QUA_M1S.md](docs/KET_QUA_M1S.md)**.
+
+| | float32 | int8 |
+|---|---|---|
+| Độ chính xác (10.000 ảnh test MNIST) | **98,29 %** | **98,25 %** (chênh +0,04 điểm %) |
+
+| Biến thể | Mô tả | Chu kỳ/ảnh | @27 MHz | chu kỳ/MAC | Trạng thái |
+|---|---|---:|---:|---:|---|
+| A-V0 | kernel C thẳng | 12.129.818 | 449,3 ms | 63,16 | **ĐO XONG** |
+| A-V1 | + tối ưu phần mềm (đối chứng) | | | | chưa làm |
+| **A-V2** | **+ DOT4** | **5.756.654** | **213,2 ms** | **29,97** | **ĐO XONG — tăng tốc 2,11×** |
+| A-V3 | + DOT4 + REQ | | | | chưa làm |
+| B-V* | lõi tự viết | | | | chưa làm |
+
+A-V2 trả **+124 LUT4 (+1,6 %)** và **không giảm Fmax** để được 2,11×. Mọi số đo đều có:
+CRC32 từng lớp khớp golden Python, dự đoán khớp golden, và số chu kỳ trên kit **bằng tuyệt đối**
+số chu kỳ trong Verilator.
 
 ## Quy ước
 
