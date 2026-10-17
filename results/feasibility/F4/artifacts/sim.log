@@ -1,0 +1,5 @@
+Dong nhan duoc: "F4,DSP,FEF834C3"
+OK: acc = fef834c3 khop Python sau 2^20 = 1048576 chu ky
+OK: trang thai LFSR cuoi khop Python (a=bc64d7e9 b=c8b82dcc)
+F4_SIM_PASS: khoi nhan int8 dung
+tb_top.v:94: $finish called at 2201440000 (1ps)

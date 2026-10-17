@@ -1,0 +1,34 @@
+# F4 check
+Thời điểm: 2026-10-17 10:23:33 +0700
+Biến thể cần kiểm: DSP
+Python tính lại 1048576 chu kỳ trong 3.59s: ACC=FEF834C3 (LFSR cuối a=BC64D7E9 b=C8B82DCC, dot trong khoảng -52213..49098)
+Cổng sẽ thử: ['/dev/cu.usbserial-20250303170', '/dev/cu.usbserial-20250303171']
+== Lần đọc 1/3 ==
+--- Thử cổng /dev/cu.usbserial-20250303170 @ 115200 8N1 ---
+    KHÔNG ĐẠT: sau 6.02s không thấy dòng F4,...
+    (đã đóng /dev/cu.usbserial-20250303170)
+--- Thử cổng /dev/cu.usbserial-20250303171 @ 115200 8N1 ---
+    (xả 6934 byte tồn trong bộ đệm)
+    Dòng thô nhận được: ['F4,DSP,27959EC3', 'F4,AEN,BC64D7E9', 'F4,BEN,C8B82DCC', 'F4,D00,00000018']
+    KHÔNG ĐẠT: acc từ kit = 27959EC3, Python = FEF834C3
+    (đã đóng /dev/cu.usbserial-20250303171)
+== Lần đọc 2/3 ==
+--- Thử cổng /dev/cu.usbserial-20250303170 @ 115200 8N1 ---
+    KHÔNG ĐẠT: sau 6.01s không thấy dòng F4,...
+    (đã đóng /dev/cu.usbserial-20250303170)
+--- Thử cổng /dev/cu.usbserial-20250303171 @ 115200 8N1 ---
+    (xả 136 byte tồn trong bộ đệm)
+    Dòng thô nhận được: ['F4,DSP,27959EC3', 'F4,AEN,BC64D7E9', 'F4,BEN,C8B82DCC', 'F4,D00,00000018']
+    KHÔNG ĐẠT: acc từ kit = 27959EC3, Python = FEF834C3
+    (đã đóng /dev/cu.usbserial-20250303171)
+== Lần đọc 3/3 ==
+--- Thử cổng /dev/cu.usbserial-20250303170 @ 115200 8N1 ---
+    KHÔNG ĐẠT: sau 6.01s không thấy dòng F4,...
+    (đã đóng /dev/cu.usbserial-20250303170)
+--- Thử cổng /dev/cu.usbserial-20250303171 @ 115200 8N1 ---
+    (xả 272 byte tồn trong bộ đệm)
+    Dòng thô nhận được: ['F4,DSP,27959EC3', 'F4,AEN,BC64D7E9', 'F4,BEN,C8B82DCC', 'F4,D00,00000018']
+    KHÔNG ĐẠT: acc từ kit = 27959EC3, Python = FEF834C3
+    (đã đóng /dev/cu.usbserial-20250303171)
+
+F4_FAIL nhãn=DSP: 0/3 lần đọc đạt

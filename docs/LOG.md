@@ -2,6 +2,79 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — Cổng F4 (khối nhân DSP) — ĐẠT CÓ DỰ PHÒNG
+
+Kết luận ngắn: **phép nhân int8 có dấu do yosys tự suy luận vào DSP cho kết quả SAI trên kit này.**
+Cách dùng được là **gọi trực tiếp primitive `MULT18X18` ở chế độ không dấu**. Biến thể nhân bằng
+logic (`-nodsp`) cũng đúng nhưng tốn 2,2 lần LUT và Fmax thấp hơn 3,2 lần.
+
+### Thiết kế
+- Mỗi chu kỳ: hai LFSR 32 bit (cùng đa thức với F3, hạt giống 0x12345678 / 0x9ABCDEF0) sinh a, b;
+  tính `dot = Σ_{i=0..3} $signed(a[8i+7:8i]) * $signed(b[8i+7:8i])`; `acc <= acc + dot` (32 bit, quấn).
+  Chạy đúng 2^20 = 1.048.576 chu kỳ (≈38,8 ms @27 MHz) rồi cứ 1 giây in 8 dòng.
+- `scripts/gen_f4_expect.py` tính giá trị kỳ vọng: **ACC = FEF834C3**, LFSR cuối a=BC64D7E9, b=C8B82DCC,
+  dot nằm trong khoảng −52213..49098 (biên lý thuyết ±65536).
+- **Bốn biến thể dùng CHUNG một `top.v`**, khác nhau bằng cờ build (nên so sánh được công bằng):
+  | nhãn | cách dựng |
+  |---|---|
+  | DSP | `synth_gowin` (mặc định) — yosys tự ánh xạ phép nhân vào DSP |
+  | D18 | như trên nhưng toán hạng mở rộng dấu lên 18 bit (`-DWIDE_MULT`) |
+  | PRM | gọi trực tiếp `MULT18X18`, `ASIGN=BSIGN=0`, toán hạng mở rộng dấu 18 bit (`-DPRIM_MULT`) |
+  | LUT | `synth_gowin -nodsp` — "do not infer DSP multipliers" |
+- Mô phỏng Icarus chạy **đủ 2^20 chu kỳ**: `F4_SIM_PASS`, acc và cả trạng thái LFSR cuối khớp Python.
+
+### Kết quả trên kit (cả bốn build từ cùng một top.v cuối cùng)
+| Biến thể | Cách dựng | LUT4 | DFF | ALU | MULT9X9 | MULT18X18 | DUMMY | Fmax (MHz) | Trên kit |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---|
+| DSP | yosys suy luận (mul2dsp → MULT9X9) | 771 | 291 | 234 | 4 | 0 | 4 | 225,28 | **SAI** |
+| D18 | toán hạng 18 bit (yosys vẫn chọn MULT9X9) | 815 | 291 | 234 | 4 | 0 | 4 | 237,02 | **SAI** |
+| **PRM** | **MULT18X18 trực tiếp, không dấu** | **811** | 291 | 234 | 0 | **4** | 16 | **233,64** | **ĐÚNG 3/3** |
+| LUT | `-nodsp`, nhân bằng logic | 1764 | 291 | 306 | 0 | 0 | 0 | 73,08 | **ĐÚNG 3/3** |
+
+### Chẩn đoán (trước khi sửa, theo quy tắc 3 "không bịa số")
+1. Kit báo `acc = 27959EC3`, Python và Icarus đều cho `FEF834C3`. Quét Python: **không** có số chu kỳ nào
+   trong 1..2^21 cho ra giá trị của kit, và **không** có cách hiểu dấu nào (có/không dấu, các kiểu cắt bit,
+   mở rộng dấu ở mọi độ rộng 8..18) khớp cả bốn giá trị dot đầu — nên không phải lỗi quy ước dấu đơn giản.
+2. Thêm 8 dòng chẩn đoán vào thiết kế: trạng thái LFSR cuối, 4 giá trị `dot` đầu, rồi **từng tích riêng**.
+   - **LFSR cuối ĐÚNG** (a=BC64D7E9, b=C8B82DCC) → LFSR và số chu kỳ không sai.
+   - **Từng tích SAI**, và **8 bit thấp của mỗi tích luôn đúng**:
+     | lane | toán hạng | kỳ vọng | kit |
+     |---|---|---|---|
+     | P00 | 120 × −16 | −1920 (F880) | −6016 (E880) |
+     | P01 | 86 × −34 | −2924 (F494) | −24428 (A094) |
+     | P02 | 52 × −68 | −3536 (F230) | +23088 (5A30) |
+     | P03 | 18 × −102 | −1836 (F8D4) | +7380 (1CD4) |
+   - Cùng RTL đó với `-nodsp` thì **đúng** → lỗi ở đường suy luận/ánh xạ DSP, không ở RTL của tôi.
+
+### Ba hướng sửa đã thử (quy tắc 2)
+1. **Mở rộng dấu toán hạng lên 18 bit** để yosys chọn MULT18X18 → **thất bại**: `wreduce` của yosys rút
+   lại toán hạng về 8 bit, report vẫn cho `MULT9X9 = 4`, kết quả sai y hệt (`27959EC3`, `D00 = 00000018`).
+2. **Gọi trực tiếp primitive `MULT18X18`**, `ASIGN=BSIGN=0` (không dấu), toán hạng int8 mở rộng dấu lên
+   18 bit, các tham số `AREG=BREG=OUT_REG=PIPE_REG=0` (tổ hợp) → **THÀNH CÔNG**, acc = FEF834C3, 3/3 lần.
+   Lý do đúng mà không cần đường cờ dấu của DSP: với x' = x mod 2^18, y' = y mod 2^18 thì
+   x'·y' ≡ x·y (mod 2^18), và |x·y| ≤ 128·128 = 16384 < 2^17, nên `DOUT[17:0]` đọc như số có dấu 18 bit
+   chính là x·y. Giao diện primitive lấy từ `YosysHQ/apicula` `examples/dsp-mult18x18.v` — ví dụ mà
+   Apicula tự kiểm thử trên kit thật (đích `hil-dsp-mult18x18-tangnano20k` trong examples/Makefile).
+3. Hướng 3 (phương án dự phòng của kế hoạch: dùng biến thể LUT) **không cần dùng tới**, nhưng vẫn đã
+   kiểm và nó đúng — giữ làm đường lùi.
+
+### Ý nghĩa cho các cổng sau
+- **F8 (DOT4 qua PCPI) nên dùng cách PRM**: tiết kiệm **953 LUT4** (811 so với 1764) và Fmax **cao hơn
+  3,2 lần** (233,64 so với 73,08 MHz) so với nhân bằng logic.
+- Nếu về sau có chỗ nào để yosys tự suy luận phép nhân thì **phải kiểm lại trên kit**, không tin mô phỏng:
+  mô phỏng Icarus đúng trong khi phần cứng sai, vì Icarus không mô phỏng khối DSP thật.
+- `MULT18X18` trong thư viện của yosys là **blackbox không có mô hình mô phỏng** → biến thể PRM chỉ kiểm
+  được trên kit, không mô phỏng được. Khi dùng ở F8 cần giữ cả đường LUT để mô phỏng đối chiếu.
+
+### Lỗi nhỏ của chính tôi, đã sửa
+- `f4_check.py` dùng regex nhãn `[A-Z]{3}` nên không nhận nhãn `D18` (có chữ số) → đổi thành `[A-Z0-9]{3}`.
+- Lệnh `ls -l | awk` trong Makefile bị make nuốt dấu `$` → thay bằng `wc -c`.
+
+### Việc tiếp theo / cần người dùng
+- F5 (SoC PicoRV32 chạy firmware C). Ngân sách tài nguyên sau F3/F4: BSRAM 32/46 cho RAM 64 KB,
+  còn 14 khối; MULT18X18 còn 44/48. Không cần người dùng làm gì.
+- Kit đang chạy biến thể LUT của F4 (bản nạp cuối cùng trong vòng kiểm).
+
 ## 2026-10-17 — Cổng F3 (BSRAM 64 KB có khởi tạo) — ĐẠT, KHÔNG cần phương án dự phòng
 
 **Đây là rủi ro lớn nhất của cả dự án và nó đã được giải quyết.** Luồng mã nguồn mở suy luận được

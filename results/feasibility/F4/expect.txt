@@ -1,0 +1,6 @@
+# F4 giá trị kỳ vọng
+số chu kỳ      : 1048576 (= 2^20)
+hạt giống A/B  : 0x12345678 / 0x9ABCDEF0
+LFSR cuối A/B  : 0xBC64D7E9 / 0xC8B82DCC
+dot nhỏ/lớn    : -52213 / 49098  (biên lý thuyết ±4*128*128 = ±65536)
+ACC_EXPECT     : FEF834C3  (4277679299 không dấu, -17287997 có dấu)

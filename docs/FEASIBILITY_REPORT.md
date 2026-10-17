@@ -10,7 +10,7 @@ Ngày bắt đầu: 2026-10-17 · Máy: Mac Intel (x86_64, macOS 26.6.2 build 25
 | F1 Blinky | **ĐẠT** | Fmax: 347,58 MHz (ràng buộc 27) · LUT4 30/20736 · DFF 30/15552 · IOB 7/384 · bitstream 4.618.782 byte (không nén) · nạp SRAM 3/3 lần OK · người dùng xác nhận LED chạy đúng tốc độ | bỏ `gowin_pack -c` | results/feasibility/F1/ |
 | F2 UART | **ĐẠT** | Sai số baud: +0,1603 % (DIV=234 → 115.384,62 baud); byte lỗi: **0/10.240** · cổng UART = `/dev/cu.usbserial-20250303171` · Fmax 187,48 MHz · bộ đếm FPGA: rx+10.240, dr=0, er=0, ov=0, FIFO hwm 1/63 · 5.248 B/s | khối ghi của host ≤66 byte (giới hạn cầu FT2232/macOS, không phải của FPGA) | results/feasibility/F2/ |
 | F3 BSRAM 64 KB | **ĐẠT** | Khối BSRAM: **32/46** (69,6 %); Fmax: **157,36 MHz** · CRC32 ROM=C7CD86AA và RW=D63B5AB4 **khớp Python 3/3 lần đọc** · thêm phép phản chứng: đổi hạt giống LFSR → CRC ROM đổi đúng thành 454701B8, CRC RW giữ nguyên | **không** | results/feasibility/F3/ |
-| F4 DSP | | LUT/DSP (DSP): ; (LUT): | | results/feasibility/F4/ |
+| F4 DSP | **ĐẠT có dự phòng** | acc=FEF834C3 khớp Python 3/3 lần với biến thể **PRM** (gọi trực tiếp MULT18X18) và **LUT**; **sai** với cả hai biến thể để yosys tự suy luận DSP. LUT4: PRM 811 / LUT 1764; Fmax: PRM 233,64 / LUT 73,08 MHz | **có**: không dùng DSP do yosys suy luận; phải gọi primitive MULT18X18 trực tiếp | results/feasibility/F4/ |
 | F5 SoC PicoRV32 | | loop kit = sim? ; .text: | | results/feasibility/F5/ |
 | F6 Đo lường | | overhead: ; offset hw: | | results/feasibility/F6/ |
 | F7 Kernel int8 | | chu kỳ/MAC (conv): | | results/feasibility/F7/ |
@@ -24,8 +24,10 @@ Ngày bắt đầu: 2026-10-17 · Máy: Mac Intel (x86_64, macOS 26.6.2 build 25
 | F2 UART | 883 | 236 | 0 (8× RAM16SDP4 cho FIFO) | 0 | 187,48 |
 | F3 BSRAM 64 KB | 865 | 207 | **32/46** | 0 | 157,36 |
 | F3 | | | | | |
-| F4-DSP | | | | | |
-| F4-LUT | | | | | |
+| F4-DSP (yosys suy luận, SAI) | 771 | 291 | 0 | 4× MULT9X9 | 225,28 |
+| F4-D18 (18 bit, SAI) | 815 | 291 | 0 | 4× MULT9X9 | 237,02 |
+| **F4-PRM (MULT18X18 trực tiếp, ĐÚNG)** | **811** | 291 | 0 | **4× MULT18X18** | **233,64** |
+| F4-LUT (-nodsp, ĐÚNG) | 1764 | 291 | 0 | 0 | 73,08 |
 | F5 SoC | | | | | |
 | F8 SoC + DOT4 | | | | | |
 
@@ -59,6 +61,21 @@ Ngày bắt đầu: 2026-10-17 · Máy: Mac Intel (x86_64, macOS 26.6.2 build 25
 ## Tài nguyên tổng của chip (từ report.json của nextpnr, dùng để lập ngân sách các cổng sau)
 LUT4 20.736 · DFF 15.552 · ALU 15.552 · IOB 384 · **BSRAM 46** · MULT9X9 96 · **MULT18X18 48** ·
 MULT36X36 12 · MULTALU18X18 24 · MULTADDALU18X18 24 · ALU54D 24 · rPLL 2 · BUFG 24 · RAM16SDP4 648
+
+## Ghi chú quan trọng sau F4 — cách dùng khối nhân
+Bảng chi tiết: `results/feasibility/F4/comparison.md`.
+
+**Không được dựa vào việc yosys tự suy luận DSP cho phép nhân int8 có dấu trên chip này.**
+Với `synth_gowin` mặc định, yosys ánh xạ `$signed(a8) * $signed(b8)` vào `MULT9X9` và kết quả trên kit
+**sai byte cao của từng tích** (8 bit thấp vẫn đúng). Cùng RTL đó, `-nodsp` cho kết quả đúng, nên lỗi
+nằm ở đường suy luận/ánh xạ DSP, không ở RTL.
+
+Cách dùng được, đã kiểm trên kit: **gọi trực tiếp primitive `MULT18X18` ở chế độ không dấu
+(`ASIGN=BSIGN=0`) với toán hạng int8 đã mở rộng dấu lên 18 bit**, rồi đọc `DOUT[17:0]` như số có dấu
+18 bit. Đúng về mặt số học vì x'·y' ≡ x·y (mod 2^18) và |x·y| ≤ 16384 < 2^17.
+
+Đổi lại, dùng DSP tiết kiệm **953 LUT4** (811 so với 1764) và cho Fmax **cao hơn 3,2 lần**
+(233,64 so với 73,08 MHz) so với nhân bằng logic. → **F8 (DOT4) nên dùng cách PRM.**
 
 ## Ghi chú quan trọng sau F3
 Rủi ro lớn nhất của dự án (BSRAM 64 KB có khởi tạo sẵn qua luồng mã nguồn mở) đã được **giải quyết, không
