@@ -54,21 +54,22 @@ khớp golden Python từng bit**, 0 lần phải gửi lại trên 7,85 MB truy
 
 | Biến thể | Mô tả | Chu kỳ/ảnh | @27 MHz | chu kỳ/MAC | Tăng tốc |
 |---|---|---:|---:|---:|---:|
-| A-V0 | C thẳng | 12.129.818 | 449,3 ms | 63,16 | 1,00× |
-| **A-V1** | **+ tối ưu phần mềm** (đối chứng) | 6.217.657 | 230,3 ms | 32,37 | **1,95×** |
-| A-V2 | C thẳng + DOT4 | 5.756.654 | 213,2 ms | 29,97 | 2,11× |
-| **A-V1+DOT4** | **tối ưu phần mềm + DOT4** | 2.917.102 | 108,0 ms | 15,19 | **4,16×** |
-| **A-V1+DOT4+C1** | **+ bố cục 4 pha cho conv1** | **2.450.517** | **90,8 ms** | **12,76** | **4,95×** |
+| A-V0 | C thẳng | 8.987.660 | 332,9 ms | 46,80 | 1,00× |
+| **A-V1** | **+ tối ưu phần mềm** (đối chứng) | 6.217.634 | 230,3 ms | 32,37 | **1,45×** |
+| A-V2 | C thẳng + DOT4 | 5.758.001 | 213,3 ms | 29,98 | 1,56× |
+| **A-V1+DOT4** | **tối ưu phần mềm + DOT4** | 2.917.079 | 108,0 ms | 15,19 | **3,08×** |
+| **A-V1+DOT4+C1** | **+ bố cục 4 pha cho conv1** | **2.450.494** | **90,8 ms** | **12,76** | **3,67×** |
 | A-V3 | + lệnh REQ | | | | chưa làm — đã định lượng ~1,17× |
 | B-V* | lõi tự viết | | | | chưa làm |
 
-**Kết quả quan trọng nhất**: hai tối ưu **nhân được với nhau** — 1,95× (phần mềm) × 2,13× (DOT4 thêm
-vào code đã tối ưu) = **4,16×**, đúng bằng số đo. Tức lợi ích của lệnh tùy biến **không biến mất khi
-phần mềm đã tối ưu**.
+**Kết quả quan trọng nhất**: lệnh tùy biến cho lợi ích **LỚN HƠN** khi phần mềm đã tối ưu —
+DOT4 cho **1,56×** trên C thẳng nhưng **2,13×** trên C đã tối ưu (gấp 1,37 lần). Hai tối ưu
+**không độc lập**, và tương tác thuận lợi. Hệ quả: đo một lệnh tùy biến trên mã chưa tối ưu sẽ
+**đánh giá thấp** giá trị của nó.
 
 **Kết quả thứ hai**: nút cổ chai conv1 (54,9 % thời gian, `Cin=1` nên không dùng được DOT4) gỡ được
 **bằng bố cục dữ liệu, không thêm phần cứng** — 4 bản sao ảnh dịch 0/1/2/3 byte (3.584 byte `.bss`)
-làm mọi phép đọc thẳng hàng 4 byte, cho thêm **1,19×** → **4,95×**. Giới hạn của một lệnh tùy biến
+làm mọi phép đọc thẳng hàng 4 byte, cho thêm **1,19×** → **3,67×**. Giới hạn của một lệnh tùy biến
 có thể nằm ở **bố cục** chứ không ở bản thân lệnh.
 
 **Cơ hội còn lại, đã đo**: requantize tốn **49,6 chu kỳ/lần** × 7.344 lần/ảnh = **14,9 %** thời gian

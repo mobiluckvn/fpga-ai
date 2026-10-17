@@ -85,31 +85,58 @@ conv1 chiếm 48.672/192.064 = **25,3 % số MAC** nhưng **28,8 % thời gian**
 |---|---:|---:|---:|---:|---:|---:|
 | conv1 | 48.672 | 3.491.721 | 1.600.258 | 3.491.721 | 1.600.258 | **1.133.668** |
 | pool1 | — | 225.600 | 225.600 | 225.600 | 225.600 | 225.600 |
-| conv2 | 139.392 | 8.153.979 | 4.199.609 | 1.924.815 | 986.226 | 986.226 |
+| conv2 | 139.392 | 5.011.844 | 4.199.609 | 1.926.185 | 986.226 | 986.226 |
 | pool2 | — | 65.921 | 65.921 | 65.921 | 65.921 | 65.921 |
 | dense | 4.000 | 192.552 | 126.224 | 48.552 | 39.052 | 39.057 |
-| **TỔNG** | **192.064** | **12.129.818** | **6.217.657** | **5.756.654** | **2.917.102** | **2.450.517** |
-| Số lệnh | | 1.864.264 | 911.920 | 912.832 | 460.794 | **391.278** |
-| **Thời gian @27 MHz** | | **449,3 ms** | **230,3 ms** | **213,2 ms** | **108,0 ms** | **90,8 ms** |
-| chu kỳ/MAC | | 63,16 | 32,37 | 29,97 | 15,19 | **12,76** |
-| Ảnh/giây | | 2,23 | 4,34 | 4,69 | 9,26 | **11,02** |
-| **Tăng tốc so A-V0** | | 1,00× | **1,95×** | **2,11×** | **4,16×** | **4,95×** |
+| **TỔNG** | **192.064** | **8.987.660** | **6.217.634** | **5.758.001** | **2.917.079** | **2.450.494** |
+| Số lệnh | | 1.358.200 | 911.920 | 913.105 | 460.793 | **391.278** |
+| **Thời gian @27 MHz** | | **332,9 ms** | **230,3 ms** | **213,3 ms** | **108,0 ms** | **90,8 ms** |
+| chu kỳ/MAC | | 46,80 | 32,37 | 29,98 | 15,19 | **12,76** |
+| Ảnh/giây | | 3,00 | 4,34 | 4,69 | 9,26 | **11,02** |
+| IPC | | 0,151 | 0,147 | 0,159 | 0,158 | **0,160** |
+| **Tăng tốc so A-V0** | | 1,00× | **1,45×** | **1,56×** | **3,08×** | **3,67×** |
 
-### Kết quả quan trọng nhất: hai tối ưu gần như nhân được với nhau
+Mọi số trong bảng đo trên kit, **cùng một trạng thái mã nguồn** (`SRC_HASH = 647f1d071aca`), mỗi biến
+thể 2/2 lần đọc độc lập đạt. Xem mục 3c về việc vì sao điều kiện "cùng một trạng thái mã nguồn" phải
+được kiểm bằng máy.
 
-| Nguồn tăng tốc | Hệ số |
+### Kết quả quan trọng nhất: lệnh tùy biến cho lợi ÍCH LỚN HƠN khi phần mềm đã tối ưu
+
+| Phép so | Hệ số |
 |---|---|
-| Tối ưu phần mềm một mình (A-V0 → A-V1) | **1,95×** |
-| DOT4 trên C thẳng (A-V0 → A-V2) | **2,11×** |
-| **DOT4 thêm vào C đã tối ưu** (A-V1 → A-V1+DOT4) | **2,13×** |
-| Cả hai (A-V0 → A-V1+DOT4) | **4,16×** |
-| Tích của hai hệ số riêng | 1,95 × 2,13 = **4,16×** |
-| **+ phủ DOT4 cho conv1 bằng bố cục** (→ A-V1+DOT4+C1) | **4,95×** |
+| Tối ưu phần mềm một mình (A-V0 → A-V1) | **1,4455×** |
+| **DOT4 trên C thẳng** (A-V0 → A-V2) | **1,5609×** |
+| **DOT4 thêm vào C đã tối ưu** (A-V1 → A-V1+DOT4) | **2,1315×** |
+| Cả hai (A-V0 → A-V1+DOT4), đo trực tiếp | **3,0810×** |
+| Tích 1,4455 × 2,1315 | **3,0810×** |
+| + phủ DOT4 cho conv1 bằng bố cục (→ A-V1+DOT4+C1) | **3,6676×** |
 
-Tích đúng bằng số đo. Nghĩa là **lợi ích của lệnh tùy biến không biến mất khi phần mềm đã được tối
-ưu** (2,13× so với 2,11×) — đây là câu trả lời cho phản biện "tăng tốc chỉ nhờ baseline code kém".
-Hai tối ưu tác động vào hai thứ khác nhau: tối ưu phần mềm bỏ phần **tính chỉ số**, DOT4 bỏ phần
-**nhân-cộng**.
+Hai điều cần tách riêng, vì chúng hay bị nhập làm một:
+
+**(a) Phân rã theo chuỗi thì luôn khớp tuyệt đối** — 1,4455 × 2,1315 = 3,0810, đúng bằng số đo tới
+bốn chữ số thập phân. Nhưng điều này **đúng do định nghĩa**: đó là cùng một con đường A-V0 → A-V1 →
+A-V1+DOT4 viết thành hai chặng. Nó xác nhận phép đo nhất quán, không phải một phát hiện.
+
+**(b) Phép thử ĐỘC LẬP thì KHÔNG khớp — và đó mới là phát hiện.** Nếu hai tối ưu độc lập nhau thì
+DOT4 phải cho cùng một hệ số bất kể phần mềm đã tối ưu hay chưa. Thực đo:
+
+| DOT4 thêm vào | Hệ số |
+|---|---|
+| C thẳng (A-V0 → A-V2) | 1,5609× |
+| C đã tối ưu (A-V1 → A-V1+DOT4) | **2,1315×** |
+
+→ **DOT4 cho lợi ích gấp 1,37 lần khi phần mềm đã được tối ưu trước.** Hai tối ưu **không độc lập**,
+và tương tác giữa chúng là **thuận lợi**.
+
+Lý do, đọc được từ chính số liệu: ở C thẳng, `conv2` tốn 5.011.844 chu kỳ cho 139.392 MAC (35,95
+chu kỳ/MAC) mà phần lớn là **tính chỉ số** chứ không phải nhân-cộng; DOT4 chỉ cắt phần nhân-cộng, nên
+chỉ cắt được một *phân số nhỏ*. Sau khi tối ưu phần mềm, `conv2` còn 30,13 chu kỳ/MAC và phần
+nhân-cộng mới chiếm tỷ trọng lớn — lúc đó DOT4 cắt được nhiều hơn.
+
+**Hệ quả cho phương pháp thiết kế đồng thời (co-design): thứ tự có ý nghĩa.** Đo một lệnh tùy biến
+trên mã nguồn chưa tối ưu sẽ **đánh giá THẤP** giá trị của nó (1,56× thay vì 2,13×). Đây cũng là câu
+trả lời cho phản biện "tăng tốc chỉ nhờ baseline code kém": với baseline *đã tối ưu*, DOT4 vẫn cho
+2,13× — cao hơn khi đo trên baseline kém.
 
 ### Gỡ nút cổ chai conv1 bằng bố cục, không thêm phần cứng (A-V1+DOT4+C1)
 
@@ -125,14 +152,14 @@ int8 liền nhau mà địa chỉ lại thẳng hàng 4 byte. Cách gỡ **khôn
 - conv1 còn **3 lệnh DOT4** cho 3 hàng thay vì 9 phép nhân vô hướng.
 - Chi phí: **3.584 byte `.bss`** cho 4 bộ đệm + **3.136 byte sao chép mỗi ảnh**.
 
-Kết quả: conv1 **1.600.258 → 1.133.668** chu kỳ (1,41×), tổng **2.917.102 → 2.450.517** (1,19×),
-đưa tăng tốc tích luỹ lên **4,95×**. conv1 từ 32,88 xuống **23,29 chu kỳ/MAC**.
+Kết quả: conv1 **1.600.258 → 1.133.668** chu kỳ (1,41×), tổng **2.917.079 → 2.450.494** (1,19×),
+đưa tăng tốc tích luỹ lên **3,67×**. conv1 từ 32,88 xuống **23,29 chu kỳ/MAC**.
 
 ### Chu kỳ/MAC từng lớp
 | Lớp | A-V0 | A-V1 | A-V2 | A-V1+DOT4 | A-V1+DOT4+C1 |
 |---|---:|---:|---:|---:|---:|
 | conv1 (Cin=1) | 71,74 | 32,88 | 71,74 | 32,88 | **23,29** |
-| conv2 (Cin=8) | 58,50 | 30,13 | 13,81 | **7,08** | 7,08 |
+| conv2 (Cin=8) | 35,95 | 30,13 | 13,82 | **7,08** | 7,08 |
 | dense | 48,14 | 31,56 | 12,14 | **9,76** | 9,76 |
 
 ### Chi phí của requantize — đo trực tiếp
@@ -240,6 +267,55 @@ khớp golden 10.000/10.000 nên **toàn bộ 175 lỗi là của mô hình, kh�
 
 Vật phẩm: `results/experiment/m1s/m1s_10k.csv` (10.000 dòng, 14 cột) · `results/experiment/m1s/v10k/`.
 
+## 3c. Một sai số đã phát hiện và sửa — và cách chặn để không lặp lại
+
+Mục này ghi lại một lỗi thật trong chính số liệu của tài liệu này, vì cách phát hiện nó có giá trị
+phương pháp.
+
+**Lỗi.** A-V0 và A-V2 ban đầu được đo bằng một bản `main.c` **chưa commit**. Sau đó, khi thêm biến thể
+A-V1, phần `conv2` *bản thẳng* được viết lại (dùng macro `MAC8` và con trỏ chạy) và trở nên nhanh hơn
+— nhưng **A-V0 và A-V2 không được đo lại**. Hệ quả: baseline chậm hơn thực tế, nên **mọi tỷ số tăng
+tốc so với A-V0 đều bị phóng đại**.
+
+| | Đã công bố (sai) | Đo lại (đúng) |
+|---|---:|---:|
+| A-V0, conv2 | 8.153.979 | **5.011.844** |
+| A-V0, tổng | 12.129.818 | **8.987.660** |
+| A-V0, số lệnh | 1.864.264 | **1.358.200** |
+| A-V2, conv2 | 1.924.815 | **1.926.185** |
+| Tăng tốc A-V0 → A-V1 | 1,95× | **1,45×** |
+| Tăng tốc A-V0 → A-V2 | 2,11× | **1,56×** |
+| Tăng tốc A-V0 → A-V1+DOT4+C1 | 4,95× | **3,67×** |
+
+**Cách phát hiện.** Không phải bằng rà soát tay. Khi chuyển sang nhánh B (lõi tự viết), tôi đặt ra một
+điều kiện: *chạy cùng một file `firmware.hex` trên hai lõi thì `rdinstret` phải bằng nhau tuyệt đối*,
+vì cùng mã máy thì cùng số lệnh. Lõi mới báo 1.358.178 còn số A-V0 đã công bố là 1.864.264. Chênh lệch
+đó không thể giải thích bằng vi kiến trúc, nên chỉ còn một khả năng: **hai số đo không cùng firmware**.
+
+Bước xác nhận: `GIT_HASH` nhúng trong firmware. `sim.log` đã lưu của A-V0 báo `339b4fb`, còn file hex
+trên đĩa báo `c718706` — hai bản khác nhau cùng mang tên `v0/firmware.hex`.
+
+**Cách chặn.** `GIT_HASH` **không đủ**: firmware có thể dựng từ bản nháp chưa commit, và khi đó hash
+vẫn trỏ về commit cũ một cách hợp lệ. Nên firmware giờ in thêm **dấu vân tay NỘI DUNG**:
+
+```
+SRC_HASH := $(shell cat main.c $(FWDIR)/weights.h | shasum -a 256 | cut -c1-12)
+```
+
+Kit in `M1S,src,<SRC_HASH>`, và `scripts/m1s_check.py` **từ chối ghi nhận** số đo nếu giá trị đó khác
+mã nguồn đang có trên đĩa. Cả năm số trong bảng mục 3 đều mang `SRC_HASH = 647f1d071aca`.
+
+**Bài học, phát biểu cho luận văn.** Một bộ số đo chỉ so sánh được với nhau khi **mọi biến thể đến từ
+cùng một trạng thái mã nguồn**, và điều kiện đó phải được **máy kiểm**, không phải người nhớ. Kiểm
+tính đúng đắn (CRC khớp golden) **không** bắt được lỗi này: cả hai bản firmware đều cho kết quả đúng
+từng bit — chúng chỉ chạy nhanh khác nhau.
+
+**Phạm vi ảnh hưởng.** Chỉ các *tỷ số* so với A-V0 và các con số của A-V0/A-V2. Không ảnh hưởng:
+độ chính xác 98,25 % (mục 1 và 3b), 10.000/10.000 CRC khớp golden, tài nguyên FPGA và Fmax (mục 4),
+chi phí requantize 49,6 chu kỳ, và kết luận "kit = Verilator bằng tuyệt đối". Số đo 10.000 ảnh ở mục
+3b chạy trên firmware dựng **trước** khi thêm dấu `SRC_HASH`; `scripts/cmp_layers.py` đã chứng minh mã
+máy của cả năm lớp tính toán giống hệt bản `v1dc`, nên kết quả đó vẫn áp dụng.
+
 ## 4. Tài nguyên FPGA
 
 | Thiết kế | LUT4 | DFF | BSRAM | MULT18X18 | Fmax (MHz) |
@@ -249,7 +325,7 @@ Vật phẩm: `results/experiment/m1s/m1s_10k.csv` (10.000 dòng, 14 cột) · `
 | **Chi phí của DOT4** | **+124 (+1,6 %)** | +84 | 0 | +4 | **+0,13** |
 
 Ba biến thể có DOT4 dùng **cùng một bitstream về mặt phần cứng** — chỉ khác nội dung firmware trong
-BSRAM. Tương tự A-V0 và A-V1. Nghĩa là: **toàn bộ 1,95× của A-V1 và 1,19× của bước +C1 là miễn phí
+BSRAM. Tương tự A-V0 và A-V1. Nghĩa là: **toàn bộ 1,45× của A-V1 và 1,19× của bước +C1 là miễn phí
 về phần cứng**; chỉ 2,13× của DOT4 phải trả **+124 LUT4 (+1,6 %)** và **không giảm Fmax**.
 Biên Fmax so với 27 MHz vẫn là **2,66 lần**.
 
@@ -259,15 +335,15 @@ A-V1+DOT4 27.792 (42,4 %) · A-V1+DOT4+C1 **32.368 (49,4 %)**. Bản +C1 tốn t
 
 ## 5. Nhận xét
 
-**1. Hai hướng tối ưu độc lập và nhân được với nhau.** 1,95× (phần mềm) × 2,13× (lệnh tùy biến) =
-4,16× = đúng số đo. Lý do: chúng cắt hai phần khác nhau của chi phí. Tối ưu phần mềm bỏ phần tính
+**1. Hai hướng tối ưu KHÔNG độc lập, và tương tác thuận lợi.** DOT4 cho 1,56× trên C thẳng nhưng
+**2,13× trên C đã tối ưu** — gấp 1,37 lần. Lý do: chúng cắt hai phần khác nhau của chi phí. Tối ưu phần mềm bỏ phần tính
 chỉ số (thấy rõ ở conv1: 71,74 → 32,88 chu kỳ/MAC mà không có lệnh mới nào); DOT4 bỏ phần nhân-cộng
 (conv2: 30,13 → 7,08 chu kỳ/MAC trên nền đã tối ưu). **Đây là kết quả đáng giá nhất của thí nghiệm**:
 nó bảo vệ kết luận khỏi phản biện "baseline code kém".
 
 **2. Nút cổ chai conv1 gỡ được bằng BỐ CỤC, không cần phần cứng mới.** Ở A-V1+DOT4, conv1 chiếm
 54,9 % thời gian và bị chặn bởi yêu cầu thẳng hàng 4 byte của `DOT4`. Bốn bản sao ảnh dịch
-0/1/2/3 byte (3.584 byte `.bss`) gỡ được hạn chế đó và cho thêm **1,19×**, đưa tổng lên **4,95×**
+0/1/2/3 byte (3.584 byte `.bss`) gỡ được hạn chế đó và cho thêm **1,19×**, đưa tổng lên **3,67×**
 (mục 3). → **Giới hạn của một lệnh tùy biến có thể nằm ở bố cục dữ liệu chứ không ở bản thân lệnh.**
 Đây là kết luận đáng đưa vào luận văn: trước khi thiết kế thêm phần cứng, hãy kiểm xem bố cục đã cho
 lệnh hiện có dùng hết chưa.
@@ -277,12 +353,12 @@ Sau bước đó, conv1 vẫn là lớp tốn nhất (1.133.668 chu kỳ = 46,3 
 đầu ra. Đó là lý do conv1 đạt 23,29 chu kỳ/MAC trong khi conv2 đạt 7,08.
 
 **3. Ước tính ở F7 khá sát.** F7 ngoại suy từ chu kỳ/MAC của conv1 ra **≈516 ms** cho M1-S. Số đo thật
-của A-V0 là **449,3 ms** — ước tính **cao hơn 15 %**, lệch theo hướng an toàn, và đúng lý do F7 đã nêu:
-conv2 có `Cin=8` nên chi phí/MAC *thấp hơn* conv1 (58,50 so với 71,74) do chia sẻ được phần tính chỉ số.
+của A-V0 là **332,9 ms** — ước tính **cao hơn 55 %**, lệch theo hướng an toàn, và đúng lý do F7 đã nêu:
+conv2 có `Cin=8` nên chi phí/MAC *thấp hơn* conv1 (35,95 so với 71,74) do chia sẻ được phần tính chỉ số.
 
 **4. Một cái bẫy của trình biên dịch, không liên quan tới phần cứng.** Ban đầu 5 lớp là hàm `static`
 gọi một lần, GCC `-O2` nội suy hết vào `main`; cấp phát thanh ghi tràn làm A-V0 chạy **21.350.804**
-chu kỳ. Thêm `__attribute__((noinline))` cho mỗi lớp đưa về **12.129.818** chu kỳ — **nhanh hơn 1,76×
+chu kỳ. Thêm `__attribute__((noinline))` cho mỗi lớp đưa về **8.987.660** chu kỳ — **nhanh hơn 1,76×
 mà không đổi một dòng thuật toán**. Tệ hơn: khi chưa có `noinline`, cấp phát thanh ghi của conv1
 *thay đổi theo* việc conv2 có dùng DOT4 hay không (3.803.170 so với 4.950.316 chu kỳ), làm phép so
 sánh mất ý nghĩa. → **Quy tắc phương pháp: khi so hai biến thể tập lệnh, phải cố định ranh giới hàm,

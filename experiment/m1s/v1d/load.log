@@ -18,3 +18,13 @@ Erase SRAM Load SRAM Load SRAM: [======================                        
 
 Done
 DONE
+Jtag frequency : requested 6.00MHz    -> real 6.00MHz   
+Parse file Parse v1d/top.fs: 
+Done
+DONE
+Erase SRAM Load SRAM Load SRAM: [===================                               ] 36.11%
+Load SRAM: [========================================          ] 79.44%
+Load SRAM: [==================================================] 100.00%
+
+Done
+DONE

@@ -1,0 +1,478 @@
+// mycore — lõi RISC-V RV32IM tự viết cho nhánh B (xem docs/BRANCH_B_PLAN.md).
+//
+// MỤC TIÊU: nâng IPC. Nhánh A đo được IPC = 0,160 trên PicoRV32 + bus 2 chu kỳ.
+//
+// CÁCH LÀM — hai tầng, bộ nhớ MỘT cổng đọc đồng bộ 1 chu kỳ:
+//
+//   Hợp đồng bộ nhớ: đặt địa chỉ ở chu kỳ n  ->  dữ liệu có ở chu kỳ n+1.
+//
+//   Trong chu kỳ S_EXEC, lệnh đang nằm trên mem_rdata (nạp từ chu kỳ trước). Lõi
+//   giải mã, đọc thanh ghi, tính toán, ghi về, VÀ đặt địa chỉ của lệnh kế tiếp —
+//   tất cả trong một chu kỳ. Vì địa chỉ kế tiếp được tính xong trong chính chu kỳ
+//   đó, lõi KHÔNG đoán nhánh và KHÔNG có hình phạt rẽ nhánh: nhảy hay không nhảy
+//   đều hết đúng 1 chu kỳ.
+//
+//   Chỉ khi lệnh cần truy cập dữ liệu (load/store) thì cổng bộ nhớ bị chiếm, nên
+//   lệnh kế phải nạp ở chu kỳ sau -> load/store hết 2 chu kỳ (S_EXEC + S_MEM).
+//   Nhân/chia hết 2 / ~34 chu kỳ (S_MD).
+//
+//   IPC kỳ vọng = 1 / (1 + tỷ lệ lệnh truy cập bộ nhớ + chi phí nhân/chia).
+//   Đây là kỳ vọng thiết kế, số thật lấy từ đo.
+//
+// PHẠM VI: RV32IM đầy đủ (kể cả div/rem mà firmware không dùng, để qua trọn bộ
+// riscv-tests), CSR chỉ đọc cycle/cycleh/instret/instreth, fence và fence.i = nop,
+// ecall/ebreak/lệnh lạ/truy cập lệch địa chỉ = trap.
+//
+// Bộ nhân: MUL_DSP=0 dùng toán tử `*` (mô phỏng, hoặc tổng hợp thành LUT).
+// MUL_DSP=1 (cổng B3) sẽ gọi MULT18X18 trực tiếp — bài học F4: để yosys tự suy
+// luận DSP cho kết quả SAI TRÊN KIT.
+
+`default_nettype none
+
+module mycore #(
+    parameter [31:0] RESET_PC    = 32'h0000_0000,
+    parameter        WITH_MULDIV = 1,
+    parameter        MUL_DSP     = 0,
+    parameter        WITH_DOT4   = 0        // hiện thực ở cổng B4
+) (
+    input  wire        clk,
+    input  wire        resetn,
+
+    // mem_addr/mem_wstrb/mem_wdata/mem_valid là TỔ HỢP, không qua thanh ghi.
+    // Lý do: BSRAM đã có thanh ghi địa chỉ ở đầu vào. Nếu lõi lại thêm một tầng
+    // thanh ghi nữa thì địa chỉ ra chậm một chu kỳ -> mỗi lệnh mất 2 chu kỳ
+    // (IPC 0,5) và mất hết mục đích của thiết kế này.
+    output reg  [31:0] mem_addr,
+    output reg  [31:0] mem_wdata,
+    output reg  [3:0]  mem_wstrb,
+    output reg         mem_valid,
+    input  wire [31:0] mem_rdata,
+
+    output reg         trap,
+    output wire [31:0] dbg_pc,
+    output wire [31:0] dbg_instr
+);
+    // ---------------- mã lệnh ----------------
+    localparam [6:0] OP_LUI    = 7'b0110111;
+    localparam [6:0] OP_AUIPC  = 7'b0010111;
+    localparam [6:0] OP_JAL    = 7'b1101111;
+    localparam [6:0] OP_JALR   = 7'b1100111;
+    localparam [6:0] OP_BRANCH = 7'b1100011;
+    localparam [6:0] OP_LOAD   = 7'b0000011;
+    localparam [6:0] OP_STORE  = 7'b0100011;
+    localparam [6:0] OP_OPIMM  = 7'b0010011;
+    localparam [6:0] OP_OP     = 7'b0110011;
+    localparam [6:0] OP_MISC   = 7'b0001111;
+    localparam [6:0] OP_SYSTEM = 7'b1110011;
+    localparam [6:0] OP_CUSTOM = 7'b0001011;
+
+    localparam [1:0] S_FETCH = 2'd0,   // chờ lệnh đầu tiên về sau reset / sau S_MEM
+                     S_EXEC  = 2'd1,   // giải mã + thực thi + ghi về + nạp lệnh kế
+                     S_MEM   = 2'd2,   // dữ liệu về (load) hoặc ghi xong (store)
+                     S_MD    = 2'd3;   // nhân / chia nhiều chu kỳ
+
+    reg [1:0]  state;
+    reg [31:0] pc;            // địa chỉ lệnh ĐANG thực thi trong S_EXEC
+    reg [31:0] pc_ret;        // địa chỉ lệnh kế, giữ lại khi phải qua S_MEM/S_MD
+
+    // ---------------- tệp thanh ghi ----------------
+    // Ghi tệp thanh ghi bằng tín hiệu TỔ HỢP, ghi ngay ở sườn kết thúc chu kỳ tính
+    // ra kết quả. Nếu dùng thanh ghi trung gian thì kết quả chỉ thấy được sau 2 chu
+    // kỳ, còn lệnh kế đã đọc ở chu kỳ sau -> lỗi đọc-sau-ghi.
+    reg [31:0] regs [0:31];
+    reg        rf_we;
+    reg [4:0]  rf_wa;
+    reg [31:0] rf_wd;
+`ifdef MYCORE_SIM_INIT
+    integer ri;
+    initial for (ri = 0; ri < 32; ri = ri + 1) regs[ri] = 32'd0;
+`endif
+
+    // ---------------- giải mã ----------------
+    wire [31:0] instr = mem_rdata;
+    wire [6:0]  opc   = instr[6:0];
+    wire [4:0]  rd    = instr[11:7];
+    wire [2:0]  f3    = instr[14:12];
+    wire [4:0]  rs1   = instr[19:15];
+    wire [4:0]  rs2   = instr[24:20];
+    wire [6:0]  f7    = instr[31:25];
+
+    wire [31:0] imm_i = {{20{instr[31]}}, instr[31:20]};
+    wire [31:0] imm_s = {{20{instr[31]}}, instr[31:25], instr[11:7]};
+    wire [31:0] imm_b = {{19{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
+    wire [31:0] imm_u = {instr[31:12], 12'd0};
+    wire [31:0] imm_j = {{11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1'b0};
+
+    wire [31:0] rv1 = (rs1 == 5'd0) ? 32'd0 : regs[rs1];
+    wire [31:0] rv2 = (rs2 == 5'd0) ? 32'd0 : regs[rs2];
+
+    // ---------------- ALU ----------------
+    wire        is_imm = (opc == OP_OPIMM);
+    wire [31:0] alu_b  = is_imm ? imm_i : rv2;
+    wire [4:0]  shamt  = is_imm ? instr[24:20] : rv2[4:0];
+    wire        do_sub = (opc == OP_OP) && f7[5];
+
+    wire [31:0] sum    = do_sub ? (rv1 - alu_b) : (rv1 + alu_b);
+    wire        lt_s   = ($signed(rv1) < $signed(alu_b));
+    wire        lt_u   = (rv1 < alu_b);
+    wire        sra_i  = (opc == OP_OPIMM) ? instr[30] : f7[5];
+
+    reg [31:0] alu_r;
+    always @(*) begin
+        case (f3)
+            3'b000: alu_r = sum;
+            3'b001: alu_r = rv1 << shamt;
+            3'b010: alu_r = {31'd0, lt_s};
+            3'b011: alu_r = {31'd0, lt_u};
+            3'b100: alu_r = rv1 ^ alu_b;
+            3'b101: alu_r = sra_i ? $signed($signed(rv1) >>> shamt) : (rv1 >> shamt);
+            3'b110: alu_r = rv1 | alu_b;
+            3'b111: alu_r = rv1 & alu_b;
+        endcase
+    end
+
+    // ---------------- rẽ nhánh ----------------
+    reg br_take;
+    always @(*) begin
+        case (f3)
+            3'b000:  br_take = (rv1 == rv2);
+            3'b001:  br_take = (rv1 != rv2);
+            3'b100:  br_take = lt_s;
+            3'b101:  br_take = !lt_s;
+            3'b110:  br_take = lt_u;
+            3'b111:  br_take = !lt_u;
+            default: br_take = 1'b0;
+        endcase
+    end
+    // blt/bge/bltu/bgeu so rv1 với rv2, không với imm — alu_b = rv2 vì opc != OPIMM.
+
+    // ---------------- địa chỉ dữ liệu ----------------
+    wire [31:0] ld_addr = rv1 + imm_i;
+    wire [31:0] st_addr = rv1 + imm_s;
+    wire [31:0] d_addr  = (opc == OP_STORE) ? st_addr : ld_addr;
+
+    wire mis_h = d_addr[0];
+    wire mis_w = (d_addr[1:0] != 2'b00);
+    wire ld_mis = (f3 == 3'b001 || f3 == 3'b101) ? mis_h :
+                  (f3 == 3'b010)                 ? mis_w : 1'b0;
+    wire st_mis = (f3 == 3'b001) ? mis_h :
+                  (f3 == 3'b010) ? mis_w : 1'b0;
+
+    reg [3:0]  st_strb;
+    reg [31:0] st_data;
+    always @(*) begin
+        case (f3)
+            3'b000: begin                                  // sb
+                st_strb = 4'b0001 << d_addr[1:0];
+                st_data = {4{rv2[7:0]}};
+            end
+            3'b001: begin                                  // sh
+                st_strb = d_addr[1] ? 4'b1100 : 4'b0011;
+                st_data = {2{rv2[15:0]}};
+            end
+            default: begin                                 // sw
+                st_strb = 4'b1111;
+                st_data = rv2;
+            end
+        endcase
+    end
+
+    // ---------------- tách dữ liệu load (chu kỳ S_MEM) ----------------
+    reg [2:0]  ld_f3;
+    reg [1:0]  ld_off;
+    reg [4:0]  ld_rd;
+    reg        ld_is;
+
+    reg [7:0]  ld_b;
+    reg [15:0] ld_h;
+    reg [31:0] ld_val;
+    always @(*) begin
+        case (ld_off)
+            2'd0: ld_b = mem_rdata[7:0];
+            2'd1: ld_b = mem_rdata[15:8];
+            2'd2: ld_b = mem_rdata[23:16];
+            2'd3: ld_b = mem_rdata[31:24];
+        endcase
+        ld_h = ld_off[1] ? mem_rdata[31:16] : mem_rdata[15:0];
+        case (ld_f3)
+            3'b000:  ld_val = {{24{ld_b[7]}},  ld_b};      // lb
+            3'b001:  ld_val = {{16{ld_h[15]}}, ld_h};      // lh
+            3'b100:  ld_val = {24'd0, ld_b};               // lbu
+            3'b101:  ld_val = {16'd0, ld_h};               // lhu
+            default: ld_val = mem_rdata;                   // lw
+        endcase
+    end
+
+    // ---------------- bộ đếm CSR ----------------
+    reg [63:0] cnt_cycle;
+    reg [63:0] cnt_instret;
+    reg [31:0] csr_val;
+    always @(*) begin
+        case (instr[31:20])
+            12'hC00: csr_val = cnt_cycle[31:0];
+            12'hC80: csr_val = cnt_cycle[63:32];
+            12'hC02: csr_val = cnt_instret[31:0];
+            12'hC82: csr_val = cnt_instret[63:32];
+            default: csr_val = 32'd0;
+        endcase
+    end
+    wire csr_ok = (instr[31:20] == 12'hC00) || (instr[31:20] == 12'hC80)
+               || (instr[31:20] == 12'hC02) || (instr[31:20] == 12'hC82);
+
+    // ---------------- nhân / chia ----------------
+    reg [31:0] md_a, md_b;
+    reg [2:0]  md_f3;
+    reg [4:0]  md_rd;
+    reg [5:0]  md_cnt;
+    reg        md_is_div;
+
+    // Nhân 32x32 -> 64 không dấu, rồi chỉnh dấu. Một bộ nhân không dấu phục vụ
+    // cả mul/mulh/mulhsu/mulhu:
+    //   signed(a)*signed(b)   = u - (a31 ? b<<32 : 0) - (b31 ? a<<32 : 0)
+    //   signed(a)*unsigned(b) = u - (a31 ? b<<32 : 0)
+    wire [63:0] prod_u;
+    generate
+        if (MUL_DSP == 0) begin : g_mul_beh
+            assign prod_u = md_a * md_b;
+        end else begin : g_mul_dsp
+            // cổng B3 thay bằng 4 khối MULT18X18
+            assign prod_u = md_a * md_b;
+        end
+    endgenerate
+
+    wire need_ca = (md_f3 == 3'b001 || md_f3 == 3'b010) && md_a[31];   // mulh, mulhsu
+    wire need_cb = (md_f3 == 3'b001)                    && md_b[31];   // mulh
+    wire [63:0] prod_s = prod_u - (need_ca ? {md_b, 32'd0} : 64'd0)
+                                - (need_cb ? {md_a, 32'd0} : 64'd0);
+
+    // Chia dịch-trừ 32 bước trên trị tuyệt đối.
+    reg [31:0] dvd, dvs, quo, rmd;
+    reg        q_neg, r_neg;
+    wire [32:0] rmd_sh  = {rmd, dvd[31]};
+    wire        rmd_ge  = (rmd_sh >= {1'b0, dvs});
+    wire [32:0] rmd_sub = rmd_sh - {1'b0, dvs};
+
+    wire        div_signed   = (md_f3 == 3'b100) || (md_f3 == 3'b110);  // div, rem (đã chốt)
+    wire        div_signed_d = (f3    == 3'b100) || (f3    == 3'b110);  // div, rem (đang giải mã)
+    wire [31:0] quo_fin = q_neg ? (~quo + 32'd1) : quo;
+    wire [31:0] rmd_fin = r_neg ? (~rmd + 32'd1) : rmd;
+
+    reg [31:0] md_res;
+    always @(*) begin
+        case (md_f3)
+            3'b000:  md_res = prod_u[31:0];                 // mul
+            3'b001:  md_res = prod_s[63:32];                // mulh
+            3'b010:  md_res = prod_s[63:32];                // mulhsu
+            3'b011:  md_res = prod_u[63:32];                // mulhu
+            3'b100:  md_res = quo_fin;                      // div
+            3'b101:  md_res = quo;                          // divu
+            3'b110:  md_res = rmd_fin;                      // rem
+            default: md_res = rmd;                          // remu
+        endcase
+    end
+
+    // ---------------- phân loại lệnh ----------------
+    wire is_muldiv = (opc == OP_OP) && (f7 == 7'b0000001) && (WITH_MULDIV != 0);
+    wire is_csr    = (opc == OP_SYSTEM) && (f3 != 3'b000);
+    wire is_sys0   = (opc == OP_SYSTEM) && (f3 == 3'b000);   // ecall / ebreak / mret...
+
+    reg illegal;
+    always @(*) begin
+        case (opc)
+            OP_LUI, OP_AUIPC, OP_JAL, OP_BRANCH, OP_STORE: illegal = 1'b0;
+            OP_JALR:   illegal = (f3 != 3'b000);
+            OP_LOAD:   illegal = (f3 == 3'b011) || (f3 == 3'b110) || (f3 == 3'b111);
+            OP_OPIMM:  illegal = 1'b0;
+            OP_OP:     illegal = !((f7 == 7'b0000000) ||
+                                   (f7 == 7'b0100000 && (f3 == 3'b000 || f3 == 3'b101)) ||
+                                   (f7 == 7'b0000001 && (WITH_MULDIV != 0)));
+            OP_MISC:   illegal = 1'b0;                       // fence, fence.i = nop
+            OP_SYSTEM: illegal = is_csr ? !csr_ok : 1'b0;
+            OP_CUSTOM: illegal = (WITH_DOT4 == 0);
+            default:   illegal = 1'b1;
+        endcase
+    end
+
+    // ---------------- địa chỉ lệnh kế ----------------
+    reg [31:0] next_pc;
+    always @(*) begin
+        case (opc)
+            OP_JAL:    next_pc = pc + imm_j;
+            OP_JALR:   next_pc = (rv1 + imm_i) & ~32'd1;
+            OP_BRANCH: next_pc = br_take ? (pc + imm_b) : (pc + 32'd4);
+            default:   next_pc = pc + 32'd4;
+        endcase
+    end
+
+    // ---------------- giá trị ghi về trong S_EXEC ----------------
+    reg [31:0] wb_val;
+    reg        wb_en;
+    always @(*) begin
+        wb_en  = 1'b0;
+        wb_val = 32'd0;
+        case (opc)
+            OP_LUI:         begin wb_en = 1'b1; wb_val = imm_u; end
+            OP_AUIPC:       begin wb_en = 1'b1; wb_val = pc + imm_u; end
+            OP_JAL, OP_JALR:begin wb_en = 1'b1; wb_val = pc + 32'd4; end
+            OP_OPIMM:       begin wb_en = 1'b1; wb_val = alu_r; end
+            OP_OP:          begin wb_en = 1'b1; wb_val = alu_r; end
+            OP_SYSTEM:      begin wb_en = is_csr; wb_val = csr_val; end
+            default:        begin wb_en = 1'b0; end
+        endcase
+    end
+
+    wire acc_data = (opc == OP_LOAD) || (opc == OP_STORE);
+    wire mis      = (opc == OP_LOAD) ? ld_mis : st_mis;
+    wire bad      = illegal || is_sys0 || (acc_data && mis);
+
+    assign dbg_pc    = pc;
+    assign dbg_instr = instr;
+
+    // ---------------- cổng bộ nhớ (tổ hợp) ----------------
+    always @(*) begin
+        mem_addr  = pc;
+        mem_wdata = 32'd0;
+        mem_wstrb = 4'b0000;
+        mem_valid = 1'b0;
+        if (!trap) begin
+            case (state)
+                S_FETCH: begin
+                    mem_addr  = pc;
+                    mem_valid = 1'b1;
+                end
+                S_EXEC: begin
+                    if (bad) begin
+                        mem_valid = 1'b0;                  // sắp trap: không truy cập
+                    end else if (acc_data) begin
+                        mem_addr  = {d_addr[31:2], 2'b00};
+                        mem_wdata = st_data;
+                        mem_wstrb = (opc == OP_STORE) ? st_strb : 4'b0000;
+                        mem_valid = 1'b1;
+                    end else if (!is_muldiv) begin
+                        mem_addr  = next_pc;               // nạp lệnh kế NGAY chu kỳ này
+                        mem_valid = 1'b1;
+                    end
+                end
+                S_MEM: begin
+                    mem_addr  = pc_ret;
+                    mem_valid = 1'b1;
+                end
+                S_MD: if (md_cnt == 6'd0) begin
+                    mem_addr  = pc_ret;
+                    mem_valid = 1'b1;
+                end
+            endcase
+        end
+    end
+
+    // ---------------- ghi tệp thanh ghi (tổ hợp) ----------------
+    always @(*) begin
+        rf_we = 1'b0;
+        rf_wa = 5'd0;
+        rf_wd = 32'd0;
+        case (state)
+            S_EXEC: if (!bad && !acc_data && !is_muldiv && wb_en && rd != 5'd0) begin
+                rf_we = 1'b1; rf_wa = rd;    rf_wd = wb_val;
+            end
+            S_MEM: if (ld_is && ld_rd != 5'd0) begin
+                rf_we = 1'b1; rf_wa = ld_rd; rf_wd = ld_val;
+            end
+            S_MD: if (md_cnt == 6'd0 && md_rd != 5'd0) begin
+                rf_we = 1'b1; rf_wa = md_rd; rf_wd = md_res;
+            end
+            default: ;
+        endcase
+    end
+
+    // ---------------- máy trạng thái ----------------
+    always @(posedge clk) begin
+        if (!resetn) begin
+            state       <= S_FETCH;
+            pc          <= RESET_PC;
+            trap        <= 1'b0;
+            cnt_cycle   <= 64'd0;
+            cnt_instret <= 64'd0;
+            ld_is       <= 1'b0;
+            md_cnt      <= 6'd0;
+        end else if (!trap) begin
+            cnt_cycle <= cnt_cycle + 64'd1;
+
+            case (state)
+                S_FETCH: state <= S_EXEC;
+
+                S_EXEC: begin
+                    if (bad) begin
+                        trap <= 1'b1;
+                    end else if (acc_data) begin
+                        ld_is  <= (opc == OP_LOAD);
+                        ld_f3  <= f3;
+                        ld_off <= d_addr[1:0];
+                        ld_rd  <= rd;
+                        pc_ret <= next_pc;
+                        state  <= S_MEM;
+                    end else if (is_muldiv) begin
+                        md_a   <= rv1;
+                        md_b   <= rv2;
+                        md_f3  <= f3;
+                        md_rd  <= rd;
+                        md_is_div <= f3[2];
+                        pc_ret <= next_pc;
+                        if (f3[2]) begin
+                            // chia: 32 bước dịch-trừ trên trị tuyệt đối
+                            q_neg <= (f3 == 3'b100) && (rv1[31] ^ rv2[31]) && (rv2 != 32'd0);
+                            r_neg <= (f3 == 3'b110) && rv1[31];
+                            dvs   <= (div_signed_d && rv2[31]) ? (~rv2 + 32'd1) : rv2;
+                            quo   <= 32'd0;
+                            rmd   <= 32'd0;
+                            if (rv2 == 32'd0) begin
+                                // Đặc tả RISC-V: chia 0 -> thương toàn 1, dư = số bị chia
+                                dvd    <= 32'd0;
+                                quo    <= 32'hFFFF_FFFF;
+                                rmd    <= (div_signed_d && rv1[31]) ? (~rv1 + 32'd1) : rv1;
+                                md_cnt <= 6'd0;
+                            end else begin
+                                dvd    <= (div_signed_d && rv1[31]) ? (~rv1 + 32'd1) : rv1;
+                                md_cnt <= 6'd32;
+                            end
+                        end else begin
+                            md_cnt <= 6'd0;                // nhân: kết quả có ngay ở S_MD
+                        end
+                        state <= S_MD;
+                    end else begin
+                        pc          <= next_pc;
+                        cnt_instret <= cnt_instret + 64'd1;
+                        state       <= S_EXEC;
+                    end
+                end
+
+                S_MEM: begin
+                    ld_is       <= 1'b0;
+                    pc          <= pc_ret;
+                    cnt_instret <= cnt_instret + 64'd1;
+                    state       <= S_EXEC;
+                end
+
+                S_MD: begin
+                    if (md_cnt != 6'd0) begin
+                        if (md_is_div) begin
+                            rmd <= rmd_ge ? rmd_sub[31:0] : rmd_sh[31:0];
+                            dvd <= dvd << 1;
+                            quo <= {quo[30:0], rmd_ge};
+                        end
+                        md_cnt <= md_cnt - 6'd1;
+                    end else begin
+                        pc          <= pc_ret;
+                        cnt_instret <= cnt_instret + 64'd1;
+                        state       <= S_EXEC;
+                    end
+                end
+            endcase
+        end
+    end
+
+    always @(posedge clk)
+        if (resetn && rf_we) regs[rf_wa] <= rf_wd;
+
+endmodule
+
+`default_nettype wire

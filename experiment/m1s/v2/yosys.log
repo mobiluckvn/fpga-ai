@@ -3009,162 +3009,162 @@ Using template $paramod$b49350af947963686be7c4be015fd9ac962dd293$__GOWIN_LUTRAM_
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$b2943714a0dc01684b95effdae031303778ec7f2$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$be4a8b2e4174bda74f0b47d915aa8592c883df45$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$089a248af25bf0346360c1134b96338c2ab56ed5$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$f8f94c3b31073f60c872c7df4c6bc951e8bb55be$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$fc19b938e868d71a21d07b0c75082d9e1b06964a$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$836512b588f512542d408a6d4d83c9da5b064a89$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$88b7d54b5438970cfc833f10aa578eb077bc8124$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$190ebeecde77a5fa5c32dd53a6afc0110dc925a9$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$0689b24539de51e054e33893e9698ef149e55a8b$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$755c361b11389bcdc8238f54fefa5ec3355931ec$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$d35e7c3b47c0c689f47005c4db204111644de39a$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$ce696d106b6d70958df5177e9653d9cd86556537$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$e64f8faf38b5ddbeb0f8a08888360844753dd076$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$7c0eafda3d9508fbbe525237769faa17bc4c40a3$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$c643e2c7ece31ac3248c48b30d4f261ccba60a12$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$e510487a0da350646aac2fd237461526adebd77b$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$71078fb1c5e01d63756529c940cd82d03ffd3b47$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$2ab97abc39e85c832bb95d8bac9bc3a58afd0797$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$a83de7cdf3f0ca7530a56698d7a3a19d77624d4e$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$c0f92cc6cb821ffa57763d1f83a1479e9eb12790$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$260061ee71d906c04da41008098bb8b9c4d3b492$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$6b84d6609a3d372fc67a7c4e9bcacd7f30937b1c$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$29b308ab56475e99095a672e7eb34354e45b43b4$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$6c4d9afa501d430c6b84350688cad95b93dd0567$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$a52a69f234fcc78b50c18f95a15e256b628f3c04$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$e1e60d698a25b853ca3ba2e36a0387dcc9800183$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$7426d8999e13ab3daa20e22ce54af24ee50276ee$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$59829fa411ee95dc534fbfe1ca4f30ed348056db$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$3ca47e43f4c90cc92be8b2a0e4a54368a3d29d80$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$f787f097942fc8873ef7560c9433213ebb6817e5$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$9645827ad6b2ab78e863c4e62a1888b91ffe26ce$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$dae73f9bf38eddc265c9ab9fdbb67db57d5019e7$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$174fcc49c05a55e8e764b49d6a3f1e477b744082$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$97594dd460ec0021c88abb8e5358ba3f6d7178e4$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$eb649b355b0b430c54f56a460c7ceacf02555cf8$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$fd4ca4f06913ac0e6631970e111338a3a184f99b$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$961fdb99337256c7add9fd4932400053acac58b4$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$abded31ea0a93445fdf195620565466c0a35ac73$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$9300b14325119ba9382a46de6bf2894c0e8b6ffe$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$cf456a3c88928929947bf0467f8bb1308e6f4653$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$c52d883ad0434cf3358e4858ddf94171ccb2b1be$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$07b2d65225c9580ceb42874f7c9b81d03d5875ea$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$31be86bd41d79a15169a597756a2685cc3cb83f1$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$644db97065ed46c23bea71931bed6cc4e6c7f7da$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$275e6431bcb08af425f6ce6ea170bb63c6a297d4$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$2fae52644965076aad0374d0d4793c41d7bc4a55$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$6dc7a3ff024155a7d3c336e72e0444cbaf28a297$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$37e9fb8a35bdbf7f2420986074daec0e5ca8bda7$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$7b1c8ce769275b89546164c52161c780cc6a190b$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$fcc82acdfa6b2ccd786e7e3729f6068bb6209ac0$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$6083b8a1e3c0ab98b1b29b828393445eab407133$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$049b8f7e33acb7616d69b184e74015789776e034$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$5278caeb46090879a0c2c8df96b5834128eaebf1$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$d3f374f183f47afe15ee913cdea339d06796e30e$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$bbcca7d28e2a24718f779b2e1645f187b0c19b71$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$070820446bf0ea9946d598d0b6236d33d4be351e$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$243ecf89412bc6e9a322367b376db5e46f757bad$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$d7fa1006c3a2c32fab58565998f22db0c7d42b2d$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$1299d511040c17f641c568d903480cc1f3d37899$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$3d0fe006ce4eefc167e886b948a81b4e30a065e9$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$18f2b23f602cb822db5f9a70cec097df73f0271b$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$d4ef1d420c8916a813e1c4762449a163eafa5e56$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range [7:0] select out of bounds on signal `\PORT_A_WR_DATA': Setting 7 MSB bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [16:9] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [25:18] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
 /Users/v/tools/oss-cad-suite/libexec/../share/yosys/gowin/brams_map.v:114: Warning: Range select [34:27] out of bounds on signal `\PORT_A_WR_DATA': Setting all 8 result bits to undef.
-Using template $paramod$b02dad4990b90ed15e985649163d5b55150791f5$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
+Using template $paramod$02a08434a83d5cd55259e649bbe9296b8fc81016$__GOWIN_SP_ for cells of type $__GOWIN_SP_.
 No more expansions possible.
 <suppressed ~625 debug messages>
 
@@ -3984,9 +3984,9 @@ ABC: Warning: AIG with boxes has internal fanout in 0 complex flops and 1 carrie
 ABC: + &if -W 500 -v 
 ABC: K = 8. Memory (bytes): Truth =    0. Cut =   80. Obj =  160. Set =  816. CutMin = no
 ABC: Node =   18723.  Ch =  1428.  Total mem =    6.05 MB. Peak cut mem =    0.24 MB.
-ABC: P:  Del = 17905.00.  Ar =   29919.0.  Edge =    22299.  Cut =   304073.  T =     0.08 sec
+ABC: P:  Del = 17905.00.  Ar =   29919.0.  Edge =    22299.  Cut =   304073.  T =     0.09 sec
 ABC: P:  Del = 17905.00.  Ar =   30236.0.  Edge =    22317.  Cut =   301864.  T =     0.09 sec
-ABC: P:  Del = 17905.00.  Ar =   17165.0.  Edge =    22028.  Cut =   585361.  T =     0.16 sec
+ABC: P:  Del = 17905.00.  Ar =   17165.0.  Edge =    22028.  Cut =   585361.  T =     0.18 sec
 ABC: F:  Del = 17905.00.  Ar =    8814.0.  Edge =    19728.  Cut =   515521.  T =     0.15 sec
 ABC: If_ObjPerformMappingAnd(): Warning! Node with ID 8653 has delay (6419.000000) exceeding the required times (6399.004883).
 ABC: If_ObjPerformMappingAnd(): Warning! Node with ID 8656 has delay (7599.000000) exceeding the required times (7579.004883).
@@ -4006,8 +4006,8 @@ ABC: If_ObjPerformMappingAnd(): Warning! Node with ID 10668 has delay (11525.000
 ABC: If_ObjPerformMappingAnd(): Warning! Node with ID 10676 has delay (12748.000000) exceeding the required times (12635.004883).
 ABC: If_ObjPerformMappingAnd(): Warning! Node with ID 10943 has delay (12748.000000) exceeding the required times (12717.004883).
 ABC: A:  Del = 18018.00.  Ar =    8116.0.  Edge =    18302.  Cut =   466115.  T =     0.19 sec
-ABC: A:  Del = 18018.00.  Ar =    7792.0.  Edge =    18090.  Cut =   473187.  T =     0.20 sec
-ABC: Total time =     0.87 sec
+ABC: A:  Del = 18018.00.  Ar =    7792.0.  Edge =    18090.  Cut =   473187.  T =     0.19 sec
+ABC: Total time =     0.89 sec
 ABC: + &write -n <abc-temp-dir>/output.aig 
 ABC: + &mfs 
 ABC: + &ps -l 
@@ -4017,9 +4017,9 @@ ABC: LUT = 4655 : 2=611 13.1 %  3=1192 25.6 %  4=1828 39.3 %  5=764 16.4 %  6=84
 ABC: Warning: AIG with boxes has internal fanout in 0 complex flops and 1 carries.
 ABC: + &write -n <abc-temp-dir>/output.aig 
 ABC: + &verify 
-ABC: Networks are equivalent.  Time =     1.16 sec
+ABC: Networks are equivalent.  Time =     1.39 sec
 ABC: + time 
-ABC: elapse: 10.85 seconds, total: 10.85 seconds
+ABC: elapse: 11.43 seconds, total: 11.43 seconds
 
 7.39.15.6. Executing AIGER frontend.
 <suppressed ~10 debug messages>
@@ -7311,6 +7311,6 @@ Found and reported 0 problems.
 7.48. Executing JSON backend.
 
 Warnings: 8 unique messages, 132 total
-End of script. Logfile hash: d81ff45222, time: 46.62s, user: 36.06s, system: 0.87s, MEM: 308.13 MB peak
+End of script. Logfile hash: 83e0d5ecab, time: 49.56s, user: 37.66s, system: 1.06s, MEM: 298.86 MB peak
 Yosys 0.70+145 (git sha1 a31d95ea0, Release, Clang /usr/local/osxcross/target/bin/x86_64-apple-darwin25.5-clang++ 21.1.8)
-Time spent: 55% 9x techmap (26 sec), 22% 1x abc9_exe (10 sec), ...
+Time spent: 54% 9x techmap (27 sec), 22% 1x abc9_exe (11 sec), ...

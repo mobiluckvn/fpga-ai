@@ -21,10 +21,15 @@ CORE       := $(F5)/soc.v ../../rtl/picorv32/picorv32.v \
 CROSS      := riscv-none-elf-
 ARCH       := -march=rv32im -mabi=ilp32
 GIT_HASH   := $(shell git -C ../.. rev-parse --short HEAD 2>/dev/null || echo nogit)
+# Dấu vân tay NỘI DUNG của mã nguồn sinh ra firmware. GIT_HASH một mình KHÔNG đủ:
+# firmware có thể dựng từ bản nháp chưa commit — việc đó ĐÃ xảy ra, A-V0/A-V2 từng
+# được đo bằng một bản main.c chưa commit (xem docs/LOG.md). SRC_HASH đổi theo nội
+# dung nên phát hiện ngay nếu một biến thể được đo bằng mã nguồn khác các biến thể kia.
+SRC_HASH   := $(shell cat main.c $(FWDIR)/weights.h | shasum -a 256 | cut -c1-12)
 OPT        ?= -O2
 CFLAGS     := $(ARCH) $(OPT) -ffreestanding -fno-builtin -nostdlib -nostartfiles \
               -fno-pic -mno-relax -Wall -Wextra -I$(FWDIR) -I. \
-              -DGIT_HASH=\"$(GIT_HASH)\"
+              -DGIT_HASH=\"$(GIT_HASH)\" -DSRC_HASH=\"$(SRC_HASH)\"
 LDF        := $(ARCH) -nostdlib -nostartfiles -T $(FWDIR)/link.ld -Wl,--gc-sections
 
 DEVICE     := GW2AR-LV18QN88C8/I7
@@ -92,7 +97,7 @@ load-v0: v0/top.fs
 check-v0:
 	python3 ../../scripts/m1s_check.py --variant A-V0 --sim-log v0/sim.log \
 	    --size v0/firmware.size.txt --csv $(RESULTS)/m1s.csv \
-	    --port $(UART_PORT) --drain 2 --repeat 2 \
+	    --port $(UART_PORT) --drain 2 --repeat 2 --src-hash $(SRC_HASH) \
 	    --log v0/check.log 2>&1 | tee v0/check_stdout.log
 
 # ============================ A-V2 ============================
@@ -144,7 +149,7 @@ load-v2: v2/top.fs
 check-v2:
 	python3 ../../scripts/m1s_check.py --variant A-V2 --sim-log v2/sim.log \
 	    --size v2/firmware.size.txt --csv $(RESULTS)/m1s.csv --append \
-	    --port $(UART_PORT) --drain 2 --repeat 2 \
+	    --port $(UART_PORT) --drain 2 --repeat 2 --src-hash $(SRC_HASH) \
 	    --log v2/check.log 2>&1 | tee v2/check_stdout.log
 
 # ============================ A-V1 ============================
@@ -197,7 +202,7 @@ load-v1: v1/top.fs
 check-v1:
 	python3 ../../scripts/m1s_check.py --variant A-V1 --sim-log v1/sim.log \
 	    --size v1/firmware.size.txt --csv $(RESULTS)/m1s.csv --append \
-	    --port $(UART_PORT) --drain 2 --repeat 2 \
+	    --port $(UART_PORT) --drain 2 --repeat 2 --src-hash $(SRC_HASH) \
 	    --log v1/check.log 2>&1 | tee v1/check_stdout.log
 
 # ============================ A-V1+DOT4 ============================
@@ -249,7 +254,7 @@ load-v1d: v1d/top.fs
 check-v1d:
 	python3 ../../scripts/m1s_check.py --variant A-V1+DOT4 --sim-log v1d/sim.log \
 	    --size v1d/firmware.size.txt --csv $(RESULTS)/m1s.csv --append \
-	    --port $(UART_PORT) --drain 2 --repeat 2 \
+	    --port $(UART_PORT) --drain 2 --repeat 2 --src-hash $(SRC_HASH) \
 	    --log v1d/check.log 2>&1 | tee v1d/check_stdout.log
 
 # ============================ A-V1+DOT4+C1 ============================
@@ -301,7 +306,7 @@ load-v1dc: v1dc/top.fs
 check-v1dc:
 	python3 ../../scripts/m1s_check.py --variant A-V1+DOT4+C1 --sim-log v1dc/sim.log \
 	    --size v1dc/firmware.size.txt --csv $(RESULTS)/m1s.csv --append \
-	    --port $(UART_PORT) --drain 2 --repeat 2 \
+	    --port $(UART_PORT) --drain 2 --repeat 2 --src-hash $(SRC_HASH) \
 	    --log v1dc/check.log 2>&1 | tee v1dc/check_stdout.log
 
 # ============ A-V1+DOT4+C1, chế độ 10.000 ảnh qua UART (v10k) ============

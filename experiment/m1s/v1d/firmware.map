@@ -1,10 +1,10 @@
 
 Discarded input sections
 
- .text          0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cchNU7r3.o
- .data          0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cchNU7r3.o
- .bss           0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cchNU7r3.o
- .data          0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccimKi1L.o
+ .text          0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc0PwmWi.o
+ .data          0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc0PwmWi.o
+ .bss           0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc0PwmWi.o
+ .data          0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccESArkO.o
 
 Memory Configuration
 
@@ -14,57 +14,57 @@ RAM              0x00000000         0x00010000         xrw
 
 Linker script and memory map
 
-LOAD /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cchNU7r3.o
-LOAD /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccimKi1L.o
+LOAD /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc0PwmWi.o
+LOAD /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccESArkO.o
 
-.text           0x00000000     0x48e0
+.text           0x00000000     0x49c4
  *(.text.start)
- .text.start    0x00000000       0x30 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cchNU7r3.o
+ .text.start    0x00000000       0x30 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc0PwmWi.o
                 0x00000000                _start
  *(.text .text.*)
- .text          0x00000030      0x77c /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccimKi1L.o
- .text.startup  0x000007ac      0xc74 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccimKi1L.o
+ .text          0x00000030      0x77c /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccESArkO.o
+ .text.startup  0x000007ac      0xd3c /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccESArkO.o
                 0x000007ac                main
  *(.rodata .rodata.*)
  .rodata.str1.4
-                0x00001420       0x59 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccimKi1L.o
- *fill*         0x00001479        0x3 
- .rodata        0x0000147c     0x3464 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccimKi1L.o
+                0x000014e8       0x75 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccESArkO.o
+ *fill*         0x0000155d        0x3 
+ .rodata        0x00001560     0x3464 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccESArkO.o
  *(.srodata .srodata.*)
 
-.rela.dyn       0x000048e0        0x0
+.rela.dyn       0x000049c4        0x0
  .rela.text.start
-                0x000048e0        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cchNU7r3.o
-                0x000048e0                        . = ALIGN (0x4)
+                0x000049c4        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc0PwmWi.o
+                0x000049c4                        . = ALIGN (0x4)
 
 .data
  *(.data .data.*)
  *(.sdata .sdata.*)
-                0x000048e0                        . = ALIGN (0x4)
+                0x000049c4                        . = ALIGN (0x4)
 
-.bss            0x000048e0     0x23b0
-                0x000048e0                        __bss_start = .
+.bss            0x000049c4     0x23b0
+                0x000049c4                        __bss_start = .
  *(.bss .bss.*)
- .bss           0x000048e0     0x23b0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccimKi1L.o
+ .bss           0x000049c4     0x23b0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccESArkO.o
  *(.sbss .sbss.*)
  *(COMMON)
-                0x00006c90                        . = ALIGN (0x4)
-                0x00006c90                        __bss_end = .
-                0x00006c90                        __heap_start = .
+                0x00006d74                        . = ALIGN (0x4)
+                0x00006d74                        __bss_end = .
+                0x00006d74                        __heap_start = .
 OUTPUT(v1d/firmware.elf elf32-littleriscv)
 
 .riscv.attributes
                 0x00000000       0x2a
  .riscv.attributes
-                0x00000000       0x28 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cchNU7r3.o
+                0x00000000       0x28 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc0PwmWi.o
  .riscv.attributes
-                0x00000028       0x2a /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccimKi1L.o
+                0x00000028       0x2a /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccESArkO.o
 
 .comment        0x00000000       0x33
- .comment       0x00000000       0x33 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccimKi1L.o
+ .comment       0x00000000       0x33 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccESArkO.o
                                  0x34 (size before relaxing)
 
 .note.GNU-stack
                 0x00000000        0x0
  .note.GNU-stack
-                0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccimKi1L.o
+                0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccESArkO.o

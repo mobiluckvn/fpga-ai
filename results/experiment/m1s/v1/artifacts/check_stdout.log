@@ -1,14 +1,14 @@
 # M1-S check
-Thời điểm: 2026-10-17 14:48:45 +0700  ·  biến thể: A-V1
+Thời điểm: 2026-10-17 17:51:49 +0700  ·  biến thể: A-V1
 Độ chính xác mô hình (10.000 ảnh test): float 98.29% · int8 98.25%  (chênh +0.04 điểm %)
 Golden từ /Users/v/Documents/NCS/tinyml-riscv-tn20k/fw/weights.h: 10 ảnh thử, nhãn [7, 2, 1, 0, 4, 1, 4, 9, 5, 9], dự đoán golden [7, 2, 1, 0, 4, 1, 4, 9, 5, 9]
 Verilator: biến thể A-V1, tổng/ảnh [6217507, 6217659, 6217319, 6217721, 6217612, 6217347, 6217657, 6217516, 6217670, 6217679]
-RAM: .text 20136 + .bss 9136 = 29,272 / 65.536 byte (44.7 %)
+RAM: .text 20364 + .bss 9136 = 29,500 / 65.536 byte (45.0 %)
 == Lần đọc 1/2 ==
-    (xả 828 byte tồn)
+    (xả 690 byte tồn)
     ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
 == Lần đọc 2/2 ==
-    (xả 576 byte tồn)
+    (xả 598 byte tồn)
     ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
 
 ## Số đo trên kit (27 MHz)
@@ -25,4 +25,4 @@ RAM: .text 20136 + .bss 9136 = 29,272 / 65.536 byte (44.7 %)
     | dense | 126,224 | 2.0 % | 4000 | 31.56 |
 Đã ghi ../../results/experiment/m1s/m1s.csv
 
-M1S_PASS bien_the=A-V1 cổng=/dev/cu.usbserial-20250303171 lần_đọc_đạt=2/2 trung_vị=6,217,657 chu kỳ (230.3 ms) chu_kỳ/MAC=32.37 RAM=29,272/65536
+M1S_PASS bien_the=A-V1 cổng=/dev/cu.usbserial-20250303171 lần_đọc_đạt=2/2 trung_vị=6,217,657 chu kỳ (230.3 ms) chu_kỳ/MAC=32.37 RAM=29,500/65536

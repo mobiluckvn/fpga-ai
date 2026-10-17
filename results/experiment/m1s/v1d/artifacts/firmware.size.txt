@@ -1,9 +1,9 @@
 v1d/firmware.elf  :
 section              size    addr
-.text               18656       0
-.bss                 9136   18656
+.text               18884       0
+.bss                 9136   18884
 .riscv.attributes      42       0
 .comment               51       0
-Total               27885
+Total               28113
 
 

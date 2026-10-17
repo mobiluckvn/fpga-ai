@@ -17,7 +17,7 @@ Không sửa/xoá các thư mục `feasibility/` và `experiment/m1s/` đã có 
 | conv2 | 986.226 | 40,2 % |
 | pool1 + pool2 | 291.521 | 11,9 % |
 | dense | 39.057 | 1,6 % |
-| **Tổng** | **2.450.517** (90,8 ms) | |
+| **Tổng** | **2.450.494** (90,8 ms) | |
 | trong đó requantize (đo riêng) | ~363.990 | ~14,9 % |
 
 ---
@@ -47,7 +47,7 @@ Không sửa/xoá các thư mục `feasibility/` và `experiment/m1s/` đã có 
    từng tối ưu (chứng minh định lượng: tối ưu phần mềm cắt "tính địa chỉ", DOT4 cắt "MAC").
 
 **ĐẠT khi**: một lệnh duy nhất sinh đủ ba tầng; tổng chu kỳ theo trace = Verilator = kit cho từng lớp;
-phân loại chu kỳ giải thích được hệ số 1,95× và 2,13× đã đo.
+phân loại chu kỳ giải thích được hệ số 1,45× và 2,13× đã đo.
 
 ---
 

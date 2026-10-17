@@ -61,7 +61,8 @@ def read_golden(path: Path):
 
 
 def parse_block(lines):
-    out = {"hello": None, "variant": None, "img": {}, "cyc": {}, "crc": {}, "sum": None}
+    out = {"hello": None, "variant": None, "src": None,
+           "img": {}, "cyc": {}, "crc": {}, "sum": None}
     started = False
     for ln in lines:
         m = LINE_RE.match(ln.strip())
@@ -71,12 +72,14 @@ def parse_block(lines):
         a = rest.split(",")
         if key == "hello":
             started = True
-            out = {"hello": a[0], "variant": a[1] if len(a) > 1 else None,
+            out = {"hello": a[0], "variant": a[1] if len(a) > 1 else None, "src": None,
                    "img": {}, "cyc": {}, "crc": {}, "sum": None}
             continue
         if not started:
             continue
-        if key == "img":
+        if key == "src":
+            out["src"] = a[0]
+        elif key == "img":
             out["img"][int(a[0])] = dict(label=int(a[1]), pred=int(a[2]),
                                          pred_golden=int(a[3]), okmask=int(a[4]))
         elif key == "cyc":
@@ -151,6 +154,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--variant", required=True)
+    ap.add_argument("--src-hash", default=None,
+                    help="dấu vân tay nội dung main.c+weights.h mà firmware PHẢI báo về")
     ap.add_argument("--sim-log", required=True)
     ap.add_argument("--size", default=None)
     ap.add_argument("--csv", default=None)
@@ -207,6 +212,9 @@ def main() -> int:
             probs = []
             if k["variant"] != args.variant:
                 probs.append(f"kit báo biến thể {k['variant']}, mong đợi {args.variant}")
+            if args.src_hash and k.get("src") != args.src_hash:
+                probs.append(f"kit báo SRC_HASH={k.get('src')}, mong đợi {args.src_hash}"
+                             " — firmware trên kit KHÔNG dựng từ mã nguồn hiện tại")
             for i in range(nimg):
                 if i not in k["crc"]:
                     probs.append(f"ảnh {i}: kit thiếu dòng crc")

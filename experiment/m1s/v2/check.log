@@ -1,28 +1,28 @@
 # M1-S check
-Thời điểm: 2026-10-17 14:49:06 +0700  ·  biến thể: A-V2
+Thời điểm: 2026-10-17 17:52:09 +0700  ·  biến thể: A-V2
 Độ chính xác mô hình (10.000 ảnh test): float 98.29% · int8 98.25%  (chênh +0.04 điểm %)
 Golden từ /Users/v/Documents/NCS/tinyml-riscv-tn20k/fw/weights.h: 10 ảnh thử, nhãn [7, 2, 1, 0, 4, 1, 4, 9, 5, 9], dự đoán golden [7, 2, 1, 0, 4, 1, 4, 9, 5, 9]
-Verilator: biến thể A-V2, tổng/ảnh [5756504, 5756656, 5756316, 5756718, 5756609, 5756344, 5756654, 5756513, 5756667, 5756676]
-RAM: .text 18352 + .bss 9136 = 27,488 / 65.536 byte (41.9 %)
+Verilator: biến thể A-V2, tổng/ảnh [5757874, 5758026, 5757686, 5758088, 5757979, 5757714, 5758024, 5757883, 5758037, 5758046]
+RAM: .text 18580 + .bss 9136 = 27,716 / 65.536 byte (42.3 %)
 == Lần đọc 1/2 ==
     (xả 822 byte tồn)
     ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
 == Lần đọc 2/2 ==
-    (xả 572 byte tồn)
+    (xả 594 byte tồn)
     ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
 
 ## Số đo trên kit (27 MHz)
-    10 ảnh · tổng chu kỳ/ảnh: min 5,756,316 · trung vị 5,756,654 · max 5,756,718
-    trung vị = 213.2 ms @27 MHz · 29.97 chu kỳ/MAC trên 192,064 MAC
+    10 ảnh · tổng chu kỳ/ảnh: min 5,757,686 · trung vị 5,758,024 · max 5,758,088
+    trung vị = 213.3 ms @27 MHz · 29.98 chu kỳ/MAC trên 192,064 MAC
     dự đoán đúng nhãn: 10/10 · khớp golden: 10/10 · CRC khớp hết 5 lớp: 10/10
 
     | lớp | chu kỳ (trung vị) | % tổng | MAC | chu kỳ/MAC |
     |---|---:|---:|---:|---:|
-    | conv1 | 3,491,721 | 60.7 % | 48672 | 71.74 |
+    | conv1 | 3,491,721 | 60.6 % | 48672 | 71.74 |
     | pool1 | 225,621 | 3.9 % | — | — |
-    | conv2 | 1,924,815 | 33.4 % | 139392 | 13.81 |
+    | conv2 | 1,926,185 | 33.5 % | 139392 | 13.82 |
     | pool2 | 65,924 | 1.1 % | — | — |
     | dense | 48,552 | 0.8 % | 4000 | 12.14 |
 Đã ghi ../../results/experiment/m1s/m1s.csv
 
-M1S_PASS bien_the=A-V2 cổng=/dev/cu.usbserial-20250303171 lần_đọc_đạt=2/2 trung_vị=5,756,654 chu kỳ (213.2 ms) chu_kỳ/MAC=29.97 RAM=27,488/65536
+M1S_PASS bien_the=A-V2 cổng=/dev/cu.usbserial-20250303171 lần_đọc_đạt=2/2 trung_vị=5,758,024 chu kỳ (213.3 ms) chu_kỳ/MAC=29.98 RAM=27,716/65536

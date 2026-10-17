@@ -61,6 +61,12 @@
 #define GIT_HASH "unknown"
 #endif
 
+/* Dấu vân tay nội dung mã nguồn (main.c + weights.h). In ra để mọi số đo truy được
+ * về đúng bản nguồn đã sinh ra nó. */
+#ifndef SRC_HASH
+#define SRC_HASH "unknown"
+#endif
+
 #ifndef RUN_IMGS
 #define RUN_IMGS M1S_NIMG
 #endif
@@ -511,7 +517,8 @@ int main(void)
     u32 idx = 0;
 
     LED_REG = 0x00u;
-    puts_("M1S10K,hello,"); puts_(GIT_HASH); putch(','); puts_(VARIANT); eol();
+    puts_("M1S10K,hello,"); puts_(GIT_HASH); putch(','); puts_(VARIANT);
+    putch(','); puts_(SRC_HASH); eol();
 
     for (;;) {
         u32 i, t0, t1, i0, i1;
@@ -578,6 +585,7 @@ int main(void)
         n_crc_ok = 0;
 
         puts_("M1S,hello,"); puts_(GIT_HASH); putch(','); puts_(VARIANT); eol();
+        puts_("M1S,src,"); puts_(SRC_HASH); eol();
 
         for (k = 0; k < RUN_IMGS; k++) {
             const i8 *img = &m1s_imgs[k * M1S_IMG * M1S_IMG];

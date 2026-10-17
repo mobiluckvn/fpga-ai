@@ -2,6 +2,93 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — NHÁNH B cổng B1 ĐẠT, và SỬA SỐ LIỆU NHÁNH A (baseline sai)
+
+### B1: lõi tự viết qua riscv-tests ngay lần đầu
+`rtl/mycore/mycore.v` (478 dòng) + `rtl/mycore/soc_b.v`. Hai tầng; bộ nhớ một cổng đọc đồng bộ 1 chu kỳ.
+
+| | PicoRV32 | **mycore** |
+|---|---|---|
+| RV32IM, 48 bài | 48/48 | **48/48** |
+| `fence_i` | KHÔNG ĐẠT (không có Zifencei) | **ĐẠT** |
+| `ma_data` | KHÔNG ĐẠT | KHÔNG ĐẠT (bắt lỗi lệch địa chỉ theo thiết kế) |
+
+**Hai lỗi thiết kế tôi tự tìm khi rà lại TRƯỚC khi mô phỏng** — cả hai đều âm thầm, bộ kiểm đúng/sai
+không bắt được:
+1. `mem_addr` phải là **tổ hợp**, không phải thanh ghi. BSRAM đã có thanh ghi địa chỉ ở đầu vào; thêm
+   một tầng nữa thì địa chỉ ra chậm một chu kỳ → 2 chu kỳ mỗi lệnh, IPC 0,5, mất hết mục đích. Lõi vẫn
+   chạy ĐÚNG, chỉ chậm gấp đôi.
+2. Hazard đọc-sau-ghi ở tệp thanh ghi: ghi qua thanh ghi trung gian thì kết quả chỉ thấy sau 2 chu kỳ,
+   mà lệnh kế đã đọc ở chu kỳ sau.
+
+Hệ quả thiết kế: **không có hình phạt rẽ nhánh** — địa chỉ lệnh kế tính xong ngay trong chu kỳ thực
+thi nên lõi luôn nạp đúng, không đoán.
+
+`rtl/mycore/tests/ipc_probe/` — 4 vòng asm có số lệnh suy ra giải tích:
+
+| vòng | lệnh/vòng | chu kỳ/lệnh PicoRV32 | chu kỳ/lệnh mycore | nhanh hơn |
+|---|---|---:|---:|---:|
+| alu | 2 | 7,00 | **1,00** | 7,0× |
+| mem | 5 | 7,40 | **1,40** | 5,3× |
+| mul | 4 | 6,25 | **1,25** | 5,0× |
+| jmp | 3 | 6,33 | **1,00** | 6,3× |
+
+`instret` của **cả hai lõi** khớp tuyệt đối số lệnh lý thuyết → cả hai đếm đúng. Trên firmware F6 đã
+hiệu chuẩn (`2n+3`), hai lõi cũng cho `instret` giống nhau từng số.
+
+M1-S trên lõi mới, với **chính file hex của nhánh A**: `M1S,sum,10,10,10,10` ngay lần đầu.
+
+### SỬA SỐ LIỆU NHÁNH A — baseline A-V0/A-V2 đo bằng bản nháp chưa commit
+Chính phép kiểm tôi tự đặt ra cho nhánh B đã bắt được: *cùng một file hex thì `rdinstret` phải bằng
+nhau tuyệt đối*. Lõi mới báo 1.358.178; số A-V0 đã công bố là 1.864.264. Chênh đó không giải thích
+được bằng vi kiến trúc → chỉ còn khả năng hai số đo **không cùng firmware**. Xác nhận bằng `GIT_HASH`
+nhúng trong firmware: `sim.log` của A-V0 báo `339b4fb`, hex trên đĩa báo `c718706`.
+
+Nguyên nhân: khi thêm A-V1 tôi viết lại `conv2` *bản thẳng* (macro `MAC8` + con trỏ chạy) làm nó nhanh
+hơn, nhưng **không đo lại A-V0/A-V2**. Baseline chậm hơn thực tế → mọi tỷ số bị phóng đại.
+
+Đã **đo lại cả 5 biến thể trên kit từ một trạng thái mã nguồn duy nhất**, mỗi biến thể 2/2 lần đọc đạt:
+
+| | A-V0 | A-V1 | A-V2 | A-V1+DOT4 | A-V1+DOT4+C1 |
+|---|---:|---:|---:|---:|---:|
+| tổng | **8.987.660** | 6.217.634 | **5.758.001** | 2.917.079 | **2.450.494** |
+| lệnh | **1.358.200** | 911.920 | **913.105** | 460.793 | 391.278 |
+| ms | **332,9** | 230,3 | **213,3** | 108,0 | **90,8** |
+| so A-V0 | 1,00× | **1,45×** | **1,56×** | **3,08×** | **3,67×** |
+
+(trước đây công bố: 12.129.818 · 1,95× · 2,11× · 4,16× · 4,95×)
+
+### Số sửa làm ĐỔI MỘT KẾT LUẬN — và kết luận mới mạnh hơn
+Trước đây tôi viết "hai tối ưu độc lập, nhân được với nhau" vì DOT4 cho 2,11× trên C thẳng và 2,13×
+trên C tối ưu. Với số đúng, hai hệ số đó là **1,56×** và **2,13×** — **không** độc lập:
+
+> **DOT4 cho lợi ích gấp 1,37 lần khi phần mềm đã được tối ưu trước.**
+
+Lý do đọc được từ số liệu: ở C thẳng, `conv2` tốn 35,95 chu kỳ/MAC mà phần lớn là **tính chỉ số**;
+DOT4 chỉ cắt phần nhân-cộng nên cắt được một phân số nhỏ. Sau khi tối ưu phần mềm, phần nhân-cộng mới
+chiếm tỷ trọng lớn.
+
+**Hệ quả cho phương pháp co-design: thứ tự có ý nghĩa.** Đo một lệnh tùy biến trên mã chưa tối ưu sẽ
+**đánh giá THẤP** giá trị của nó. Và đây là câu trả lời mạnh hơn cho phản biện "tăng tốc chỉ nhờ
+baseline kém": với baseline *đã tối ưu*, DOT4 vẫn cho 2,13× — **cao hơn** khi đo trên baseline kém.
+
+Lưu ý phân rã theo chuỗi (1,4455 × 2,1315 = 3,0810 = đúng số đo tới 4 chữ số): đó **đúng do định
+nghĩa**, cùng một con đường viết thành hai chặng. Nó xác nhận phép đo nhất quán, không phải phát hiện.
+Trước đây tôi trình bày nó như phát hiện — đó là cách diễn giải sai, đã sửa.
+
+### Cách chặn để không lặp lại
+`GIT_HASH` không đủ. Firmware giờ in thêm **dấu vân tay NỘI DUNG**:
+`SRC_HASH := $(shell cat main.c $(FWDIR)/weights.h | shasum -a 256 | cut -c1-12)`.
+Kit in `M1S,src,<SRC_HASH>` và `scripts/m1s_check.py` **từ chối** ghi nhận nếu khác mã nguồn trên đĩa.
+Cả 5 số đo mới mang `SRC_HASH = 647f1d071aca`.
+
+**Điểm cốt lõi**: kiểm tính đúng đắn (CRC khớp golden) **không** bắt được lỗi này — cả hai bản firmware
+đều đúng từng bit, chỉ chạy nhanh khác nhau. Một bộ số đo chỉ so sánh được khi mọi biến thể đến từ cùng
+một trạng thái mã nguồn, và điều kiện đó phải do **máy** kiểm.
+
+Không ảnh hưởng: độ chính xác 98,25 % trên 10.000 ảnh, 10.000/10.000 CRC, tài nguyên/Fmax, chi phí
+requantize 49,6 chu kỳ, kết luận kit = Verilator.
+
 ## 2026-10-17 — NHÁNH B, cổng B0: hạ tầng kiểm thử riscv-tests — ĐẠT
 
 Bắt đầu nhánh B. Kế hoạch nhánh B viết ra ở `docs/BRANCH_B_PLAN.md` (7 cổng B0–B6, tiêu chí từng
@@ -119,6 +206,10 @@ Vật phẩm: `results/experiment/m1s/m1s_10k.csv` (10.000 dòng × 14 cột, 69
 
 ## 2026-10-17 — A-V1+DOT4+C1: gỡ nút cổ chai conv1 bằng BỐ CỤC, và định lượng lệnh REQ
 
+> **ĐÃ SỬA SỐ** — các con số của A-V0/A-V2 và mọi tỷ số so với A-V0 trong
+> mục này là SAI (baseline đo bằng bản nháp chưa commit). Số đúng và cách phát hiện:
+> xem mục nhật ký ngày 2026-10-17 "Sửa số liệu nhánh A" ở trên và `docs/KET_QUA_M1S.md` mục 3c.
+
 Số liệu của bảng 2×2 chỉ đúng một chỗ để đánh tiếp: ở biến thể nhanh nhất (A-V1+DOT4), **conv1 chiếm
 54,9 %** thời gian và **không dùng được DOT4** — vì `Cin=1`, 4 pixel liền nhau theo hàng thì có,
 nhưng địa chỉ của chúng không chia hết 4 nên không nạp được bằng một `lw`. Nếu conv2 và dense có về 0
@@ -173,6 +264,10 @@ Vật phẩm: `results/experiment/m1s/` (6 archive + `m1s.csv` + log thô). Tài
 `docs/KET_QUA_M1S.md`.
 
 ## 2026-10-17 — A-V1 (tối ưu phần mềm) + bảng 2×2 đầy đủ · KẾT QUẢ CHÍNH CỦA THÍ NGHIỆM
+
+> **ĐÃ SỬA SỐ** — các con số của A-V0/A-V2 và mọi tỷ số so với A-V0 trong
+> mục này là SAI (baseline đo bằng bản nháp chưa commit). Số đúng và cách phát hiện:
+> xem mục nhật ký ngày 2026-10-17 "Sửa số liệu nhánh A" ở trên và `docs/KET_QUA_M1S.md` mục 3c.
 
 Tôi tự chọn làm A-V1 trước A-V3, vì đó là khoảng trống **khoa học** lớn nhất: không có nhóm đối chứng
 phần mềm thì phản biện sẽ hỏi ngay *"2,11× là nhờ lệnh tùy biến hay chỉ nhờ code tốt hơn?"* — và phát
