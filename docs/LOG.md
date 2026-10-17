@@ -2,6 +2,74 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — Chạy ĐỦ 10.000 ảnh test trên kit: 98,25 % là số ĐO, không phải số suy ra
+
+Lỗ hổng duy nhất còn lại của chương nhánh A: năm biến thể chỉ chạy **10 ảnh nhúng trong firmware**,
+nên 98,25 % là của golden Python, không phải của kit. RAM 64 KB không chứa nổi 10.000 ảnh (7,84 MB)
+→ phải nạp ảnh qua UART.
+
+### Giao thức, và hai tính chất làm nó tự lành
+**1 byte `0xA5` + 784 byte ảnh**, host gửi theo khối 64 byte (bài học F2).
+- Pixel lượng tử hoá ∈ [0,127] nên **không bao giờ** trùng `0xA5` → mất byte thì khung sau tự đồng bộ
+  lại. Đây là lý do chọn đúng giá trị 0xA5 chứ không phải một byte bất kỳ.
+- **Kit mời thì host mới gửi** (chỉ gửi sau một dòng hoàn chỉnh).
+- Kit báo **CRC32 của chính 784 byte nó nhận được** → tách lỗi đường truyền khỏi lỗi tính toán.
+
+### Mô phỏng trước khi tổng hợp — và nó bắt được hai lỗi
+Harness Verilator cũ (F5/F8) chỉ đọc `uart_tx`, giữ `uart_rx` mức cao, nên **không kiểm được chiều
+thu**. Viết `experiment/m1s/sim_main_10k.cpp` tự tạo dạng sóng 8N1 ở đúng `DIV=234` bơm vào `uart_rx`.
+
+1. **GCC nhân bản `conv1` thành `conv1.constprop.0`** vì `conv1(img_buf)` luôn cùng một địa chỉ →
+   sinh mã **khác** `v1dc`, làm bản 10k không còn so sánh được với 5 biến thể cũ.
+   `scripts/cmp_layers.py` (mới) phát hiện. Sửa: `static i8 *volatile img_p = img_buf;`.
+   Giá phải trả, ghi đúng: `conv1` 1.133.668 → **1.133.673** (+5 chu kỳ cho một lần đọc volatile).
+2. **Thanh ghi thu chỉ giữ MỘT byte, không FIFO** (`rx_hold`/`rx_full` trong `soc.v`). Harness gửi
+   ngay sau reset, trong lúc kit còn đang phát dòng `hello`, nên mọi byte bị byte sau ghi đè. Kit quét
+   tìm `0xA5` mãi không thấy → mô phỏng chạy 83 triệu chu kỳ không ra phản hồi. Nếu đem thẳng lên kit
+   thì chỉ thấy "treo" mà không biết vì sao. Sửa bằng quy tắc "kit mời thì host mới gửi".
+
+Mô phỏng 3 ảnh: dự đoán 7/2/1, CRC logit `9377670B`/`3C922E73`/`46B2E0F3`, CRC ảnh
+`8DF03AB1`/`317A5E14`/`C73EC552` — **khớp golden từng bit**. `make cmp-v10k`: `CMP_PASS`, cả 6 hàm
+(`conv1`, `conv1_prep`, `pool1`, `conv2`, `pool2`, `dense`) trùng khít mnemonic/thanh ghi/offset.
+Tài nguyên `v10k` **giống hệt** `v1dc`: LUT4 8.065, 4 MULT18X18, Fmax 71,89 MHz.
+
+### Kết quả trên kit (30,0 phút, 27 MHz)
+| | |
+|---|---|
+| khung nhận đúng | **10.000/10.000**, thất bại 0, **gửi lại 0 lần**, CRC ảnh lệch 0 |
+| CRC32 logit = golden | **10.000/10.000 (100 %)** |
+| dự đoán = golden | **10.000/10.000** |
+| **độ chính xác đo trên kit** | **9.825/10.000 = 98,25 %** |
+
+Bằng golden **tuyệt đối**. 0 lần gửi lại trên 7,85 MB cũng xác nhận lại kết luận F2.
+
+### Hai kết quả phụ đáng giá, chỉ thấy được khi chạy 10.000 ảnh
+**a) Suy luận tất định về thời gian.** Biên độ tổng chỉ **765 chu kỳ = 0,031 %**; mỗi ảnh
+**90,74–90,77 ms**. `conv1` và `dense` biên độ **0** trên cả 10.000 ảnh; `conv2` lệch tối đa 2 chu kỳ
+(ReLU rẽ nhánh); `pool1`/`pool2` biên độ 560/234 (maxpool rẽ nhánh theo so sánh).
+→ **Phải sửa một điều đã ghi trước đây**: `pool1 = 225.600` và `pool2 = 65.921` là hằng số *với 10 ảnh
+cố định*, chứ không phải vì hai lớp đó tất định. Chỉ 10.000 ảnh mới phân biệt được hai chuyện này.
+
+**b) IPC = 0,160** (391.268 lệnh / 2.450.490 chu kỳ). Đây là lý do gốc còn 12,76 chu kỳ/MAC:
+PicoRV32 không pipeline và bus RAM mất 2 chu kỳ mỗi truy cập. Nó chỉ về **nhánh B** (lõi tự viết),
+không về thêm lệnh tùy biến — một lập luận định lượng cho phần sau của luận văn.
+
+175 ảnh sai đều là lỗi *mô hình* (kit khớp golden 10.000/10.000): `4→9` 14 lần, `6→0` 11, `7→2` 11,
+`8→0` 10 — đúng đặc trưng quen thuộc của CNN nhỏ trên MNIST.
+
+### Cạm bẫy mới
+- Golden từng sinh bằng `.venv-model` (numpy 1.26.4) nhưng script 10k chạy trong `.venv`
+  (**numpy 2.5.4**, khác quy tắc quảng bá kiểu NEP 50). Đã kiểm: 10 CRC logit + 10 dự đoán tính lại
+  trên numpy 2.5.4 **khớp từng bit** `fw/weights.h`, và đường vectorized khớp đường vô hướng. Nếu
+  không khớp thì toàn bộ phép so 10.000 ảnh vô nghĩa ngay từ đầu.
+- Tiến trình chạy dài ở chế độ nền có lúc bị hệ điều hành hạ ưu tiên xuống **2 % CPU** (11,5 phút
+  tường chỉ dùng 14,8 s CPU). Mô phỏng nặng CPU phải chạy tiền cảnh; lần chạy 10k thì nghẽn ở UART
+  nên không ảnh hưởng.
+- CSV được ghi **từng dòng và flush** ngay, để 30 phút chạy không mất dữ liệu nếu bị ngắt.
+
+Vật phẩm: `results/experiment/m1s/m1s_10k.csv` (10.000 dòng × 14 cột, 698 KB) ·
+`results/experiment/m1s/v10k/` (22 file) · `experiment/m1s/v10k/stats.txt`.
+
 ## 2026-10-17 — A-V1+DOT4+C1: gỡ nút cổ chai conv1 bằng BỐ CỤC, và định lượng lệnh REQ
 
 Số liệu của bảng 2×2 chỉ đúng một chỗ để đánh tiếp: ở biến thể nhanh nhất (A-V1+DOT4), **conv1 chiếm

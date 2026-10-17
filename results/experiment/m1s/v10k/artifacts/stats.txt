@@ -1,0 +1,30 @@
+số ảnh                     : 10000
+CRC32 logit khớp golden    : 10000/10000 (100.00%)
+dự đoán khớp golden        : 10000/10000 (100.00%)
+ĐỘ CHÍNH XÁC ĐO TRÊN KIT   : 9825/10000 = 98.25%
+
+lớp          trung vị     nhỏ nhất     lớn nhất   biên độ  độ lệch ch.
+conv1       1,133,673    1,133,673    1,133,673         0          0.0
+pool1         225,617      225,334      225,894       560         97.2
+conv2         986,226      986,226      986,228         2          0.0
+pool2          65,915       65,759       65,993       234         39.5
+dense          39,057       39,057       39,057         0          0.0
+tot         2,450,490    2,450,049    2,450,814       765        133.1
+
+thời gian/ảnh @27 MHz      : trung vị 90.76 ms  (nhanh nhất 90.74 · chậm nhất 90.77)
+chu kỳ/MAC                 : 12.759
+ảnh/giây                   : 11.02
+số lệnh/ảnh                : trung vị 391,268  IPC = 0.160
+
+số ảnh dự đoán sai nhãn    : 175
+10 cặp nhầm nhiều nhất (nhãn -> dự đoán):
+  4 -> 9 : 14 lần
+  6 -> 0 : 11 lần
+  7 -> 2 : 11 lần
+  8 -> 0 : 10 lần
+  7 -> 9 : 8 lần
+  6 -> 5 : 6 lần
+  2 -> 7 : 5 lần
+  5 -> 3 : 5 lần
+  8 -> 9 : 5 lần
+  3 -> 2 : 5 lần

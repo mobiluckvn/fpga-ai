@@ -1,0 +1,71 @@
+
+Discarded input sections
+
+ .text          0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccu5MSOc.o
+ .data          0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccu5MSOc.o
+ .bss           0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccu5MSOc.o
+ .data          0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc4fo1n9.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+RAM              0x00000000         0x00010000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccu5MSOc.o
+LOAD /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc4fo1n9.o
+
+.text           0x00000000     0x22a8
+ *(.text.start)
+ .text.start    0x00000000       0x30 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccu5MSOc.o
+                0x00000000                _start
+ *(.text .text.*)
+ .text          0x00000030      0x8ac /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc4fo1n9.o
+ .text.startup  0x000008dc      0x4a8 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc4fo1n9.o
+                0x000008dc                main
+ *(.rodata .rodata.*)
+ .rodata.str1.4
+                0x00000d84       0x33 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc4fo1n9.o
+ *fill*         0x00000db7        0x1 
+ .rodata        0x00000db8     0x14f0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc4fo1n9.o
+ *(.srodata .srodata.*)
+
+.rela.dyn       0x000022a8        0x0
+ .rela.text.start
+                0x000022a8        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccu5MSOc.o
+                0x000022a8                        . = ALIGN (0x4)
+
+.data           0x000022a8        0x4
+ *(.data .data.*)
+ *(.sdata .sdata.*)
+ .sdata         0x000022a8        0x4 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc4fo1n9.o
+                0x000022ac                        . = ALIGN (0x4)
+
+.bss            0x000022ac     0x3520
+                0x000022ac                        __bss_start = .
+ *(.bss .bss.*)
+ .bss           0x000022ac     0x3520 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc4fo1n9.o
+ *(.sbss .sbss.*)
+ *(COMMON)
+                0x000057cc                        . = ALIGN (0x4)
+                0x000057cc                        __bss_end = .
+                0x000057cc                        __heap_start = .
+OUTPUT(v10k/firmware.elf elf32-littleriscv)
+
+.riscv.attributes
+                0x00000000       0x2a
+ .riscv.attributes
+                0x00000000       0x28 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//ccu5MSOc.o
+ .riscv.attributes
+                0x00000028       0x2a /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc4fo1n9.o
+
+.comment        0x00000000       0x33
+ .comment       0x00000000       0x33 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc4fo1n9.o
+                                 0x34 (size before relaxing)
+
+.note.GNU-stack
+                0x00000000        0x0
+ .note.GNU-stack
+                0x00000000        0x0 /var/folders/yw/wdv9g5j57_s60xb3jnbmwfv40000gn/T//cc4fo1n9.o

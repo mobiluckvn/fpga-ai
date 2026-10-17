@@ -26,11 +26,15 @@ M1-S, huấn luyện bằng PyTorch trên MNIST (60.000 ảnh train), lượng t
 
 **Độ chính xác trên 10.000 ảnh test MNIST**
 
-| | Độ chính xác |
-|---|---|
-| float32 (PyTorch) | **98,29 %** |
-| int8 (golden Python, đúng từng bit với firmware) | **98,25 %** |
-| Chênh | **+0,04 điểm %** |
+| | Độ chính xác | Đo ở đâu |
+|---|---|---|
+| float32 (PyTorch) | **98,29 %** | máy chủ |
+| int8 (golden Python, đúng từng bit với firmware) | **98,25 %** | máy chủ |
+| **int8 ĐO TRỰC TIẾP TRÊN KIT** | **98,25 %** (9.825/10.000) | **kit, đủ 10.000 ảnh** |
+| Chênh float → int8 | **+0,04 điểm %** | |
+
+Dòng thứ ba là số **đo trên phần cứng**, không phải suy ra: cả 10.000 ảnh test đều được nạp vào kit
+qua UART và kit tự suy luận. Xem mục 5.
 
 Tiêu chí trong kế hoạch là *"int8 kém float không quá 1 điểm %"* → **ĐẠT** với biên rất rộng.
 
@@ -161,6 +165,81 @@ rằng mỗi cặp so sánh chỉ khác đúng một thứ. (Ngoại lệ nhỏ:
 39.052, lệch 5 chu kỳ, vì bản này còn biên dịch thêm phần đo requantize làm mã `dense` dài thêm
 4 byte. Đã kiểm `conv2`, `pool1`, `pool2` có kích thước mã giống hệt.)
 
+## 3b. Chạy đủ 10.000 ảnh trên kit — bỏ giả định "10 ảnh là đủ"
+
+Năm biến thể ở mục 3 chỉ chạy **10 ảnh nhúng sẵn trong firmware** (RAM 64 KB không chứa nổi 10.000
+ảnh = 7,84 MB). Nên con số 98,25 % cho tới lúc này là của **golden Python**, còn kit chỉ được kiểm
+trên 10 ảnh. Đây là lỗ hổng duy nhất còn lại của chương này, và nó đã được bịt.
+
+### Cách làm: nạp ảnh qua UART (chế độ `STREAM_10K`)
+Khung truyền: **1 byte đồng bộ `0xA5` + 784 byte ảnh int8**, host gửi theo khối 64 byte (bài học F2:
+ghi ≥ 67 byte một lần làm mất byte ở phía host). Hai tính chất làm giao thức tự lành:
+
+- Pixel lượng tử hoá nằm trong **[0, 127]** nên **không bao giờ** trùng `0xA5`. Mất byte thì kit quét
+  tiếp và tự đồng bộ lại ở khung sau; host gửi lại tối đa 3 lần.
+- **Kit mời thì host mới gửi**: chỉ gửi sau khi nhận được một dòng hoàn chỉnh từ kit. Thanh ghi thu
+  chỉ giữ **một** byte (không FIFO), nên gửi lúc kit đang bận là mất sạch.
+
+Kit báo thêm **CRC32 của chính 784 byte nó nhận được**, nhờ vậy phân biệt được *lỗi đường truyền*
+với *lỗi tính toán* — nếu trộn hai thứ này thì không kết luận được gì.
+
+### Mã tính toán KHÔNG đổi so với bản đã kiểm
+`scripts/cmp_layers.py` so mã máy từng hàm giữa `v1dc` (đã kiểm kit = Verilator) và `v10k`:
+
+| hàm | byte | lệnh y hệt (bỏ địa chỉ tuyệt đối) |
+|---|---:|---|
+| `conv1` | 452 = 452 | CÓ |
+| `conv1_prep` | 248 = 248 | CÓ |
+| `pool1` | 276 = 276 | CÓ |
+| `conv2` | 644 = 644 | CÓ |
+| `pool2` | 260 = 260 | CÓ |
+| `dense` | 124 = 124 | CÓ |
+
+Chỉ khác giá trị địa chỉ tuyệt đối (bố cục `.bss` dịch vì bỏ 10 ảnh nhúng, thêm `img_buf`). Tài nguyên
+FPGA **giống hệt** `v1dc`: LUT4 8.065, 4 MULT18X18, Fmax 71,89 MHz.
+
+### Kết quả (30,0 phút chạy liên tục, 27 MHz)
+
+| Phép kiểm | Kết quả |
+|---|---|
+| Khung nhận đúng | **10.000/10.000** · thất bại 0 · gửi lại **0 lần** · CRC ảnh lệch **0** |
+| **CRC32 logit = golden Python** | **10.000/10.000 (100,00 %)** |
+| Dự đoán trên kit = dự đoán golden | **10.000/10.000** |
+| **ĐỘ CHÍNH XÁC ĐO TRÊN KIT** | **9.825/10.000 = 98,25 %** |
+
+Bằng nhau **tuyệt đối** với golden Python: 98,25 % không còn là số suy ra mà là số đo.
+0 lần gửi lại trên 7,85 MB truyền qua UART cũng xác nhận lại kết luận F2 (đường truyền sạch).
+
+### Phân bố chu kỳ trên 10.000 ảnh — lớp nào tất định, lớp nào không
+
+| lớp | trung vị | nhỏ nhất | lớn nhất | biên độ | độ lệch chuẩn |
+|---|---:|---:|---:|---:|---:|
+| conv1 | 1.133.673 | 1.133.673 | 1.133.673 | **0** | 0,0 |
+| pool1 | 225.617 | 225.334 | 225.894 | 560 | 97,2 |
+| conv2 | 986.226 | 986.226 | 986.228 | 2 | 0,0 |
+| pool2 | 65.915 | 65.759 | 65.993 | 234 | 39,5 |
+| dense | 39.057 | 39.057 | 39.057 | **0** | 0,0 |
+| **TỔNG** | **2.450.490** | 2.450.049 | 2.450.814 | **765** | 133,1 |
+
+- `conv1` và `dense` **tất định tuyệt đối** trên cả 10.000 ảnh — biên độ 0 chu kỳ.
+- `pool1`/`pool2` **phụ thuộc dữ liệu** (biên độ 560 và 234) vì maxpool rẽ nhánh theo phép so sánh.
+  Trước đây chúng được ghi là hằng số 225.600 / 65.921; điều đó đúng với 10 ảnh cố định nhưng
+  **không phải vì lớp đó tất định** — chỉ số đo trên 10.000 ảnh mới nói được.
+- `conv2` lệch tối đa **2 chu kỳ** (ReLU rẽ nhánh), gần như tất định.
+- Toàn bộ biên độ là **765 chu kỳ = 0,031 %** của 2,45 triệu. Thời gian mỗi ảnh nằm trong
+  **90,74 – 90,77 ms**. Nói cách khác: suy luận trên lõi mềm này **đúng thời gian thực cứng**, dao
+  động chưa tới 0,3 phần nghìn — một tính chất thực tế quan trọng mà 10 ảnh không thể chứng minh.
+- IPC = **0,160** (391.268 lệnh / 2.450.490 chu kỳ): PicoRV32 không pipeline, mỗi lệnh nhiều chu kỳ,
+  và bus RAM 2 chu kỳ mỗi truy cập. Đây mới là lý do gốc khiến còn nhiều chu kỳ/MAC, và nó chỉ về
+  **nhánh B** (lõi tự viết) chứ không về thêm lệnh tùy biến.
+
+### Các cặp nhầm lẫn nhiều nhất (175 ảnh sai)
+`4→9` 14 lần · `6→0` 11 · `7→2` 11 · `8→0` 10 · `7→9` 8 · `6→5` 6 · `2→7` 5 · `5→3` 5 · `8→9` 5 ·
+`3→2` 5. Phân bố này giống đặc trưng quen thuộc của CNN nhỏ trên MNIST (4/9, 7/9, 3/5/8), và vì kit
+khớp golden 10.000/10.000 nên **toàn bộ 175 lỗi là của mô hình, không phải của phần cứng**.
+
+Vật phẩm: `results/experiment/m1s/m1s_10k.csv` (10.000 dòng, 14 cột) · `results/experiment/m1s/v10k/`.
+
 ## 4. Tài nguyên FPGA
 
 | Thiết kế | LUT4 | DFF | BSRAM | MULT18X18 | Fmax (MHz) |
@@ -223,9 +302,14 @@ nhất.
 nhiều so với DOT4 (2,13×). **Đòn lớn hơn còn lại là giảm số lệnh trên mỗi giá trị đầu ra của conv1**
 — ví dụ tính nhiều kênh ra cùng lúc để dùng lại 3 từ ảnh đã nạp, hoặc một lệnh nhân-cộng rộng hơn.
 
-**7. Những gì phần này chưa làm.** Chỉ đo 10 ảnh trên kit (độ chính xác 98,25 % là của golden Python
-trên đủ 10.000 ảnh, không phải của kit trên 10.000 ảnh). Chưa hiện thực **REQ**. Chưa làm **nhánh B**
-(lõi tự viết). Chưa đo công suất.
+**7. Số đo trên kit đã phủ đủ tập test, và nó cho một kết quả phụ đáng giá.** 10.000/10.000 ảnh khớp
+golden từng bit, độ chính xác **98,25 % đo trực tiếp trên kit**. Ngoài ra phân bố chu kỳ trên 10.000
+ảnh cho thấy thời gian suy luận dao động **chưa tới 0,031 %** (90,74–90,77 ms) — tính tất định mà
+10 ảnh không chứng minh được, và là lập luận mạnh cho ứng dụng thời gian thực. IPC chỉ **0,160** chỉ
+rõ nút cổ chai kế tiếp nằm ở **vi kiến trúc lõi**, tức nhánh B, chứ không ở thêm lệnh tùy biến.
+
+**8. Những gì phần này chưa làm.** Chưa hiện thực **REQ**. Chưa làm **nhánh B** (lõi tự viết).
+Chưa đo công suất.
 
 ## 6. Cách chạy lại
 
@@ -242,6 +326,13 @@ cd ../experiment/m1s
 for v in v0 v1 v2 v1d v1dc; do make fw-$v sim-$v build-$v; done
 # Nạp và đo TUẦN TỰ — đừng chạy song song, hai tiến trình sẽ tranh nhau cùng một kit:
 for v in v0 v1 v2 v1d v1dc; do make load-$v check-$v; done
+
+# 3. Chạy đủ 10.000 ảnh trên kit (~30 phút). Mô phỏng trước, rồi mới tổng hợp:
+make sim-v10k            # 3 ảnh trong Verilator, có bơm UART vào chân uart_rx
+make cmp-v10k            # chứng minh mã 5 lớp không đổi so với v1dc
+make build-v10k load-v10k
+make run-v10k            # N10K=20 để thử nhanh trước
+python3 ../../scripts/m1s_10k_stats.py ../../results/experiment/m1s/m1s_10k.csv
 make archive
 ```
 
@@ -252,6 +343,7 @@ make archive
 | `v2/` | A-V2 | `-DUSE_DOT4` |
 | `v1d/` | A-V1+DOT4 | `-DOPT_KERNELS -DUSE_DOT4` |
 | `v1dc/` | A-V1+DOT4+C1 | `-DOPT_KERNELS -DUSE_DOT4 -DCONV1_DOT4 -DREQ_BENCH` |
+| `v10k/` | A-V1+DOT4+C1, ảnh qua UART | `… -DCONV1_DOT4 -DSTREAM_10K` |
 
 PyTorch nằm trong venv riêng `.venv-model` (Python 3.12 + torch 2.2.2 + numpy 1.26.4): Python 3.14
 của `.venv` chính **không có** wheel torch cho macOS x86_64, và torch 2.2.2 là bản cuối còn wheel cho

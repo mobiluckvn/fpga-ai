@@ -21,3 +21,11 @@ theo docs/FEASIBILITY_PLAN.md, giữ nguyên các quy tắc trong CLAUDE.md.
 Dừng sửa. Tóm tắt trong LOG.md: triệu chứng, 3 hướng đã thử, log lỗi đầy đủ, và các phương án dự phòng trong
 FEASIBILITY_PLAN.md cho cổng này. Đề xuất phương án nên thử tiếp và lý do.
 ```
+
+## Giai đoạn đồng thiết kế (sau thí nghiệm M1-S)
+```
+Đọc CLAUDE.md, docs/KET_QUA_M1S.md và docs/CODESIGN_PLAN.md. Bắt đầu giai đoạn đồng thiết kế từ P0, làm đúng
+thứ tự P0 → P4, giữ mọi quy tắc trong CLAUDE.md. Không sửa hay xoá các thư mục feasibility/ và experiment/m1s/
+đã có. Ở P3, luôn ghi dự báo của mô hình P2 TRƯỚC khi hiện thực ứng viên, rồi so với số đo. Sau mỗi bước:
+cập nhật LOG.md, commit, báo tôi kết quả trước khi sang bước sau.
+```

@@ -1,7 +1,7 @@
 # Vật phẩm cổng m1s
 
-- Ngày lưu: `2026-10-17 15:04:51 +0700`
-- Git commit lúc lưu: `897cfec`
+- Ngày lưu: `2026-10-17 16:15:25 +0700`
+- Git commit lúc lưu: `b228c39`
 - Thư mục build nguồn: `.`
 - Máy: `Darwin 25.6.0 x86_64` · macOS `26.6.2`
 - File lớn hơn 524288 byte được lưu dạng `.gz` (giải nén: `gunzip -k <file>.gz`).
@@ -22,8 +22,9 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 
 | File (như đã lưu) | Byte gốc | Byte lưu | SHA256 (nội dung gốc) |
 |---|---:|---:|---|
-| `artifacts/Makefile` | 13277 | 13277 | `234692e3039404b099eb490eaa6b4c1d079f1d2a431c299cb4de55b19526ec6f` |
+| `artifacts/Makefile` | 16023 | 16023 | `8e310d39f7f69540634a75b0fdf58a48613e9ff16465473004468cec84bc7cca` |
 | `artifacts/Vsoc` | 294592 | 294592 | `c4d0cf23d037848ef8b6e769f60e4d6ac437d21a33095e58cfbaeeb979a740f3` |
+| `artifacts/Vsoc_10k` | 299488 | 299488 | `3eabfc35ab55fc99c91a91158c54f5280ac5c339da73dc7e9a025101d835f0e6` |
 | `artifacts/Vsoc_f8` | 295160 | 295160 | `85452eef9b3de7f85913a94d3f2afc80abe55f07f3314c4a613f08fbed94921b` |
 | `artifacts/check.log` | 1713 | 1713 | `fa85340a8118b1d3bec93d0170b150d1ff592b71192e53930a58b5c2c1b536e7` |
 | `artifacts/check_stdout.log` | 1713 | 1713 | `fa85340a8118b1d3bec93d0170b150d1ff592b71192e53930a58b5c2c1b536e7` |
@@ -33,19 +34,25 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/firmware.hex` | 147456 | 147456 | `a3e6c2d2da8defc2294f680485821dbd89ed92d3186106cc308359357c272b5c` |
 | `artifacts/firmware.map` | 3131 | 3131 | `415881e034e28deead47a865dc2f8dd9bba326f875d33c95905e0d64e645b354` |
 | `artifacts/firmware.size.txt` | 219 | 219 | `21f5a685c269cc6a0e45ec528aba2d1b5118daccfeb572cd87014681236201c9` |
+| `artifacts/imgs3.bin` | 2352 | 2352 | `51543bfe5616f9be1b999f951094c9caabc19388fb49eb6949c0c499b467f238` |
 | `artifacts/load.log` | 347 | 347 | `f171dc1d90889a6953e3ffc0c4d9dd966a6440700c4e4afa544495e5ac1c6042` |
-| `artifacts/main.c` | 21103 | 21103 | `a5f15a3adb6f7fb5b2273a7ee3f902984510fe8dec95cac84af7f80c2d1bafe1` |
+| `artifacts/main.c` | 24381 | 24381 | `d7673ddba8595526cb8ceccec4e794922df3f087cf2f51792b710fdcac53d35c` |
 | `artifacts/nextpnr.log` | 67823 | 67823 | `f7dfbfae656d64d7da06202c4a1a20b3cd31b6e2962717d1825e31ecf3a0c453` |
 | `artifacts/pnr.json.gz` | 27433455 | 1234197 | `6f037db3a6dde205653230dce9fffd587d2e917d345e956776f0f70a91f69567` |
 | `artifacts/report.json` | 74867 | 74867 | `8852bb204d7e88f8321a0ed0ebf0a959e720817b4269b273b1c678548ec83db6` |
 | `artifacts/resources.txt` | 1050 | 1050 | `2164c7fe1b7ff444f1ec05b8895a2cd1ff2e00b9aa1c4fb7d12c5a56f1429237` |
+| `artifacts/run.log` | 561 | 561 | `374f8bef2d9c0c4767ef79c16d49276f713c24dd0337b38d21ab084aed4141de` |
+| `artifacts/run_stdout.log` | 2729 | 2729 | `4196626f7c8f5fdcc4dacd4cf0d7911ef76556d487fe1ee7b2f2c33b17e8b0ac` |
 | `artifacts/sim.log` | 1452 | 1452 | `dcb4e153041529760416acb6cf5084589efd5d7d5da452a1f6046440ef787cc1` |
+| `artifacts/sim_main_10k.cpp` | 4932 | 4932 | `4b6a4cf4e8d11e19dda7f9f5a778cacf2a30ce09986a647c5046f24d8fc9390d` |
+| `artifacts/stats.txt` | 1258 | 1258 | `05b393ad112f0bd730708bbe1ee6364e636e548e0fe084a5b38eb34bdf5357c8` |
 | `artifacts/top-synth.json.gz` | 22260836 | 517361 | `1a18d0f6f92832a6c9bbff7b6852df7523dfdac36d4e87e1246023663e98cd43` |
 | `artifacts/top.fs.gz` | 7261470 | 298858 | `b186fef0003519334c085e745004050f779d5e459507bc7fadeb8376fe59c927` |
 | `artifacts/verilator.log` | 347 | 347 | `83fa650342c1bc5f1091f5cb076dd96f2624b6a731ee74e150616eb3e92316c3` |
 | `artifacts/weights.h` | 52464 | 52464 | `dcccba6c1d3485ce531c6861a1e9785815e04dd43462dce784a130ddcfc3f7ba` |
 | `artifacts/yosys.log.gz` | 740682 | 94690 | `576fc4d7bc4c250ed5f7f37004be512c9bad11a7449cac7eeb88fdee2b22a88c` |
 | `m1s.csv` | 4777 | 4777 | `75023b65da5466c1604aabb9d07bb264c49d54719ff6841121e2f93f086ec9e5` |
+| `m1s_10k.csv` | 697952 | 697952 | `a23c036f5f0cfee9d0b0b1913b7f9060d805a215983825d9fd17d8d08638d55f` |
 | `v0/artifacts/Vsoc` | 294592 | 294592 | `c4d0cf23d037848ef8b6e769f60e4d6ac437d21a33095e58cfbaeeb979a740f3` |
 | `v0/artifacts/check.log` | 1709 | 1709 | `9d68620b15f042199b1731ef98e833d274090fba8b692d7812c3882806756c80` |
 | `v0/artifacts/check_stdout.log` | 1709 | 1709 | `9d68620b15f042199b1731ef98e833d274090fba8b692d7812c3882806756c80` |
@@ -103,6 +110,25 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `v1d/artifacts/top.fs.gz` | 7261470 | 297037 | `54cc11ca170a77a0571c0b9dc5b191c285b33b311f42054464d46604dcf1886b` |
 | `v1d/artifacts/verilator.log` | 7835 | 7835 | `0e60423381641c1b572045b8fbdbd055708b0a95b3e7dc2132b5cc52df760992` |
 | `v1d/artifacts/yosys.log.gz` | 740682 | 94683 | `efdd0d59a3eb5afacf2f1f22e4e1c7e1d48239f1c358b025d41f1b2e883d7eaa` |
+| `v1dc/artifacts/Vsoc_f8` | 295160 | 295160 | `85452eef9b3de7f85913a94d3f2afc80abe55f07f3314c4a613f08fbed94921b` |
+| `v1dc/artifacts/check.log` | 1713 | 1713 | `fa85340a8118b1d3bec93d0170b150d1ff592b71192e53930a58b5c2c1b536e7` |
+| `v1dc/artifacts/check_stdout.log` | 1713 | 1713 | `fa85340a8118b1d3bec93d0170b150d1ff592b71192e53930a58b5c2c1b536e7` |
+| `v1dc/artifacts/firmware.bin` | 19548 | 19548 | `6ac18779473a535a30042973e6e0a49b604aba71fccc3bfbe9b4db0d627528e4` |
+| `v1dc/artifacts/firmware.dis` | 222616 | 222616 | `42bcba11ee66a1de5ba6b8dda34e55db2d023bff59a9f6c933b1bd288f1d6397` |
+| `v1dc/artifacts/firmware.elf` | 25196 | 25196 | `491a1470bf0cfdd078370aea12c9fb5472eb65f3d0f9e22ba5fd520c0a1dd276` |
+| `v1dc/artifacts/firmware.hex` | 147456 | 147456 | `a3e6c2d2da8defc2294f680485821dbd89ed92d3186106cc308359357c272b5c` |
+| `v1dc/artifacts/firmware.map` | 3131 | 3131 | `415881e034e28deead47a865dc2f8dd9bba326f875d33c95905e0d64e645b354` |
+| `v1dc/artifacts/firmware.size.txt` | 219 | 219 | `21f5a685c269cc6a0e45ec528aba2d1b5118daccfeb572cd87014681236201c9` |
+| `v1dc/artifacts/load.log` | 347 | 347 | `f171dc1d90889a6953e3ffc0c4d9dd966a6440700c4e4afa544495e5ac1c6042` |
+| `v1dc/artifacts/nextpnr.log` | 67823 | 67823 | `f7dfbfae656d64d7da06202c4a1a20b3cd31b6e2962717d1825e31ecf3a0c453` |
+| `v1dc/artifacts/pnr.json.gz` | 27433455 | 1234197 | `6f037db3a6dde205653230dce9fffd587d2e917d345e956776f0f70a91f69567` |
+| `v1dc/artifacts/report.json` | 74867 | 74867 | `8852bb204d7e88f8321a0ed0ebf0a959e720817b4269b273b1c678548ec83db6` |
+| `v1dc/artifacts/resources.txt` | 1050 | 1050 | `2164c7fe1b7ff444f1ec05b8895a2cd1ff2e00b9aa1c4fb7d12c5a56f1429237` |
+| `v1dc/artifacts/sim.log` | 1452 | 1452 | `dcb4e153041529760416acb6cf5084589efd5d7d5da452a1f6046440ef787cc1` |
+| `v1dc/artifacts/top-synth.json.gz` | 22260836 | 517361 | `1a18d0f6f92832a6c9bbff7b6852df7523dfdac36d4e87e1246023663e98cd43` |
+| `v1dc/artifacts/top.fs.gz` | 7261470 | 298858 | `b186fef0003519334c085e745004050f779d5e459507bc7fadeb8376fe59c927` |
+| `v1dc/artifacts/verilator.log` | 347 | 347 | `83fa650342c1bc5f1091f5cb076dd96f2624b6a731ee74e150616eb3e92316c3` |
+| `v1dc/artifacts/yosys.log.gz` | 740682 | 94690 | `576fc4d7bc4c250ed5f7f37004be512c9bad11a7449cac7eeb88fdee2b22a88c` |
 | `v2/artifacts/Vsoc_f8` | 295160 | 295160 | `85452eef9b3de7f85913a94d3f2afc80abe55f07f3314c4a613f08fbed94921b` |
 | `v2/artifacts/check.log` | 1693 | 1693 | `54bb5a31051412a00df5ccc3232517ec188fb61ef9bbcc0c203539718c60f828` |
 | `v2/artifacts/check_stdout.log` | 1693 | 1693 | `54bb5a31051412a00df5ccc3232517ec188fb61ef9bbcc0c203539718c60f828` |

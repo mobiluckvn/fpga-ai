@@ -44,9 +44,13 @@ cd feasibility/F5_soc && make fw sim build load f5check
 Mô hình M1-S (CNN int8, MNIST, 192.064 MAC) đã huấn luyện, lượng tử hoá và **chạy suy luận đầy đủ
 trên kit**. Chi tiết: **[docs/KET_QUA_M1S.md](docs/KET_QUA_M1S.md)**.
 
-| | float32 | int8 |
-|---|---|---|
-| Độ chính xác (10.000 ảnh test MNIST) | **98,29 %** | **98,25 %** (chênh +0,04 điểm %) |
+| | float32 (PyTorch) | int8 (golden Python) | **int8 ĐO TRÊN KIT** |
+|---|---|---|---|
+| Độ chính xác (10.000 ảnh test MNIST) | **98,29 %** | **98,25 %** | **98,25 %** (9.825/10.000) |
+
+Cả **10.000 ảnh test** đã được nạp vào kit qua UART và kit tự suy luận: **10.000/10.000 CRC32 logit
+khớp golden Python từng bit**, 0 lần phải gửi lại trên 7,85 MB truyền. Thời gian mỗi ảnh nằm trong
+**90,74 – 90,77 ms** — dao động **0,031 %** trên 10.000 ảnh, tức suy luận **tất định về thời gian**.
 
 | Biến thể | Mô tả | Chu kỳ/ảnh | @27 MHz | chu kỳ/MAC | Tăng tốc |
 |---|---|---:|---:|---:|---:|
@@ -72,7 +76,8 @@ có thể nằm ở **bố cục** chứ không ở bản thân lệnh.
 
 DOT4 trả **+124 LUT4 (+1,6 %)** và **không giảm Fmax**; A-V1 và bước +C1 thì **miễn phí hoàn toàn về
 phần cứng** (cùng bitstream). Mọi số đo đều có: CRC32 từng lớp khớp golden Python (**250/250**), dự
-đoán khớp golden (**50/50**), và số chu kỳ trên kit **bằng tuyệt đối** số chu kỳ trong Verilator.
+đoán khớp golden (**50/50**), và số chu kỳ trên kit **bằng tuyệt đối** số chu kỳ trong Verilator; cộng
+thêm **10.000/10.000** CRC logit khớp golden ở lần chạy đủ tập test.
 
 ## Quy ước
 

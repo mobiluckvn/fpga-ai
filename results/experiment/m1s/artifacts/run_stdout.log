@@ -1,0 +1,34 @@
+nạp dữ liệu golden cho 10000 ảnh...
+  xong: 10000 ảnh · golden acc = 98.25%
+  500/10000 · acc kit 98.40% · khớp golden 500/500 · crc logit 500/500 · còn ~29.1 phút
+  1000/10000 · acc kit 98.10% · khớp golden 1000/1000 · crc logit 1000/1000 · còn ~27.3 phút
+  1500/10000 · acc kit 97.67% · khớp golden 1500/1500 · crc logit 1500/1500 · còn ~25.7 phút
+  2000/10000 · acc kit 97.75% · khớp golden 2000/2000 · crc logit 2000/2000 · còn ~24.1 phút
+  2500/10000 · acc kit 97.40% · khớp golden 2500/2500 · crc logit 2500/2500 · còn ~22.6 phút
+  3000/10000 · acc kit 97.43% · khớp golden 3000/3000 · crc logit 3000/3000 · còn ~21.1 phút
+  3500/10000 · acc kit 97.63% · khớp golden 3500/3500 · crc logit 3500/3500 · còn ~19.5 phút
+  4000/10000 · acc kit 97.47% · khớp golden 4000/4000 · crc logit 4000/4000 · còn ~18.0 phút
+  4500/10000 · acc kit 97.44% · khớp golden 4500/4500 · crc logit 4500/4500 · còn ~16.5 phút
+  5000/10000 · acc kit 97.46% · khớp golden 5000/5000 · crc logit 5000/5000 · còn ~15.0 phút
+  5500/10000 · acc kit 97.64% · khớp golden 5500/5500 · crc logit 5500/5500 · còn ~13.5 phút
+  6000/10000 · acc kit 97.63% · khớp golden 6000/6000 · crc logit 6000/6000 · còn ~12.0 phút
+  6500/10000 · acc kit 97.82% · khớp golden 6500/6500 · crc logit 6500/6500 · còn ~10.5 phút
+  7000/10000 · acc kit 97.86% · khớp golden 7000/7000 · crc logit 7000/7000 · còn ~9.0 phút
+  7500/10000 · acc kit 97.96% · khớp golden 7500/7500 · crc logit 7500/7500 · còn ~7.5 phút
+  8000/10000 · acc kit 98.08% · khớp golden 8000/8000 · crc logit 8000/8000 · còn ~6.0 phút
+  8500/10000 · acc kit 98.18% · khớp golden 8500/8500 · crc logit 8500/8500 · còn ~4.5 phút
+  9000/10000 · acc kit 98.24% · khớp golden 9000/9000 · crc logit 9000/9000 · còn ~3.0 phút
+  9500/10000 · acc kit 98.31% · khớp golden 9500/9500 · crc logit 9500/9500 · còn ~1.5 phút
+  10000/10000 · acc kit 98.25% · khớp golden 10000/10000 · crc logit 10000/10000 · còn ~0.0 phút
+
+biến thể       : A-V1+DOT4+C1
+số ảnh gửi     : 10000  ·  nhận đúng khung: 10000  ·  thất bại: 0
+gửi lại        : 0 lần (trong đó CRC ảnh lệch: 0)
+CRC logit khớp : 10000/10000  (100.00%)
+khớp golden    : 10000/10000
+ĐỘ CHÍNH XÁC TRÊN KIT: 9825/10000 = 98.25%
+chu kỳ/ảnh     : trung vị 2,450,490 · nhỏ nhất 2,450,049 · lớn nhất 2,450,814 · lệch 765
+               : 90.8 ms @27 MHz · 12.76 chu kỳ/MAC
+thời gian chạy : 30.0 phút
+M1S10K_PASS n=10000 acc=98.25% crc=10000/10000 golden=10000/10000
+đã ghi 10000 dòng vào ../../results/experiment/m1s/m1s_10k.csv
