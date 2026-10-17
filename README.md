@@ -60,7 +60,17 @@ khớp golden Python từng bit**, 0 lần phải gửi lại trên 7,85 MB truy
 | **A-V1+DOT4** | **tối ưu phần mềm + DOT4** | 2.917.079 | 108,0 ms | 15,19 | **3,08×** |
 | **A-V1+DOT4+C1** | **+ bố cục 4 pha cho conv1** | **2.450.494** | **90,8 ms** | **12,76** | **3,67×** |
 | A-V3 | + lệnh REQ | | | | chưa làm — đã định lượng ~1,17× |
-| B-V* | lõi tự viết | | | | chưa làm |
+| **B-V0** | **lõi tự viết, C thẳng** | **1.978.697** | **73,3 ms** | **10,30** | **4,54×** |
+| **B-V1** | **lõi tự viết + tối ưu phần mềm** | **1.459.993** | **54,1 ms** | **7,60** | **6,16×** |
+| B-V2/B-V3 | lõi tự viết + DOT4/REQ | | | | chưa làm |
+
+**Kết quả nhánh B**: lõi RISC-V tự viết (`rtl/mycore/`, 2 tầng, bộ nhớ 1 chu kỳ, không hình phạt rẽ
+nhánh) qua **48/48** bài `riscv-tests` RV32IM **cộng `fence_i`** mà PicoRV32 trượt. Chạy **đúng các
+file firmware.hex của nhánh A** nên `rdinstret` **khớp tuyệt đối** → chênh lệch là thuần vi kiến trúc.
+**B-V0 (73,3 ms) nhanh hơn A-V1+DOT4+C1 (90,8 ms) 1,24×**: kernel C thẳng, không một lệnh tùy biến
+nào, vượt bản tối ưu hết mức *có* lệnh tùy biến trên PicoRV32. Lõi tự viết còn **nhỏ hơn 58,8 % LUT4**
+(3.272 so với 7.941). Với khối lượng này, **vi kiến trúc đáng giá hơn tập lệnh**: 4,54× từ lõi so với
+2,13× từ DOT4. Chi tiết: **[docs/KET_QUA_NHANH_B.md](docs/KET_QUA_NHANH_B.md)**.
 
 **Kết quả quan trọng nhất**: lệnh tùy biến cho lợi ích **LỚN HƠN** khi phần mềm đã tối ưu —
 DOT4 cho **1,56×** trên C thẳng nhưng **2,13×** trên C đã tối ưu (gấp 1,37 lần). Hai tối ưu

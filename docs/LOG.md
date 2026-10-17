@@ -2,6 +2,38 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — NHÁNH B cổng B3 ĐẠT: lõi tự viết chạy trên kit, 73,3 ms
+
+Sau khi người dùng cắm lại cáp USB, đo lại trong **một lượt liên tục** với đối chứng trước/sau mỗi
+phép đo (`scripts/branch_b_measure.sh`, thiết kế tối giản `top_min` phát "MIN"). Cả hai phép đo đều
+có đối chứng ĐẠT (8 lần "MIN") trước và sau.
+
+| | A-V0 | **B-V0** | A-V1 | **B-V1** |
+|---|---:|---:|---:|---:|
+| tổng chu kỳ | 8.987.660 | **1.978.697** | 6.217.634 | **1.459.993** |
+| `instret` | 1.358.200 | **1.358.200 KHỚP** | 911.920 | **911.920 KHỚP** |
+| ms @27 MHz | 332,9 | **73,3** | 230,3 | **54,1** |
+| chu kỳ/MAC | 46,80 | **10,30** | 32,37 | **7,60** |
+| IPC | 0,151 | **0,686** | 0,147 | **0,625** |
+| nhanh hơn | — | **4,54×** | — | **4,26×** |
+
+CRC 5 lớp × 10 ảnh khớp golden, dự đoán khớp golden, **kit = Verilator bằng tuyệt đối**, 2/2 lần đọc.
+
+**Kết quả đáng chú ý nhất**: B-V0 (73,3 ms) **nhanh hơn A-V1+DOT4+C1 (90,8 ms) 1,24×** — kernel C
+thẳng, không một lệnh tùy biến nào, trên lõi tự viết, vượt bản tối ưu hết mức *có* lệnh tùy biến trên
+PicoRV32. Với khối lượng này **vi kiến trúc đáng giá hơn tập lệnh**: 4,54× từ lõi so với 2,13× từ DOT4.
+
+**Tài nguyên**: lõi tự viết nhanh hơn 4,54× mà **nhỏ hơn 58,8 % LUT4** (3.272 so với 7.941), DFF 656
+so với 1.069. Lý do: chỉ làm đúng những gì cần (RV32IM + 4 CSR đọc), không ngắt, không PCPI, và bus
+1 chu kỳ đơn giản hơn máy trạng thái 2 chu kỳ.
+
+**Lần im lặng trước đó đúng là do UART của kit chết, không phải thiết kế** — bản `FAST_ADDR=1` (địa chỉ
+tổ hợp) chạy hoàn toàn đúng trên kit. Ghi nhận thêm về hiện tượng: UART chết sau mười mấy phút không
+dùng cổng (trong lúc tổng hợp bitstream), đảo DTR/RTS và đổi baud không cứu được, chỉ rút/cắm lại cáp;
+phần JTAG vẫn tốt. Vì vậy mọi phép đo phải gom vào một lượt liên tục ngay sau khi cắm cáp.
+
+Tài liệu kết quả: `docs/KET_QUA_NHANH_B.md`.
+
 ## 2026-10-17 — NHÁNH B cổng B3: TẠM HOÃN, KHÔNG PHẢI KHÔNG ĐẠT — đường UART của kit đã chết
 
 > **SỬA KẾT LUẬN.** Mục này ban đầu ghi "B3 KHÔNG ĐẠT". Sai. Sau khi khoanh vùng theo hướng người

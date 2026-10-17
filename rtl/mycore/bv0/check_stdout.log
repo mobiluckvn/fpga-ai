@@ -1,9 +1,10 @@
 # M1-S check
-Thời điểm: 2026-10-17 18:33:52 +0700  ·  biến thể: A-V0
+Thời điểm: 2026-10-17 19:05:51 +0700  ·  biến thể: A-V0
 Độ chính xác mô hình (10.000 ảnh test): float 98.29% · int8 98.25%  (chênh +0.04 điểm %)
 Golden từ /Users/v/Documents/NCS/tinyml-riscv-tn20k/fw/weights.h: 10 ảnh thử, nhãn [7, 2, 1, 0, 4, 1, 4, 9, 5, 9], dự đoán golden [7, 2, 1, 0, 4, 1, 4, 9, 5, 9]
 Verilator: biến thể A-V0, tổng/ảnh [1978570, 1978722, 1978382, 1978784, 1978675, 1978410, 1978720, 1978579, 1978733, 1978742]
 == Lần đọc 1/2 ==
+    (xả 6662 byte tồn)
     /dev/cu.usbserial-20250303171: chưa đủ dữ liệu (0 dòng thô)
 == Lần đọc 2/2 ==
     /dev/cu.usbserial-20250303171: chưa đủ dữ liệu (0 dòng thô)

@@ -64,10 +64,10 @@ Vẫn hiện thực `div divu rem remu mulhsu` để qua **trọn bộ** `rv32ui
 
 | Cổng | Việc | Tiêu chí ĐẠT |
 |---|---|---|
-| **B0** | Hạ tầng kiểm thử: lấy `riscv-tests` (ghim commit), dựng thành `.hex`, viết testbench tự kiểm | **Chạy bộ kiểm trên PicoRV32 trước** và tất cả PASS — chứng minh harness đúng trước khi dùng nó xét lõi mới |
-| **B1** | Viết `rtl/mycore/mycore.v` | 100 % `rv32ui-p-*` và `rv32um-p-*` PASS, cùng danh sách với PicoRV32 |
-| **B2** | Chạy firmware M1-S trong Verilator | CRC 5 lớp × 10 ảnh khớp golden; `rdinstret` **bằng tuyệt đối** nhánh A trên cùng file hex |
-| **B3** | Lên kit | Nạp được; 10 ảnh CRC khớp; **kit = Verilator bằng tuyệt đối**; báo LUT4/DFF/BSRAM/Fmax |
+| **B0** ✅ | Hạ tầng kiểm thử: lấy `riscv-tests` (ghim commit), dựng thành `.hex`, viết testbench tự kiểm | **Chạy bộ kiểm trên PicoRV32 trước** và tất cả PASS — chứng minh harness đúng trước khi dùng nó xét lõi mới |
+| **B1** ✅ | Viết `rtl/mycore/mycore.v` | 100 % `rv32ui-p-*` và `rv32um-p-*` PASS, cùng danh sách với PicoRV32 |
+| **B2** ✅ | Chạy firmware M1-S trong Verilator | CRC 5 lớp × 10 ảnh khớp golden; `rdinstret` **bằng tuyệt đối** nhánh A trên cùng file hex |
+| **B3** ✅ | Lên kit | Nạp được; 10 ảnh CRC khớp; **kit = Verilator bằng tuyệt đối**; báo LUT4/DFF/BSRAM/Fmax |
 | **B4** | B-V2: DOT4 trong tầng thực thi | CRC khớp; đo tăng tốc; so trực tiếp với A-V2/A-V1+DOT4 → **RQ3** |
 | **B5** | B-V3: lệnh REQ | CRC khớp; đo; so với dự báo 1,17× ở nhánh A |
 | **B6** | Tổng kết | **100 ảnh đúng từng bit** trên kit; bảng tài nguyên/Fmax/chu kỳ A ↔ B; kết luận RQ3 |
