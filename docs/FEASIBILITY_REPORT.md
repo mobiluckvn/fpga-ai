@@ -5,6 +5,9 @@
 **Kit**: Sipeed Tang Nano 20K, FPGA GW2AR-LV18QN88C8/I7 (họ GW2A-18C), thạch anh 27 MHz
 **Phạm vi**: các cổng F0 → F6 của `docs/FEASIBILITY_PLAN.md`. F7 và F8 **chưa làm**.
 
+**Bản chia sẻ/xuất PDF**: https://claude.ai/code/artifact/bb8b43e4-8aaf-4a75-94c3-ea4ab6ea5834
+(bản rút gọn của tài liệu này; file trong repo là bản gốc đầy đủ).
+
 Mọi con số trong báo cáo này lấy từ output thật của công cụ hoặc của kit. Log thô và vật phẩm
 (bitstream, netlist, firmware, CSV) lưu ở `results/feasibility/F<n>/`, kèm `MANIFEST.md` ghi
 SHA256 của từng file để truy nguyên. Nhật ký chi tiết từng cổng: `docs/LOG.md`.
