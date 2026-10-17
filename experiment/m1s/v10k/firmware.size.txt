@@ -1,10 +1,10 @@
 v10k/firmware.elf  :
 section              size   addr
-.text                8872      0
-.data                   4   8872
-.bss                13600   8876
+.text                8936      0
+.data                   4   8936
+.bss                13600   8940
 .riscv.attributes      42      0
 .comment               51      0
-Total               22569
+Total               22633
 
 

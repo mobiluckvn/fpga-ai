@@ -33,6 +33,50 @@ WITH_DOT4  ?= 0
 CSV_APPEND_SET := $(if $(filter CSV_APPEND,$(.VARIABLES)),1,)
 
 .PHONY: all rvtests archive clean min build-min load-min
+# ---------------- cổng B6: 100+ ảnh qua UART (STREAM_10K) ----------------
+.PHONY: sim-bv10k build-bv10k load-bv10k run-bv10k
+bv10k/firmware.hex: $(M1S)/v10k/firmware.hex
+	@mkdir -p bv10k
+	cp $< $@
+
+bv10k/imgs3.bin:
+	@mkdir -p bv10k
+	../../.venv/bin/python ../../scripts/m1s_10k.py --n 3 --export $@
+
+Vsoc_b10k: $(CORE) sim_main_10k_b.cpp
+	verilator --cc --exe --build -j 0 -O2 -Wno-fatal -CFLAGS "$(TN20K_CXX_INC)" \
+	    -GFAST_ADDR=1 -GWITH_DOT4=1 \
+	    --top-module soc_b -Mdir obj_dir10k -o ../Vsoc_b10k $(CORE) sim_main_10k_b.cpp \
+	    2>&1 | tee verilator10k.log
+
+sim-bv10k: Vsoc_b10k bv10k/firmware.hex bv10k/imgs3.bin
+	cd bv10k && ../Vsoc_b10k --imgs imgs3.bin --n 3 2>&1 | tee sim.log
+	@grep -c "^M1S10K," bv10k/sim.log
+
+bv10k/top-synth.json: top_b.v $(CORE) bv10k/firmware.hex
+	cd bv10k && yosys -l yosys.log -p "read_verilog -DMYCORE_MUL_DSP ../top_b.v ../soc_b.v \
+	    ../mycore.v ../../uart/uart_tx.v ../../uart/uart_rx.v; \
+	    chparam -set DIV_UART 234 -set FAST_ADDR 1 -set BEACON 0 -set WITH_DOT4 1 top; \
+	    synth_gowin -top top -family $(YOSYS_FAM) -nodsp -json top-synth.json -setundef"
+
+bv10k/pnr.json: bv10k/top-synth.json $(CST)
+	nextpnr-himbaechel -l bv10k/nextpnr.log --json $< --write $@ \
+	    --device "$(DEVICE)" --vopt family=$(FAMILY) --vopt cst=$(CST) \
+	    --freq $(FREQ) --report bv10k/report.json
+
+bv10k/top.fs: bv10k/pnr.json
+	gowin_pack -d $(FAMILY) -o $@ $<
+
+build-bv10k: bv10k/top.fs
+load-bv10k: bv10k/top.fs
+	openFPGALoader -b $(BOARD) $< 2>&1 | tee -a bv10k/load.log
+
+N10K ?= 100
+run-bv10k:
+	../../.venv/bin/python ../../scripts/m1s_10k.py --port $(UART_PORT) --n $(N10K) \
+	    --variant B-V1+DOT4+C1 --csv $(RESULTS)/m1s_b_$(N10K).csv \
+	    --log bv10k/run_$(N10K).log 2>&1 | tee bv10k/run_stdout_$(N10K).log
+
 # ---------------- thiết kế tối giản để khoanh vùng (cổng B3) ----------------
 min/top-synth.json: top_min.v ../uart/uart_tx.v
 	@mkdir -p min
@@ -129,4 +173,4 @@ archive:
 	@for v in bv0 bv1 bv0r bv1r bv2 bv1d bv1dc; do [ -d $$v ] && RESULTS_BASE=results/branch_b sh ../../scripts/archive_gate.sh core/$$v $$v; done
 
 clean:
-	rm -rf bv0 bv1 bv0r bv1r bv2 bv1d bv1dc min obj_dir* Vsoc_b* rvt* verilator*.log
+	rm -rf bv0 bv1 bv0r bv1r bv2 bv1d bv1dc bv10k min obj_dir* Vsoc_b* rvt* verilator*.log

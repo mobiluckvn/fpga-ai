@@ -204,6 +204,55 @@ một cổng logic nào**. Nhưng tính đúng đắn của nó về mặt thờ
 nguồn mở này**; nó chỉ được chứng minh bằng việc chạy đúng trên kit ở 27 MHz với CRC khớp golden.
 Trong một thiết kế đưa vào sản xuất, đó là lý do chính đáng để chọn bản bảo thủ.
 
+## 4d. B6: 100 và 10.000 ảnh đúng từng bit trên kit — ĐẠT
+
+Tiêu chí ĐẠT của cả nhánh B trong kế hoạch gốc là *"lõi qua `riscv-tests`; **100 ảnh đúng từng bit**"*.
+Phần `riscv-tests` xong ở B1. Phần 100 ảnh làm bằng chế độ `STREAM_10K` (nạp ảnh qua UART) chạy trên
+lõi tự viết — 100 ảnh nhúng sẵn thì không vừa RAM 64 KB (78.400 byte). Làm luôn 10.000 ảnh.
+
+| | 100 ảnh | **10.000 ảnh** |
+|---|---|---|
+| khung nhận đúng | 100/100 · gửi lại **0** | 10.000/10.000 · gửi lại **0** |
+| **CRC32 logit khớp golden** | **100/100** | **10.000/10.000 (100 %)** |
+| dự đoán khớp golden | 100/100 | **10.000/10.000** |
+| **độ chính xác đo trên kit** | 100/100 = 100 % | **9.825/10.000 = 98,25 %** |
+| trung vị chu kỳ/ảnh | 487.846 | **487.857** |
+| thời gian chạy | 0,2 phút | 16,7 phút |
+
+**98,25 % — bằng tuyệt đối** nhánh A và bằng golden Python. Nghĩa là **cùng một mô hình, cùng một kết
+quả từng bit, trên hai vi kiến trúc khác hẳn nhau**, chỉ khác thời gian: 90,8 ms so với **18,1 ms**.
+175 ảnh sai là lỗi *mô hình*, giống y nhánh A tới từng cặp nhầm (`4→9` 14 lần, `6→0` 11, `7→2` 11…).
+
+Phép kiểm chéo tốt: trung vị 487.857 (10.000 ảnh, firmware `STREAM_10K`) so với 487.888 (10 ảnh nhúng,
+firmware khác) — lệch **31 chu kỳ = 0,006 %**, đúng mức dao động do dữ liệu.
+
+### Một kết quả phụ gọn và đáng ghi
+`instret` cũng dao động **đúng 765** với độ lệch chuẩn **133,1** — **trùng khít** dao động chu kỳ, và
+**giống hệt nhau trên cả hai lõi**:
+
+| | trung vị | biên độ | độ lệch chuẩn |
+|---|---:|---:|---:|
+| nhánh A, chu kỳ | 2.450.490 | 765 | 133,1 |
+| nhánh A, **số lệnh** | 391.268 | **765** | **133,1** |
+| nhánh B, chu kỳ | 487.857 | 765 | 133,1 |
+| nhánh B, **số lệnh** | 391.268 | **765** | **133,1** |
+
+Diễn giải: phần phụ thuộc dữ liệu nằm ở **số lệnh thực thi** — nhiều nhất 765 lệnh chênh giữa ảnh nhanh
+nhất và chậm nhất, do các nhánh so sánh trong maxpool — và **mỗi lệnh thêm đó tốn đúng 1 chu kỳ trên cả
+hai lõi**. Với lõi tự viết, 1 chu kỳ là giá bình thường của một lệnh ALU. Với PicoRV32 (trung bình 6,6
+chu kỳ/lệnh) thì điều đó có nghĩa những lệnh thêm này **lọt vào các khe đang chờ bộ nhớ** nên không
+tốn thêm gì ngoài 1 chu kỳ. Đây là suy luận **phù hợp với số liệu**, chưa phải cơ chế đã chứng minh.
+
+Hệ quả thực tế: thời gian mỗi ảnh nằm trong **18,05–18,08 ms** (dao động **0,16 %**). Lõi nhanh hơn
+5× nhưng dao động tuyệt đối không đổi, nên **tỷ lệ** dao động tăng từ 0,031 % lên 0,16 % — vẫn là suy
+luận tất định về thời gian theo mọi nghĩa thực tế.
+
+### UART đã thành nút cổ chai, không còn là tính toán
+18,1 ms để tính một ảnh, nhưng **~68 ms** để nạp 784 byte qua UART 115200. 10.000 ảnh mất 16,7 phút,
+trong đó **chỉ ~3 phút là tính**. Với nhánh A tỷ lệ này là 30 phút / 15 phút tính. Nói cách khác:
+**lõi đã nhanh hơn đường nạp dữ liệu**, nên muốn đo thông lượng thật thì phải đổi cách nạp (UART nhanh
+hơn, hoặc nạp theo lô vào BSRAM) — một giới hạn của *bàn đo*, không phải của thiết kế.
+
 ## 5. Tài nguyên FPGA — lõi tự viết NHỎ HƠN
 
 | | PicoRV32 + `soc.v` | **mycore + `soc_b.v`** | chênh |
@@ -266,7 +315,7 @@ Về hiện tượng: UART chết sau khoảng mười mấy phút không dùng 
 | B3 | M1-S trên kit | **ĐẠT** — 73,3 ms (B-V0), 54,1 ms (B-V1) |
 | B4 | DOT4 **trong tầng thực thi** | **ĐẠT** — 18,1 ms; RQ3: 2,31× so với 2,13× trên PicoRV32 |
 | B5 | lệnh REQ (B-V3) | chưa làm |
-| B6 | 100 ảnh đúng từng bit + tổng kết RQ3 | chưa làm |
+| B6 | 100 ảnh đúng từng bit + tổng kết RQ3 | **ĐẠT** — 100/100 và **10.000/10.000** đúng từng bit |
 
 ### Số liệu đã trọn vẹn
 `results/branch_b/m1s_b.csv`: **70 dòng** = 7 biến thể × 10 ảnh, tất cả đo trên kit, tất cả 2/2 lần đọc.
@@ -274,3 +323,27 @@ Hai biến thể quan trọng nhất (`bv1dc`, `bv1d`) đã được **đo lại
 khít** (487.888 và 631.153) — bằng chứng tái lập mạnh hơn cả bản thân file CSV.
 
 Vật phẩm: `results/branch_b/` (B0, B1, B3, `m1s_b.csv` 20 dòng) · mã nguồn `rtl/mycore/`.
+
+## 9. Tổng kết RQ3
+
+> *"Khả năng chuyển giao: cùng các lệnh đó, khi gắn vào lõi RISC-V tự viết, có cho mức cải thiện tương
+> đương không?"*
+
+**Có, tương đương và tốt hơn một chút.** Bằng chứng, tất cả đo trên kit với firmware **giống nhau đến
+từng byte**:
+
+| Tối ưu | Trên PicoRV32 | Trên lõi tự viết | Chuyển giao? |
+|---|---:|---:|---|
+| DOT4 (thêm vào mã đã tối ưu) | 2,13× | **2,31×** | ✅ tốt hơn 8 % |
+| Bố cục 4 pha cho conv1 | 1,19× | **1,29×** | ✅ tốt hơn 8 % |
+| Tối ưu phần mềm (A-V0→A-V1) | 1,45× | **1,36×** | ✅ thấp hơn 6 % |
+
+Ba hệ số đều **giữ nguyên bậc độ lớn** khi đổi vi kiến trúc. Hai hệ số đầu *tăng* vì trên lõi mới chi
+phí cố định quanh chúng nhỏ hơn: DOT4 tốn 1 chu kỳ (tầng thực thi) thay vì 2 (qua PCPI). Hệ số thứ ba
+*giảm* nhẹ vì phần tính chỉ số mà nó cắt vốn đã rẻ hơn trên lõi nhanh.
+
+**Kết luận bổ sung, mạnh hơn cả RQ3**: trên cùng khối lượng công việc này, **vi kiến trúc đóng góp
+4,26× — gần gấp đôi lệnh tùy biến (2,31×) — và còn dùng ít hơn 58,8 % LUT4.** Nếu chỉ có một lựa chọn
+đầu tư, sửa vi kiến trúc đáng hơn thêm lệnh. Hai hướng **nhân được với nhau** (4,26 × 2,31 = 9,8× trên
+cùng firmware), nên trong thực tế nên làm cả hai — và theo đúng thứ tự đó, vì mỗi tối ưu làm phần còn
+lại *đáng giá hơn*, không phải ít hơn.

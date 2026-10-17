@@ -2,6 +2,40 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — NHÁNH B cổng B6 ĐẠT: 100 và 10.000 ảnh đúng từng bit trên lõi tự viết
+
+Tiêu chí ĐẠT của cả nhánh B trong kế hoạch gốc (*"lõi qua riscv-tests; 100 ảnh đúng từng bit"*) nay
+thoả cả hai phần. Dùng chế độ `STREAM_10K` nạp ảnh qua UART trên lõi tự viết (100 ảnh nhúng sẵn không
+vừa RAM 64 KB). Đã mô phỏng 3 ảnh trước khi tổng hợp: CRC logit `9377670B`/`3C922E73`/`46B2E0F3` khớp
+golden từng bit.
+
+| | 100 ảnh | **10.000 ảnh** |
+|---|---|---|
+| khung nhận đúng / gửi lại | 100/100 · 0 | 10.000/10.000 · **0** |
+| CRC32 logit khớp golden | 100/100 | **10.000/10.000** |
+| độ chính xác đo trên kit | 100 % | **98,25 %** |
+| trung vị chu kỳ/ảnh | 487.846 | **487.857** |
+
+**98,25 % bằng tuyệt đối nhánh A và bằng golden** → cùng mô hình, cùng kết quả từng bit, trên hai vi
+kiến trúc khác hẳn nhau; chỉ khác thời gian 90,8 ms so với **18,1 ms**. 175 ảnh sai giống y nhánh A tới
+từng cặp nhầm.
+
+Kiểm chéo: 487.857 (10.000 ảnh, firmware STREAM_10K) so với 487.888 (10 ảnh nhúng, firmware khác) —
+lệch 31 chu kỳ = 0,006 %.
+
+### Kết quả phụ gọn: phần phụ thuộc dữ liệu nằm ở SỐ LỆNH
+`instret` dao động **đúng 765**, độ lệch chuẩn **133,1** — **trùng khít** dao động chu kỳ, và **giống
+hệt nhau trên cả hai lõi**. Nghĩa là mỗi lệnh thêm (nhánh so sánh trong maxpool) tốn **đúng 1 chu kỳ
+trên cả hai**. Với lõi tự viết đó là giá bình thường của lệnh ALU; với PicoRV32 (6,6 chu kỳ/lệnh trung
+bình) thì những lệnh này **lọt vào khe đang chờ bộ nhớ**. Suy luận phù hợp số liệu, chưa chứng minh cơ chế.
+
+### UART đã thành nút cổ chai
+18,1 ms để tính một ảnh, ~68 ms để nạp 784 byte qua UART 115200. 10.000 ảnh mất 16,7 phút, **chỉ ~3
+phút là tính**. Lõi đã nhanh hơn đường nạp dữ liệu — giới hạn của **bàn đo**, không phải của thiết kế.
+
+Đã viết tổng kết RQ3 chính thức vào `docs/KET_QUA_NHANH_B.md` mục 9: cả ba tối ưu đều giữ nguyên bậc
+độ lớn khi đổi vi kiến trúc (DOT4 2,13→2,31×, bố cục 1,19→1,29×, tối ưu phần mềm 1,45→1,36×).
+
 ## 2026-10-17 — Nhánh B: số liệu TRỌN VẸN, 7 biến thể × 10 ảnh trên kit
 
 Sau khi viết lại `scripts/branch_b_measure.sh` cho bền với sự cố, một lượt duy nhất đo xong **5 biến

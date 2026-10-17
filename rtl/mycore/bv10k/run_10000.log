@@ -1,0 +1,10 @@
+biến thể       : B-V1+DOT4+C1
+số ảnh gửi     : 10000  ·  nhận đúng khung: 10000  ·  thất bại: 0
+gửi lại        : 0 lần (trong đó CRC ảnh lệch: 0)
+CRC logit khớp : 10000/10000  (100.00%)
+khớp golden    : 10000/10000
+ĐỘ CHÍNH XÁC TRÊN KIT: 9825/10000 = 98.25%
+chu kỳ/ảnh     : trung vị 487,857 · nhỏ nhất 487,416 · lớn nhất 488,181 · lệch 765
+               : 18.1 ms @27 MHz · 2.54 chu kỳ/MAC
+thời gian chạy : 16.7 phút
+M1S10K_PASS n=10000 acc=98.25% crc=10000/10000 golden=10000/10000

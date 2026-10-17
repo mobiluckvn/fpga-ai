@@ -68,6 +68,10 @@ khớp golden Python từng bit**, 0 lần phải gửi lại trên 7,85 MB truy
 | B-V0r/B-V1r | lõi tự viết, địa chỉ bộ nhớ ghi thanh ghi | 3.750.662 / 2.713.280 | 138,9 / 100,5 ms | 19,53 / 14,13 | 2,40× / 3,31× |
 | B-V3 | lõi tự viết + REQ | | | | chưa làm |
 
+Nhánh B cũng đã chạy **đủ 10.000 ảnh test trên kit**: **10.000/10.000 CRC32 logit khớp golden**,
+độ chính xác **98,25 %** — bằng tuyệt đối nhánh A và bằng golden Python. Cùng một mô hình cho **cùng
+kết quả từng bit trên hai vi kiến trúc khác hẳn nhau**, chỉ khác thời gian: 90,8 ms so với **18,1 ms**.
+
 **Kết quả nhánh B**: lõi RISC-V tự viết (`rtl/mycore/`, 2 tầng, bộ nhớ 1 chu kỳ, không hình phạt rẽ
 nhánh) qua **48/48** bài `riscv-tests` RV32IM **cộng `fence_i`** mà PicoRV32 trượt. Chạy **đúng các
 file firmware.hex của nhánh A** nên `rdinstret` **khớp tuyệt đối** → chênh lệch là thuần vi kiến trúc.
