@@ -57,10 +57,28 @@ bất kỳ số đo nào của F5; vật phẩm đã lưu của F5 là của b�
 Cũng vì chờ 166 s mỗi lần bật nguồn là quá lâu, firmware F6 đổi sang chạy bài `rdcycleh`
 **sau 5 khối in** (`HI_AFTER=5`) thay vì sau khối đầu.
 
-### Việc tiếp theo / cần người dùng
-- **Bước còn thiếu của F6**: 3 lần rút/cắm cáp USB. Mỗi lần, sau khi anh cắm lại, tôi chạy
-  `make cycle RUN=2` (rồi 3, 4) — nạp SRAM và đo, mất ~15 giây mỗi lần.
-- Chỉ khi bước này xong, F6 mới được đánh ĐẠT và mới sang F7.
+### Quyết định của người dùng (cùng ngày, sau khi đọc kết quả 4/5 bước)
+Người dùng quyết định **bỏ điều kiện 4** (3 lần tắt/bật nguồn) và coi F6 là xong, rồi yêu cầu
+viết tài liệu tổng kết giai đoạn khả thi.
+
+Cách ghi nhận trong báo cáo (để trung thực): F6 ghi là **ĐẠT với 4/5 điều kiện kiểm được**, và
+điều kiện 4 ghi rõ là **"KHÔNG KIỂM — bỏ theo quyết định của người thực hiện"**, chứ KHÔNG ghi là
+đã kiểm và đạt. Mục 7 của `docs/FEASIBILITY_REPORT.md` nêu rủi ro còn lại, ba quan sát làm rủi ro
+đó nhỏ (hơn 20 lần nạp SRAM trong F1–F6 đều cho số giống nhau; 3 lần đọc độc lập ở cả F5 và F6;
+mô hình `mcycle = 14·N + 1` khớp tuyệt đối trải 4 bậc độ lớn và được xác nhận lại ở quy mô 4,48 tỷ
+chu kỳ), và đề nghị chạy điều kiện 4 trước khi lấy số đo chính thức cho luận văn.
+
+### Tài liệu đã viết
+- `docs/FEASIBILITY_REPORT.md` — viết lại thành báo cáo hoàn chỉnh 8 mục, kết luận
+  **GO CÓ ĐIỀU KIỆN** kèm 9 đề xuất điều chỉnh cho kế hoạch thí nghiệm chính.
+- `docs/HUONG_DAN.md` — hướng dẫn dựng lại môi trường và chạy lại mọi phép đo, kèm bảng
+  "những cái bẫy đã gặp".
+- `README.md` — cập nhật trạng thái và ba quy tắc build bắt buộc.
+
+### Việc tiếp theo
+- F7 (kernel int8 thật) và F8 (DOT4 qua PCPI) — chưa làm.
+- Nếu muốn hoàn tất điều kiện 4 của F6 về sau: rút/cắm cáp rồi
+  `cd feasibility/F6_measure && make cycle RUN=2` (lặp `RUN=3`, `RUN=4`).
 
 ## 2026-10-17 — Cổng F5 (SoC PicoRV32 chạy firmware C) — ĐẠT
 
