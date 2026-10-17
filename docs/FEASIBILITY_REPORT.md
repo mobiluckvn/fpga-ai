@@ -3,7 +3,7 @@
 **Ngày thực hiện**: 2026-10-17 · **Người thực hiện**: Vũ Trí Công (học viên cao học PTIT)
 **Máy**: Mac Intel — x86_64, macOS 26.6.2 (build 25G83)
 **Kit**: Sipeed Tang Nano 20K, FPGA GW2AR-LV18QN88C8/I7 (họ GW2A-18C), thạch anh 27 MHz
-**Phạm vi**: các cổng F0 → F7 của `docs/FEASIBILITY_PLAN.md`. F8 **chưa làm**.
+**Phạm vi**: **toàn bộ** các cổng F0 → F8 của `docs/FEASIBILITY_PLAN.md`.
 
 **Bản chia sẻ/xuất PDF**: https://claude.ai/code/artifact/bb8b43e4-8aaf-4a75-94c3-ea4ab6ea5834
 (bản rút gọn của tài liệu này; file trong repo là bản gốc đầy đủ).
@@ -26,7 +26,7 @@ SHA256 của từng file để truy nguyên. Nhật ký chi tiết từng cổng
 | F5 | SoC PicoRV32 chạy firmware C; mô phỏng = kit | **ĐẠT** | `synth_gowin -nodsp` |
 | F6 | Phép đo chu kỳ tất định, ba nguồn khớp | **ĐẠT** (4/5 điều kiện kiểm được; xem mục 7) | không |
 | F7 | Kernel int8 thật chạy đúng từng bit | **ĐẠT** | không |
-| F8 | Lệnh tùy biến DOT4 qua PCPI | *chưa làm* | — |
+| F8 | Lệnh tùy biến DOT4 qua PCPI | **ĐẠT** | không |
 
 ### Số đo chính từng cổng
 
@@ -53,14 +53,21 @@ SHA256 của từng file để truy nguyên. Nhật ký chi tiết từng cổng
 | F4-D18 (toán hạng 18 bit — **SAI**) | 815 | 291 | 0 | 4× MULT9X9 | 237,02 |
 | **F4-PRM (MULT18X18 trực tiếp — ĐÚNG)** | **811** | 291 | 0 | **4× MULT18X18** | **233,64** |
 | F4-LUT (`-nodsp` — ĐÚNG) | 1764 | 291 | 0 | 0 | 73,08 |
-| **F5/F6 SoC PicoRV32 + RAM 64 KB** | **7950** | **1069** | **32/46** | 0 (nhân 32×32 bằng LUT vì `-nodsp`) | **70,05** |
+| **F5/F6/F7 SoC PicoRV32 + RAM 64 KB** | **7950** | **1069** | **32/46** | 0 (nhân 32×32 bằng LUT vì `-nodsp`) | **70,05** |
+| F8 SoC + DOT4, nhân bằng `MULT18X18` | 8065 (**+115**) | 1153 (+84) | 32/46 | **4× MULT18X18** | 71,89 (**+1,83**) |
+| F8 SoC + DOT4, nhân bằng LUT | 9086 (**+1136**) | 1153 (+84) | 32/46 | 0 | 73,83 (+3,78) |
 
 **Tài nguyên tổng của chip** (dùng để lập ngân sách): LUT4 20.736 · DFF 15.552 · ALU 15.552 ·
 IOB 384 · **BSRAM 46** · MULT9X9 96 · **MULT18X18 48** · MULT36X36 12 · MULTALU18X18 24 ·
 MULTADDALU18X18 24 · ALU54D 24 · rPLL 2 · BUFG 24 · RAM16SDP4 648.
 
-**Còn dư sau F5**: LUT4 **12.786** (61,7 %) · BSRAM **14** (30,4 %) · MULT18X18 **48** (100 %) ·
-biên Fmax **2,6 lần** so với 27 MHz. Đủ thoải mái cho khối DOT4 của F8.
+**Còn dư sau F8 (bản DSP)**: LUT4 **12.671** (61,1 %) · BSRAM **14** (30,4 %) · MULT18X18 **44** (91,7 %) ·
+biên Fmax **2,66 lần** so với 27 MHz.
+
+Chi phí thật của DOT4, đo bằng cách so với chính bản nền F5: **+115 LUT4 (+1,4 %) và +84 DFF** nếu dùng
+`MULT18X18`, hoặc **+1.136 LUT4 (+14,3 %)** nếu nhân bằng logic. Fmax **không giảm** ở cả hai bản
+(thậm chí nhúc nhích lên, trong phạm vi nhiễu của place & route) vì DOT4 trả lời trong 2 chu kỳ và
+phép nhân int8 ngắn hơn đường tới hạn hiện có.
 
 ---
 
@@ -195,12 +202,17 @@ lần mất ~15 giây: rút/cắm cáp USB rồi
 
 ### **GO CÓ ĐIỀU KIỆN**
 
-Toàn bộ sáu rủi ro kỹ thuật được kiểm (F0–F6) đều có lời giải đã chứng minh trên phần cứng thật.
+**Toàn bộ chín rủi ro kỹ thuật (F0–F8) đều có lời giải đã chứng minh trên phần cứng thật.**
 Rủi ro lớn nhất của dự án — **BSRAM 64 KB có khởi tạo sẵn nội dung qua luồng mã nguồn mở** — đã
 giải quyết xong **không cần tới bất kỳ phương án dự phòng nào** trong bốn phương án (a)–(d) của kế hoạch.
 Nền tảng đo lường cũng đã chứng minh được điều quan trọng nhất cho một luận văn đo hiệu năng:
 **số chu kỳ trên kit bằng tuyệt đối số chu kỳ trong mô phỏng**, và chênh giữa hai nguồn đếm độc lập
 là một hằng số.
+
+Và quan trọng nhất về mặt khoa học: **ý tưởng trung tâm của luận văn đã có bằng chứng số.** Một lệnh
+tùy biến duy nhất (DOT4) cho **tăng tốc 3,985× đo trên kit**, kết quả đúng từng bit, với chi phí phần
+cứng **+115 LUT4 (+1,4 %)** và **không giảm Fmax**. Giả thuyết "thêm lệnh tùy biến làm giảm số chu kỳ
+suy luận" không còn là giả thuyết.
 
 Ba điều kiện kèm theo, tất cả đã có cách xử lý đã kiểm chứng:
 
@@ -221,19 +233,24 @@ Ba điều kiện kèm theo, tất cả đã có cách xử lý đã kiểm ch�
 | 6 | Mỗi biến thể phải chạy cùng firmware trong Verilator và trên kit, và **chỉ ghi nhận số đo khi hai bên bằng tuyệt đối** | F5/F6: đã chứng minh làm được, nên đây là tiêu chí thực tế chứ không phải lý tưởng |
 | 7 | Thêm vào kế hoạch: đo thông lượng FPGA→PC liên tục ở full baud | F2 chưa đo phần này |
 | 8 | Chạy điều kiện 4 của F6 (3 lần bật nguồn) trước khi lấy số đo chính thức | Mục 7 |
-| 9 | Ngân sách Fmax: SoC hiện 70,05 MHz. Nếu thêm DOT4 làm Fmax tụt dưới 27 MHz thì **giảm tần số thí nghiệm**, không giảm độ chính xác phép đo | Biên hiện tại 2,6 lần, nhưng bộ nhân LUT là đường tới hạn |
+| 9 | Ngân sách Fmax **không còn là rủi ro**: thêm DOT4 cho Fmax 71,89 MHz, *cao hơn* bản nền 70,05 MHz | F8 đã đo; biên 2,66 lần so với 27 MHz |
+| 10 | **Hướng tối ưu nên nhắm vào số lệnh, không phải độ trễ phép toán** | F8: tăng tốc (3,985×) bằng đúng tỉ lệ giảm số lệnh (3,983×), CPI gần như không đổi (6,86→6,85); DOT4 chỉ đắt hơn `ADD` 1 chu kỳ |
+| 11 | Khi mở rộng sang conv, **đừng kỳ vọng 3,985×**: phần chỉ số 2 chiều và requantize của conv1 (72,59 chu kỳ/MAC ở F7) không được DOT4 cắt. Cân nhắc thêm lệnh cho phần địa chỉ/requantize (đó chính là vai trò của REQ trong kế hoạch) | F7 + F8 |
 
-### Việc còn lại của giai đoạn khả thi
+### Giai đoạn khả thi đã hoàn tất
 
-- **F8** — lệnh tùy biến DOT4 qua PCPI, đo tăng tốc thật. Chưa làm.
-
-F7 đã xong (xem mục số đo bên dưới). Dòng DOT4 trong bảng để trống chờ số đo thật của F8.
+Cả chín cổng F0 → F8 đã làm xong. Không còn việc nào của giai đoạn này, ngoài điều kiện 4 của F6
+(ba lần tắt/bật nguồn) mà người thực hiện đã quyết định bỏ — xem mục 7.
 
 | Bài | Biến thể | MAC | Chu kỳ | hw_count | instret | CPI | chu kỳ/MAC | CRC khớp Python |
 |---|---|---:|---:|---:|---:|---:|---:|---|
 | A dot 1024 ×100 | C thẳng (A-V0) | 102.400 | 4.921.446 | 4.921.485 | 717.812 | 6,86 | **48,06** | **có** (`64F298C2`) |
-| A dot 1024 ×100 | DOT4 | | | | | | | *F8 chưa làm* |
+| A dot 1024 ×100 (offset ⊥4) | C thẳng | 102.400 | 4.921.446 | 4.921.485 | 717.812 | 6,86 | 48,06 | **có** (`3D68C1ED`) |
+| A dot 1024 ×100 (offset ⊥4) | **DOT4** | 102.400 | **1.235.011** | 1.235.050 | 180.205 | 6,85 | **12,06** | **có** (`3D68C1ED`) |
 | B conv1 28×28×8 | C thẳng (A-V0) | 48.672 | 3.533.204 | 3.533.252 | 570.232 | 6,20 | **72,59** | **có** (`661C5304`) |
+
+**Tăng tốc của DOT4 trên bài A: 3,985×** (số lệnh giảm 3,983×). Số liệu gốc:
+`results/feasibility/F7/kernel.csv` và `results/feasibility/F8/dot4.csv`.
 
 Số liệu gốc: `results/feasibility/F7/kernel.csv`. Chu kỳ kit = Verilator **bằng tuyệt đối** ở cả ba cột
 (cycles, hw_count, instret), lặp lại 3/3 lần đọc độc lập.

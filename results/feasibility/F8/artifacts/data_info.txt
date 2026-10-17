@@ -1,0 +1,8 @@
+# F8 gen_f8_data
+file            : build/f8_data_check.h (41372 byte)
+pool            : 8192 byte, seed 0x5EEDF007 (giống F7)
+offset          : thẳng hàng 4 byte; cặp 0 = (0, 3000), cặp 1 = (68, 3128)
+MAC             : 102,400  ·  số lệnh DOT4 = 25,600
+dot[0], dot[1]  : -27724, -24573
+dot min/max     : -458677 / 413417
+CRC32_A         : 3D68C1ED

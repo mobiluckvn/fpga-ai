@@ -1,0 +1,24 @@
+# F8 check
+Thời điểm: 2026-10-17 12:07:49 +0700  ·  biến thể: lut
+Python tính lại CRC32 bài A (offset thẳng hàng 4 byte): 3D68C1ED
+Verilator (nhân hành vi):
+    scalar : cycles=4,921,446 instret=717,812 crc=3D68C1ED
+    dot4   : cycles=1,235,011 instret=180,205 crc=3D68C1ED
+F7 bài A (không có PCPI), chu kỳ trên kit: 4,921,446
+== Lần đọc 1/3 ==
+    ĐẠT: CRC DOT4 = vô hướng = Python; chu kỳ kit = Verilator
+== Lần đọc 2/3 ==
+    ĐẠT: CRC DOT4 = vô hướng = Python; chu kỳ kit = Verilator
+== Lần đọc 3/3 ==
+    ĐẠT: CRC DOT4 = vô hướng = Python; chu kỳ kit = Verilator
+
+## Số đo trên kit
+    bài A, 102,400 MAC, 25,600 lệnh DOT4
+    vô hướng: 4,921,446 chu kỳ · 717,812 lệnh · 48.06 chu kỳ/MAC · CPI 6.86
+    DOT4    : 1,235,011 chu kỳ · 180,205 lệnh · 12.06 chu kỳ/MAC · CPI 6.85
+    **TĂNG TỐC = 3.985x** (số lệnh giảm 3.983x)
+    độ trễ DOT4: vòng DOT4 3,500,041 vs vòng ADD 3,400,041 trên 100,000 vòng → DOT4 đắt hơn ADD +1.000 chu kỳ/lệnh
+    bản vô hướng khi BẬT PCPI: 4,921,446 chu kỳ; ở F7 khi KHÔNG có PCPI: 4,921,446 → chênh +0 chu kỳ
+Đã ghi ../../results/feasibility/F8/dot4.csv
+
+F8_PASS biến_thể=lut cổng=/dev/cu.usbserial-20250303171 lần_đọc_đạt=3/3 tăng_tốc=3.985x chu_kỳ/MAC 48.06→12.06

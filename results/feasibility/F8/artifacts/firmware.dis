@@ -1,0 +1,3969 @@
+
+build/firmware.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+       0:	00010137          	lui	sp,0x10
+       4:	00003517          	auipc	a0,0x3
+       8:	93450513          	addi	a0,a0,-1740 # 2938 <res_s>
+       c:	00003597          	auipc	a1,0x3
+      10:	c5058593          	addi	a1,a1,-944 # 2c5c <__bss_end>
+      14:	00b57863          	bgeu	a0,a1,24 <_start+0x24>
+      18:	00052023          	sw	zero,0(a0)
+      1c:	00450513          	addi	a0,a0,4
+      20:	ff5ff06f          	j	14 <_start+0x14>
+      24:	00000097          	auipc	ra,0x0
+      28:	0f8080e7          	jalr	248(ra) # 11c <main>
+      2c:	0000006f          	j	2c <_start+0x2c>
+
+00000030 <put_u32>:
+      30:	08050063          	beqz	a0,b0 <put_u32+0x80>
+      34:	ff010113          	addi	sp,sp,-16 # fff0 <__bss_end+0xd394>
+      38:	ccccd8b7          	lui	a7,0xccccd
+      3c:	ccd88893          	addi	a7,a7,-819 # cccccccd <__bss_end+0xcccca071>
+      40:	00000613          	li	a2,0
+      44:	00410593          	addi	a1,sp,4
+      48:	00900313          	li	t1,9
+      4c:	031537b3          	mulhu	a5,a0,a7
+      50:	00160613          	addi	a2,a2,1
+      54:	00050813          	mv	a6,a0
+      58:	00c586b3          	add	a3,a1,a2
+      5c:	0037d793          	srli	a5,a5,0x3
+      60:	00279713          	slli	a4,a5,0x2
+      64:	00f70733          	add	a4,a4,a5
+      68:	00171713          	slli	a4,a4,0x1
+      6c:	40e50533          	sub	a0,a0,a4
+      70:	03050513          	addi	a0,a0,48
+      74:	fea68fa3          	sb	a0,-1(a3)
+      78:	00078513          	mv	a0,a5
+      7c:	fd0368e3          	bltu	t1,a6,4c <put_u32+0x1c>
+      80:	10000737          	lui	a4,0x10000
+      84:	00470713          	addi	a4,a4,4 # 10000004 <__bss_end+0xfffd3a8>
+      88:	10000537          	lui	a0,0x10000
+      8c:	fff6c603          	lbu	a2,-1(a3)
+      90:	00072783          	lw	a5,0(a4)
+      94:	0017f793          	andi	a5,a5,1
+      98:	fe079ce3          	bnez	a5,90 <put_u32+0x60>
+      9c:	00c52023          	sw	a2,0(a0) # 10000000 <__bss_end+0xfffd3a4>
+      a0:	fff68693          	addi	a3,a3,-1
+      a4:	fed594e3          	bne	a1,a3,8c <put_u32+0x5c>
+      a8:	01010113          	addi	sp,sp,16
+      ac:	00008067          	ret
+      b0:	10000737          	lui	a4,0x10000
+      b4:	00470713          	addi	a4,a4,4 # 10000004 <__bss_end+0xfffd3a8>
+      b8:	100006b7          	lui	a3,0x10000
+      bc:	00072783          	lw	a5,0(a4)
+      c0:	0017f793          	andi	a5,a5,1
+      c4:	fe079ce3          	bnez	a5,bc <put_u32+0x8c>
+      c8:	03000793          	li	a5,48
+      cc:	00f6a023          	sw	a5,0(a3) # 10000000 <__bss_end+0xfffd3a4>
+      d0:	00008067          	ret
+
+000000d4 <crc32_buf.constprop.0>:
+      d4:	edb88637          	lui	a2,0xedb88
+      d8:	19050813          	addi	a6,a0,400
+      dc:	32060613          	addi	a2,a2,800 # edb88320 <__bss_end+0xedb856c4>
+      e0:	fff00793          	li	a5,-1
+      e4:	00054703          	lbu	a4,0(a0)
+      e8:	00800693          	li	a3,8
+      ec:	00e7c7b3          	xor	a5,a5,a4
+      f0:	01f79593          	slli	a1,a5,0x1f
+      f4:	41f5d713          	srai	a4,a1,0x1f
+      f8:	00c77733          	and	a4,a4,a2
+      fc:	0017d793          	srli	a5,a5,0x1
+     100:	fff68693          	addi	a3,a3,-1
+     104:	00f747b3          	xor	a5,a4,a5
+     108:	fe0694e3          	bnez	a3,f0 <crc32_buf.constprop.0+0x1c>
+     10c:	00150513          	addi	a0,a0,1
+     110:	fd051ae3          	bne	a0,a6,e4 <crc32_buf.constprop.0+0x10>
+     114:	fff7c513          	not	a0,a5
+     118:	00008067          	ret
+
+0000011c <main>:
+     11c:	fa010113          	addi	sp,sp,-96
+     120:	04112e23          	sw	ra,92(sp)
+     124:	04812c23          	sw	s0,88(sp)
+     128:	04912a23          	sw	s1,84(sp)
+     12c:	05212823          	sw	s2,80(sp)
+     130:	05312623          	sw	s3,76(sp)
+     134:	05412423          	sw	s4,72(sp)
+     138:	05512223          	sw	s5,68(sp)
+     13c:	05612023          	sw	s6,64(sp)
+     140:	03712e23          	sw	s7,60(sp)
+     144:	03812c23          	sw	s8,56(sp)
+     148:	03912a23          	sw	s9,52(sp)
+     14c:	03a12823          	sw	s10,48(sp)
+     150:	03b12623          	sw	s11,44(sp)
+     154:	00100713          	li	a4,1
+     158:	100007b7          	lui	a5,0x10000
+     15c:	02e7a023          	sw	a4,32(a5) # 10000020 <__bss_end+0xfffd3c4>
+     160:	100007b7          	lui	a5,0x10000
+     164:	00e7a823          	sw	a4,16(a5) # 10000010 <__bss_end+0xfffd3b4>
+     168:	c02027f3          	rdinstret	a5
+     16c:	c00026f3          	rdcycle	a3
+     170:	000008b7          	lui	a7,0x0
+     174:	00003537          	lui	a0,0x3
+     178:	7a888893          	addi	a7,a7,1960 # 7a8 <f8_off>
+     17c:	93850513          	addi	a0,a0,-1736 # 2938 <res_s>
+     180:	00001e37          	lui	t3,0x1
+     184:	19088e93          	addi	t4,a7,400
+     188:	00088313          	mv	t1,a7
+     18c:	00050f13          	mv	t5,a0
+     190:	938e0e13          	addi	t3,t3,-1736 # 938 <f8_pool>
+     194:	00035703          	lhu	a4,0(t1)
+     198:	00235583          	lhu	a1,2(t1)
+     19c:	00000813          	li	a6,0
+     1a0:	00ee0733          	add	a4,t3,a4
+     1a4:	40070293          	addi	t0,a4,1024
+     1a8:	00be05b3          	add	a1,t3,a1
+     1ac:	00070603          	lb	a2,0(a4)
+     1b0:	00058f83          	lb	t6,0(a1)
+     1b4:	00170713          	addi	a4,a4,1
+     1b8:	00158593          	addi	a1,a1,1
+     1bc:	03f60633          	mul	a2,a2,t6
+     1c0:	00c80833          	add	a6,a6,a2
+     1c4:	fe5714e3          	bne	a4,t0,1ac <main+0x90>
+     1c8:	010f2023          	sw	a6,0(t5)
+     1cc:	00430313          	addi	t1,t1,4
+     1d0:	004f0f13          	addi	t5,t5,4
+     1d4:	fc6e90e3          	bne	t4,t1,194 <main+0x78>
+     1d8:	c0002673          	rdcycle	a2
+     1dc:	c0202773          	rdinstret	a4
+     1e0:	40f707b3          	sub	a5,a4,a5
+     1e4:	10000737          	lui	a4,0x10000
+     1e8:	01470713          	addi	a4,a4,20 # 10000014 <__bss_end+0xfffd3b8>
+     1ec:	00072703          	lw	a4,0(a4)
+     1f0:	40d606b3          	sub	a3,a2,a3
+     1f4:	00f12423          	sw	a5,8(sp)
+     1f8:	00e12023          	sw	a4,0(sp)
+     1fc:	00d12223          	sw	a3,4(sp)
+     200:	100007b7          	lui	a5,0x10000
+     204:	00100713          	li	a4,1
+     208:	0007a823          	sw	zero,16(a5) # 10000010 <__bss_end+0xfffd3b4>
+     20c:	00e7a823          	sw	a4,16(a5)
+     210:	c02027f3          	rdinstret	a5
+     214:	c00026f3          	rdcycle	a3
+     218:	19050413          	addi	s0,a0,400
+     21c:	00040313          	mv	t1,s0
+     220:	0008d703          	lhu	a4,0(a7)
+     224:	0028d583          	lhu	a1,2(a7)
+     228:	00000813          	li	a6,0
+     22c:	00ee0733          	add	a4,t3,a4
+     230:	40070f93          	addi	t6,a4,1024
+     234:	00be05b3          	add	a1,t3,a1
+     238:	00072603          	lw	a2,0(a4)
+     23c:	00470713          	addi	a4,a4,4
+     240:	0005af03          	lw	t5,0(a1)
+     244:	00458593          	addi	a1,a1,4
+     248:	01e6060b          	.insn	4, 0x01e6060b
+     24c:	00c80833          	add	a6,a6,a2
+     250:	feef94e3          	bne	t6,a4,238 <main+0x11c>
+     254:	01032023          	sw	a6,0(t1)
+     258:	00488893          	addi	a7,a7,4
+     25c:	00430313          	addi	t1,t1,4
+     260:	fd1e90e3          	bne	t4,a7,220 <main+0x104>
+     264:	c0002673          	rdcycle	a2
+     268:	c0202773          	rdinstret	a4
+     26c:	40f707b3          	sub	a5,a4,a5
+     270:	10000737          	lui	a4,0x10000
+     274:	01470713          	addi	a4,a4,20 # 10000014 <__bss_end+0xfffd3b8>
+     278:	00072703          	lw	a4,0(a4)
+     27c:	40d606b3          	sub	a3,a2,a3
+     280:	00f12a23          	sw	a5,20(sp)
+     284:	00d12823          	sw	a3,16(sp)
+     288:	100007b7          	lui	a5,0x10000
+     28c:	00e12623          	sw	a4,12(sp)
+     290:	0007a823          	sw	zero,16(a5) # 10000010 <__bss_end+0xfffd3b4>
+     294:	c00028f3          	rdcycle	a7
+     298:	010205b7          	lui	a1,0x1020
+     29c:	05060637          	lui	a2,0x5060
+     2a0:	000186b7          	lui	a3,0x18
+     2a4:	30458593          	addi	a1,a1,772 # 1020304 <__bss_end+0x101d6a8>
+     2a8:	70860613          	addi	a2,a2,1800 # 5060708 <__bss_end+0x505daac>
+     2ac:	6a068693          	addi	a3,a3,1696 # 186a0 <__bss_end+0x15a44>
+     2b0:	00000713          	li	a4,0
+     2b4:	00000793          	li	a5,0
+     2b8:	00b7c833          	xor	a6,a5,a1
+     2bc:	00c78333          	add	t1,a5,a2
+     2c0:	00178793          	addi	a5,a5,1
+     2c4:	0068080b          	.insn	4, 0x0068080b
+     2c8:	01070733          	add	a4,a4,a6
+     2cc:	fed796e3          	bne	a5,a3,2b8 <main+0x19c>
+     2d0:	c00027f3          	rdcycle	a5
+     2d4:	411787b3          	sub	a5,a5,a7
+     2d8:	000038b7          	lui	a7,0x3
+     2dc:	00f12e23          	sw	a5,28(sp)
+     2e0:	c4e8ac23          	sw	a4,-936(a7) # 2c58 <sink>
+     2e4:	c0002373          	rdcycle	t1
+     2e8:	010205b7          	lui	a1,0x1020
+     2ec:	05060637          	lui	a2,0x5060
+     2f0:	000186b7          	lui	a3,0x18
+     2f4:	30458593          	addi	a1,a1,772 # 1020304 <__bss_end+0x101d6a8>
+     2f8:	70860613          	addi	a2,a2,1800 # 5060708 <__bss_end+0x505daac>
+     2fc:	6a068693          	addi	a3,a3,1696 # 186a0 <__bss_end+0x15a44>
+     300:	00000713          	li	a4,0
+     304:	00000793          	li	a5,0
+     308:	00b7c833          	xor	a6,a5,a1
+     30c:	00c78e33          	add	t3,a5,a2
+     310:	00178793          	addi	a5,a5,1
+     314:	01c80833          	add	a6,a6,t3
+     318:	01070733          	add	a4,a4,a6
+     31c:	fed796e3          	bne	a5,a3,308 <main+0x1ec>
+     320:	c00027f3          	rdcycle	a5
+     324:	406787b3          	sub	a5,a5,t1
+     328:	00f12c23          	sw	a5,24(sp)
+     32c:	c4e8ac23          	sw	a4,-936(a7)
+     330:	00000097          	auipc	ra,0x0
+     334:	da4080e7          	jalr	-604(ra) # d4 <crc32_buf.constprop.0>
+     338:	00050c13          	mv	s8,a0
+     33c:	00040513          	mv	a0,s0
+     340:	00000097          	auipc	ra,0x0
+     344:	d94080e7          	jalr	-620(ra) # d4 <crc32_buf.constprop.0>
+     348:	100007b7          	lui	a5,0x10000
+     34c:	00000b37          	lui	s6,0x0
+     350:	00000ab7          	lui	s5,0x0
+     354:	00000a37          	lui	s4,0x0
+     358:	000009b7          	lui	s3,0x0
+     35c:	00000937          	lui	s2,0x0
+     360:	000004b7          	lui	s1,0x0
+     364:	00000437          	lui	s0,0x0
+     368:	10000cb7          	lui	s9,0x10000
+     36c:	00050b93          	mv	s7,a0
+     370:	0207a023          	sw	zero,32(a5) # 10000020 <__bss_end+0xfffd3c4>
+     374:	76db0b13          	addi	s6,s6,1901 # 76d <main+0x651>
+     378:	777a8a93          	addi	s5,s5,1911 # 777 <main+0x65b>
+     37c:	77fa0a13          	addi	s4,s4,1919 # 77f <main+0x663>
+     380:	78a98993          	addi	s3,s3,1930 # 78a <main+0x66e>
+     384:	79490913          	addi	s2,s2,1940 # 794 <main+0x678>
+     388:	79f48493          	addi	s1,s1,1951 # 79f <main+0x683>
+     38c:	7a740413          	addi	s0,s0,1959 # 7a7 <main+0x68b>
+     390:	004c8c93          	addi	s9,s9,4 # 10000004 <__bss_end+0xfffd3a8>
+     394:	10000db7          	lui	s11,0x10000
+     398:	00d00d13          	li	s10,13
+     39c:	000007b7          	lui	a5,0x0
+     3a0:	04600693          	li	a3,70
+     3a4:	76478713          	addi	a4,a5,1892 # 764 <main+0x648>
+     3a8:	00170713          	addi	a4,a4,1
+     3ac:	000ca783          	lw	a5,0(s9)
+     3b0:	0017f793          	andi	a5,a5,1
+     3b4:	fe079ce3          	bnez	a5,3ac <main+0x290>
+     3b8:	00dda023          	sw	a3,0(s11) # 10000000 <__bss_end+0xfffd3a4>
+     3bc:	00074683          	lbu	a3,0(a4)
+     3c0:	ff6714e3          	bne	a4,s6,3a8 <main+0x28c>
+     3c4:	000007b7          	lui	a5,0x0
+     3c8:	06500693          	li	a3,101
+     3cc:	77078713          	addi	a4,a5,1904 # 770 <main+0x654>
+     3d0:	00170713          	addi	a4,a4,1
+     3d4:	000ca783          	lw	a5,0(s9)
+     3d8:	0017f793          	andi	a5,a5,1
+     3dc:	fe079ce3          	bnez	a5,3d4 <main+0x2b8>
+     3e0:	00dda023          	sw	a3,0(s11)
+     3e4:	00074683          	lbu	a3,0(a4)
+     3e8:	ff5714e3          	bne	a4,s5,3d0 <main+0x2b4>
+     3ec:	000ca783          	lw	a5,0(s9)
+     3f0:	0017f793          	andi	a5,a5,1
+     3f4:	fe079ce3          	bnez	a5,3ec <main+0x2d0>
+     3f8:	01ada023          	sw	s10,0(s11)
+     3fc:	000ca783          	lw	a5,0(s9)
+     400:	0017f793          	andi	a5,a5,1
+     404:	fe079ce3          	bnez	a5,3fc <main+0x2e0>
+     408:	00a00793          	li	a5,10
+     40c:	00fda023          	sw	a5,0(s11)
+     410:	000007b7          	lui	a5,0x0
+     414:	04600693          	li	a3,70
+     418:	77878713          	addi	a4,a5,1912 # 778 <main+0x65c>
+     41c:	00170713          	addi	a4,a4,1
+     420:	000ca783          	lw	a5,0(s9)
+     424:	0017f793          	andi	a5,a5,1
+     428:	fe079ce3          	bnez	a5,420 <main+0x304>
+     42c:	00dda023          	sw	a3,0(s11)
+     430:	00074683          	lbu	a3,0(a4)
+     434:	ff4714e3          	bne	a4,s4,41c <main+0x300>
+     438:	00019537          	lui	a0,0x19
+     43c:	00000097          	auipc	ra,0x0
+     440:	bf4080e7          	jalr	-1036(ra) # 30 <put_u32>
+     444:	000ca783          	lw	a5,0(s9)
+     448:	0017f793          	andi	a5,a5,1
+     44c:	fe079ce3          	bnez	a5,444 <main+0x328>
+     450:	02c00793          	li	a5,44
+     454:	00006537          	lui	a0,0x6
+     458:	00fda023          	sw	a5,0(s11)
+     45c:	40050513          	addi	a0,a0,1024 # 6400 <__bss_end+0x37a4>
+     460:	00000097          	auipc	ra,0x0
+     464:	bd0080e7          	jalr	-1072(ra) # 30 <put_u32>
+     468:	000ca783          	lw	a5,0(s9)
+     46c:	0017f793          	andi	a5,a5,1
+     470:	fe079ce3          	bnez	a5,468 <main+0x34c>
+     474:	01ada023          	sw	s10,0(s11)
+     478:	000ca783          	lw	a5,0(s9)
+     47c:	0017f793          	andi	a5,a5,1
+     480:	fe079ce3          	bnez	a5,478 <main+0x35c>
+     484:	00a00793          	li	a5,10
+     488:	00fda023          	sw	a5,0(s11)
+     48c:	000007b7          	lui	a5,0x0
+     490:	04600693          	li	a3,70
+     494:	78078713          	addi	a4,a5,1920 # 780 <main+0x664>
+     498:	00170713          	addi	a4,a4,1
+     49c:	000ca783          	lw	a5,0(s9)
+     4a0:	0017f793          	andi	a5,a5,1
+     4a4:	fe079ce3          	bnez	a5,49c <main+0x380>
+     4a8:	00dda023          	sw	a3,0(s11)
+     4ac:	00074683          	lbu	a3,0(a4)
+     4b0:	ff3714e3          	bne	a4,s3,498 <main+0x37c>
+     4b4:	00412503          	lw	a0,4(sp)
+     4b8:	00000097          	auipc	ra,0x0
+     4bc:	b78080e7          	jalr	-1160(ra) # 30 <put_u32>
+     4c0:	000ca783          	lw	a5,0(s9)
+     4c4:	0017f793          	andi	a5,a5,1
+     4c8:	fe079ce3          	bnez	a5,4c0 <main+0x3a4>
+     4cc:	00012503          	lw	a0,0(sp)
+     4d0:	02c00793          	li	a5,44
+     4d4:	00fda023          	sw	a5,0(s11)
+     4d8:	00000097          	auipc	ra,0x0
+     4dc:	b58080e7          	jalr	-1192(ra) # 30 <put_u32>
+     4e0:	000ca783          	lw	a5,0(s9)
+     4e4:	0017f793          	andi	a5,a5,1
+     4e8:	fe079ce3          	bnez	a5,4e0 <main+0x3c4>
+     4ec:	00812503          	lw	a0,8(sp)
+     4f0:	02c00793          	li	a5,44
+     4f4:	00fda023          	sw	a5,0(s11)
+     4f8:	00000097          	auipc	ra,0x0
+     4fc:	b38080e7          	jalr	-1224(ra) # 30 <put_u32>
+     500:	000ca783          	lw	a5,0(s9)
+     504:	0017f793          	andi	a5,a5,1
+     508:	fe079ce3          	bnez	a5,500 <main+0x3e4>
+     50c:	02c00793          	li	a5,44
+     510:	00fda023          	sw	a5,0(s11)
+     514:	01c00713          	li	a4,28
+     518:	00900593          	li	a1,9
+     51c:	ffc00613          	li	a2,-4
+     520:	00ec57b3          	srl	a5,s8,a4
+     524:	00f7f793          	andi	a5,a5,15
+     528:	03778693          	addi	a3,a5,55
+     52c:	00f5e463          	bltu	a1,a5,534 <main+0x418>
+     530:	03078693          	addi	a3,a5,48
+     534:	000ca783          	lw	a5,0(s9)
+     538:	0017f793          	andi	a5,a5,1
+     53c:	fe079ce3          	bnez	a5,534 <main+0x418>
+     540:	00dda023          	sw	a3,0(s11)
+     544:	ffc70713          	addi	a4,a4,-4
+     548:	fcc71ce3          	bne	a4,a2,520 <main+0x404>
+     54c:	000ca783          	lw	a5,0(s9)
+     550:	0017f793          	andi	a5,a5,1
+     554:	fe079ce3          	bnez	a5,54c <main+0x430>
+     558:	01ada023          	sw	s10,0(s11)
+     55c:	000ca783          	lw	a5,0(s9)
+     560:	0017f793          	andi	a5,a5,1
+     564:	fe079ce3          	bnez	a5,55c <main+0x440>
+     568:	00a00793          	li	a5,10
+     56c:	00fda023          	sw	a5,0(s11)
+     570:	000007b7          	lui	a5,0x0
+     574:	04600693          	li	a3,70
+     578:	78c78713          	addi	a4,a5,1932 # 78c <main+0x670>
+     57c:	00170713          	addi	a4,a4,1
+     580:	000ca783          	lw	a5,0(s9)
+     584:	0017f793          	andi	a5,a5,1
+     588:	fe079ce3          	bnez	a5,580 <main+0x464>
+     58c:	00dda023          	sw	a3,0(s11)
+     590:	00074683          	lbu	a3,0(a4)
+     594:	ff2714e3          	bne	a4,s2,57c <main+0x460>
+     598:	01012503          	lw	a0,16(sp)
+     59c:	00000097          	auipc	ra,0x0
+     5a0:	a94080e7          	jalr	-1388(ra) # 30 <put_u32>
+     5a4:	000ca783          	lw	a5,0(s9)
+     5a8:	0017f793          	andi	a5,a5,1
+     5ac:	fe079ce3          	bnez	a5,5a4 <main+0x488>
+     5b0:	00c12503          	lw	a0,12(sp)
+     5b4:	02c00793          	li	a5,44
+     5b8:	00fda023          	sw	a5,0(s11)
+     5bc:	00000097          	auipc	ra,0x0
+     5c0:	a74080e7          	jalr	-1420(ra) # 30 <put_u32>
+     5c4:	000ca783          	lw	a5,0(s9)
+     5c8:	0017f793          	andi	a5,a5,1
+     5cc:	fe079ce3          	bnez	a5,5c4 <main+0x4a8>
+     5d0:	01412503          	lw	a0,20(sp)
+     5d4:	02c00793          	li	a5,44
+     5d8:	00fda023          	sw	a5,0(s11)
+     5dc:	00000097          	auipc	ra,0x0
+     5e0:	a54080e7          	jalr	-1452(ra) # 30 <put_u32>
+     5e4:	000ca783          	lw	a5,0(s9)
+     5e8:	0017f793          	andi	a5,a5,1
+     5ec:	fe079ce3          	bnez	a5,5e4 <main+0x4c8>
+     5f0:	02c00793          	li	a5,44
+     5f4:	00fda023          	sw	a5,0(s11)
+     5f8:	01c00713          	li	a4,28
+     5fc:	00900593          	li	a1,9
+     600:	ffc00613          	li	a2,-4
+     604:	00ebd7b3          	srl	a5,s7,a4
+     608:	00f7f793          	andi	a5,a5,15
+     60c:	03778693          	addi	a3,a5,55
+     610:	00f5e463          	bltu	a1,a5,618 <main+0x4fc>
+     614:	03078693          	addi	a3,a5,48
+     618:	000ca783          	lw	a5,0(s9)
+     61c:	0017f793          	andi	a5,a5,1
+     620:	fe079ce3          	bnez	a5,618 <main+0x4fc>
+     624:	00dda023          	sw	a3,0(s11)
+     628:	ffc70713          	addi	a4,a4,-4
+     62c:	fcc71ce3          	bne	a4,a2,604 <main+0x4e8>
+     630:	000ca783          	lw	a5,0(s9)
+     634:	0017f793          	andi	a5,a5,1
+     638:	fe079ce3          	bnez	a5,630 <main+0x514>
+     63c:	01ada023          	sw	s10,0(s11)
+     640:	000ca783          	lw	a5,0(s9)
+     644:	0017f793          	andi	a5,a5,1
+     648:	fe079ce3          	bnez	a5,640 <main+0x524>
+     64c:	00a00793          	li	a5,10
+     650:	00fda023          	sw	a5,0(s11)
+     654:	000007b7          	lui	a5,0x0
+     658:	04600693          	li	a3,70
+     65c:	79878713          	addi	a4,a5,1944 # 798 <main+0x67c>
+     660:	00170713          	addi	a4,a4,1
+     664:	000ca783          	lw	a5,0(s9)
+     668:	0017f793          	andi	a5,a5,1
+     66c:	fe079ce3          	bnez	a5,664 <main+0x548>
+     670:	00dda023          	sw	a3,0(s11)
+     674:	00074683          	lbu	a3,0(a4)
+     678:	fe9714e3          	bne	a4,s1,660 <main+0x544>
+     67c:	00018537          	lui	a0,0x18
+     680:	6a050513          	addi	a0,a0,1696 # 186a0 <__bss_end+0x15a44>
+     684:	00000097          	auipc	ra,0x0
+     688:	9ac080e7          	jalr	-1620(ra) # 30 <put_u32>
+     68c:	000ca783          	lw	a5,0(s9)
+     690:	0017f793          	andi	a5,a5,1
+     694:	fe079ce3          	bnez	a5,68c <main+0x570>
+     698:	01c12503          	lw	a0,28(sp)
+     69c:	02c00793          	li	a5,44
+     6a0:	00fda023          	sw	a5,0(s11)
+     6a4:	00000097          	auipc	ra,0x0
+     6a8:	98c080e7          	jalr	-1652(ra) # 30 <put_u32>
+     6ac:	000ca783          	lw	a5,0(s9)
+     6b0:	0017f793          	andi	a5,a5,1
+     6b4:	fe079ce3          	bnez	a5,6ac <main+0x590>
+     6b8:	01812503          	lw	a0,24(sp)
+     6bc:	02c00793          	li	a5,44
+     6c0:	00fda023          	sw	a5,0(s11)
+     6c4:	00000097          	auipc	ra,0x0
+     6c8:	96c080e7          	jalr	-1684(ra) # 30 <put_u32>
+     6cc:	000ca783          	lw	a5,0(s9)
+     6d0:	0017f793          	andi	a5,a5,1
+     6d4:	fe079ce3          	bnez	a5,6cc <main+0x5b0>
+     6d8:	01ada023          	sw	s10,0(s11)
+     6dc:	000ca783          	lw	a5,0(s9)
+     6e0:	0017f793          	andi	a5,a5,1
+     6e4:	fe079ce3          	bnez	a5,6dc <main+0x5c0>
+     6e8:	00a00793          	li	a5,10
+     6ec:	00fda023          	sw	a5,0(s11)
+     6f0:	000007b7          	lui	a5,0x0
+     6f4:	04600693          	li	a3,70
+     6f8:	7a078713          	addi	a4,a5,1952 # 7a0 <main+0x684>
+     6fc:	00170713          	addi	a4,a4,1
+     700:	000ca783          	lw	a5,0(s9)
+     704:	0017f793          	andi	a5,a5,1
+     708:	fe079ce3          	bnez	a5,700 <main+0x5e4>
+     70c:	00dda023          	sw	a3,0(s11)
+     710:	00074683          	lbu	a3,0(a4)
+     714:	fe8714e3          	bne	a4,s0,6fc <main+0x5e0>
+     718:	000ca783          	lw	a5,0(s9)
+     71c:	0017f793          	andi	a5,a5,1
+     720:	fe079ce3          	bnez	a5,718 <main+0x5fc>
+     724:	01ada023          	sw	s10,0(s11)
+     728:	000ca783          	lw	a5,0(s9)
+     72c:	0017f793          	andi	a5,a5,1
+     730:	fe079ce3          	bnez	a5,728 <main+0x60c>
+     734:	00a00793          	li	a5,10
+     738:	10000737          	lui	a4,0x10000
+     73c:	00fda023          	sw	a5,0(s11)
+     740:	02070713          	addi	a4,a4,32 # 10000020 <__bss_end+0xfffd3c4>
+     744:	00100793          	li	a5,1
+     748:	00f72023          	sw	a5,0(a4)
+     74c:	001e87b7          	lui	a5,0x1e8
+     750:	48078793          	addi	a5,a5,1152 # 1e8480 <__bss_end+0x1e5824>
+     754:	fff78793          	addi	a5,a5,-1
+     758:	fe079ee3          	bnez	a5,754 <main+0x638>
+     75c:	00072023          	sw	zero,0(a4)
+     760:	c3dff06f          	j	39c <main+0x280>
+     764:	3846                	.insn	2, 0x3846
+     766:	682c                	.insn	2, 0x682c
+     768:	6c65                	.insn	2, 0x6c65
+     76a:	6f6c                	.insn	2, 0x6f6c
+     76c:	002c                	.insn	2, 0x002c
+     76e:	0000                	.insn	2, 0x0000
+     770:	3965                	.insn	2, 0x3965
+     772:	38613833          	.insn	4, 0x38613833
+     776:	0066                	.insn	2, 0x0066
+     778:	3846                	.insn	2, 0x3846
+     77a:	6d2c                	.insn	2, 0x6d2c
+     77c:	6361                	.insn	2, 0x6361
+     77e:	002c                	.insn	2, 0x002c
+     780:	3846                	.insn	2, 0x3846
+     782:	732c                	.insn	2, 0x732c
+     784:	616c6163          	bltu	s8,s6,d86 <f8_pool+0x44e>
+     788:	2c72                	.insn	2, 0x2c72
+     78a:	0000                	.insn	2, 0x0000
+     78c:	3846                	.insn	2, 0x3846
+     78e:	642c                	.insn	2, 0x642c
+     790:	2c34746f          	jal	s0,48252 <__bss_end+0x455f6>
+     794:	0000                	.insn	2, 0x0000
+     796:	0000                	.insn	2, 0x0000
+     798:	3846                	.insn	2, 0x3846
+     79a:	6c2c                	.insn	2, 0x6c2c
+     79c:	7461                	.insn	2, 0x7461
+     79e:	002c                	.insn	2, 0x002c
+     7a0:	3846                	.insn	2, 0x3846
+     7a2:	642c                	.insn	2, 0x642c
+     7a4:	00656e6f          	jal	t3,567aa <__bss_end+0x53b4e>
+
+000007a8 <f8_off>:
+     7a8:	0000                	.insn	2, 0x0000
+     7aa:	0bb8                	.insn	2, 0x0bb8
+     7ac:	0044                	.insn	2, 0x0044
+     7ae:	0c38                	.insn	2, 0x0c38
+     7b0:	008c                	.insn	2, 0x008c
+     7b2:	0cbc                	.insn	2, 0x0cbc
+     7b4:	00d4                	.insn	2, 0x00d4
+     7b6:	0d40                	.insn	2, 0x0d40
+     7b8:	011c                	.insn	2, 0x011c
+     7ba:	0dc4                	.insn	2, 0x0dc4
+     7bc:	0160                	.insn	2, 0x0160
+     7be:	0e44                	.insn	2, 0x0e44
+     7c0:	01a8                	.insn	2, 0x01a8
+     7c2:	0ec8                	.insn	2, 0x0ec8
+     7c4:	01f0                	.insn	2, 0x01f0
+     7c6:	0f4c                	.insn	2, 0x0f4c
+     7c8:	0238                	.insn	2, 0x0238
+     7ca:	0fd0                	.insn	2, 0x0fd0
+     7cc:	027c                	.insn	2, 0x027c
+     7ce:	1050                	.insn	2, 0x1050
+     7d0:	02c4                	.insn	2, 0x02c4
+     7d2:	10d4                	.insn	2, 0x10d4
+     7d4:	030c                	.insn	2, 0x030c
+     7d6:	1158                	.insn	2, 0x1158
+     7d8:	0354                	.insn	2, 0x0354
+     7da:	11dc                	.insn	2, 0x11dc
+     7dc:	0398                	.insn	2, 0x0398
+     7de:	125c                	.insn	2, 0x125c
+     7e0:	03e0                	.insn	2, 0x03e0
+     7e2:	12e0                	.insn	2, 0x12e0
+     7e4:	0428                	.insn	2, 0x0428
+     7e6:	1364                	.insn	2, 0x1364
+     7e8:	0470                	.insn	2, 0x0470
+     7ea:	13e8                	.insn	2, 0x13e8
+     7ec:	04b4                	.insn	2, 0x04b4
+     7ee:	1468                	.insn	2, 0x1468
+     7f0:	04fc                	.insn	2, 0x04fc
+     7f2:	14ec                	.insn	2, 0x14ec
+     7f4:	0544                	.insn	2, 0x0544
+     7f6:	1570                	.insn	2, 0x1570
+     7f8:	058c                	.insn	2, 0x058c
+     7fa:	15f4                	.insn	2, 0x15f4
+     7fc:	05d0                	.insn	2, 0x05d0
+     7fe:	1674                	.insn	2, 0x1674
+     800:	0618                	.insn	2, 0x0618
+     802:	16f8                	.insn	2, 0x16f8
+     804:	0660                	.insn	2, 0x0660
+     806:	177c                	.insn	2, 0x177c
+     808:	06a8                	.insn	2, 0x06a8
+     80a:	1800                	.insn	2, 0x1800
+     80c:	06ec                	.insn	2, 0x06ec
+     80e:	1880                	.insn	2, 0x1880
+     810:	0734                	.insn	2, 0x0734
+     812:	1904                	.insn	2, 0x1904
+     814:	077c                	.insn	2, 0x077c
+     816:	1988                	.insn	2, 0x1988
+     818:	07c4                	.insn	2, 0x07c4
+     81a:	1a0c                	.insn	2, 0x1a0c
+     81c:	0808                	.insn	2, 0x0808
+     81e:	1a8c                	.insn	2, 0x1a8c
+     820:	0850                	.insn	2, 0x0850
+     822:	1b10                	.insn	2, 0x1b10
+     824:	0898                	.insn	2, 0x0898
+     826:	1b94                	.insn	2, 0x1b94
+     828:	08e0                	.insn	2, 0x08e0
+     82a:	0018                	.insn	2, 0x0018
+     82c:	0924                	.insn	2, 0x0924
+     82e:	0098                	.insn	2, 0x0098
+     830:	096c                	.insn	2, 0x096c
+     832:	011c                	.insn	2, 0x011c
+     834:	09b4                	.insn	2, 0x09b4
+     836:	01a0                	.insn	2, 0x01a0
+     838:	09fc                	.insn	2, 0x09fc
+     83a:	0224                	.insn	2, 0x0224
+     83c:	0a40                	.insn	2, 0x0a40
+     83e:	02a4                	.insn	2, 0x02a4
+     840:	0a88                	.insn	2, 0x0a88
+     842:	0328                	.insn	2, 0x0328
+     844:	0ad0                	.insn	2, 0x0ad0
+     846:	03ac                	.insn	2, 0x03ac
+     848:	0b18                	.insn	2, 0x0b18
+     84a:	0430                	.insn	2, 0x0430
+     84c:	0b5c                	.insn	2, 0x0b5c
+     84e:	04b0                	.insn	2, 0x04b0
+     850:	0ba4                	.insn	2, 0x0ba4
+     852:	0534                	.insn	2, 0x0534
+     854:	0bec                	.insn	2, 0x0bec
+     856:	05b8                	.insn	2, 0x05b8
+     858:	0c34                	.insn	2, 0x0c34
+     85a:	063c                	.insn	2, 0x063c
+     85c:	0c78                	.insn	2, 0x0c78
+     85e:	06bc                	.insn	2, 0x06bc
+     860:	0cc0                	.insn	2, 0x0cc0
+     862:	0740                	.insn	2, 0x0740
+     864:	0d08                	.insn	2, 0x0d08
+     866:	07c4                	.insn	2, 0x07c4
+     868:	0d50                	.insn	2, 0x0d50
+     86a:	0848                	.insn	2, 0x0848
+     86c:	0d94                	.insn	2, 0x0d94
+     86e:	08c8                	.insn	2, 0x08c8
+     870:	0ddc                	.insn	2, 0x0ddc
+     872:	094c                	.insn	2, 0x094c
+     874:	0e24                	.insn	2, 0x0e24
+     876:	09d0                	.insn	2, 0x09d0
+     878:	0e6c                	.insn	2, 0x0e6c
+     87a:	0a54                	.insn	2, 0x0a54
+     87c:	0eb0                	.insn	2, 0x0eb0
+     87e:	0ad4                	.insn	2, 0x0ad4
+     880:	0ef8                	.insn	2, 0x0ef8
+     882:	0b58                	.insn	2, 0x0b58
+     884:	0f40                	.insn	2, 0x0f40
+     886:	0bdc                	.insn	2, 0x0bdc
+     888:	0f88                	.insn	2, 0x0f88
+     88a:	0c60                	.insn	2, 0x0c60
+     88c:	0fcc                	.insn	2, 0x0fcc
+     88e:	0ce0                	.insn	2, 0x0ce0
+     890:	1014                	.insn	2, 0x1014
+     892:	0d64                	.insn	2, 0x0d64
+     894:	105c                	.insn	2, 0x105c
+     896:	0de8                	.insn	2, 0x0de8
+     898:	10a4                	.insn	2, 0x10a4
+     89a:	0e6c                	.insn	2, 0x0e6c
+     89c:	10e8                	.insn	2, 0x10e8
+     89e:	0eec                	.insn	2, 0x0eec
+     8a0:	1130                	.insn	2, 0x1130
+     8a2:	0f70                	.insn	2, 0x0f70
+     8a4:	1178                	.insn	2, 0x1178
+     8a6:	0ff4                	.insn	2, 0x0ff4
+     8a8:	11c0                	.insn	2, 0x11c0
+     8aa:	1078                	.insn	2, 0x1078
+     8ac:	1204                	.insn	2, 0x1204
+     8ae:	10f8                	.insn	2, 0x10f8
+     8b0:	124c                	.insn	2, 0x124c
+     8b2:	117c                	.insn	2, 0x117c
+     8b4:	1294                	.insn	2, 0x1294
+     8b6:	1200                	.insn	2, 0x1200
+     8b8:	12dc                	.insn	2, 0x12dc
+     8ba:	1284                	.insn	2, 0x1284
+     8bc:	1320                	.insn	2, 0x1320
+     8be:	1304                	.insn	2, 0x1304
+     8c0:	1368                	.insn	2, 0x1368
+     8c2:	1388                	.insn	2, 0x1388
+     8c4:	13b0                	.insn	2, 0x13b0
+     8c6:	140c                	.insn	2, 0x140c
+     8c8:	13f8                	.insn	2, 0x13f8
+     8ca:	1490                	.insn	2, 0x1490
+     8cc:	143c                	.insn	2, 0x143c
+     8ce:	1510                	.insn	2, 0x1510
+     8d0:	1484                	.insn	2, 0x1484
+     8d2:	1594                	.insn	2, 0x1594
+     8d4:	14cc                	.insn	2, 0x14cc
+     8d6:	1618                	.insn	2, 0x1618
+     8d8:	1514                	.insn	2, 0x1514
+     8da:	169c                	.insn	2, 0x169c
+     8dc:	1558                	.insn	2, 0x1558
+     8de:	171c                	.insn	2, 0x171c
+     8e0:	15a0                	.insn	2, 0x15a0
+     8e2:	17a0                	.insn	2, 0x17a0
+     8e4:	15e8                	.insn	2, 0x15e8
+     8e6:	1824                	.insn	2, 0x1824
+     8e8:	1630                	.insn	2, 0x1630
+     8ea:	18a8                	.insn	2, 0x18a8
+     8ec:	1674                	.insn	2, 0x1674
+     8ee:	1928                	.insn	2, 0x1928
+     8f0:	16bc                	.insn	2, 0x16bc
+     8f2:	19ac                	.insn	2, 0x19ac
+     8f4:	1704                	.insn	2, 0x1704
+     8f6:	1a30                	.insn	2, 0x1a30
+     8f8:	174c                	.insn	2, 0x174c
+     8fa:	1ab4                	.insn	2, 0x1ab4
+     8fc:	1790                	.insn	2, 0x1790
+     8fe:	1b34                	.insn	2, 0x1b34
+     900:	17d8                	.insn	2, 0x17d8
+     902:	1bb8                	.insn	2, 0x1bb8
+     904:	1820                	.insn	2, 0x1820
+     906:	003c                	.insn	2, 0x003c
+     908:	1868                	.insn	2, 0x1868
+     90a:	00c0                	.insn	2, 0x00c0
+     90c:	18ac                	.insn	2, 0x18ac
+     90e:	0140                	.insn	2, 0x0140
+     910:	18f4                	.insn	2, 0x18f4
+     912:	01c4                	.insn	2, 0x01c4
+     914:	193c                	.insn	2, 0x193c
+     916:	0248                	.insn	2, 0x0248
+     918:	1984                	.insn	2, 0x1984
+     91a:	02cc                	.insn	2, 0x02cc
+     91c:	19c8                	.insn	2, 0x19c8
+     91e:	034c                	.insn	2, 0x034c
+     920:	1a10                	.insn	2, 0x1a10
+     922:	03d0                	.insn	2, 0x03d0
+     924:	1a58                	.insn	2, 0x1a58
+     926:	0454                	.insn	2, 0x0454
+     928:	1aa0                	.insn	2, 0x1aa0
+     92a:	04d8                	.insn	2, 0x04d8
+     92c:	1ae4                	.insn	2, 0x1ae4
+     92e:	0558                	.insn	2, 0x0558
+     930:	1b2c                	.insn	2, 0x1b2c
+     932:	05dc                	.insn	2, 0x05dc
+     934:	1b74                	.insn	2, 0x1b74
+     936:	0660                	.insn	2, 0x0660
+
+00000938 <f8_pool>:
+     938:	a5e6                	.insn	2, 0xa5e6
+     93a:	b3f5                	.insn	2, 0xb3f5
+     93c:	9b2ab2cf          	.insn	4, 0x9b2ab2cf
+     940:	59a8                	.insn	2, 0x59a8
+     942:	1f2d                	.insn	2, 0x1f2d
+     944:	b0ce                	.insn	2, 0xb0ce
+     946:	92e4                	.insn	2, 0x92e4
+     948:	99c49d83          	lh	s11,-1636(s1)
+     94c:	afcc                	.insn	2, 0xafcc
+     94e:	0b0476f7          	.insn	4, 0x0b0476f7
+     952:	5678                	.insn	2, 0x5678
+     954:	0226                	.insn	2, 0x0226
+     956:	04f8                	.insn	2, 0x04f8
+     958:	d40c                	.insn	2, 0xd40c
+     95a:	9fa6                	.insn	2, 0x9fa6
+     95c:	14c7073f 615d2ed1 	.insn	8, 0x615d2ed114c7073f
+     964:	c35f 7397 3c32      	.insn	6, 0x3c327397c35f
+     96a:	c1d15197          	auipc	gp,0xc1d15
+     96e:	791ecbab          	.insn	4, 0x791ecbab
+     972:	3c2d                	.insn	2, 0x3c2d
+     974:	4625                	.insn	2, 0x4625
+     976:	d208                	.insn	2, 0xd208
+     978:	2313eb9b          	.insn	4, 0x2313eb9b
+     97c:	afc6                	.insn	2, 0xafc6
+     97e:	4cf0                	.insn	2, 0x4cf0
+     980:	9e2e                	.insn	2, 0x9e2e
+     982:	5dd1                	.insn	2, 0x5dd1
+     984:	ed25                	.insn	2, 0xed25
+     986:	c514                	.insn	2, 0xc514
+     988:	d14e                	.insn	2, 0xd14e
+     98a:	da95                	.insn	2, 0xda95
+     98c:	f3b6                	.insn	2, 0xf3b6
+     98e:	57ac                	.insn	2, 0x57ac
+     990:	d19fea53          	.insn	4, 0xd19fea53
+     994:	60c5                	.insn	2, 0x60c5
+     996:	45e8                	.insn	2, 0x45e8
+     998:	6cb55dcb          	.insn	4, 0x6cb55dcb
+     99c:	4b50                	.insn	2, 0x4b50
+     99e:	5d41                	.insn	2, 0x5d41
+     9a0:	dcee                	.insn	2, 0xdcee
+     9a2:	7865                	.insn	2, 0x7865
+     9a4:	1691                	.insn	2, 0x1691
+     9a6:	9702a9b7          	lui	s3,0x9702a
+     9aa:	eb018b03          	lb	s6,-336(gp) # c1d1581a <__bss_end+0xc1d12bbe>
+     9ae:	40e5                	.insn	2, 0x40e5
+     9b0:	3c582d1b          	.insn	4, 0x3c582d1b
+     9b4:	1609                	.insn	2, 0x1609
+     9b6:	7720                	.insn	2, 0x7720
+     9b8:	aa05                	.insn	2, 0xaa05
+     9ba:	eac4                	.insn	2, 0xeac4
+     9bc:	01df e222 ceb4      	.insn	6, 0xceb4e22201df
+     9c2:	e725                	.insn	2, 0xe725
+     9c4:	3f6452a3          	.insn	4, 0x3f6452a3
+     9c8:	d470                	.insn	2, 0xd470
+     9ca:	d340                	.insn	2, 0xd340
+     9cc:	f482                	.insn	2, 0xf482
+     9ce:	80c2                	.insn	2, 0x80c2
+     9d0:	5abc                	.insn	2, 0x5abc
+     9d2:	6881                	.insn	2, 0x6881
+     9d4:	b90a                	.insn	2, 0xb90a
+     9d6:	8312                	.insn	2, 0x8312
+     9d8:	8cb1                	.insn	2, 0x8cb1
+     9da:	3610                	.insn	2, 0x3610
+     9dc:	9b59                	.insn	2, 0x9b59
+     9de:	c5214183          	lbu	gp,-942(sp)
+     9e2:	52d2                	.insn	2, 0x52d2
+     9e4:	9b35                	.insn	2, 0x9b35
+     9e6:	0da0                	.insn	2, 0x0da0
+     9e8:	38d5                	.insn	2, 0x38d5
+     9ea:	20b313ab          	.insn	4, 0x20b313ab
+     9ee:	de1d                	.insn	2, 0xde1d
+     9f0:	3c6d                	.insn	2, 0x3c6d
+     9f2:	5270                	.insn	2, 0x5270
+     9f4:	22ce                	.insn	2, 0x22ce
+     9f6:	8db5                	.insn	2, 0x8db5
+     9f8:	aac171f3          	.insn	4, 0xaac171f3
+     9fc:	02d4dd77          	.insn	4, 0x02d4dd77
+     a00:	ec2d                	.insn	2, 0xec2d
+     a02:	36e1                	.insn	2, 0x36e1
+     a04:	3add                	.insn	2, 0x3add
+     a06:	d358ea2f          	.insn	4, 0xd358ea2f
+     a0a:	0165                	.insn	2, 0x0165
+     a0c:	736f1f17          	auipc	t5,0x736f1
+     a10:	65a0                	.insn	2, 0x65a0
+     a12:	5794                	.insn	2, 0x5794
+     a14:	2cae                	.insn	2, 0x2cae
+     a16:	f060                	.insn	2, 0xf060
+     a18:	fe5a                	.insn	2, 0xfe5a
+     a1a:	420981cb          	.insn	4, 0x420981cb
+     a1e:	4042                	.insn	2, 0x4042
+     a20:	ac09                	.insn	2, 0xac09
+     a22:	3114                	.insn	2, 0x3114
+     a24:	666c                	.insn	2, 0x666c
+     a26:	07aa                	.insn	2, 0x07aa
+     a28:	020d                	.insn	2, 0x020d
+     a2a:	36e9                	.insn	2, 0x36e9
+     a2c:	95b45aa7          	.insn	4, 0x95b45aa7
+     a30:	068c6c2f          	.insn	4, 0x068c6c2f
+     a34:	c854                	.insn	2, 0xc854
+     a36:	0361                	.insn	2, 0x0361
+     a38:	cfe0                	.insn	2, 0xcfe0
+     a3a:	ac42                	.insn	2, 0xac42
+     a3c:	10de                	.insn	2, 0x10de
+     a3e:	06b1                	.insn	2, 0x06b1
+     a40:	92f9                	.insn	2, 0x92f9
+     a42:	6485                	.insn	2, 0x6485
+     a44:	ebdd                	.insn	2, 0xebdd
+     a46:	a309fa9b          	.insn	4, 0xa309fa9b
+     a4a:	b30c                	.insn	2, 0xb30c
+     a4c:	7f9f e505 604d      	.insn	6, 0x604de5057f9f
+     a52:	861d                	.insn	2, 0x861d
+     a54:	13b0                	.insn	2, 0x13b0
+     a56:	5118                	.insn	2, 0x5118
+     a58:	8668                	.insn	2, 0x8668
+     a5a:	14b51d63          	bne	a0,a1,bb4 <f8_pool+0x27c>
+     a5e:	44ad                	.insn	2, 0x44ad
+     a60:	f4905d9b          	.insn	4, 0xf4905d9b
+     a64:	4cd6                	.insn	2, 0x4cd6
+     a66:	92a6                	.insn	2, 0x92a6
+     a68:	2772                	.insn	2, 0x2772
+     a6a:	8db2                	.insn	2, 0x8db2
+     a6c:	8396                	.insn	2, 0x8396
+     a6e:	fe8758d7          	.insn	4, 0xfe8758d7
+     a72:	1fb3c863          	blt	t2,s11,c62 <f8_pool+0x32a>
+     a76:	6e609e47          	.insn	4, 0x6e609e47
+     a7a:	e3b2                	.insn	2, 0xe3b2
+     a7c:	6618                	.insn	2, 0x6618
+     a7e:	8f14                	.insn	2, 0x8f14
+     a80:	f6ea                	.insn	2, 0xf6ea
+     a82:	8035                	.insn	2, 0x8035
+     a84:	c424                	.insn	2, 0xc424
+     a86:	d36d207b          	.insn	4, 0xd36d207b
+     a8a:	a219                	.insn	2, 0xa219
+     a8c:	3bca                	.insn	2, 0x3bca
+     a8e:	f85c27ab          	.insn	4, 0xf85c27ab
+     a92:	bf29                	.insn	2, 0xbf29
+     a94:	ae8d                	.insn	2, 0xae8d
+     a96:	2d54397b          	.insn	4, 0x2d54397b
+     a9a:	e114                	.insn	2, 0xe114
+     a9c:	8406                	.insn	2, 0x8406
+     a9e:	bafe                	.insn	2, 0xbafe
+     aa0:	952d                	.insn	2, 0x952d
+     aa2:	8b0e                	.insn	2, 0x8b0e
+     aa4:	07e1                	.insn	2, 0x07e1
+     aa6:	a170                	.insn	2, 0xa170
+     aa8:	08c78643          	.insn	4, 0x08c78643
+     aac:	c612                	.insn	2, 0xc612
+     aae:	c3b834f7          	.insn	4, 0xc3b834f7
+     ab2:	8576                	.insn	2, 0x8576
+     ab4:	198c                	.insn	2, 0x198c
+     ab6:	db3c                	.insn	2, 0xdb3c
+     ab8:	dc658cd3          	.insn	4, 0xdc658cd3
+     abc:	ffcc                	.insn	2, 0xffcc
+     abe:	07d2                	.insn	2, 0x07d2
+     ac0:	7f21                	.insn	2, 0x7f21
+     ac2:	ab2d                	.insn	2, 0xab2d
+     ac4:	5806                	.insn	2, 0x5806
+     ac6:	e1a1                	.insn	2, 0xe1a1
+     ac8:	7d9d                	.insn	2, 0x7d9d
+     aca:	711a                	.insn	2, 0x711a
+     acc:	af32                	.insn	2, 0xaf32
+     ace:	c566                	.insn	2, 0xc566
+     ad0:	606e                	.insn	2, 0x606e
+     ad2:	404c                	.insn	2, 0x404c
+     ad4:	9c35f6b7          	lui	a3,0x9c35f
+     ad8:	3d80cd37          	lui	s10,0x3d80c
+     adc:	4120                	.insn	2, 0x4120
+     ade:	8510                	.insn	2, 0x8510
+     ae0:	add1                	.insn	2, 0xadd1
+     ae2:	062a3c17          	auipc	s8,0x62a3
+     ae6:	2958                	.insn	2, 0x2958
+     ae8:	c81c                	.insn	2, 0xc81c
+     aea:	1192c19b          	.insn	4, 0x1192c19b
+     aee:	6dbe                	.insn	2, 0x6dbe
+     af0:	dc9d                	.insn	2, 0xdc9d
+     af2:	7f11                	.insn	2, 0x7f11
+     af4:	e302                	.insn	2, 0xe302
+     af6:	7efa                	.insn	2, 0x7efa
+     af8:	2c4a                	.insn	2, 0x2c4a
+     afa:	f389                	.insn	2, 0xf389
+     afc:	5489                	.insn	2, 0x5489
+     afe:	262e                	.insn	2, 0x262e
+     b00:	a274b12f          	.insn	4, 0xa274b12f
+     b04:	ebb2                	.insn	2, 0xebb2
+     b06:	649686a7          	.insn	4, 0x649686a7
+     b0a:	722e                	.insn	2, 0x722e
+     b0c:	70e1                	.insn	2, 0x70e1
+     b0e:	d9de                	.insn	2, 0xd9de
+     b10:	8c2a                	.insn	2, 0x8c2a
+     b12:	9eac                	.insn	2, 0x9eac
+     b14:	310e                	.insn	2, 0x310e
+     b16:	acba                	.insn	2, 0xacba
+     b18:	3758                	.insn	2, 0x3758
+     b1a:	e6a8                	.insn	2, 0xe6a8
+     b1c:	8ba8                	.insn	2, 0x8ba8
+     b1e:	747e                	.insn	2, 0x747e
+     b20:	9df5                	.insn	2, 0x9df5
+     b22:	0284160f          	.insn	4, 0x0284160f
+     b26:	d67c                	.insn	2, 0xd67c
+     b28:	610109eb          	.insn	4, 0x610109eb
+     b2c:	82e1                	.insn	2, 0x82e1
+     b2e:	2fb2                	.insn	2, 0x2fb2
+     b30:	88f5                	.insn	2, 0x88f5
+     b32:	73c9                	.insn	2, 0x73c9
+     b34:	be00                	.insn	2, 0xbe00
+     b36:	98b7adfb          	.insn	4, 0x98b7adfb
+     b3a:	2f56                	.insn	2, 0x2f56
+     b3c:	9d15                	.insn	2, 0x9d15
+     b3e:	5daa                	.insn	2, 0x5daa
+     b40:	f4906ec7          	.insn	4, 0xf4906ec7
+     b44:	582c                	.insn	2, 0x582c
+     b46:	19c4                	.insn	2, 0x19c4
+     b48:	3582                	.insn	2, 0x3582
+     b4a:	e936                	.insn	2, 0xe936
+     b4c:	2a35                	.insn	2, 0x2a35
+     b4e:	b8a9                	.insn	2, 0xb8a9
+     b50:	63b9                	.insn	2, 0x63b9
+     b52:	9ed5                	.insn	2, 0x9ed5
+     b54:	1ca9                	.insn	2, 0x1ca9
+     b56:	bcfd                	.insn	2, 0xbcfd
+     b58:	7e2d                	.insn	2, 0x7e2d
+     b5a:	5a4e                	.insn	2, 0x5a4e
+     b5c:	3f2735ab          	.insn	4, 0x3f2735ab
+     b60:	912d                	.insn	2, 0x912d
+     b62:	13f0                	.insn	2, 0x13f0
+     b64:	2c26                	.insn	2, 0x2c26
+     b66:	b82e                	.insn	2, 0xb82e
+     b68:	f988                	.insn	2, 0xf988
+     b6a:	eabf57ef          	jal	a5,ffff6a14 <__bss_end+0xffff3db8>
+     b6e:	5d5d                	.insn	2, 0x5d5d
+     b70:	0b25                	.insn	2, 0x0b25
+     b72:	3aee                	.insn	2, 0x3aee
+     b74:	507e                	.insn	2, 0x507e
+     b76:	61d868eb          	.insn	4, 0x61d868eb
+     b7a:	190c                	.insn	2, 0x190c
+     b7c:	4b90                	.insn	2, 0x4b90
+     b7e:	d34a                	.insn	2, 0xd34a
+     b80:	a238                	.insn	2, 0xa238
+     b82:	9525                	.insn	2, 0x9525
+     b84:	c688                	.insn	2, 0xc688
+     b86:	5e76                	.insn	2, 0x5e76
+     b88:	f981                	.insn	2, 0xf981
+     b8a:	f6b8                	.insn	2, 0xf6b8
+     b8c:	054a                	.insn	2, 0x054a
+     b8e:	dfea                	.insn	2, 0xdfea
+     b90:	10a2                	.insn	2, 0x10a2
+     b92:	4904                	.insn	2, 0x4904
+     b94:	a0be                	.insn	2, 0xa0be
+     b96:	cdd0                	.insn	2, 0xcdd0
+     b98:	f88c                	.insn	2, 0xf88c
+     b9a:	9ce03243          	.insn	4, 0x9ce03243
+     b9e:	1681                	.insn	2, 0x1681
+     ba0:	4850                	.insn	2, 0x4850
+     ba2:	bb1f 25a3 4538      	.insn	6, 0x453825a3bb1f
+     ba8:	05727ee7          	.insn	4, 0x05727ee7
+     bac:	5b09                	.insn	2, 0x5b09
+     bae:	e641                	.insn	2, 0xe641
+     bb0:	82dd                	.insn	2, 0x82dd
+     bb2:	2a5e                	.insn	2, 0x2a5e
+     bb4:	234db457          	.insn	4, 0x234db457
+     bb8:	affa                	.insn	2, 0xaffa
+     bba:	48ac                	.insn	2, 0x48ac
+     bbc:	2df1                	.insn	2, 0x2df1
+     bbe:	9ec6                	.insn	2, 0x9ec6
+     bc0:	897a                	.insn	2, 0x897a
+     bc2:	3b089d4b          	.insn	4, 0x3b089d4b
+     bc6:	52c0fbb3          	.insn	4, 0x52c0fbb3
+     bca:	413d                	.insn	2, 0x413d
+     bcc:	f27a                	.insn	2, 0xf27a
+     bce:	f6d3c263          	blt	t2,a3,332 <main+0x216>
+     bd2:	e8ac                	.insn	2, 0xe8ac
+     bd4:	f4e1                	.insn	2, 0xf4e1
+     bd6:	8892                	.insn	2, 0x8892
+     bd8:	95befdd7          	.insn	4, 0x95befdd7
+     bdc:	b6ec                	.insn	2, 0xb6ec
+     bde:	4c10                	.insn	2, 0x4c10
+     be0:	9fb9                	.insn	2, 0x9fb9
+     be2:	1988                	.insn	2, 0x1988
+     be4:	9bf0                	.insn	2, 0x9bf0
+     be6:	b136                	.insn	2, 0xb136
+     be8:	0378                	.insn	2, 0x0378
+     bea:	26b8                	.insn	2, 0x26b8
+     bec:	bab9                	.insn	2, 0xbab9
+     bee:	6294                	.insn	2, 0x6294
+     bf0:	c28d                	.insn	2, 0xc28d
+     bf2:	59d2                	.insn	2, 0x59d2
+     bf4:	8cae                	.insn	2, 0x8cae
+     bf6:	69d9                	.insn	2, 0x69d9
+     bf8:	403e                	.insn	2, 0x403e
+     bfa:	3a7297e3          	bne	t0,t2,17a8 <f8_pool+0xe70>
+     bfe:	0c24                	.insn	2, 0x0c24
+     c00:	7144                	.insn	2, 0x7144
+     c02:	dbe1                	.insn	2, 0xdbe1
+     c04:	115c                	.insn	2, 0x115c
+     c06:	c4be                	.insn	2, 0xc4be
+     c08:	2ee8                	.insn	2, 0x2ee8
+     c0a:	e356                	.insn	2, 0xe356
+     c0c:	ac9c                	.insn	2, 0xac9c
+     c0e:	87ce                	.insn	2, 0x87ce
+     c10:	eef6                	.insn	2, 0xeef6
+     c12:	c8c2                	.insn	2, 0xc8c2
+     c14:	4f1c                	.insn	2, 0x4f1c
+     c16:	1802                	.insn	2, 0x1802
+     c18:	44ed                	.insn	2, 0x44ed
+     c1a:	f24f6193          	ori	gp,t5,-220
+     c1e:	30cd                	.insn	2, 0x30cd
+     c20:	2b4d                	.insn	2, 0x2b4d
+     c22:	12971eb7          	lui	t4,0x12971
+     c26:	570d                	.insn	2, 0x570d
+     c28:	01f81a0b          	.insn	4, 0x01f81a0b
+     c2c:	ffe5                	.insn	2, 0xffe5
+     c2e:	42a10fc3          	.insn	4, 0x42a10fc3
+     c32:	99ae4f6f          	jal	t5,fffe4dcc <__bss_end+0xfffe2170>
+     c36:	5bfc                	.insn	2, 0x5bfc
+     c38:	a29e                	.insn	2, 0xa29e
+     c3a:	15a9                	.insn	2, 0x15a9
+     c3c:	1206                	.insn	2, 0x1206
+     c3e:	1340                	.insn	2, 0x1340
+     c40:	c8aa3b2b          	.insn	4, 0xc8aa3b2b
+     c44:	e6f4                	.insn	2, 0xe6f4
+     c46:	9116                	.insn	2, 0x9116
+     c48:	5ce15d23          	.insn	4, 0x5ce15d23
+     c4c:	03ba                	.insn	2, 0x03ba
+     c4e:	1e32                	.insn	2, 0x1e32
+     c50:	c4e9                	.insn	2, 0xc4e9
+     c52:	588e3767          	.insn	4, 0x588e3767
+     c56:	2fc0                	.insn	2, 0x2fc0
+     c58:	b1fa                	.insn	2, 0xb1fa
+     c5a:	d10c                	.insn	2, 0xd10c
+     c5c:	c69d                	.insn	2, 0xc69d
+     c5e:	1f09                	.insn	2, 0x1f09
+     c60:	b332                	.insn	2, 0xb332
+     c62:	bd39                	.insn	2, 0xbd39
+     c64:	9c63254b          	.insn	4, 0x9c63254b
+     c68:	c534                	.insn	2, 0xc534
+     c6a:	05e9                	.insn	2, 0x05e9
+     c6c:	b0f5fb13          	andi	s6,a1,-1265
+     c70:	382b021b          	.insn	4, 0x382b021b
+     c74:	b6c3bfb3          	.insn	4, 0xb6c3bfb3
+     c78:	abe2                	.insn	2, 0xabe2
+     c7a:	5a2a                	.insn	2, 0x5a2a
+     c7c:	75f6                	.insn	2, 0x75f6
+     c7e:	aa88                	.insn	2, 0xaa88
+     c80:	067e346b          	.insn	4, 0x067e346b
+     c84:	0992                	.insn	2, 0x0992
+     c86:	71f1                	.insn	2, 0x71f1
+     c88:	894dcb13          	xori	s6,s11,-1900
+     c8c:	8572                	.insn	2, 0x8572
+     c8e:	aa56                	.insn	2, 0xaa56
+     c90:	0a66                	.insn	2, 0x0a66
+     c92:	01ca                	.insn	2, 0x01ca
+     c94:	027f 95e9 10ec e786 	.insn	10, 0x4265e78610ec95e9027f
+     c9c:	4265 
+     c9e:	4d0a                	.insn	2, 0x4d0a
+     ca0:	57d9                	.insn	2, 0x57d9
+     ca2:	cb66                	.insn	2, 0xcb66
+     ca4:	29f20ef7          	.insn	4, 0x29f20ef7
+     ca8:	b62d                	.insn	2, 0xb62d
+     caa:	34f4                	.insn	2, 0x34f4
+     cac:	0ece                	.insn	2, 0x0ece
+     cae:	5c01                	.insn	2, 0x5c01
+     cb0:	4bb6                	.insn	2, 0x4bb6
+     cb2:	129b90eb          	.insn	4, 0x129b90eb
+     cb6:	6e60                	.insn	2, 0x6e60
+     cb8:	f218                	.insn	2, 0xf218
+     cba:	eb8c                	.insn	2, 0xeb8c
+     cbc:	cad1                	.insn	2, 0xcad1
+     cbe:	c561                	.insn	2, 0xc561
+     cc0:	6e53f58f          	.insn	4, 0x6e53f58f
+     cc4:	148d270f          	.insn	4, 0x148d270f
+     cc8:	fac39acb          	.insn	4, 0xfac39acb
+     ccc:	d230                	.insn	2, 0xd230
+     cce:	0ed2                	.insn	2, 0x0ed2
+     cd0:	7fc5                	.insn	2, 0x7fc5
+     cd2:	b0b1                	.insn	2, 0xb0b1
+     cd4:	89f4                	.insn	2, 0x89f4
+     cd6:	880e                	.insn	2, 0x880e
+     cd8:	cb2cf45b          	.insn	4, 0xcb2cf45b
+     cdc:	c684                	.insn	2, 0xc684
+     cde:	3d0e                	.insn	2, 0x3d0e
+     ce0:	c5bd                	.insn	2, 0xc5bd
+     ce2:	6604                	.insn	2, 0x6604
+     ce4:	7516                	.insn	2, 0x7516
+     ce6:	fb36                	.insn	2, 0xfb36
+     ce8:	4721                	.insn	2, 0x4721
+     cea:	c53c                	.insn	2, 0xc53c
+     cec:	9f88                	.insn	2, 0x9f88
+     cee:	8bda                	.insn	2, 0x8bda
+     cf0:	bcc2                	.insn	2, 0xbcc2
+     cf2:	95be                	.insn	2, 0x95be
+     cf4:	9c7e                	.insn	2, 0x9c7e
+     cf6:	659f 9fcb ba93      	.insn	6, 0xba939fcb659f
+     cfc:	c476                	.insn	2, 0xc476
+     cfe:	35b27c17          	auipc	s8,0x35b27
+     d02:	df50cabb          	.insn	4, 0xdf50cabb
+     d06:	04a8                	.insn	2, 0x04a8
+     d08:	9519                	.insn	2, 0x9519
+     d0a:	6b5f8633          	.insn	4, 0x6b5f8633
+     d0e:	87b4                	.insn	2, 0x87b4
+     d10:	b944ba37          	lui	s4,0xb944b
+     d14:	2b02                	.insn	2, 0x2b02
+     d16:	32d45b7f 2e5c5677 	.insn	20, 0xba72b1a8b69cb097f698c4802e5c567732d45b7f
+     d1e:	f698c480 b69cb097 
+     d26:	ba72b1a8 
+     d2a:	e9df 6a74 b121      	.insn	6, 0xb1216a74e9df
+     d30:	b1c2                	.insn	2, 0xb1c2
+     d32:	777d                	.insn	2, 0x777d
+     d34:	f49c                	.insn	2, 0xf49c
+     d36:	b6e1                	.insn	2, 0xb6e1
+     d38:	af2d87f7          	.insn	4, 0xaf2d87f7
+     d3c:	77c0                	.insn	2, 0x77c0
+     d3e:	8512                	.insn	2, 0x8512
+     d40:	53df fc60 94ca      	.insn	6, 0x94cafc6053df
+     d46:	75e4                	.insn	2, 0x75e4
+     d48:	99b1                	.insn	2, 0x99b1
+     d4a:	d689                	.insn	2, 0xd689
+     d4c:	4c15                	.insn	2, 0x4c15
+     d4e:	741c                	.insn	2, 0x741c
+     d50:	37f30a4b          	.insn	4, 0x37f30a4b
+     d54:	8926                	.insn	2, 0x8926
+     d56:	0e80                	.insn	2, 0x0e80
+     d58:	88d6                	.insn	2, 0x88d6
+     d5a:	10ed                	.insn	2, 0x10ed
+     d5c:	152d                	.insn	2, 0x152d
+     d5e:	8c49                	.insn	2, 0x8c49
+     d60:	646f4d03          	lbu	s10,1606(t5) # 736f2052 <__bss_end+0x736ef3f6>
+     d64:	64ba7593          	andi	a1,s4,1611
+     d68:	cc45                	.insn	2, 0xcc45
+     d6a:	652c                	.insn	2, 0x652c
+     d6c:	f800                	.insn	2, 0xf800
+     d6e:	468f6933          	.insn	4, 0x468f6933
+     d72:	4882                	.insn	2, 0x4882
+     d74:	c679                	.insn	2, 0xc679
+     d76:	7480                	.insn	2, 0x7480
+     d78:	bf80                	.insn	2, 0xbf80
+     d7a:	17f714c3          	.insn	4, 0x17f714c3
+     d7e:	31c4                	.insn	2, 0x31c4
+     d80:	0ce1ac87          	.insn	4, 0x0ce1ac87
+     d84:	9ce63e4f          	.insn	4, 0x9ce63e4f
+     d88:	7afd                	.insn	2, 0x7afd
+     d8a:	b808                	.insn	2, 0xb808
+     d8c:	53b2                	.insn	2, 0x53b2
+     d8e:	61d84cd3          	.insn	4, 0x61d84cd3
+     d92:	a278                	.insn	2, 0xa278
+     d94:	c4811b37          	lui	s6,0xc4811
+     d98:	6d0e                	.insn	2, 0x6d0e
+     d9a:	74124037          	lui	zero,0x74124
+     d9e:	33fa                	.insn	2, 0x33fa
+     da0:	0090                	.insn	2, 0x0090
+     da2:	1cec                	.insn	2, 0x1cec
+     da4:	a24e                	.insn	2, 0xa24e
+     da6:	22a5                	.insn	2, 0x22a5
+     da8:	93df 6b26 9921      	.insn	6, 0x99216b2693df
+     dae:	05f6                	.insn	2, 0x05f6
+     db0:	3770                	.insn	2, 0x3770
+     db2:	a106                	.insn	2, 0xa106
+     db4:	eade                	.insn	2, 0xeade
+     db6:	1b65                	.insn	2, 0x1b65
+     db8:	6279                	.insn	2, 0x6279
+     dba:	a802                	.insn	2, 0xa802
+     dbc:	fbf1                	.insn	2, 0xfbf1
+     dbe:	0c2d                	.insn	2, 0x0c2d
+     dc0:	9081                	.insn	2, 0x9081
+     dc2:	c978                	.insn	2, 0xc978
+     dc4:	c4cc                	.insn	2, 0xc4cc
+     dc6:	19d6                	.insn	2, 0x19d6
+     dc8:	576c                	.insn	2, 0x576c
+     dca:	f54e                	.insn	2, 0xf54e
+     dcc:	e9c0                	.insn	2, 0xe9c0
+     dce:	ff38f4bf 5c03c82d 	.insn	8, 0x5c03c82dff38f4bf
+     dd6:	7dffc53b          	.insn	4, 0x7dffc53b
+     dda:	2b5a                	.insn	2, 0x2b5a
+     ddc:	32de                	.insn	2, 0x32de
+     dde:	5929                	.insn	2, 0x5929
+     de0:	11f0                	.insn	2, 0x11f0
+     de2:	ab5e6fcb          	.insn	4, 0xab5e6fcb
+     de6:	ca4c                	.insn	2, 0xca4c
+     de8:	b2e9bdef          	jal	s11,fff9c116 <__bss_end+0xfff994ba>
+     dec:	af58                	.insn	2, 0xaf58
+     dee:	55f47983          	.insn	4, 0x55f47983
+     df2:	213d00db          	.insn	4, 0x213d00db
+     df6:	75eb1da3          	sh	t5,1883(s6) # c481175b <__bss_end+0xc480eaff>
+     dfa:	50f1d93b          	.insn	4, 0x50f1d93b
+     dfe:	36ba                	.insn	2, 0x36ba
+     e00:	6ad8                	.insn	2, 0x6ad8
+     e02:	1c26                	.insn	2, 0x1c26
+     e04:	cb34                	.insn	2, 0xcb34
+     e06:	1acc                	.insn	2, 0x1acc
+     e08:	2aa1                	.insn	2, 0x2aa1
+     e0a:	4581                	.insn	2, 0x4581
+     e0c:	966a                	.insn	2, 0x966a
+     e0e:	d9bc                	.insn	2, 0xd9bc
+     e10:	e932                	.insn	2, 0xe932
+     e12:	b0d6                	.insn	2, 0xb0d6
+     e14:	eea042a7          	.insn	4, 0xeea042a7
+     e18:	80e2                	.insn	2, 0x80e2
+     e1a:	8b5d                	.insn	2, 0x8b5d
+     e1c:	db80                	.insn	2, 0xdb80
+     e1e:	97d6                	.insn	2, 0x97d6
+     e20:	84fd                	.insn	2, 0x84fd
+     e22:	4555                	.insn	2, 0x4555
+     e24:	5906                	.insn	2, 0x5906
+     e26:	2289                	.insn	2, 0x2289
+     e28:	9eb0                	.insn	2, 0x9eb0
+     e2a:	abdd                	.insn	2, 0xabdd
+     e2c:	389a                	.insn	2, 0x389a
+     e2e:	a578                	.insn	2, 0xa578
+     e30:	749f 4a32 4c6b      	.insn	6, 0x4c6b4a32749f
+     e36:	434a                	.insn	2, 0x434a
+     e38:	93ab8433          	.insn	4, 0x93ab8433
+     e3c:	cfed                	.insn	2, 0xcfed
+     e3e:	b779                	.insn	2, 0xb779
+     e40:	a049                	.insn	2, 0xa049
+     e42:	55ce                	.insn	2, 0x55ce
+     e44:	100e78a3          	.insn	4, 0x100e78a3
+     e48:	dfc06dc7          	.insn	4, 0xdfc06dc7
+     e4c:	0a98                	.insn	2, 0x0a98
+     e4e:	5032                	.insn	2, 0x5032
+     e50:	72d8                	.insn	2, 0x72d8
+     e52:	0905                	.insn	2, 0x0905
+     e54:	ca44                	.insn	2, 0xca44
+     e56:	6492a22f          	.insn	4, 0x6492a22f
+     e5a:	c3a2bb53          	.insn	4, 0xc3a2bb53
+     e5e:	ee8d                	.insn	2, 0xee8d
+     e60:	2fc6                	.insn	2, 0x2fc6
+     e62:	1c3a                	.insn	2, 0x1c3a
+     e64:	1df9                	.insn	2, 0x1df9
+     e66:	d58d830b          	.insn	4, 0xd58d830b
+     e6a:	78f5                	.insn	2, 0x78f5
+     e6c:	713a                	.insn	2, 0x713a
+     e6e:	e922                	.insn	2, 0xe922
+     e70:	cde6                	.insn	2, 0xcde6
+     e72:	49e9                	.insn	2, 0x49e9
+     e74:	a7374a2b          	.insn	4, 0xa7374a2b
+     e78:	50c0                	.insn	2, 0x50c0
+     e7a:	73be                	.insn	2, 0x73be
+     e7c:	5520987f 7aa43698 	.insn	12, 0xa85c83937aa436985520987f
+     e84:	a85c8393 
+     e88:	f079                	.insn	2, 0xf079
+     e8a:	93c6                	.insn	2, 0x93c6
+     e8c:	00983ec7          	.insn	4, 0x00983ec7
+     e90:	513c                	.insn	2, 0x513c
+     e92:	bf4d                	.insn	2, 0xbf4d
+     e94:	088c                	.insn	2, 0x088c
+     e96:	28052743          	.insn	4, 0x28052743
+     e9a:	26d66663          	bltu	a2,a3,1106 <f8_pool+0x7ce>
+     e9e:	6115                	.insn	2, 0x6115
+     ea0:	b1fd                	.insn	2, 0xb1fd
+     ea2:	f3c6                	.insn	2, 0xf3c6
+     ea4:	c9ead743          	.insn	4, 0xc9ead743
+     ea8:	9daa                	.insn	2, 0x9daa
+     eaa:	4e58                	.insn	2, 0x4e58
+     eac:	b415                	.insn	2, 0xb415
+     eae:	f55d                	.insn	2, 0xf55d
+     eb0:	8662                	.insn	2, 0x8662
+     eb2:	d3d2                	.insn	2, 0xd3d2
+     eb4:	37e8                	.insn	2, 0x37e8
+     eb6:	ba40                	.insn	2, 0xba40
+     eb8:	1ee5                	.insn	2, 0x1ee5
+     eba:	27094de3          	blt	s2,a6,1934 <f8_pool+0xffc>
+     ebe:	2701                	.insn	2, 0x2701
+     ec0:	28ed                	.insn	2, 0x28ed
+     ec2:	a06c                	.insn	2, 0xa06c
+     ec4:	6509                	.insn	2, 0x6509
+     ec6:	bc4a                	.insn	2, 0xbc4a
+     ec8:	cb92                	.insn	2, 0xcb92
+     eca:	a328                	.insn	2, 0xa328
+     ecc:	e89eaa53          	.insn	4, 0xe89eaa53
+     ed0:	ac01                	.insn	2, 0xac01
+     ed2:	55c6                	.insn	2, 0x55c6
+     ed4:	6486                	.insn	2, 0x6486
+     ed6:	73cd                	.insn	2, 0x73cd
+     ed8:	4a6e1d33          	.insn	4, 0x4a6e1d33
+     edc:	80da                	.insn	2, 0x80da
+     ede:	4c65                	.insn	2, 0x4c65
+     ee0:	8094                	.insn	2, 0x8094
+     ee2:	61b8                	.insn	2, 0x61b8
+     ee4:	7915                	.insn	2, 0x7915
+     ee6:	1586                	.insn	2, 0x1586
+     ee8:	9ceabe23          	.insn	4, 0x9ceabe23
+     eec:	177d                	.insn	2, 0x177d
+     eee:	894c                	.insn	2, 0x894c
+     ef0:	058a                	.insn	2, 0x058a
+     ef2:	a2f5                	.insn	2, 0xa2f5
+     ef4:	8de9                	.insn	2, 0x8de9
+     ef6:	2580                	.insn	2, 0x2580
+     ef8:	8f00                	.insn	2, 0x8f00
+     efa:	ad90                	.insn	2, 0xad90
+     efc:	b8b6                	.insn	2, 0xb8b6
+     efe:	dec6                	.insn	2, 0xdec6
+     f00:	5480                	.insn	2, 0x5480
+     f02:	366d                	.insn	2, 0x366d
+     f04:	1a35                	.insn	2, 0x1a35
+     f06:	8741                	.insn	2, 0x8741
+     f08:	ebce                	.insn	2, 0xebce
+     f0a:	bc6d                	.insn	2, 0xbc6d
+     f0c:	90ce                	.insn	2, 0x90ce
+     f0e:	3201                	.insn	2, 0x3201
+     f10:	df3f5de7          	.insn	4, 0xdf3f5de7
+     f14:	3286                	.insn	2, 0x3286
+     f16:	6a22                	.insn	2, 0x6a22
+     f18:	5e66e1cf          	.insn	4, 0x5e66e1cf
+     f1c:	bf0a                	.insn	2, 0xbf0a
+     f1e:	970d                	.insn	2, 0x970d
+     f20:	e5f8                	.insn	2, 0xe5f8
+     f22:	e6df b16d 7e58      	.insn	6, 0x7e58b16de6df
+     f28:	3f30                	.insn	2, 0x3f30
+     f2a:	949dcf17          	auipc	t5,0x949dc
+     f2e:	1656                	.insn	2, 0x1656
+     f30:	6b9f 30c3 423a      	.insn	6, 0x423a30c36b9f
+     f36:	c9a8                	.insn	2, 0xc9a8
+     f38:	67f8979b          	.insn	4, 0x67f8979b
+     f3c:	4151                	.insn	2, 0x4151
+     f3e:	9d62d2eb          	.insn	4, 0x9d62d2eb
+     f42:	a3d5                	.insn	2, 0xa3d5
+     f44:	b844b577          	.insn	4, 0xb844b577
+     f48:	e340                	.insn	2, 0xe340
+     f4a:	baf9                	.insn	2, 0xbaf9
+     f4c:	0ffd                	.insn	2, 0x0ffd
+     f4e:	c36d5cfb          	.insn	4, 0xc36d5cfb
+     f52:	e3ba                	.insn	2, 0xe3ba
+     f54:	0099                	.insn	2, 0x0099
+     f56:	76ac                	.insn	2, 0x76ac
+     f58:	5df4                	.insn	2, 0x5df4
+     f5a:	01f8                	.insn	2, 0x01f8
+     f5c:	6adc                	.insn	2, 0x6adc
+     f5e:	e249                	.insn	2, 0xe249
+     f60:	cc30b8e3          	.insn	4, 0xcc30b8e3
+     f64:	5482                	.insn	2, 0x5482
+     f66:	c2fe                	.insn	2, 0xc2fe
+     f68:	cfcd                	.insn	2, 0xcfcd
+     f6a:	5c62                	.insn	2, 0x5c62
+     f6c:	5919                	.insn	2, 0x5919
+     f6e:	64b9                	.insn	2, 0x64b9
+     f70:	ba31                	.insn	2, 0xba31
+     f72:	6366                	.insn	2, 0x6366
+     f74:	b599                	.insn	2, 0xb599
+     f76:	84b2                	.insn	2, 0x84b2
+     f78:	8092                	.insn	2, 0x8092
+     f7a:	5484                	.insn	2, 0x5484
+     f7c:	752e                	.insn	2, 0x752e
+     f7e:	4a0d                	.insn	2, 0x4a0d
+     f80:	7fbd8b57          	.insn	4, 0x7fbd8b57
+     f84:	15ec                	.insn	2, 0x15ec
+     f86:	d5aa                	.insn	2, 0xd5aa
+     f88:	52904fb7          	lui	t6,0x52904
+     f8c:	0fb0                	.insn	2, 0x0fb0
+     f8e:	e830                	.insn	2, 0xe830
+     f90:	bac6                	.insn	2, 0xbac6
+     f92:	e49974b3          	.insn	4, 0xe49974b3
+     f96:	1dbcd50f          	.insn	4, 0x1dbcd50f
+     f9a:	fec6                	.insn	2, 0xfec6
+     f9c:	2e7c5c0b          	.insn	4, 0x2e7c5c0b
+     fa0:	299cc627          	.insn	4, 0x299cc627
+     fa4:	e619                	.insn	2, 0xe619
+     fa6:	19cd                	.insn	2, 0x19cd
+     fa8:	fbc6                	.insn	2, 0xfbc6
+     faa:	64dc                	.insn	2, 0x64dc
+     fac:	934c                	.insn	2, 0x934c
+     fae:	fee0                	.insn	2, 0xfee0
+     fb0:	efb5                	.insn	2, 0xefb5
+     fb2:	45d1                	.insn	2, 0x45d1
+     fb4:	2945                	.insn	2, 0x2945
+     fb6:	5f59                	.insn	2, 0x5f59
+     fb8:	b0aa                	.insn	2, 0xb0aa
+     fba:	5f0d                	.insn	2, 0x5f0d
+     fbc:	62bc                	.insn	2, 0x62bc
+     fbe:	ac4d                	.insn	2, 0xac4d
+     fc0:	b4e2                	.insn	2, 0xb4e2
+     fc2:	d64da5af          	.insn	4, 0xd64da5af
+     fc6:	a0e12947          	.insn	4, 0xa0e12947
+     fca:	9bc90de3          	beq	s2,t3,984 <f8_pool+0x4c>
+     fce:	21e3ac57          	.insn	4, 0x21e3ac57
+     fd2:	a02a                	.insn	2, 0xa02a
+     fd4:	5565                	.insn	2, 0x5565
+     fd6:	4d7dbe9b          	.insn	4, 0x4d7dbe9b
+     fda:	183e                	.insn	2, 0x183e
+     fdc:	c3cd                	.insn	2, 0xc3cd
+     fde:	1bda54af          	.insn	4, 0x1bda54af
+     fe2:	351a                	.insn	2, 0x351a
+     fe4:	20f4                	.insn	2, 0x20f4
+     fe6:	af5a                	.insn	2, 0xaf5a
+     fe8:	67d4                	.insn	2, 0x67d4
+     fea:	3e4e                	.insn	2, 0x3e4e
+     fec:	e51c                	.insn	2, 0xe51c
+     fee:	0ebc4587          	.insn	4, 0x0ebc4587
+     ff2:	cca1                	.insn	2, 0xcca1
+     ff4:	a501                	.insn	2, 0xa501
+     ff6:	c098                	.insn	2, 0xc098
+     ff8:	09f66007          	.insn	4, 0x09f66007
+     ffc:	315c                	.insn	2, 0x315c
+     ffe:	c70c                	.insn	2, 0xc70c
+    1000:	207a                	.insn	2, 0x207a
+    1002:	71e0                	.insn	2, 0x71e0
+    1004:	e214                	.insn	2, 0xe214
+    1006:	e34c                	.insn	2, 0xe34c
+    1008:	095a                	.insn	2, 0x095a
+    100a:	eb59                	.insn	2, 0xeb59
+    100c:	355e                	.insn	2, 0x355e
+    100e:	c9b4                	.insn	2, 0xc9b4
+    1010:	660d                	.insn	2, 0x660d
+    1012:	b426                	.insn	2, 0xb426
+    1014:	3a2cc0e3          	blt	s9,sp,1bb4 <f8_pool+0x127c>
+    1018:	9e84                	.insn	2, 0x9e84
+    101a:	9fc5e1c3          	.insn	4, 0x9fc5e1c3
+    101e:	f21465af          	.insn	4, 0xf21465af
+    1022:	56e4                	.insn	2, 0x56e4
+    1024:	8414                	.insn	2, 0x8414
+    1026:	e9d2                	.insn	2, 0xe9d2
+    1028:	e466                	.insn	2, 0xe466
+    102a:	4f95d007          	.insn	4, 0x4f95d007
+    102e:	4f82                	.insn	2, 0x4f82
+    1030:	e2d2                	.insn	2, 0xe2d2
+    1032:	58b00343          	.insn	4, 0x58b00343
+    1036:	32710d8b          	.insn	4, 0x32710d8b
+    103a:	e0d0b7c3          	.insn	4, 0xe0d0b7c3
+    103e:	a7e9                	.insn	2, 0xa7e9
+    1040:	d630                	.insn	2, 0xd630
+    1042:	308d                	.insn	2, 0x308d
+    1044:	c791                	.insn	2, 0xc791
+    1046:	c3ca                	.insn	2, 0xc3ca
+    1048:	5d7da3ef          	jal	t2,dbe1e <__bss_end+0xd91c2>
+    104c:	aa84                	.insn	2, 0xaa84
+    104e:	1fb5                	.insn	2, 0x1fb5
+    1050:	0a06                	.insn	2, 0x0a06
+    1052:	8a55                	.insn	2, 0x8a55
+    1054:	ead8                	.insn	2, 0xead8
+    1056:	3d2a                	.insn	2, 0x3d2a
+    1058:	c491                	.insn	2, 0xc491
+    105a:	05da731b          	.insn	4, 0x05da731b
+    105e:	7b0c                	.insn	2, 0x7b0c
+    1060:	1442de6b          	.insn	4, 0x1442de6b
+    1064:	69a1                	.insn	2, 0x69a1
+    1066:	d13f25ab          	.insn	4, 0xd13f25ab
+    106a:	b23dff73          	.insn	4, 0xb23dff73
+    106e:	1e22370f          	.insn	4, 0x1e22370f
+    1072:	8e40                	.insn	2, 0x8e40
+    1074:	e858                	.insn	2, 0xe858
+    1076:	1c9c                	.insn	2, 0x1c9c
+    1078:	23a5                	.insn	2, 0x23a5
+    107a:	9801                	.insn	2, 0x9801
+    107c:	18f9                	.insn	2, 0x18f9
+    107e:	3901                	.insn	2, 0x3901
+    1080:	406fb41b          	.insn	4, 0x406fb41b
+    1084:	be85                	.insn	2, 0xbe85
+    1086:	b82d                	.insn	2, 0xb82d
+    1088:	77f9                	.insn	2, 0x77f9
+    108a:	1ebc91db          	.insn	4, 0x1ebc91db
+    108e:	1fe5                	.insn	2, 0x1fe5
+    1090:	891d                	.insn	2, 0x891d
+    1092:	e878                	.insn	2, 0xe878
+    1094:	f29e                	.insn	2, 0xf29e
+    1096:	d38fd8cf          	.insn	4, 0xd38fd8cf
+    109a:	1dd9                	.insn	2, 0x1dd9
+    109c:	9fdc                	.insn	2, 0x9fdc
+    109e:	dfdb1347          	.insn	4, 0xdfdb1347
+    10a2:	81868693          	addi	a3,a3,-2024 # 9c35e818 <__bss_end+0x9c35bbbc>
+    10a6:	09a6                	.insn	2, 0x09a6
+    10a8:	cacd                	.insn	2, 0xcacd
+    10aa:	eeb5                	.insn	2, 0xeeb5
+    10ac:	274a                	.insn	2, 0x274a
+    10ae:	6b30                	.insn	2, 0x6b30
+    10b0:	0e09                	.insn	2, 0x0e09
+    10b2:	dbdc                	.insn	2, 0xdbdc
+    10b4:	9518                	.insn	2, 0x9518
+    10b6:	40fa                	.insn	2, 0x40fa
+    10b8:	66b9                	.insn	2, 0x66b9
+    10ba:	4837e53f 986782ce 	.insn	8, 0x986782ce4837e53f
+    10c2:	4611                	.insn	2, 0x4611
+    10c4:	5738                	.insn	2, 0x5738
+    10c6:	e23fb68f          	.insn	4, 0xe23fb68f
+    10ca:	6031                	.insn	2, 0x6031
+    10cc:	9715                	.insn	2, 0x9715
+    10ce:	edca                	.insn	2, 0xedca
+    10d0:	5133019b          	.insn	4, 0x5133019b
+    10d4:	b545                	.insn	2, 0xb545
+    10d6:	c8f6                	.insn	2, 0xc8f6
+    10d8:	f10d8733          	.insn	4, 0xf10d8733
+    10dc:	a320                	.insn	2, 0xa320
+    10de:	d131a5cb          	.insn	4, 0xd131a5cb
+    10e2:	bdee                	.insn	2, 0xbdee
+    10e4:	fd90                	.insn	2, 0xfd90
+    10e6:	0048                	.insn	2, 0x0048
+    10e8:	aa1e                	.insn	2, 0xaa1e
+    10ea:	3991                	.insn	2, 0x3991
+    10ec:	5d92                	.insn	2, 0x5d92
+    10ee:	ece4                	.insn	2, 0xece4
+    10f0:	dd64                	.insn	2, 0xdd64
+    10f2:	597f9edb          	.insn	4, 0x597f9edb
+    10f6:	4bf1                	.insn	2, 0x4bf1
+    10f8:	8316                	.insn	2, 0x8316
+    10fa:	9bb04d2f          	.insn	4, 0x9bb04d2f
+    10fe:	7251                	.insn	2, 0x7251
+    1100:	9902                	.insn	2, 0x9902
+    1102:	90b1c7a7          	.insn	4, 0x90b1c7a7
+    1106:	f81f 1a05 579c      	.insn	6, 0x579c1a05f81f
+    110c:	0fde                	.insn	2, 0x0fde
+    110e:	c05c                	.insn	2, 0xc05c
+    1110:	fe11                	.insn	2, 0xfe11
+    1112:	2f91                	.insn	2, 0x2f91
+    1114:	49ec                	.insn	2, 0x49ec
+    1116:	2a5a                	.insn	2, 0x2a5a
+    1118:	9b6d                	.insn	2, 0x9b6d
+    111a:	2571                	.insn	2, 0x2571
+    111c:	e7923b97          	auipc	s7,0xe7923
+    1120:	1ee2                	.insn	2, 0x1ee2
+    1122:	a644                	.insn	2, 0xa644
+    1124:	cf84                	.insn	2, 0xcf84
+    1126:	05c1                	.insn	2, 0x05c1
+    1128:	4519                	.insn	2, 0x4519
+    112a:	2b52                	.insn	2, 0x2b52
+    112c:	f9670663          	beq	a4,s6,8b8 <f8_off+0x110>
+    1130:	f5de8f1b          	.insn	4, 0xf5de8f1b
+    1134:	7f52                	.insn	2, 0x7f52
+    1136:	d5e8                	.insn	2, 0xd5e8
+    1138:	079db0bb          	.insn	4, 0x079db0bb
+    113c:	f3d8                	.insn	2, 0xf3d8
+    113e:	8e1604d3          	.insn	4, 0x8e1604d3
+    1142:	985a                	.insn	2, 0x985a
+    1144:	2ed1                	.insn	2, 0x2ed1
+    1146:	4b41                	.insn	2, 0x4b41
+    1148:	fb4b2c17          	auipc	s8,0xfb4b2
+    114c:	2d6e                	.insn	2, 0x2d6e
+    114e:	dd29                	.insn	2, 0xdd29
+    1150:	6585cc83          	lbu	s9,1624(a1)
+    1154:	467d                	.insn	2, 0x467d
+    1156:	aeb5                	.insn	2, 0xaeb5
+    1158:	2b86                	.insn	2, 0x2b86
+    115a:	7b68                	.insn	2, 0x7b68
+    115c:	24f1                	.insn	2, 0x24f1
+    115e:	cb50                	.insn	2, 0xcb50
+    1160:	ad61                	.insn	2, 0xad61
+    1162:	022e622b          	.insn	4, 0x022e622b
+    1166:	a0f2                	.insn	2, 0xa0f2
+    1168:	6a56                	.insn	2, 0x6a56
+    116a:	97ee                	.insn	2, 0x97ee
+    116c:	8940                	.insn	2, 0x8940
+    116e:	7cf1b2a3          	.insn	4, 0x7cf1b2a3
+    1172:	77c9                	.insn	2, 0x77c9
+    1174:	b6be3bff 2c8de25f 	.insn	16, 0xeaed700711b195fd2c8de25fb6be3bff
+    117c:	11b195fd eaed7007 
+    1184:	8c32                	.insn	2, 0x8c32
+    1186:	a15d                	.insn	2, 0xa15d
+    1188:	9966                	.insn	2, 0x9966
+    118a:	e97e                	.insn	2, 0xe97e
+    118c:	6926                	.insn	2, 0x6926
+    118e:	0e54                	.insn	2, 0x0e54
+    1190:	6a86                	.insn	2, 0x6a86
+    1192:	57dc624f          	.insn	4, 0x57dc624f
+    1196:	22e5                	.insn	2, 0x22e5
+    1198:	aadc                	.insn	2, 0xaadc
+    119a:	3982                	.insn	2, 0x3982
+    119c:	829f c21b 0e0a      	.insn	6, 0x0e0ac21b829f
+    11a2:	6635                	.insn	2, 0x6635
+    11a4:	170f6b3b          	.insn	4, 0x170f6b3b
+    11a8:	c2c6                	.insn	2, 0xc2c6
+    11aa:	f28c                	.insn	2, 0xf28c
+    11ac:	98617a7b          	.insn	4, 0x98617a7b
+    11b0:	5cfe                	.insn	2, 0x5cfe
+    11b2:	6522                	.insn	2, 0x6522
+    11b4:	6af2                	.insn	2, 0x6af2
+    11b6:	758e73c7          	.insn	4, 0x758e73c7
+    11ba:	4444                	.insn	2, 0x4444
+    11bc:	b7de                	.insn	2, 0xb7de
+    11be:	6d55                	.insn	2, 0x6d55
+    11c0:	e7c8                	.insn	2, 0xe7c8
+    11c2:	d91f 0e50 9872      	.insn	6, 0x98720e50d91f
+    11c8:	93e9cbab          	.insn	4, 0x93e9cbab
+    11cc:	1df6                	.insn	2, 0x1df6
+    11ce:	113d                	.insn	2, 0x113d
+    11d0:	acc9                	.insn	2, 0xacc9
+    11d2:	5372                	.insn	2, 0x5372
+    11d4:	ddf8                	.insn	2, 0xddf8
+    11d6:	620c                	.insn	2, 0x620c
+    11d8:	0774                	.insn	2, 0x0774
+    11da:	3493acbb          	.insn	4, 0x3493acbb
+    11de:	a165                	.insn	2, 0xa165
+    11e0:	7f71                	.insn	2, 0x7f71
+    11e2:	5db0b133          	.insn	4, 0x5db0b133
+    11e6:	3335                	.insn	2, 0x3335
+    11e8:	1a21                	.insn	2, 0x1a21
+    11ea:	87c5df43          	.insn	4, 0x87c5df43
+    11ee:	004e                	.insn	2, 0x004e
+    11f0:	e741                	.insn	2, 0xe741
+    11f2:	2b91                	.insn	2, 0x2b91
+    11f4:	e7d5aed3          	.insn	4, 0xe7d5aed3
+    11f8:	0aa202d3          	.insn	4, 0x0aa202d3
+    11fc:	6ce4                	.insn	2, 0x6ce4
+    11fe:	ed45                	.insn	2, 0xed45
+    1200:	692b607b          	.insn	4, 0x692b607b
+    1204:	3acd9e1b          	.insn	4, 0x3acd9e1b
+    1208:	9953d36f          	jal	t1,fff3eb9c <__bss_end+0xfff3bf40>
+    120c:	ddad                	.insn	2, 0xddad
+    120e:	216e710f          	.insn	4, 0x216e710f
+    1212:	c808                	.insn	2, 0xc808
+    1214:	d66d                	.insn	2, 0xd66d
+    1216:	ebf4                	.insn	2, 0xebf4
+    1218:	1fe1                	.insn	2, 0x1fe1
+    121a:	b510b083          	.insn	4, 0xb510b083
+    121e:	799d                	.insn	2, 0x799d
+    1220:	ba28                	.insn	2, 0xba28
+    1222:	c3d0                	.insn	2, 0xc3d0
+    1224:	751cfe5b          	.insn	4, 0x751cfe5b
+    1228:	2164                	.insn	2, 0x2164
+    122a:	02b1                	.insn	2, 0x02b1
+    122c:	8aec0e3f b2d22b02 	.insn	8, 0xb2d22b028aec0e3f
+    1234:	11dc                	.insn	2, 0x11dc
+    1236:	f753b77f 1a238199 	.insn	16, 0x7fa5c4ae432db03e1a238199f753b77f
+    123e:	432db03e 7fa5c4ae 
+    1246:	ce1a                	.insn	2, 0xce1a
+    1248:	10ee                	.insn	2, 0x10ee
+    124a:	d04a                	.insn	2, 0xd04a
+    124c:	a584                	.insn	2, 0xa584
+    124e:	2f59                	.insn	2, 0x2f59
+    1250:	7b5484eb          	.insn	4, 0x7b5484eb
+    1254:	5f502bcf          	.insn	4, 0x5f502bcf
+    1258:	4630                	.insn	2, 0x4630
+    125a:	38f1                	.insn	2, 0x38f1
+    125c:	2cbe                	.insn	2, 0x2cbe
+    125e:	0a3c                	.insn	2, 0x0a3c
+    1260:	11b0                	.insn	2, 0x11b0
+    1262:	c1e2                	.insn	2, 0xc1e2
+    1264:	e84d                	.insn	2, 0xe84d
+    1266:	1d09                	.insn	2, 0x1d09
+    1268:	8ddd6b2b          	.insn	4, 0x8ddd6b2b
+    126c:	ac97ba7b          	.insn	4, 0xac97ba7b
+    1270:	e0b9                	.insn	2, 0xe0b9
+    1272:	55cd                	.insn	2, 0x55cd
+    1274:	68e9c663          	blt	s3,a4,1900 <f8_pool+0xfc8>
+    1278:	172bcbc7          	.insn	4, 0x172bcbc7
+    127c:	701a                	.insn	2, 0x701a
+    127e:	dcbf4703          	lbu	a4,-565(t5) # 949dccf5 <__bss_end+0x949da099>
+    1282:	f8f6                	.insn	2, 0xf8f6
+    1284:	25d5                	.insn	2, 0x25d5
+    1286:	3c51                	.insn	2, 0x3c51
+    1288:	a9a4                	.insn	2, 0xa9a4
+    128a:	02081087          	.insn	4, 0x02081087
+    128e:	9440                	.insn	2, 0x9440
+    1290:	2462                	.insn	2, 0x2462
+    1292:	beb5                	.insn	2, 0xbeb5
+    1294:	bc6d                	.insn	2, 0xbc6d
+    1296:	4039                	.insn	2, 0x4039
+    1298:	d0ad                	.insn	2, 0xd0ad
+    129a:	cbcd                	.insn	2, 0xcbcd
+    129c:	b46d                	.insn	2, 0xb46d
+    129e:	61da                	.insn	2, 0x61da
+    12a0:	a80e                	.insn	2, 0xa80e
+    12a2:	deac7eeb          	.insn	4, 0xdeac7eeb
+    12a6:	d2b6                	.insn	2, 0xd2b6
+    12a8:	fff6                	.insn	2, 0xfff6
+    12aa:	55a1                	.insn	2, 0x55a1
+    12ac:	1906                	.insn	2, 0x1906
+    12ae:	dcf5                	.insn	2, 0xdcf5
+    12b0:	2bc0                	.insn	2, 0x2bc0
+    12b2:	ba70                	.insn	2, 0xba70
+    12b4:	8218                	.insn	2, 0x8218
+    12b6:	ceb47fef          	jal	t6,fff48fa0 <__bss_end+0xfff46344>
+    12ba:	c3b4                	.insn	2, 0xc3b4
+    12bc:	c79954ef          	jal	s1,fff96f34 <__bss_end+0xfff942d8>
+    12c0:	e594b2db          	.insn	4, 0xe594b2db
+    12c4:	d002                	.insn	2, 0xd002
+    12c6:	ccc1                	.insn	2, 0xccc1
+    12c8:	59fd                	.insn	2, 0x59fd
+    12ca:	e2d6e4b3          	.insn	4, 0xe2d6e4b3
+    12ce:	762e16ef          	jal	a3,e2a30 <__bss_end+0xdfdd4>
+    12d2:	e7d0                	.insn	2, 0xe7d0
+    12d4:	4d85                	.insn	2, 0x4d85
+    12d6:	cb5d                	.insn	2, 0xcb5d
+    12d8:	fbc0                	.insn	2, 0xfbc0
+    12da:	add8b713          	sltiu	a4,a7,-1315
+    12de:	f8b87a7b          	.insn	4, 0xf8b87a7b
+    12e2:	2296                	.insn	2, 0x2296
+    12e4:	801f 4fc1 ac49      	.insn	6, 0xac494fc1801f
+    12ea:	5adf5d43          	.insn	4, 0x5adf5d43
+    12ee:	de68                	.insn	2, 0xde68
+    12f0:	43a5                	.insn	2, 0x43a5
+    12f2:	166e                	.insn	2, 0x166e
+    12f4:	7921                	.insn	2, 0x7921
+    12f6:	2a29                	.insn	2, 0x2a29
+    12f8:	d577400b          	.insn	4, 0xd577400b
+    12fc:	e4c5                	.insn	2, 0xe4c5
+    12fe:	40dc7077          	.insn	4, 0x40dc7077
+    1302:	c67a                	.insn	2, 0xc67a
+    1304:	09a2                	.insn	2, 0x09a2
+    1306:	506c                	.insn	2, 0x506c
+    1308:	d483157b          	.insn	4, 0xd483157b
+    130c:	8852                	.insn	2, 0x8852
+    130e:	962e                	.insn	2, 0x962e
+    1310:	5d42                	.insn	2, 0x5d42
+    1312:	a6c7ba3b          	.insn	4, 0xa6c7ba3b
+    1316:	7b1e                	.insn	2, 0x7b1e
+    1318:	5a68                	.insn	2, 0x5a68
+    131a:	e574                	.insn	2, 0xe574
+    131c:	eb55                	.insn	2, 0xeb55
+    131e:	10efd037          	lui	zero,0x10efd
+    1322:	041f 7c92 4a67      	.insn	6, 0x4a677c92041f
+    1328:	8f2a                	.insn	2, 0x8f2a
+    132a:	c21ffe83          	.insn	4, 0xc21ffe83
+    132e:	5e31                	.insn	2, 0x5e31
+    1330:	eed9                	.insn	2, 0xeed9
+    1332:	015ac203          	lbu	tp,21(s5)
+    1336:	1f1f edfd 2084      	.insn	6, 0x2084edfd1f1f
+    133c:	8eec                	.insn	2, 0x8eec
+    133e:	caf2                	.insn	2, 0xcaf2
+    1340:	79876073          	.insn	4, 0x79876073
+    1344:	cc6e                	.insn	2, 0xcc6e
+    1346:	27f8                	.insn	2, 0x27f8
+    1348:	3cce                	.insn	2, 0x3cce
+    134a:	a919                	.insn	2, 0xa919
+    134c:	611d                	.insn	2, 0x611d
+    134e:	0b66                	.insn	2, 0x0b66
+    1350:	ef5a                	.insn	2, 0xef5a
+    1352:	8f79                	.insn	2, 0x8f79
+    1354:	cbca                	.insn	2, 0xcbca
+    1356:	2b89                	.insn	2, 0x2b89
+    1358:	df76                	.insn	2, 0xdf76
+    135a:	9021a6db          	.insn	4, 0x9021a6db
+    135e:	33644f3f 7e209428 	.insn	8, 0x7e20942833644f3f
+    1366:	09502583          	lw	a1,149(zero) # 95 <put_u32+0x65>
+    136a:	1fd8d013          	.insn	4, 0x1fd8d013
+    136e:	c9ac                	.insn	2, 0xc9ac
+    1370:	f7fe                	.insn	2, 0xf7fe
+    1372:	f33ea0cf          	.insn	4, 0xf33ea0cf
+    1376:	7466                	.insn	2, 0x7466
+    1378:	2ad5                	.insn	2, 0x2ad5
+    137a:	305b6faf          	.insn	4, 0x305b6faf
+    137e:	4326                	.insn	2, 0x4326
+    1380:	55b6                	.insn	2, 0x55b6
+    1382:	ccfe                	.insn	2, 0xccfe
+    1384:	fb7f05c7          	.insn	4, 0xfb7f05c7
+    1388:	13f9                	.insn	2, 0x13f9
+    138a:	e1ca                	.insn	2, 0xe1ca
+    138c:	7715                	.insn	2, 0x7715
+    138e:	4df4                	.insn	2, 0x4df4
+    1390:	5f14                	.insn	2, 0x5f14
+    1392:	607a                	.insn	2, 0x607a
+    1394:	53fb0277          	.insn	4, 0x53fb0277
+    1398:	bbe2                	.insn	2, 0xbbe2
+    139a:	c890                	.insn	2, 0xc890
+    139c:	5853ca63          	blt	t2,t0,1930 <f8_pool+0xff8>
+    13a0:	88ac                	.insn	2, 0x88ac
+    13a2:	90ae                	.insn	2, 0x90ae
+    13a4:	5f61                	.insn	2, 0x5f61
+    13a6:	12c6                	.insn	2, 0x12c6
+    13a8:	ea233ec7          	.insn	4, 0xea233ec7
+    13ac:	d092                	.insn	2, 0xd092
+    13ae:	8ba9                	.insn	2, 0x8ba9
+    13b0:	0fb1                	.insn	2, 0x0fb1
+    13b2:	c01e9b0b          	.insn	4, 0xc01e9b0b
+    13b6:	8d16                	.insn	2, 0x8d16
+    13b8:	a441                	.insn	2, 0xa441
+    13ba:	6149                	.insn	2, 0x6149
+    13bc:	aa64                	.insn	2, 0xaa64
+    13be:	25c0                	.insn	2, 0x25c0
+    13c0:	38b7a18f          	.insn	4, 0x38b7a18f
+    13c4:	3f1f debd 2449      	.insn	6, 0x2449debd3f1f
+    13ca:	d490                	.insn	2, 0xd490
+    13cc:	903a                	.insn	2, 0x903a
+    13ce:	f64d                	.insn	2, 0xf64d
+    13d0:	2059                	.insn	2, 0x2059
+    13d2:	4c04                	.insn	2, 0x4c04
+    13d4:	d026                	.insn	2, 0xd026
+    13d6:	2571                	.insn	2, 0x2571
+    13d8:	78e9b6b3          	.insn	4, 0x78e9b6b3
+    13dc:	b168                	.insn	2, 0xb168
+    13de:	d448                	.insn	2, 0xd448
+    13e0:	40bd                	.insn	2, 0x40bd
+    13e2:	0d7a                	.insn	2, 0x0d7a
+    13e4:	ec74                	.insn	2, 0xec74
+    13e6:	4909                	.insn	2, 0x4909
+    13e8:	523a                	.insn	2, 0x523a
+    13ea:	dbc8                	.insn	2, 0xdbc8
+    13ec:	24e5dd93          	.insn	4, 0x24e5dd93
+    13f0:	66ae                	.insn	2, 0x66ae
+    13f2:	91a9                	.insn	2, 0x91a9
+    13f4:	51d4                	.insn	2, 0x51d4
+    13f6:	f088                	.insn	2, 0xf088
+    13f8:	38b53693          	sltiu	a3,a0,907
+    13fc:	9060                	.insn	2, 0x9060
+    13fe:	1a23f6b7          	lui	a3,0x1a23f
+    1402:	3a8d                	.insn	2, 0x3a8d
+    1404:	276a                	.insn	2, 0x276a
+    1406:	3fbc                	.insn	2, 0x3fbc
+    1408:	4b08                	.insn	2, 0x4b08
+    140a:	e199                	.insn	2, 0xe199
+    140c:	a3ea                	.insn	2, 0xa3ea
+    140e:	97c5                	.insn	2, 0x97c5
+    1410:	9324                	.insn	2, 0x9324
+    1412:	59e2                	.insn	2, 0x59e2
+    1414:	84e8                	.insn	2, 0x84e8
+    1416:	15c9                	.insn	2, 0x15c9
+    1418:	e2d4                	.insn	2, 0xe2d4
+    141a:	0fc0                	.insn	2, 0x0fc0
+    141c:	113d                	.insn	2, 0x113d
+    141e:	9ee2                	.insn	2, 0x9ee2
+    1420:	e5f6                	.insn	2, 0xe5f6
+    1422:	9c99                	.insn	2, 0x9c99
+    1424:	4965                	.insn	2, 0x4965
+    1426:	c1ac                	.insn	2, 0xc1ac
+    1428:	6aa19b4f          	.insn	4, 0x6aa19b4f
+    142c:	0fe0                	.insn	2, 0x0fe0
+    142e:	c41a                	.insn	2, 0xc41a
+    1430:	2615e82b          	.insn	4, 0x2615e82b
+    1434:	998c                	.insn	2, 0x998c
+    1436:	8b05032f          	.insn	4, 0x8b05032f
+    143a:	b052                	.insn	2, 0xb052
+    143c:	4946                	.insn	2, 0x4946
+    143e:	2f7c                	.insn	2, 0x2f7c
+    1440:	bcb4                	.insn	2, 0xbcb4
+    1442:	54727e97          	auipc	t4,0x54727
+    1446:	ba1995f3          	.insn	4, 0xba1995f3
+    144a:	a28d                	.insn	2, 0xa28d
+    144c:	af45de07          	.insn	4, 0xaf45de07
+    1450:	b105                	.insn	2, 0xb105
+    1452:	6241                	.insn	2, 0x6241
+    1454:	55a6                	.insn	2, 0x55a6
+    1456:	f80516cf          	.insn	4, 0xf80516cf
+    145a:	76ce                	.insn	2, 0x76ce
+    145c:	cbdcb8b3          	.insn	4, 0xcbdcb8b3
+    1460:	b28a                	.insn	2, 0xb28a
+    1462:	0458                	.insn	2, 0x0458
+    1464:	92f6                	.insn	2, 0x92f6
+    1466:	4c38                	.insn	2, 0x4c38
+    1468:	fda1                	.insn	2, 0xfda1
+    146a:	1af8                	.insn	2, 0x1af8
+    146c:	15fe4b37          	lui	s6,0x15fe4
+    1470:	9dc9                	.insn	2, 0x9dc9
+    1472:	62bd                	.insn	2, 0x62bd
+    1474:	cb98                	.insn	2, 0xcb98
+    1476:	1632                	.insn	2, 0x1632
+    1478:	36373a27          	.insn	4, 0x36373a27
+    147c:	3e52a003          	lw	zero,997(t0)
+    1480:	aa0c                	.insn	2, 0xaa0c
+    1482:	02a0                	.insn	2, 0x02a0
+    1484:	8dd4                	.insn	2, 0x8dd4
+    1486:	e589                	.insn	2, 0xe589
+    1488:	5698eb4b          	.insn	4, 0x5698eb4b
+    148c:	63d2                	.insn	2, 0x63d2
+    148e:	11e8                	.insn	2, 0x11e8
+    1490:	f8e9                	.insn	2, 0xf8e9
+    1492:	54be7407          	.insn	4, 0x54be7407
+    1496:	b825                	.insn	2, 0xb825
+    1498:	f14d                	.insn	2, 0xf14d
+    149a:	7b08                	.insn	2, 0x7b08
+    149c:	3146c85b          	.insn	4, 0x3146c85b
+    14a0:	7c20                	.insn	2, 0x7c20
+    14a2:	43f2                	.insn	2, 0x43f2
+    14a4:	0359                	.insn	2, 0x0359
+    14a6:	6d2d                	.insn	2, 0x6d2d
+    14a8:	a818                	.insn	2, 0xa818
+    14aa:	d2e5dff7          	.insn	4, 0xd2e5dff7
+    14ae:	ee80                	.insn	2, 0xee80
+    14b0:	c7ea                	.insn	2, 0xc7ea
+    14b2:	7964                	.insn	2, 0x7964
+    14b4:	5481                	.insn	2, 0x5481
+    14b6:	c6aa7053          	.insn	4, 0xc6aa7053
+    14ba:	1b0a                	.insn	2, 0x1b0a
+    14bc:	1cad                	.insn	2, 0x1cad
+    14be:	798a                	.insn	2, 0x798a
+    14c0:	b42c                	.insn	2, 0xb42c
+    14c2:	9168                	.insn	2, 0x9168
+    14c4:	6ddd                	.insn	2, 0x6ddd
+    14c6:	37a3b947          	.insn	4, 0x37a3b947
+    14ca:	c621                	.insn	2, 0xc621
+    14cc:	f0a5                	.insn	2, 0xf0a5
+    14ce:	4f04                	.insn	2, 0x4f04
+    14d0:	fdba                	.insn	2, 0xfdba
+    14d2:	6ab0                	.insn	2, 0x6ab0
+    14d4:	36b9a893          	slti	a7,s3,875
+    14d8:	bca4                	.insn	2, 0xbca4
+    14da:	45b1                	.insn	2, 0x45b1
+    14dc:	c318                	.insn	2, 0xc318
+    14de:	b564754f          	.insn	4, 0xb564754f
+    14e2:	1a34                	.insn	2, 0x1a34
+    14e4:	6836                	.insn	2, 0x6836
+    14e6:	8fd9cd2b          	.insn	4, 0x8fd9cd2b
+    14ea:	a328                	.insn	2, 0xa328
+    14ec:	adb325d3          	.insn	4, 0xadb325d3
+    14f0:	d861                	.insn	2, 0xd861
+    14f2:	1abe                	.insn	2, 0x1abe
+    14f4:	3fa9                	.insn	2, 0x3fa9
+    14f6:	dbf6                	.insn	2, 0xdbf6
+    14f8:	f264                	.insn	2, 0xf264
+    14fa:	e1406617          	auipc	a2,0xe1406
+    14fe:	e0be                	.insn	2, 0xe0be
+    1500:	63f9                	.insn	2, 0x63f9
+    1502:	4d0d3633          	.insn	4, 0x4d0d3633
+    1506:	0ab2                	.insn	2, 0x0ab2
+    1508:	b4ea                	.insn	2, 0xb4ea
+    150a:	f61c                	.insn	2, 0xf61c
+    150c:	fcd2                	.insn	2, 0xfcd2
+    150e:	8a9f d060 ab5c      	.insn	6, 0xab5cd0608a9f
+    1514:	fbcd                	.insn	2, 0xfbcd
+    1516:	56d7444b          	.insn	4, 0x56d7444b
+    151a:	46a0                	.insn	2, 0x46a0
+    151c:	50ca                	.insn	2, 0x50ca
+    151e:	dc63456f          	jal	a0,fff35ae4 <__bss_end+0xfff32e88>
+    1522:	7c16                	.insn	2, 0x7c16
+    1524:	ec11                	.insn	2, 0xec11
+    1526:	57ea                	.insn	2, 0x57ea
+    1528:	d822                	.insn	2, 0xd822
+    152a:	b409                	.insn	2, 0xb409
+    152c:	021a7e0b          	.insn	4, 0x021a7e0b
+    1530:	55ea583f 7abf1ede 	.insn	8, 0x7abf1ede55ea583f
+    1538:	c093c6d3          	.insn	4, 0xc093c6d3
+    153c:	6134                	.insn	2, 0x6134
+    153e:	5fba                	.insn	2, 0x5fba
+    1540:	70a0d993          	.insn	4, 0x70a0d993
+    1544:	1f38                	.insn	2, 0x1f38
+    1546:	efe1                	.insn	2, 0xefe1
+    1548:	a208                	.insn	2, 0xa208
+    154a:	5578cb03          	lbu	s6,1367(a7)
+    154e:	127c                	.insn	2, 0x127c
+    1550:	2331                	.insn	2, 0x2331
+    1552:	5ba6                	.insn	2, 0x5ba6
+    1554:	f4ad                	.insn	2, 0xf4ad
+    1556:	9239                	.insn	2, 0x9239
+    1558:	7c6e                	.insn	2, 0x7c6e
+    155a:	1bb6                	.insn	2, 0x1bb6
+    155c:	db8a                	.insn	2, 0xdb8a
+    155e:	c6fd                	.insn	2, 0xc6fd
+    1560:	e281                	.insn	2, 0xe281
+    1562:	cd68                	.insn	2, 0xcd68
+    1564:	9829                	.insn	2, 0x9829
+    1566:	876a                	.insn	2, 0x876a
+    1568:	26caafa3          	sw	a2,639(s5)
+    156c:	cfd6                	.insn	2, 0xcfd6
+    156e:	d89bdf87          	.insn	4, 0xd89bdf87
+    1572:	7eff88f7          	.insn	4, 0x7eff88f7
+    1576:	41a8                	.insn	2, 0x41a8
+    1578:	f6f5                	.insn	2, 0xf6f5
+    157a:	9dd56893          	ori	a7,a0,-1571
+    157e:	9b75                	.insn	2, 0x9b75
+    1580:	d11fb4d3          	.insn	4, 0xd11fb4d3
+    1584:	19fc                	.insn	2, 0x19fc
+    1586:	6a86a6cb          	.insn	4, 0x6a86a6cb
+    158a:	ca16                	.insn	2, 0xca16
+    158c:	6748                	.insn	2, 0x6748
+    158e:	91b4                	.insn	2, 0x91b4
+    1590:	72a1                	.insn	2, 0x72a1
+    1592:	e422                	.insn	2, 0xe422
+    1594:	001316af          	.insn	4, 0x001316af
+    1598:	4dc3870b          	.insn	4, 0x4dc3870b
+    159c:	a82d                	.insn	2, 0xa82d
+    159e:	4cfc                	.insn	2, 0x4cfc
+    15a0:	48498a67          	jalr	s4,1156(s3) # 9702a484 <__bss_end+0x97027828>
+    15a4:	a9d6                	.insn	2, 0xa9d6
+    15a6:	7b66                	.insn	2, 0x7b66
+    15a8:	8ce2                	.insn	2, 0x8ce2
+    15aa:	1fda                	.insn	2, 0x1fda
+    15ac:	04b61863          	bne	a2,a1,15fc <f8_pool+0xcc4>
+    15b0:	a1c4                	.insn	2, 0xa1c4
+    15b2:	2448eb0f          	.insn	4, 0x2448eb0f
+    15b6:	e00ba867          	.insn	4, 0xe00ba867
+    15ba:	e795                	.insn	2, 0xe795
+    15bc:	5fe1                	.insn	2, 0x5fe1
+    15be:	1b39                	.insn	2, 0x1b39
+    15c0:	7a16                	.insn	2, 0x7a16
+    15c2:	c924                	.insn	2, 0xc924
+    15c4:	aecc                	.insn	2, 0xaecc
+    15c6:	c06d26b7          	lui	a3,0xc06d2
+    15ca:	b9ed                	.insn	2, 0xb9ed
+    15cc:	2b52                	.insn	2, 0x2b52
+    15ce:	fc28                	.insn	2, 0xfc28
+    15d0:	0df5                	.insn	2, 0x0df5
+    15d2:	ad2c                	.insn	2, 0xad2c
+    15d4:	97d9                	.insn	2, 0x97d9
+    15d6:	6041                	.insn	2, 0x6041
+    15d8:	c68c                	.insn	2, 0xc68c
+    15da:	c50b2de3          	.insn	4, 0xc50b2de3
+    15de:	aa5e                	.insn	2, 0xaa5e
+    15e0:	ef52                	.insn	2, 0xef52
+    15e2:	8a06                	.insn	2, 0x8a06
+    15e4:	df8da803          	lw	a6,-520(s11)
+    15e8:	d174                	.insn	2, 0xd174
+    15ea:	f12bd457          	.insn	4, 0xf12bd457
+    15ee:	f9caadf3          	.insn	4, 0xf9caadf3
+    15f2:	8246                	.insn	2, 0x8246
+    15f4:	cc7e                	.insn	2, 0xcc7e
+    15f6:	2908                	.insn	2, 0x2908
+    15f8:	2c3a                	.insn	2, 0x2c3a
+    15fa:	17d2                	.insn	2, 0x17d2
+    15fc:	5df75613          	.insn	4, 0x5df75613
+    1600:	6be8                	.insn	2, 0x6be8
+    1602:	eaf9                	.insn	2, 0xeaf9
+    1604:	fc3f6473          	.insn	4, 0xfc3f6473
+    1608:	0d56                	.insn	2, 0x0d56
+    160a:	56ec                	.insn	2, 0x56ec
+    160c:	86862dc7          	.insn	4, 0x86862dc7
+    1610:	4782                	.insn	2, 0x4782
+    1612:	5271                	.insn	2, 0x5271
+    1614:	2c6996e3          	bne	s3,t1,20e0 <f8_pool+0x17a8>
+    1618:	77e2                	.insn	2, 0x77e2
+    161a:	bc49                	.insn	2, 0xbc49
+    161c:	92e5                	.insn	2, 0x92e5
+    161e:	4b62                	.insn	2, 0x4b62
+    1620:	7460                	.insn	2, 0x7460
+    1622:	b4f0                	.insn	2, 0xb4f0
+    1624:	8978                	.insn	2, 0x8978
+    1626:	f8517a17          	auipc	s4,0xf8517
+    162a:	ba3c                	.insn	2, 0xba3c
+    162c:	917e                	.insn	2, 0x917e
+    162e:	e889                	.insn	2, 0xe889
+    1630:	62ec                	.insn	2, 0x62ec
+    1632:	22a59a0f          	.insn	4, 0x22a59a0f
+    1636:	662e                	.insn	2, 0x662e
+    1638:	3521                	.insn	2, 0x3521
+    163a:	98f1                	.insn	2, 0x98f1
+    163c:	f6ec                	.insn	2, 0xf6ec
+    163e:	c474                	.insn	2, 0xc474
+    1640:	ccc581ef          	jal	gp,fff59b0c <__bss_end+0xfff56eb0>
+    1644:	b732                	.insn	2, 0xb732
+    1646:	b6de                	.insn	2, 0xb6de
+    1648:	95a6                	.insn	2, 0x95a6
+    164a:	e8b1                	.insn	2, 0xe8b1
+    164c:	bdcc                	.insn	2, 0xbdcc
+    164e:	761ef56b          	.insn	4, 0x761ef56b
+    1652:	1cd2362b          	.insn	4, 0x1cd2362b
+    1656:	a581                	.insn	2, 0xa581
+    1658:	5978                	.insn	2, 0x5978
+    165a:	b480                	.insn	2, 0xb480
+    165c:	aa85                	.insn	2, 0xaa85
+    165e:	aae0                	.insn	2, 0xaae0
+    1660:	05ed                	.insn	2, 0x05ed
+    1662:	3e94                	.insn	2, 0x3e94
+    1664:	c8dbea47          	.insn	4, 0xc8dbea47
+    1668:	cdb6                	.insn	2, 0xcdb6
+    166a:	d494                	.insn	2, 0xd494
+    166c:	6614ecc3          	.insn	4, 0x6614ecc3
+    1670:	c7b36db7          	lui	s11,0xc7b36
+    1674:	f062                	.insn	2, 0xf062
+    1676:	211f 6e4c 5b57      	.insn	6, 0x5b576e4c211f
+    167c:	a9ba                	.insn	2, 0xa9ba
+    167e:	6551                	.insn	2, 0x6551
+    1680:	29e4                	.insn	2, 0x29e4
+    1682:	cb88                	.insn	2, 0xcb88
+    1684:	6811                	.insn	2, 0x6811
+    1686:	0171                	.insn	2, 0x0171
+    1688:	4051                	.insn	2, 0x4051
+    168a:	a6e37b67          	.insn	4, 0xa6e37b67
+    168e:	99ae                	.insn	2, 0x99ae
+    1690:	fafa                	.insn	2, 0xfafa
+    1692:	db69                	.insn	2, 0xdb69
+    1694:	d4eedc6b          	.insn	4, 0xd4eedc6b
+    1698:	ac08                	.insn	2, 0xac08
+    169a:	93f0                	.insn	2, 0x93f0
+    169c:	0279                	.insn	2, 0x0279
+    169e:	d2a6                	.insn	2, 0xd2a6
+    16a0:	0e4d                	.insn	2, 0x0e4d
+    16a2:	3dfe                	.insn	2, 0x3dfe
+    16a4:	e40ea747          	.insn	4, 0xe40ea747
+    16a8:	e315                	.insn	2, 0xe315
+    16aa:	cb55                	.insn	2, 0xcb55
+    16ac:	615e623b          	.insn	4, 0x615e623b
+    16b0:	2da450cf          	.insn	4, 0x2da450cf
+    16b4:	d775                	.insn	2, 0xd775
+    16b6:	7f34                	.insn	2, 0x7f34
+    16b8:	baa64d63          	blt	a2,a0,a72 <f8_pool+0x13a>
+    16bc:	ea59                	.insn	2, 0xea59
+    16be:	3541                	.insn	2, 0x3541
+    16c0:	1448                	.insn	2, 0x1448
+    16c2:	90e4                	.insn	2, 0x90e4
+    16c4:	70da                	.insn	2, 0x70da
+    16c6:	d569                	.insn	2, 0xd569
+    16c8:	ba5e                	.insn	2, 0xba5e
+    16ca:	0fbb774b          	.insn	4, 0x0fbb774b
+    16ce:	1d18                	.insn	2, 0x1d18
+    16d0:	13c1                	.insn	2, 0x13c1
+    16d2:	28e9                	.insn	2, 0x28e9
+    16d4:	578c                	.insn	2, 0x578c
+    16d6:	e61c                	.insn	2, 0xe61c
+    16d8:	6cce                	.insn	2, 0x6cce
+    16da:	8239                	.insn	2, 0x8239
+    16dc:	8c9282d7          	.insn	4, 0x8c9282d7
+    16e0:	01e2                	.insn	2, 0x01e2
+    16e2:	31fc                	.insn	2, 0x31fc
+    16e4:	b4cc                	.insn	2, 0xb4cc
+    16e6:	933d                	.insn	2, 0x933d
+    16e8:	0875                	.insn	2, 0x0875
+    16ea:	f2c6                	.insn	2, 0xf2c6
+    16ec:	a0c0                	.insn	2, 0xa0c0
+    16ee:	57ab5b27          	.insn	4, 0x57ab5b27
+    16f2:	10d9                	.insn	2, 0x10d9
+    16f4:	a026                	.insn	2, 0xa026
+    16f6:	80ea                	.insn	2, 0x80ea
+    16f8:	23846d5b          	.insn	4, 0x23846d5b
+    16fc:	0e8c                	.insn	2, 0x0e8c
+    16fe:	8661                	.insn	2, 0x8661
+    1700:	13774ed3          	.insn	4, 0x13774ed3
+    1704:	4002                	.insn	2, 0x4002
+    1706:	08e9                	.insn	2, 0x08e9
+    1708:	073d                	.insn	2, 0x073d
+    170a:	38e2ec0f          	.insn	4, 0x38e2ec0f
+    170e:	878a                	.insn	2, 0x878a
+    1710:	0b74                	.insn	2, 0x0b74
+    1712:	354a                	.insn	2, 0x354a
+    1714:	1c29                	.insn	2, 0x1c29
+    1716:	16cd                	.insn	2, 0x16cd
+    1718:	813d                	.insn	2, 0x813d
+    171a:	3ec9                	.insn	2, 0x3ec9
+    171c:	cd2a4ac3          	.insn	4, 0xcd2a4ac3
+    1720:	25ee913b          	.insn	4, 0x25ee913b
+    1724:	1558                	.insn	2, 0x1558
+    1726:	53f245a3          	.insn	4, 0x53f245a3
+    172a:	00f8                	.insn	2, 0x00f8
+    172c:	4e7e                	.insn	2, 0x4e7e
+    172e:	8c7c                	.insn	2, 0x8c7c
+    1730:	2e0fe463          	bltu	t6,zero,1a18 <f8_pool+0x10e0>
+    1734:	c856                	.insn	2, 0xc856
+    1736:	93da                	.insn	2, 0x93da
+    1738:	d076                	.insn	2, 0xd076
+    173a:	e45d0a9b          	.insn	4, 0xe45d0a9b
+    173e:	a554                	.insn	2, 0xa554
+    1740:	eea9a313          	slti	t1,s3,-278
+    1744:	f0e8                	.insn	2, 0xf0e8
+    1746:	76c4                	.insn	2, 0x76c4
+    1748:	8815                	.insn	2, 0x8815
+    174a:	e7ac                	.insn	2, 0xe7ac
+    174c:	3a06                	.insn	2, 0x3a06
+    174e:	8d2fb03f 6f7b0809 	.insn	8, 0x6f7b08098d2fb03f
+    1756:	8bd0ffb7          	lui	t6,0x8bd0f
+    175a:	58405a57          	.insn	4, 0x58405a57
+    175e:	f63def23          	.insn	4, 0xf63def23
+    1762:	802c                	.insn	2, 0x802c
+    1764:	78c3b35b          	.insn	4, 0x78c3b35b
+    1768:	48de                	.insn	2, 0x48de
+    176a:	5b85                	.insn	2, 0x5b85
+    176c:	45a0                	.insn	2, 0x45a0
+    176e:	8ad3c123          	.insn	4, 0x8ad3c123
+    1772:	6251                	.insn	2, 0x6251
+    1774:	4d0a                	.insn	2, 0x4d0a
+    1776:	3bc9                	.insn	2, 0x3bc9
+    1778:	4641                	.insn	2, 0x4641
+    177a:	a65efccf          	.insn	4, 0xa65efccf
+    177e:	3e92                	.insn	2, 0x3e92
+    1780:	6f6c                	.insn	2, 0x6f6c
+    1782:	347d                	.insn	2, 0x347d
+    1784:	fb55                	.insn	2, 0xfb55
+    1786:	a156                	.insn	2, 0xa156
+    1788:	3412                	.insn	2, 0x3412
+    178a:	e0fcf8db          	.insn	4, 0xe0fcf8db
+    178e:	845b9ce7          	.insn	4, 0x845b9ce7
+    1792:	7a38d84b          	.insn	4, 0x7a38d84b
+    1796:	7e90220b          	.insn	4, 0x7e90220b
+    179a:	1d88                	.insn	2, 0x1d88
+    179c:	10a604f7          	.insn	4, 0x10a604f7
+    17a0:	97e1                	.insn	2, 0x97e1
+    17a2:	8a19                	.insn	2, 0x8a19
+    17a4:	9f1eb9d7          	.insn	4, 0x9f1eb9d7
+    17a8:	9fadd553          	.insn	4, 0x9fadd553
+    17ac:	bb10                	.insn	2, 0xbb10
+    17ae:	a1a4                	.insn	2, 0xa1a4
+    17b0:	02387367          	.insn	4, 0x02387367
+    17b4:	2025                	.insn	2, 0x2025
+    17b6:	3935                	.insn	2, 0x3935
+    17b8:	d649                	.insn	2, 0xd649
+    17ba:	e63e                	.insn	2, 0xe63e
+    17bc:	48c2                	.insn	2, 0x48c2
+    17be:	68625ebb          	.insn	4, 0x68625ebb
+    17c2:	0e6e                	.insn	2, 0x0e6e
+    17c4:	4392                	.insn	2, 0x4392
+    17c6:	a54ff52b          	.insn	4, 0xa54ff52b
+    17ca:	50bd                	.insn	2, 0x50bd
+    17cc:	2846                	.insn	2, 0x2846
+    17ce:	925d                	.insn	2, 0x925d
+    17d0:	1b5c                	.insn	2, 0x1b5c
+    17d2:	091c92af          	.insn	4, 0x091c92af
+    17d6:	7cb8                	.insn	2, 0x7cb8
+    17d8:	67de                	.insn	2, 0x67de
+    17da:	b79899f3          	.insn	4, 0xb79899f3
+    17de:	5f5c                	.insn	2, 0x5f5c
+    17e0:	68a0                	.insn	2, 0x68a0
+    17e2:	0d7f 4909 e367 c0ac 	.insn	10, 0x9e6fc0ace36749090d7f
+    17ea:	9e6f 
+    17ec:	5fb6                	.insn	2, 0x5fb6
+    17ee:	bed4                	.insn	2, 0xbed4
+    17f0:	da2a                	.insn	2, 0xda2a
+    17f2:	1814                	.insn	2, 0x1814
+    17f4:	63241ab3          	.insn	4, 0x63241ab3
+    17f8:	f525                	.insn	2, 0xf525
+    17fa:	c3fa                	.insn	2, 0xc3fa
+    17fc:	180575f7          	.insn	4, 0x180575f7
+    1800:	a009                	.insn	2, 0xa009
+    1802:	57dc0e27          	.insn	4, 0x57dc0e27
+    1806:	e7ca                	.insn	2, 0xe7ca
+    1808:	c34a                	.insn	2, 0xc34a
+    180a:	4c18                	.insn	2, 0x4c18
+    180c:	e52e                	.insn	2, 0xe52e
+    180e:	3544                	.insn	2, 0x3544
+    1810:	ff80                	.insn	2, 0xff80
+    1812:	6fda                	.insn	2, 0x6fda
+    1814:	f49e                	.insn	2, 0xf49e
+    1816:	038c                	.insn	2, 0x038c
+    1818:	2b58                	.insn	2, 0x2b58
+    181a:	e1da                	.insn	2, 0xe1da
+    181c:	20f178b3          	.insn	4, 0x20f178b3
+    1820:	4835                	.insn	2, 0x4835
+    1822:	731c                	.insn	2, 0x731c
+    1824:	aa214ebb          	.insn	4, 0xaa214ebb
+    1828:	d4a2c587          	.insn	4, 0xd4a2c587
+    182c:	85c44b83          	lbu	s7,-1956(s0)
+    1830:	49c2                	.insn	2, 0x49c2
+    1832:	eb8a                	.insn	2, 0xeb8a
+    1834:	37bd                	.insn	2, 0x37bd
+    1836:	4c28                	.insn	2, 0x4c28
+    1838:	d710                	.insn	2, 0xd710
+    183a:	cf35                	.insn	2, 0xcf35
+    183c:	b4aa                	.insn	2, 0xb4aa
+    183e:	2784                	.insn	2, 0x2784
+    1840:	ecb5                	.insn	2, 0xecb5
+    1842:	f3c2                	.insn	2, 0xf3c2
+    1844:	cc68                	.insn	2, 0xcc68
+    1846:	3ac5f393          	andi	t2,a1,940
+    184a:	ed2a                	.insn	2, 0xed2a
+    184c:	0c7f e399 8eb5 2666 	.insn	10, 0xfaec26668eb5e3990c7f
+    1854:	faec 
+    1856:	f769                	.insn	2, 0xf769
+    1858:	355a                	.insn	2, 0x355a
+    185a:	fa86                	.insn	2, 0xfa86
+    185c:	de96                	.insn	2, 0xde96
+    185e:	1778                	.insn	2, 0x1778
+    1860:	6dd1                	.insn	2, 0x6dd1
+    1862:	71cd                	.insn	2, 0x71cd
+    1864:	04b94a8b          	.insn	4, 0x04b94a8b
+    1868:	4c67864f          	.insn	4, 0x4c67864f
+    186c:	e75a                	.insn	2, 0xe75a
+    186e:	f3ad                	.insn	2, 0xf3ad
+    1870:	2a01                	.insn	2, 0x2a01
+    1872:	6f62                	.insn	2, 0x6f62
+    1874:	911d                	.insn	2, 0x911d
+    1876:	9484f67b          	.insn	4, 0x9484f67b
+    187a:	6c751573          	.insn	4, 0x6c751573
+    187e:	43227257          	.insn	4, 0x43227257
+    1882:	8832                	.insn	2, 0x8832
+    1884:	a670a577          	.insn	4, 0xa670a577
+    1888:	c618                	.insn	2, 0xc618
+    188a:	eab2                	.insn	2, 0xeab2
+    188c:	0a38e76f          	jal	a4,9012e <__bss_end+0x8d4d2>
+    1890:	d4adefab          	.insn	4, 0xd4adefab
+    1894:	4d50                	.insn	2, 0x4d50
+    1896:	7d9d                	.insn	2, 0x7d9d
+    1898:	380b3d37          	lui	s10,0x380b3
+    189c:	8af2                	.insn	2, 0x8af2
+    189e:	d734                	.insn	2, 0xd734
+    18a0:	4f98e947          	.insn	4, 0x4f98e947
+    18a4:	c90a                	.insn	2, 0xc90a
+    18a6:	e3ca                	.insn	2, 0xe3ca
+    18a8:	ce80                	.insn	2, 0xce80
+    18aa:	e422                	.insn	2, 0xe422
+    18ac:	e141                	.insn	2, 0xe141
+    18ae:	83ee                	.insn	2, 0x83ee
+    18b0:	8d5ebaa7          	.insn	4, 0x8d5ebaa7
+    18b4:	1e55                	.insn	2, 0x1e55
+    18b6:	2955                	.insn	2, 0x2955
+    18b8:	57b0                	.insn	2, 0x57b0
+    18ba:	4a3625bb          	.insn	4, 0x4a3625bb
+    18be:	a5ca                	.insn	2, 0xa5ca
+    18c0:	4434                	.insn	2, 0x4434
+    18c2:	25e5                	.insn	2, 0x25e5
+    18c4:	8d5c                	.insn	2, 0x8d5c
+    18c6:	f2f4                	.insn	2, 0xf2f4
+    18c8:	8161                	.insn	2, 0x8161
+    18ca:	4fd66b7b          	.insn	4, 0x4fd66b7b
+    18ce:	19b5b103          	.insn	4, 0x19b5b103
+    18d2:	49be35a3          	.insn	4, 0x49be35a3
+    18d6:	1d84                	.insn	2, 0x1d84
+    18d8:	156c                	.insn	2, 0x156c
+    18da:	9f5d7b2b          	.insn	4, 0x9f5d7b2b
+    18de:	e314d847          	.insn	4, 0xe314d847
+    18e2:	52de                	.insn	2, 0x52de
+    18e4:	62e5                	.insn	2, 0x62e5
+    18e6:	6382                	.insn	2, 0x6382
+    18e8:	9d38                	.insn	2, 0x9d38
+    18ea:	0a9e                	.insn	2, 0x0a9e
+    18ec:	7fee                	.insn	2, 0x7fee
+    18ee:	dc49                	.insn	2, 0xdc49
+    18f0:	b1ac                	.insn	2, 0xb1ac
+    18f2:	d270                	.insn	2, 0xd270
+    18f4:	dd75                	.insn	2, 0xdd75
+    18f6:	1036                	.insn	2, 0x1036
+    18f8:	75a8                	.insn	2, 0x75a8
+    18fa:	328d                	.insn	2, 0x328d
+    18fc:	718fe8ef          	jal	a7,100014 <__bss_end+0xfd3b8>
+    1900:	86c0                	.insn	2, 0x86c0
+    1902:	c71a                	.insn	2, 0xc71a
+    1904:	178e                	.insn	2, 0x178e
+    1906:	6a82                	.insn	2, 0x6a82
+    1908:	d65a                	.insn	2, 0xd65a
+    190a:	d501                	.insn	2, 0xd501
+    190c:	f7fe                	.insn	2, 0xf7fe
+    190e:	4121                	.insn	2, 0x4121
+    1910:	b158                	.insn	2, 0xb158
+    1912:	5fec767b          	.insn	4, 0x5fec767b
+    1916:	2e70                	.insn	2, 0x2e70
+    1918:	da29                	.insn	2, 0xda29
+    191a:	1700cb13          	xori	s6,ra,368
+    191e:	7a69                	.insn	2, 0x7a69
+    1920:	9c71                	.insn	2, 0x9c71
+    1922:	ae70                	.insn	2, 0xae70
+    1924:	ca6c                	.insn	2, 0xca6c
+    1926:	bace                	.insn	2, 0xbace
+    1928:	43b9                	.insn	2, 0x43b9
+    192a:	e7fd                	.insn	2, 0xe7fd
+    192c:	ef16                	.insn	2, 0xef16
+    192e:	161a4feb          	.insn	4, 0x161a4feb
+    1932:	87c4                	.insn	2, 0x87c4
+    1934:	a944                	.insn	2, 0xa944
+    1936:	56d4                	.insn	2, 0x56d4
+    1938:	987d                	.insn	2, 0x987d
+    193a:	f42a                	.insn	2, 0xf42a
+    193c:	ea45                	.insn	2, 0xea45
+    193e:	6335                	.insn	2, 0x6335
+    1940:	d7c4                	.insn	2, 0xd7c4
+    1942:	ed96                	.insn	2, 0xed96
+    1944:	f8a8                	.insn	2, 0xf8a8
+    1946:	a7ad                	.insn	2, 0xa7ad
+    1948:	f29e                	.insn	2, 0xf29e
+    194a:	d4c1                	.insn	2, 0xd4c1
+    194c:	3164b1d7          	.insn	4, 0x3164b1d7
+    1950:	b011                	.insn	2, 0xb011
+    1952:	5c69                	.insn	2, 0x5c69
+    1954:	f19d7567          	.insn	4, 0xf19d7567
+    1958:	cdac                	.insn	2, 0xcdac
+    195a:	f8fe                	.insn	2, 0xf8fe
+    195c:	c18c                	.insn	2, 0xc18c
+    195e:	1d2d6147          	.insn	4, 0x1d2d6147
+    1962:	47e03687          	.insn	4, 0x47e03687
+    1966:	c456                	.insn	2, 0xc456
+    1968:	71bc                	.insn	2, 0x71bc
+    196a:	9c25                	.insn	2, 0x9c25
+    196c:	fe118067          	jr	-31(gp)
+    1970:	f2c9                	.insn	2, 0xf2c9
+    1972:	e1283daf          	.insn	4, 0xe1283daf
+    1976:	a2f4                	.insn	2, 0xa2f4
+    1978:	b3f6eb7b          	.insn	4, 0xb3f6eb7b
+    197c:	06e4                	.insn	2, 0x06e4
+    197e:	ad346003          	.insn	4, 0xad346003
+    1982:	95b2                	.insn	2, 0x95b2
+    1984:	d1b5                	.insn	2, 0xd1b5
+    1986:	ca49                	.insn	2, 0xca49
+    1988:	5534                	.insn	2, 0x5534
+    198a:	b751                	.insn	2, 0xb751
+    198c:	33422e7b          	.insn	4, 0x33422e7b
+    1990:	143b41b7          	lui	gp,0x143b4
+    1994:	4119                	.insn	2, 0x4119
+    1996:	bd74                	.insn	2, 0xbd74
+    1998:	25b1                	.insn	2, 0x25b1
+    199a:	b7c0                	.insn	2, 0xb7c0
+    199c:	497f 6dfe 312b 5674 	.insn	18, 0x29d51bea0f558b91d0e55674312b6dfe497f
+    19a4:	d0e5 8b91 0f55 1bea 
+    19ac:	29d5 
+    19ae:	50ad                	.insn	2, 0x50ad
+    19b0:	5d0f8277          	.insn	4, 0x5d0f8277
+    19b4:	ff0a                	.insn	2, 0xff0a
+    19b6:	08e6                	.insn	2, 0x08e6
+    19b8:	dbda                	.insn	2, 0xdbda
+    19ba:	db01                	.insn	2, 0xdb01
+    19bc:	910ee35b          	.insn	4, 0x910ee35b
+    19c0:	bad4                	.insn	2, 0xbad4
+    19c2:	5349                	.insn	2, 0x5349
+    19c4:	1464                	.insn	2, 0x1464
+    19c6:	4fe5                	.insn	2, 0x4fe5
+    19c8:	6a5c                	.insn	2, 0x6a5c
+    19ca:	6fe4                	.insn	2, 0x6fe4
+    19cc:	d6bd                	.insn	2, 0xd6bd
+    19ce:	ac9203cf          	.insn	4, 0xac9203cf
+    19d2:	3f39                	.insn	2, 0x3f39
+    19d4:	6306                	.insn	2, 0x6306
+    19d6:	038d812b          	.insn	4, 0x038d812b
+    19da:	0880                	.insn	2, 0x0880
+    19dc:	b631                	.insn	2, 0xb631
+    19de:	4759                	.insn	2, 0x4759
+    19e0:	39a7782f          	.insn	4, 0x39a7782f
+    19e4:	fa82                	.insn	2, 0xfa82
+    19e6:	33c2                	.insn	2, 0x33c2
+    19e8:	7201                	.insn	2, 0x7201
+    19ea:	f03a                	.insn	2, 0xf03a
+    19ec:	866d                	.insn	2, 0x866d
+    19ee:	61cd                	.insn	2, 0x61cd
+    19f0:	2406                	.insn	2, 0x2406
+    19f2:	598c1d3f 00d60578 	.insn	8, 0x00d60578598c1d3f
+    19fa:	a9e0                	.insn	2, 0xa9e0
+    19fc:	0836                	.insn	2, 0x0836
+    19fe:	b599                	.insn	2, 0xb599
+    1a00:	2980                	.insn	2, 0x2980
+    1a02:	42ff733f f906ac39 	.insn	8, 0xf906ac3942ff733f
+    1a0a:	45f2                	.insn	2, 0x45f2
+    1a0c:	e792                	.insn	2, 0xe792
+    1a0e:	59c5                	.insn	2, 0x59c5
+    1a10:	8be43f63          	.insn	4, 0x8be43f63
+    1a14:	9fdd                	.insn	2, 0x9fdd
+    1a16:	e89a6a17          	auipc	s4,0xe89a6
+    1a1a:	c8fa                	.insn	2, 0xc8fa
+    1a1c:	0291                	.insn	2, 0x0291
+    1a1e:	5362                	.insn	2, 0x5362
+    1a20:	dd4c                	.insn	2, 0xdd4c
+    1a22:	a599                	.insn	2, 0xa599
+    1a24:	6b86                	.insn	2, 0x6b86
+    1a26:	2159                	.insn	2, 0x2159
+    1a28:	fec8                	.insn	2, 0xfec8
+    1a2a:	070a                	.insn	2, 0x070a
+    1a2c:	6c89                	.insn	2, 0x6c89
+    1a2e:	9012                	.insn	2, 0x9012
+    1a30:	19df3fff 56a7c93c 	.insn	16, 0xcea0222323bc4e4456a7c93c19df3fff
+    1a38:	23bc4e44 cea02223 
+    1a40:	f358                	.insn	2, 0xf358
+    1a42:	d43d                	.insn	2, 0xd43d
+    1a44:	2fad                	.insn	2, 0x2fad
+    1a46:	e2bd                	.insn	2, 0xe2bd
+    1a48:	4b70                	.insn	2, 0x4b70
+    1a4a:	8aa1                	.insn	2, 0x8aa1
+    1a4c:	d386                	.insn	2, 0xd386
+    1a4e:	b835                	.insn	2, 0xb835
+    1a50:	a855                	.insn	2, 0xa855
+    1a52:	4d8a                	.insn	2, 0x4d8a
+    1a54:	9c19                	.insn	2, 0x9c19
+    1a56:	00d0                	.insn	2, 0x00d0
+    1a58:	da75                	.insn	2, 0xda75
+    1a5a:	aad1                	.insn	2, 0xaad1
+    1a5c:	a2a1                	.insn	2, 0xa2a1
+    1a5e:	5af2                	.insn	2, 0x5af2
+    1a60:	439a                	.insn	2, 0x439a
+    1a62:	43f4                	.insn	2, 0x43f4
+    1a64:	549e                	.insn	2, 0x549e
+    1a66:	b7e6                	.insn	2, 0xb7e6
+    1a68:	5808                	.insn	2, 0x5808
+    1a6a:	1b7d                	.insn	2, 0x1b7d
+    1a6c:	ffe8                	.insn	2, 0xffe8
+    1a6e:	162e5c6b          	.insn	4, 0x162e5c6b
+    1a72:	a040                	.insn	2, 0xa040
+    1a74:	07683b2f          	.insn	4, 0x07683b2f
+    1a78:	47a4                	.insn	2, 0x47a4
+    1a7a:	8229                	.insn	2, 0x8229
+    1a7c:	331d                	.insn	2, 0x331d
+    1a7e:	ec7e6347          	.insn	4, 0xec7e6347
+    1a82:	2c5a                	.insn	2, 0x2c5a
+    1a84:	c10a                	.insn	2, 0xc10a
+    1a86:	ec91                	.insn	2, 0xec91
+    1a88:	740c                	.insn	2, 0x740c
+    1a8a:	c0c6                	.insn	2, 0xc0c6
+    1a8c:	cd16                	.insn	2, 0xcd16
+    1a8e:	a560                	.insn	2, 0xa560
+    1a90:	b806                	.insn	2, 0xb806
+    1a92:	3d26                	.insn	2, 0x3d26
+    1a94:	b998                	.insn	2, 0xb998
+    1a96:	995f 0a1f e092      	.insn	6, 0xe0920a1f995f
+    1a9c:	1eb6                	.insn	2, 0x1eb6
+    1a9e:	0f1c                	.insn	2, 0x0f1c
+    1aa0:	aea2                	.insn	2, 0xaea2
+    1aa2:	bca9                	.insn	2, 0xbca9
+    1aa4:	376d                	.insn	2, 0x376d
+    1aa6:	1068                	.insn	2, 0x1068
+    1aa8:	8404                	.insn	2, 0x8404
+    1aaa:	25a4                	.insn	2, 0x25a4
+    1aac:	74b4                	.insn	2, 0x74b4
+    1aae:	2b24                	.insn	2, 0x2b24
+    1ab0:	30533f5b          	.insn	4, 0x30533f5b
+    1ab4:	8cf9                	.insn	2, 0x8cf9
+    1ab6:	e5dd8eeb          	.insn	4, 0xe5dd8eeb
+    1aba:	7f5e                	.insn	2, 0x7f5e
+    1abc:	d9ac                	.insn	2, 0xd9ac
+    1abe:	070c                	.insn	2, 0x070c
+    1ac0:	fdf4                	.insn	2, 0xfdf4
+    1ac2:	a68cfd03          	.insn	4, 0xa68cfd03
+    1ac6:	bd8a3287          	.insn	4, 0xbd8a3287
+    1aca:	0f171c17          	auipc	s8,0xf171
+    1ace:	301c                	.insn	2, 0x301c
+    1ad0:	3426                	.insn	2, 0x3426
+    1ad2:	fb85                	.insn	2, 0xfb85
+    1ad4:	6bd5                	.insn	2, 0x6bd5
+    1ad6:	1a02                	.insn	2, 0x1a02
+    1ad8:	f19f 1747 2b39      	.insn	6, 0x2b391747f19f
+    1ade:	0364                	.insn	2, 0x0364
+    1ae0:	5fea                	.insn	2, 0x5fea
+    1ae2:	bd08                	.insn	2, 0xbd08
+    1ae4:	3e50                	.insn	2, 0x3e50
+    1ae6:	c048                	.insn	2, 0xc048
+    1ae8:	d2f8302f          	.insn	4, 0xd2f8302f
+    1aec:	9374                	.insn	2, 0x9374
+    1aee:	f56c                	.insn	2, 0xf56c
+    1af0:	0bd0                	.insn	2, 0x0bd0
+    1af2:	25e5                	.insn	2, 0x25e5
+    1af4:	4a6d                	.insn	2, 0x4a6d
+    1af6:	f959d63b          	.insn	4, 0xf959d63b
+    1afa:	791a6ca3          	.insn	4, 0x791a6ca3
+    1afe:	04a7193b          	.insn	4, 0x04a7193b
+    1b02:	35ca                	.insn	2, 0x35ca
+    1b04:	5957cd87          	.insn	4, 0x5957cd87
+    1b08:	c851                	.insn	2, 0xc851
+    1b0a:	082e76c3          	.insn	4, 0x082e76c3
+    1b0e:	bedf cfdc 8cc2      	.insn	6, 0x8cc2cfdcbedf
+    1b14:	0bdf 5dae fc43      	.insn	6, 0xfc435dae0bdf
+    1b1a:	6aec                	.insn	2, 0x6aec
+    1b1c:	6d0c41a7          	.insn	4, 0x6d0c41a7
+    1b20:	dbe5                	.insn	2, 0xdbe5
+    1b22:	1e04                	.insn	2, 0x1e04
+    1b24:	7942                	.insn	2, 0x7942
+    1b26:	49a9                	.insn	2, 0x49a9
+    1b28:	6851                	.insn	2, 0x6851
+    1b2a:	88be                	.insn	2, 0x88be
+    1b2c:	c988e9a7          	.insn	4, 0xc988e9a7
+    1b30:	0652bde7          	.insn	4, 0x0652bde7
+    1b34:	3af3f6d3          	.insn	4, 0x3af3f6d3
+    1b38:	8501                	.insn	2, 0x8501
+    1b3a:	47e5                	.insn	2, 0x47e5
+    1b3c:	e9fbb8a7          	.insn	4, 0xe9fbb8a7
+    1b40:	d522                	.insn	2, 0xd522
+    1b42:	13c0                	.insn	2, 0x13c0
+    1b44:	c7f2                	.insn	2, 0xc7f2
+    1b46:	4fa8                	.insn	2, 0x4fa8
+    1b48:	88d93d07          	.insn	4, 0x88d93d07
+    1b4c:	173d                	.insn	2, 0x173d
+    1b4e:	32ed                	.insn	2, 0x32ed
+    1b50:	cf05                	.insn	2, 0xcf05
+    1b52:	ca62                	.insn	2, 0xca62
+    1b54:	8792                	.insn	2, 0x8792
+    1b56:	e42a                	.insn	2, 0xe42a
+    1b58:	a278                	.insn	2, 0xa278
+    1b5a:	2387a6a7          	.insn	4, 0x2387a6a7
+    1b5e:	bbb1                	.insn	2, 0xbbb1
+    1b60:	1d28                	.insn	2, 0x1d28
+    1b62:	da8d6a9b          	.insn	4, 0xda8d6a9b
+    1b66:	cf42                	.insn	2, 0xcf42
+    1b68:	87bd                	.insn	2, 0x87bd
+    1b6a:	610a                	.insn	2, 0x610a
+    1b6c:	57e0                	.insn	2, 0x57e0
+    1b6e:	c232                	.insn	2, 0xc232
+    1b70:	8d0e                	.insn	2, 0x8d0e
+    1b72:	d8ce                	.insn	2, 0xd8ce
+    1b74:	7644                	.insn	2, 0x7644
+    1b76:	e94a                	.insn	2, 0xe94a
+    1b78:	089f1587          	.insn	4, 0x089f1587
+    1b7c:	eda0                	.insn	2, 0xeda0
+    1b7e:	8ffef0f3          	.insn	4, 0x8ffef0f3
+    1b82:	2b60                	.insn	2, 0x2b60
+    1b84:	f421d6cb          	.insn	4, 0xf421d6cb
+    1b88:	e056                	.insn	2, 0xe056
+    1b8a:	6ad1                	.insn	2, 0x6ad1
+    1b8c:	f605                	.insn	2, 0xf605
+    1b8e:	24e1                	.insn	2, 0x24e1
+    1b90:	0e96                	.insn	2, 0x0e96
+    1b92:	e42d                	.insn	2, 0xe42d
+    1b94:	7f3a                	.insn	2, 0x7f3a
+    1b96:	9188                	.insn	2, 0x9188
+    1b98:	4fac                	.insn	2, 0x4fac
+    1b9a:	39f2                	.insn	2, 0x39f2
+    1b9c:	80c3ef47          	.insn	4, 0x80c3ef47
+    1ba0:	70e1                	.insn	2, 0x70e1
+    1ba2:	144dc203          	lbu	tp,324(s11) # c7b36144 <__bss_end+0xc7b334e8>
+    1ba6:	0d32                	.insn	2, 0x0d32
+    1ba8:	3644                	.insn	2, 0x3644
+    1baa:	11f2                	.insn	2, 0x11f2
+    1bac:	2558                	.insn	2, 0x2558
+    1bae:	a758                	.insn	2, 0xa758
+    1bb0:	83b5                	.insn	2, 0x83b5
+    1bb2:	8b4c                	.insn	2, 0x8b4c
+    1bb4:	c8d9d63f 144af542 	.insn	8, 0x144af542c8d9d63f
+    1bbc:	9ef8                	.insn	2, 0x9ef8
+    1bbe:	c566                	.insn	2, 0xc566
+    1bc0:	bd91                	.insn	2, 0xbd91
+    1bc2:	2564                	.insn	2, 0x2564
+    1bc4:	ed6c                	.insn	2, 0xed6c
+    1bc6:	d58a                	.insn	2, 0xd58a
+    1bc8:	8286                	.insn	2, 0x8286
+    1bca:	452a                	.insn	2, 0x452a
+    1bcc:	d5bd                	.insn	2, 0xd5bd
+    1bce:	b7d6                	.insn	2, 0xb7d6
+    1bd0:	028c                	.insn	2, 0x028c
+    1bd2:	a994                	.insn	2, 0xa994
+    1bd4:	20181aaf          	.insn	4, 0x20181aaf
+    1bd8:	17f8                	.insn	2, 0x17f8
+    1bda:	4128                	.insn	2, 0x4128
+    1bdc:	21ca                	.insn	2, 0x21ca
+    1bde:	e5cc                	.insn	2, 0xe5cc
+    1be0:	414620cb          	.insn	4, 0x414620cb
+    1be4:	c691                	.insn	2, 0xc691
+    1be6:	880115a7          	.insn	4, 0x880115a7
+    1bea:	f849                	.insn	2, 0xf849
+    1bec:	6701                	.insn	2, 0x6701
+    1bee:	e894                	.insn	2, 0xe894
+    1bf0:	10295fdb          	.insn	4, 0x10295fdb
+    1bf4:	2bae                	.insn	2, 0x2bae
+    1bf6:	dde2                	.insn	2, 0xdde2
+    1bf8:	0636                	.insn	2, 0x0636
+    1bfa:	1081                	.insn	2, 0x1081
+    1bfc:	c3f11cc3          	.insn	4, 0xc3f11cc3
+    1c00:	20c9                	.insn	2, 0x20c9
+    1c02:	a8ab580b          	.insn	4, 0xa8ab580b
+    1c06:	aa94                	.insn	2, 0xaa94
+    1c08:	37f1                	.insn	2, 0x37f1
+    1c0a:	ef8cc637          	lui	a2,0xef8cc
+    1c0e:	69b8                	.insn	2, 0x69b8
+    1c10:	c815                	.insn	2, 0xc815
+    1c12:	151e                	.insn	2, 0x151e
+    1c14:	5635                	.insn	2, 0x5635
+    1c16:	3972                	.insn	2, 0x3972
+    1c18:	8776                	.insn	2, 0x8776
+    1c1a:	c1c7c797          	auipc	a5,0xc1c7c
+    1c1e:	10278e57          	.insn	4, 0x10278e57
+    1c22:	17c6                	.insn	2, 0x17c6
+    1c24:	4ce4                	.insn	2, 0x4ce4
+    1c26:	468f1fcf          	.insn	4, 0x468f1fcf
+    1c2a:	0952                	.insn	2, 0x0952
+    1c2c:	3514                	.insn	2, 0x3514
+    1c2e:	e5b6                	.insn	2, 0xe5b6
+    1c30:	57e6                	.insn	2, 0x57e6
+    1c32:	6df6                	.insn	2, 0x6df6
+    1c34:	6edf de78 35d7      	.insn	6, 0x35d7de786edf
+    1c3a:	a3d5                	.insn	2, 0xa3d5
+    1c3c:	2b25                	.insn	2, 0x2b25
+    1c3e:	d97c                	.insn	2, 0xd97c
+    1c40:	70dd354f          	.insn	4, 0x70dd354f
+    1c44:	5646                	.insn	2, 0x5646
+    1c46:	8a8c                	.insn	2, 0x8a8c
+    1c48:	c87e                	.insn	2, 0xc87e
+    1c4a:	c208                	.insn	2, 0xc208
+    1c4c:	b4a9                	.insn	2, 0xb4a9
+    1c4e:	8b7d                	.insn	2, 0x8b7d
+    1c50:	eefc                	.insn	2, 0xeefc
+    1c52:	06ba                	.insn	2, 0x06ba
+    1c54:	7d1d                	.insn	2, 0x7d1d
+    1c56:	281e                	.insn	2, 0x281e
+    1c58:	1cc6                	.insn	2, 0x1cc6
+    1c5a:	7e2a                	.insn	2, 0x7e2a
+    1c5c:	c684                	.insn	2, 0xc684
+    1c5e:	b42603a7          	.insn	4, 0xb42603a7
+    1c62:	5226                	.insn	2, 0x5226
+    1c64:	dc88                	.insn	2, 0xdc88
+    1c66:	92cf7217          	auipc	tp,0x92cf7
+    1c6a:	80d9                	.insn	2, 0x80d9
+    1c6c:	05cd                	.insn	2, 0x05cd
+    1c6e:	305c3d1b          	.insn	4, 0x305c3d1b
+    1c72:	47c9e0af          	.insn	4, 0x47c9e0af
+    1c76:	00e5                	.insn	2, 0x00e5
+    1c78:	9d85                	.insn	2, 0x9d85
+    1c7a:	4105                	.insn	2, 0x4105
+    1c7c:	1324a933          	.insn	4, 0x1324a933
+    1c80:	003d                	.insn	2, 0x003d
+    1c82:	0b32                	.insn	2, 0x0b32
+    1c84:	f07a                	.insn	2, 0xf07a
+    1c86:	b52a                	.insn	2, 0xb52a
+    1c88:	f29ca60b          	.insn	4, 0xf29ca60b
+    1c8c:	7e493f13          	sltiu	t5,s2,2020
+    1c90:	fab1                	.insn	2, 0xfab1
+    1c92:	9a7c                	.insn	2, 0x9a7c
+    1c94:	087b2a5b          	.insn	4, 0x087b2a5b
+    1c98:	e782                	.insn	2, 0xe782
+    1c9a:	cef1                	.insn	2, 0xcef1
+    1c9c:	4f2d                	.insn	2, 0x4f2d
+    1c9e:	aa08                	.insn	2, 0xaa08
+    1ca0:	dfb29c23          	sh	s11,-520(t0)
+    1ca4:	f549a743          	.insn	4, 0xf549a743
+    1ca8:	2f16                	.insn	2, 0x2f16
+    1caa:	fcfe                	.insn	2, 0xfcfe
+    1cac:	9b62                	.insn	2, 0x9b62
+    1cae:	ebed                	.insn	2, 0xebed
+    1cb0:	c90a                	.insn	2, 0xc90a
+    1cb2:	e159                	.insn	2, 0xe159
+    1cb4:	4ff82e6f          	jal	t3,849b2 <__bss_end+0x81d56>
+    1cb8:	ac7a                	.insn	2, 0xac7a
+    1cba:	7666                	.insn	2, 0x7666
+    1cbc:	6d5a                	.insn	2, 0x6d5a
+    1cbe:	79f0                	.insn	2, 0x79f0
+    1cc0:	adc45f3b          	.insn	4, 0xadc45f3b
+    1cc4:	a41e                	.insn	2, 0xa41e
+    1cc6:	352e                	.insn	2, 0x352e
+    1cc8:	3e729abf 71075a7b 	.insn	8, 0x71075a7b3e729abf
+    1cd0:	7945                	.insn	2, 0x7945
+    1cd2:	9f0a                	.insn	2, 0x9f0a
+    1cd4:	66a6d613          	.insn	4, 0x66a6d613
+    1cd8:	bd54                	.insn	2, 0xbd54
+    1cda:	ecdf 6b82 da09      	.insn	6, 0xda096b82ecdf
+    1ce0:	68e0                	.insn	2, 0x68e0
+    1ce2:	fdba                	.insn	2, 0xfdba
+    1ce4:	c12c                	.insn	2, 0xc12c
+    1ce6:	6b528457          	.insn	4, 0x6b528457
+    1cea:	4d2f0abb          	.insn	4, 0x4d2f0abb
+    1cee:	6848                	.insn	2, 0x6848
+    1cf0:	dd7c                	.insn	2, 0xdd7c
+    1cf2:	5a92                	.insn	2, 0x5a92
+    1cf4:	c42d                	.insn	2, 0xc42d
+    1cf6:	f554                	.insn	2, 0xf554
+    1cf8:	85d5                	.insn	2, 0x85d5
+    1cfa:	b840                	.insn	2, 0xb840
+    1cfc:	7128                	.insn	2, 0x7128
+    1cfe:	bf68                	.insn	2, 0xbf68
+    1d00:	55a4                	.insn	2, 0x55a4
+    1d02:	af1a                	.insn	2, 0xaf1a
+    1d04:	31d8                	.insn	2, 0x31d8
+    1d06:	1e8a1c5b          	.insn	4, 0x1e8a1c5b
+    1d0a:	6ab6                	.insn	2, 0x6ab6
+    1d0c:	b78ac32b          	.insn	4, 0xb78ac32b
+    1d10:	611f4f6f          	jal	t5,f6b20 <__bss_end+0xf3ec4>
+    1d14:	5b58                	.insn	2, 0x5b58
+    1d16:	d1ac                	.insn	2, 0xd1ac
+    1d18:	abfacc17          	auipc	s8,0xabfac
+    1d1c:	5495                	.insn	2, 0x5495
+    1d1e:	64ad                	.insn	2, 0x64ad
+    1d20:	0c7c                	.insn	2, 0x0c7c
+    1d22:	f52c                	.insn	2, 0xf52c
+    1d24:	f78a                	.insn	2, 0xf78a
+    1d26:	a998                	.insn	2, 0xa998
+    1d28:	e65f a7cd 32f9      	.insn	6, 0x32f9a7cde65f
+    1d2e:	ae9b0ea7          	.insn	4, 0xae9b0ea7
+    1d32:	3042                	.insn	2, 0x3042
+    1d34:	d1ae                	.insn	2, 0xd1ae
+    1d36:	f79f 0cac d8ac      	.insn	6, 0xd8ac0cacf79f
+    1d3c:	b244b48f          	.insn	4, 0xb244b48f
+    1d40:	e199                	.insn	2, 0xe199
+    1d42:	ff119807          	.insn	4, 0xff119807
+    1d46:	6ac2                	.insn	2, 0x6ac2
+    1d48:	3e9c                	.insn	2, 0x3e9c
+    1d4a:	e8ea                	.insn	2, 0xe8ea
+    1d4c:	4112                	.insn	2, 0x4112
+    1d4e:	d818                	.insn	2, 0xd818
+    1d50:	12ac                	.insn	2, 0x12ac
+    1d52:	25e2                	.insn	2, 0x25e2
+    1d54:	3f591503          	lh	a0,1013(s2)
+    1d58:	1a45                	.insn	2, 0x1a45
+    1d5a:	e175                	.insn	2, 0xe175
+    1d5c:	a3ee                	.insn	2, 0xa3ee
+    1d5e:	061f 1135 cda4      	.insn	6, 0xcda41135061f
+    1d64:	3c6e                	.insn	2, 0x3c6e
+    1d66:	f606                	.insn	2, 0xf606
+    1d68:	b71c                	.insn	2, 0xb71c
+    1d6a:	52f0                	.insn	2, 0x52f0
+    1d6c:	73552a97          	auipc	s5,0x73552
+    1d70:	b74d6527          	.insn	4, 0xb74d6527
+    1d74:	ec36                	.insn	2, 0xec36
+    1d76:	7185                	.insn	2, 0x7185
+    1d78:	bb96                	.insn	2, 0xbb96
+    1d7a:	a930                	.insn	2, 0xa930
+    1d7c:	83c0                	.insn	2, 0x83c0
+    1d7e:	a25f5f87          	.insn	4, 0xa25f5f87
+    1d82:	d915                	.insn	2, 0xd915
+    1d84:	3e3a                	.insn	2, 0x3e3a
+    1d86:	615d5b17          	auipc	s6,0x615d5
+    1d8a:	01e82cf7          	.insn	4, 0x01e82cf7
+    1d8e:	19cc0457          	.insn	4, 0x19cc0457
+    1d92:	8094eb67          	.insn	4, 0x8094eb67
+    1d96:	e36d                	.insn	2, 0xe36d
+    1d98:	a85c45bb          	.insn	4, 0xa85c45bb
+    1d9c:	3bd8                	.insn	2, 0x3bd8
+    1d9e:	81c9                	.insn	2, 0x81c9
+    1da0:	7a4a                	.insn	2, 0x7a4a
+    1da2:	9188                	.insn	2, 0x9188
+    1da4:	fcd9                	.insn	2, 0xfcd9
+    1da6:	2f1e                	.insn	2, 0x2f1e
+    1da8:	09a8                	.insn	2, 0x09a8
+    1daa:	c099                	.insn	2, 0xc099
+    1dac:	b6d8                	.insn	2, 0xb6d8
+    1dae:	45d2                	.insn	2, 0x45d2
+    1db0:	77bd                	.insn	2, 0x77bd
+    1db2:	b501                	.insn	2, 0xb501
+    1db4:	d6efb9c3          	.insn	4, 0xd6efb9c3
+    1db8:	7e45                	.insn	2, 0x7e45
+    1dba:	1114                	.insn	2, 0x1114
+    1dbc:	4b64                	.insn	2, 0x4b64
+    1dbe:	30fa                	.insn	2, 0x30fa
+    1dc0:	4c7a                	.insn	2, 0x4c7a
+    1dc2:	1f1c                	.insn	2, 0x1f1c
+    1dc4:	29b2                	.insn	2, 0x29b2
+    1dc6:	c796                	.insn	2, 0xc796
+    1dc8:	e68c                	.insn	2, 0xe68c
+    1dca:	f819                	.insn	2, 0xf819
+    1dcc:	6b4d                	.insn	2, 0x6b4d
+    1dce:	93ba                	.insn	2, 0x93ba
+    1dd0:	46b5                	.insn	2, 0x46b5
+    1dd2:	653e                	.insn	2, 0x653e
+    1dd4:	730e                	.insn	2, 0x730e
+    1dd6:	8014                	.insn	2, 0x8014
+    1dd8:	bc3d                	.insn	2, 0xbc3d
+    1dda:	5fb2                	.insn	2, 0x5fb2
+    1ddc:	841e                	.insn	2, 0x841e
+    1dde:	bdb6                	.insn	2, 0xbdb6
+    1de0:	3d90                	.insn	2, 0x3d90
+    1de2:	ffb921ef          	jal	gp,fff94ddc <__bss_end+0xfff92180>
+    1de6:	a49302a7          	.insn	4, 0xa49302a7
+    1dea:	6781                	.insn	2, 0x6781
+    1dec:	6cca                	.insn	2, 0x6cca
+    1dee:	b4ba                	.insn	2, 0xb4ba
+    1df0:	5529                	.insn	2, 0x5529
+    1df2:	f701                	.insn	2, 0xf701
+    1df4:	8eb2                	.insn	2, 0x8eb2
+    1df6:	8a18                	.insn	2, 0x8a18
+    1df8:	a286                	.insn	2, 0xa286
+    1dfa:	aca5                	.insn	2, 0xaca5
+    1dfc:	2d0d                	.insn	2, 0x2d0d
+    1dfe:	6211                	.insn	2, 0x6211
+    1e00:	f808                	.insn	2, 0xf808
+    1e02:	fbc2                	.insn	2, 0xfbc2
+    1e04:	d894                	.insn	2, 0xd894
+    1e06:	9036                	.insn	2, 0x9036
+    1e08:	f9a58c37          	lui	s8,0xf9a58
+    1e0c:	8302dc17          	auipc	s8,0x8302d
+    1e10:	1ee8e443          	.insn	4, 0x1ee8e443
+    1e14:	6ef5                	.insn	2, 0x6ef5
+    1e16:	55ba                	.insn	2, 0x55ba
+    1e18:	68c05dd3          	.insn	4, 0x68c05dd3
+    1e1c:	8fc6                	.insn	2, 0x8fc6
+    1e1e:	55d839ab          	.insn	4, 0x55d839ab
+    1e22:	f093ca3f b4522185 	.insn	8, 0xb4522185f093ca3f
+    1e2a:	1db2fd33          	.insn	4, 0x1db2fd33
+    1e2e:	d581                	.insn	2, 0xd581
+    1e30:	e479                	.insn	2, 0xe479
+    1e32:	6fdc                	.insn	2, 0x6fdc
+    1e34:	2fa2                	.insn	2, 0x2fa2
+    1e36:	7d6a                	.insn	2, 0x7d6a
+    1e38:	51f6c853          	.insn	4, 0x51f6c853
+    1e3c:	10c6                	.insn	2, 0x10c6
+    1e3e:	9f90                	.insn	2, 0x9f90
+    1e40:	7c3c                	.insn	2, 0x7c3c
+    1e42:	870e                	.insn	2, 0x870e
+    1e44:	e052                	.insn	2, 0xe052
+    1e46:	754c                	.insn	2, 0x754c
+    1e48:	2ba0626f          	jal	tp,8102 <__bss_end+0x54a6>
+    1e4c:	06f321b3          	.insn	4, 0x06f321b3
+    1e50:	5a56                	.insn	2, 0x5a56
+    1e52:	05e0                	.insn	2, 0x05e0
+    1e54:	1ac0                	.insn	2, 0x1ac0
+    1e56:	a4cd1fbf 87aa3c78 	.insn	8, 0x87aa3c78a4cd1fbf
+    1e5e:	a4ba                	.insn	2, 0xa4ba
+    1e60:	d5c2c873          	.insn	4, 0xd5c2c873
+    1e64:	c38e                	.insn	2, 0xc38e
+    1e66:	8b70                	.insn	2, 0x8b70
+    1e68:	bcd2                	.insn	2, 0xbcd2
+    1e6a:	c22e                	.insn	2, 0xc22e
+    1e6c:	318e                	.insn	2, 0x318e
+    1e6e:	49b9f0a3          	.insn	4, 0x49b9f0a3
+    1e72:	36d2                	.insn	2, 0x36d2
+    1e74:	38e2b967          	.insn	4, 0x38e2b967
+    1e78:	1ace                	.insn	2, 0x1ace
+    1e7a:	fd92                	.insn	2, 0xfd92
+    1e7c:	574d                	.insn	2, 0x574d
+    1e7e:	20f5                	.insn	2, 0x20f5
+    1e80:	b2c1                	.insn	2, 0xb2c1
+    1e82:	4edd                	.insn	2, 0x4edd
+    1e84:	c4ba                	.insn	2, 0xc4ba
+    1e86:	f99f 9e30 0e6b      	.insn	6, 0x0e6b9e30f99f
+    1e8c:	41659833          	.insn	4, 0x41659833
+    1e90:	b596e1d7          	.insn	4, 0xb596e1d7
+    1e94:	c2c2                	.insn	2, 0xc2c2
+    1e96:	7f48                	.insn	2, 0x7f48
+    1e98:	0a9c                	.insn	2, 0x0a9c
+    1e9a:	b11c                	.insn	2, 0xb11c
+    1e9c:	4bec                	.insn	2, 0x4bec
+    1e9e:	eb52b48f          	.insn	4, 0xeb52b48f
+    1ea2:	9840                	.insn	2, 0x9840
+    1ea4:	f65c                	.insn	2, 0xf65c
+    1ea6:	e641f9db          	.insn	4, 0xe641f9db
+    1eaa:	f6d0                	.insn	2, 0xf6d0
+    1eac:	74691b2b          	.insn	4, 0x74691b2b
+    1eb0:	a248                	.insn	2, 0xa248
+    1eb2:	a185                	.insn	2, 0xa185
+    1eb4:	990af983          	.insn	4, 0x990af983
+    1eb8:	a7455dab          	.insn	4, 0xa7455dab
+    1ebc:	de42                	.insn	2, 0xde42
+    1ebe:	3848                	.insn	2, 0x3848
+    1ec0:	3c181ea7          	.insn	4, 0x3c181ea7
+    1ec4:	a345                	.insn	2, 0xa345
+    1ec6:	962eb0f7          	.insn	4, 0x962eb0f7
+    1eca:	0b96                	.insn	2, 0x0b96
+    1ecc:	0114                	.insn	2, 0x0114
+    1ece:	0a29                	.insn	2, 0x0a29
+    1ed0:	39bc                	.insn	2, 0x39bc
+    1ed2:	e7ba                	.insn	2, 0xe7ba
+    1ed4:	7244bd57          	.insn	4, 0x7244bd57
+    1ed8:	fdc09ae3          	bne	ra,t3,1eac <f8_pool+0x1574>
+    1edc:	b8b8                	.insn	2, 0xb8b8
+    1ede:	41a0                	.insn	2, 0x41a0
+    1ee0:	0f2dfcd3          	.insn	4, 0x0f2dfcd3
+    1ee4:	2d9f 51ff 3d22      	.insn	6, 0x3d2251ff2d9f
+    1eea:	206369fb          	.insn	4, 0x206369fb
+    1eee:	8c74                	.insn	2, 0x8c74
+    1ef0:	69f4                	.insn	2, 0x69f4
+    1ef2:	6e7fdbcb          	.insn	4, 0x6e7fdbcb
+    1ef6:	232158a3          	.insn	4, 0x232158a3
+    1efa:	288e                	.insn	2, 0x288e
+    1efc:	61cd5607          	.insn	4, 0x61cd5607
+    1f00:	bcc4                	.insn	2, 0xbcc4
+    1f02:	3086                	.insn	2, 0x3086
+    1f04:	a015                	.insn	2, 0xa015
+    1f06:	f041                	.insn	2, 0xf041
+    1f08:	5bb0                	.insn	2, 0x5bb0
+    1f0a:	5c367cf7          	.insn	4, 0x5c367cf7
+    1f0e:	3eee                	.insn	2, 0x3eee
+    1f10:	005e                	.insn	2, 0x005e
+    1f12:	6efe                	.insn	2, 0x6efe
+    1f14:	2246                	.insn	2, 0x2246
+    1f16:	d360                	.insn	2, 0xd360
+    1f18:	6faf2abb          	.insn	4, 0x6faf2abb
+    1f1c:	c161                	.insn	2, 0xc161
+    1f1e:	9dd6                	.insn	2, 0x9dd6
+    1f20:	6caa                	.insn	2, 0x6caa
+    1f22:	3990                	.insn	2, 0x3990
+    1f24:	29fa                	.insn	2, 0x29fa
+    1f26:	a2c1                	.insn	2, 0xa2c1
+    1f28:	651e                	.insn	2, 0x651e
+    1f2a:	1f5c                	.insn	2, 0x1f5c
+    1f2c:	e9ba                	.insn	2, 0xe9ba
+    1f2e:	f4193ac7          	.insn	4, 0xf4193ac7
+    1f32:	52feb7cb          	.insn	4, 0x52feb7cb
+    1f36:	f7a2                	.insn	2, 0xf7a2
+    1f38:	605c                	.insn	2, 0x605c
+    1f3a:	74ad47fb          	.insn	4, 0x74ad47fb
+    1f3e:	c0ad                	.insn	2, 0xc0ad
+    1f40:	db71                	.insn	2, 0xdb71
+    1f42:	4f46                	.insn	2, 0x4f46
+    1f44:	a8fd                	.insn	2, 0xa8fd
+    1f46:	a96e529b          	.insn	4, 0xa96e529b
+    1f4a:	1f4f04bf d0f5ed73 	.insn	8, 0xd0f5ed731f4f04bf
+    1f52:	41766957          	.insn	4, 0x41766957
+    1f56:	ae85                	.insn	2, 0xae85
+    1f58:	034975cb          	.insn	4, 0x034975cb
+    1f5c:	33a4                	.insn	2, 0x33a4
+    1f5e:	0f9d                	.insn	2, 0x0f9d
+    1f60:	5ae8                	.insn	2, 0x5ae8
+    1f62:	70c4                	.insn	2, 0x70c4
+    1f64:	985a                	.insn	2, 0x985a
+    1f66:	d181                	.insn	2, 0xd181
+    1f68:	6cd1                	.insn	2, 0x6cd1
+    1f6a:	cc8d                	.insn	2, 0xcc8d
+    1f6c:	1ada                	.insn	2, 0x1ada
+    1f6e:	e5c4                	.insn	2, 0xe5c4
+    1f70:	68a1                	.insn	2, 0x68a1
+    1f72:	3772                	.insn	2, 0x3772
+    1f74:	cdec                	.insn	2, 0xcdec
+    1f76:	c2b2                	.insn	2, 0xc2b2
+    1f78:	545715db          	.insn	4, 0x545715db
+    1f7c:	c498                	.insn	2, 0xc498
+    1f7e:	4c4a                	.insn	2, 0x4c4a
+    1f80:	e716                	.insn	2, 0xe716
+    1f82:	3d0038e3          	.insn	4, 0x3d0038e3
+    1f86:	6060                	.insn	2, 0x6060
+    1f88:	6542                	.insn	2, 0x6542
+    1f8a:	b241                	.insn	2, 0xb241
+    1f8c:	9b30                	.insn	2, 0x9b30
+    1f8e:	d6a0e443          	.insn	4, 0xd6a0e443
+    1f92:	283f81f3          	.insn	4, 0x283f81f3
+    1f96:	c24d                	.insn	2, 0xc24d
+    1f98:	7dec                	.insn	2, 0x7dec
+    1f9a:	56ec                	.insn	2, 0x56ec
+    1f9c:	ec11646b          	.insn	4, 0xec11646b
+    1fa0:	36b4053b          	.insn	4, 0x36b4053b
+    1fa4:	ae36                	.insn	2, 0xae36
+    1fa6:	6721f89b          	.insn	4, 0x6721f89b
+    1faa:	2be0                	.insn	2, 0x2be0
+    1fac:	b2d5                	.insn	2, 0xb2d5
+    1fae:	6d91                	.insn	2, 0x6d91
+    1fb0:	545d                	.insn	2, 0x545d
+    1fb2:	349c                	.insn	2, 0x349c
+    1fb4:	dd90c023          	.insn	4, 0xdd90c023
+    1fb8:	fa9e                	.insn	2, 0xfa9e
+    1fba:	bf5a                	.insn	2, 0xbf5a
+    1fbc:	2652                	.insn	2, 0x2652
+    1fbe:	af0e9a83          	lh	s5,-1296(t4) # 54727f32 <__bss_end+0x547252d6>
+    1fc2:	c06a                	.insn	2, 0xc06a
+    1fc4:	a50748b3          	.insn	4, 0xa50748b3
+    1fc8:	36a2                	.insn	2, 0x36a2
+    1fca:	b72b6d87          	.insn	4, 0xb72b6d87
+    1fce:	4058b3eb          	.insn	4, 0x4058b3eb
+    1fd2:	e0c4                	.insn	2, 0xe0c4
+    1fd4:	0ab0                	.insn	2, 0x0ab0
+    1fd6:	64a1                	.insn	2, 0x64a1
+    1fd8:	430c95a3          	sh	a6,1067(s9)
+    1fdc:	81a0                	.insn	2, 0x81a0
+    1fde:	8545                	.insn	2, 0x8545
+    1fe0:	21f3360f          	.insn	4, 0x21f3360f
+    1fe4:	2e04                	.insn	2, 0x2e04
+    1fe6:	d589                	.insn	2, 0xd589
+    1fe8:	2224                	.insn	2, 0x2224
+    1fea:	4b1a9763          	bne	s5,a7,2498 <f8_pool+0x1b60>
+    1fee:	f1bc                	.insn	2, 0xf1bc
+    1ff0:	472d                	.insn	2, 0x472d
+    1ff2:	1d6c                	.insn	2, 0x1d6c
+    1ff4:	b5e2                	.insn	2, 0xb5e2
+    1ff6:	f4de                	.insn	2, 0xf4de
+    1ff8:	1b82                	.insn	2, 0x1b82
+    1ffa:	7f4b0d97          	auipc	s11,0x7f4b0
+    1ffe:	750a                	.insn	2, 0x750a
+    2000:	c974                	.insn	2, 0xc974
+    2002:	fd96                	.insn	2, 0xfd96
+    2004:	e85e                	.insn	2, 0xe85e
+    2006:	9f28                	.insn	2, 0x9f28
+    2008:	3c8c07e7          	jalr	a5,968(s8) # 8302f1d4 <__bss_end+0x8302c578>
+    200c:	95e288f7          	.insn	4, 0x95e288f7
+    2010:	75c1                	.insn	2, 0x75c1
+    2012:	f001                	.insn	2, 0xf001
+    2014:	6540afcb          	.insn	4, 0x6540afcb
+    2018:	b11c                	.insn	2, 0xb11c
+    201a:	01e8                	.insn	2, 0x01e8
+    201c:	eabb3a77          	.insn	4, 0xeabb3a77
+    2020:	7834                	.insn	2, 0x7834
+    2022:	40f1                	.insn	2, 0x40f1
+    2024:	89ec                	.insn	2, 0x89ec
+    2026:	5126                	.insn	2, 0x5126
+    2028:	f53d                	.insn	2, 0xf53d
+    202a:	cefa                	.insn	2, 0xcefa
+    202c:	f562                	.insn	2, 0xf562
+    202e:	30f1                	.insn	2, 0x30f1
+    2030:	786a                	.insn	2, 0x786a
+    2032:	619e5093          	.insn	4, 0x619e5093
+    2036:	40ce                	.insn	2, 0x40ce
+    2038:	2200                	.insn	2, 0x2200
+    203a:	a278                	.insn	2, 0xa278
+    203c:	41916fc3          	.insn	4, 0x41916fc3
+    2040:	fef5                	.insn	2, 0xfef5
+    2042:	d03a                	.insn	2, 0xd03a
+    2044:	d1d2                	.insn	2, 0xd1d2
+    2046:	11b6bea3          	.insn	4, 0x11b6bea3
+    204a:	3cda                	.insn	2, 0x3cda
+    204c:	74a14433          	.insn	4, 0x74a14433
+    2050:	4950                	.insn	2, 0x4950
+    2052:	2345                	.insn	2, 0x2345
+    2054:	2c7d                	.insn	2, 0x2c7d
+    2056:	268140f7          	.insn	4, 0x268140f7
+    205a:	e67a                	.insn	2, 0xe67a
+    205c:	155a                	.insn	2, 0x155a
+    205e:	7c25                	.insn	2, 0x7c25
+    2060:	6435                	.insn	2, 0x6435
+    2062:	fde5                	.insn	2, 0xfde5
+    2064:	4999256f          	jal	a0,94cfc <__bss_end+0x920a0>
+    2068:	7b4d                	.insn	2, 0x7b4d
+    206a:	44b1                	.insn	2, 0x44b1
+    206c:	8a65                	.insn	2, 0x8a65
+    206e:	53898a53          	.insn	4, 0x53898a53
+    2072:	b7fd                	.insn	2, 0xb7fd
+    2074:	b84563b3          	.insn	4, 0xb84563b3
+    2078:	d441                	.insn	2, 0xd441
+    207a:	6069                	.insn	2, 0x6069
+    207c:	3d888e03          	lb	t3,984(a7)
+    2080:	cefe                	.insn	2, 0xcefe
+    2082:	ddbf67c3          	.insn	4, 0xddbf67c3
+    2086:	2b08                	.insn	2, 0x2b08
+    2088:	8254                	.insn	2, 0x8254
+    208a:	3ede                	.insn	2, 0x3ede
+    208c:	4029                	.insn	2, 0x4029
+    208e:	94d6db17          	auipc	s6,0x94d6d
+    2092:	c655                	.insn	2, 0xc655
+    2094:	43f0                	.insn	2, 0x43f0
+    2096:	7958                	.insn	2, 0x7958
+    2098:	47ed                	.insn	2, 0x47ed
+    209a:	3692707b          	.insn	4, 0x3692707b
+    209e:	c68c                	.insn	2, 0xc68c
+    20a0:	219cfe87          	.insn	4, 0x219cfe87
+    20a4:	3bb2083b          	.insn	4, 0x3bb2083b
+    20a8:	ee555867          	.insn	4, 0xee555867
+    20ac:	6bee                	.insn	2, 0x6bee
+    20ae:	a0dc                	.insn	2, 0xa0dc
+    20b0:	ddd9                	.insn	2, 0xddd9
+    20b2:	32ae                	.insn	2, 0x32ae
+    20b4:	5fb2                	.insn	2, 0x5fb2
+    20b6:	57fee1ef          	jal	gp,f0e34 <__bss_end+0xee1d8>
+    20ba:	087f 1fde 843d eb45 	.insn	10, 0xdf13eb45843d1fde087f
+    20c2:	df13 
+    20c4:	8c4d29cb          	.insn	4, 0x8c4d29cb
+    20c8:	214d                	.insn	2, 0x214d
+    20ca:	1da9e6b3          	.insn	4, 0x1da9e6b3
+    20ce:	ffd1ee33          	.insn	4, 0xffd1ee33
+    20d2:	9b32                	.insn	2, 0x9b32
+    20d4:	a7f6                	.insn	2, 0xa7f6
+    20d6:	e1c0eb27          	.insn	4, 0xe1c0eb27
+    20da:	f458                	.insn	2, 0xf458
+    20dc:	5a5c                	.insn	2, 0x5a5c
+    20de:	cc1e                	.insn	2, 0xcc1e
+    20e0:	47f2                	.insn	2, 0x47f2
+    20e2:	f30e                	.insn	2, 0xf30e
+    20e4:	71b1                	.insn	2, 0x71b1
+    20e6:	2f9a3703          	.insn	4, 0x2f9a3703
+    20ea:	1db2                	.insn	2, 0x1db2
+    20ec:	28c6                	.insn	2, 0x28c6
+    20ee:	e2ae                	.insn	2, 0xe2ae
+    20f0:	ffba                	.insn	2, 0xffba
+    20f2:	3460                	.insn	2, 0x3460
+    20f4:	6809                	.insn	2, 0x6809
+    20f6:	b8fd                	.insn	2, 0xb8fd
+    20f8:	61ea5ba7          	.insn	4, 0x61ea5ba7
+    20fc:	017e                	.insn	2, 0x017e
+    20fe:	a224                	.insn	2, 0xa224
+    2100:	4c21                	.insn	2, 0x4c21
+    2102:	e75a                	.insn	2, 0xe75a
+    2104:	984e                	.insn	2, 0x984e
+    2106:	3fe5                	.insn	2, 0x3fe5
+    2108:	7cb2                	.insn	2, 0x7cb2
+    210a:	5e05                	.insn	2, 0x5e05
+    210c:	9520                	.insn	2, 0x9520
+    210e:	9ed2                	.insn	2, 0x9ed2
+    2110:	ff60                	.insn	2, 0xff60
+    2112:	eb3e386b          	.insn	4, 0xeb3e386b
+    2116:	fc5a                	.insn	2, 0xfc5a
+    2118:	5cb9                	.insn	2, 0x5cb9
+    211a:	3594                	.insn	2, 0x3594
+    211c:	ef46                	.insn	2, 0xef46
+    211e:	11b8                	.insn	2, 0x11b8
+    2120:	a30ac59b          	.insn	4, 0xa30ac59b
+    2124:	4356                	.insn	2, 0x4356
+    2126:	6042                	.insn	2, 0x6042
+    2128:	4d00                	.insn	2, 0x4d00
+    212a:	82e8                	.insn	2, 0x82e8
+    212c:	0de1                	.insn	2, 0x0de1
+    212e:	7641                	.insn	2, 0x7641
+    2130:	9311                	.insn	2, 0x9311
+    2132:	95ce                	.insn	2, 0x95ce
+    2134:	fb01384b          	.insn	4, 0xfb01384b
+    2138:	44ee                	.insn	2, 0x44ee
+    213a:	9ab797af          	.insn	4, 0x9ab797af
+    213e:	70ffc6fb          	.insn	4, 0x70ffc6fb
+    2142:	9602                	.insn	2, 0x9602
+    2144:	af32                	.insn	2, 0xaf32
+    2146:	9e51                	.insn	2, 0x9e51
+    2148:	3fcd                	.insn	2, 0x3fcd
+    214a:	81a4                	.insn	2, 0x81a4
+    214c:	384d6edb          	.insn	4, 0x384d6edb
+    2150:	aaa4                	.insn	2, 0xaaa4
+    2152:	d874                	.insn	2, 0xd874
+    2154:	d672                	.insn	2, 0xd672
+    2156:	7996                	.insn	2, 0x7996
+    2158:	7586                	.insn	2, 0x7586
+    215a:	8706                	.insn	2, 0x8706
+    215c:	5d5a                	.insn	2, 0x5d5a
+    215e:	36d8                	.insn	2, 0x36d8
+    2160:	3da9                	.insn	2, 0x3da9
+    2162:	ce94                	.insn	2, 0xce94
+    2164:	d63e                	.insn	2, 0xd63e
+    2166:	742d                	.insn	2, 0x742d
+    2168:	b212                	.insn	2, 0xb212
+    216a:	5eb9                	.insn	2, 0x5eb9
+    216c:	ae72                	.insn	2, 0xae72
+    216e:	4f44                	.insn	2, 0x4f44
+    2170:	f238                	.insn	2, 0xf238
+    2172:	5b6e                	.insn	2, 0x5b6e
+    2174:	18e5                	.insn	2, 0x18e5
+    2176:	01b8                	.insn	2, 0x01b8
+    2178:	1972                	.insn	2, 0x1972
+    217a:	41fc                	.insn	2, 0x41fc
+    217c:	9381                	.insn	2, 0x9381
+    217e:	a0e5                	.insn	2, 0xa0e5
+    2180:	70be                	.insn	2, 0x70be
+    2182:	72e0                	.insn	2, 0x72e0
+    2184:	3085                	.insn	2, 0x3085
+    2186:	e568                	.insn	2, 0xe568
+    2188:	9f6e                	.insn	2, 0x9f6e
+    218a:	4658                	.insn	2, 0x4658
+    218c:	93d1                	.insn	2, 0x93d1
+    218e:	b0495ee3          	bge	s2,tp,1caa <f8_pool+0x1372>
+    2192:	ec15                	.insn	2, 0xec15
+    2194:	30d4                	.insn	2, 0x30d4
+    2196:	4868062f          	.insn	4, 0x4868062f
+    219a:	1f12                	.insn	2, 0x1f12
+    219c:	e426                	.insn	2, 0xe426
+    219e:	c5e98077          	.insn	4, 0xc5e98077
+    21a2:	81d1                	.insn	2, 0x81d1
+    21a4:	8e5e                	.insn	2, 0x8e5e
+    21a6:	0c76                	.insn	2, 0x0c76
+    21a8:	bf2d                	.insn	2, 0xbf2d
+    21aa:	fdd5                	.insn	2, 0xfdd5
+    21ac:	f011                	.insn	2, 0xf011
+    21ae:	990b5c03          	lhu	s8,-1648(s6) # 94d6ea1e <__bss_end+0x94d6bdc2>
+    21b2:	cca9                	.insn	2, 0xcca9
+    21b4:	8d9a                	.insn	2, 0x8d9a
+    21b6:	f139                	.insn	2, 0xf139
+    21b8:	3ae0                	.insn	2, 0x3ae0
+    21ba:	1911                	.insn	2, 0x1911
+    21bc:	364c                	.insn	2, 0x364c
+    21be:	d620                	.insn	2, 0xd620
+    21c0:	c4e4                	.insn	2, 0xc4e4
+    21c2:	f8a4                	.insn	2, 0xf8a4
+    21c4:	50a8                	.insn	2, 0x50a8
+    21c6:	af25                	.insn	2, 0xaf25
+    21c8:	22e2                	.insn	2, 0x22e2
+    21ca:	675b07cb          	.insn	4, 0x675b07cb
+    21ce:	b7ac                	.insn	2, 0xb7ac
+    21d0:	23a2                	.insn	2, 0x23a2
+    21d2:	2078                	.insn	2, 0x2078
+    21d4:	9ad4                	.insn	2, 0x9ad4
+    21d6:	f5e6                	.insn	2, 0xf5e6
+    21d8:	9e68                	.insn	2, 0x9e68
+    21da:	770d                	.insn	2, 0x770d
+    21dc:	478cf163          	bgeu	s9,s8,263e <f8_pool+0x1d06>
+    21e0:	4649d867          	.insn	4, 0x4649d867
+    21e4:	c89e                	.insn	2, 0xc89e
+    21e6:	eb2e                	.insn	2, 0xeb2e
+    21e8:	3aaf2057          	.insn	4, 0x3aaf2057
+    21ec:	8b38                	.insn	2, 0x8b38
+    21ee:	fd3e                	.insn	2, 0xfd3e
+    21f0:	e012                	.insn	2, 0xe012
+    21f2:	f139                	.insn	2, 0xf139
+    21f4:	d7cf63d3          	.insn	4, 0xd7cf63d3
+    21f8:	79cdb7a3          	.insn	4, 0x79cdb7a3
+    21fc:	e6dd                	.insn	2, 0xe6dd
+    21fe:	63166993          	ori	s3,a2,1585
+    2202:	2100074f          	.insn	4, 0x2100074f
+    2206:	8cef377f 76acea08 	.insn	16, 0x8ccccdb33dd463f176acea088cef377f
+    220e:	3dd463f1 8ccccdb3 
+    2216:	eedf a0c7 d527      	.insn	6, 0xd527a0c7eedf
+    221c:	b062                	.insn	2, 0xb062
+    221e:	d6d6                	.insn	2, 0xd6d6
+    2220:	e7d9                	.insn	2, 0xe7d9
+    2222:	4632                	.insn	2, 0x4632
+    2224:	8869bc2b          	.insn	4, 0x8869bc2b
+    2228:	6dc9                	.insn	2, 0x6dc9
+    222a:	56e2                	.insn	2, 0x56e2
+    222c:	c151                	.insn	2, 0xc151
+    222e:	6776                	.insn	2, 0x6776
+    2230:	d1e9                	.insn	2, 0xd1e9
+    2232:	a4965c3f 0c9c2222 	.insn	8, 0x0c9c2222a4965c3f
+    223a:	2122                	.insn	2, 0x2122
+    223c:	0601                	.insn	2, 0x0601
+    223e:	dacd                	.insn	2, 0xdacd
+    2240:	bbee                	.insn	2, 0xbbee
+    2242:	82705383          	lhu	t2,-2009(zero) # fffff827 <__bss_end+0xffffcbcb>
+    2246:	df88                	.insn	2, 0xdf88
+    2248:	b61073eb          	.insn	4, 0xb61073eb
+    224c:	ce2d                	.insn	2, 0xce2d
+    224e:	f99d                	.insn	2, 0xf99d
+    2250:	7dc1fcf3          	.insn	4, 0x7dc1fcf3
+    2254:	d4e2                	.insn	2, 0xd4e2
+    2256:	85ea                	.insn	2, 0x85ea
+    2258:	80cd28f7          	.insn	4, 0x80cd28f7
+    225c:	999814b3          	.insn	4, 0x999814b3
+    2260:	968c                	.insn	2, 0x968c
+    2262:	b3c9                	.insn	2, 0xb3c9
+    2264:	93c6                	.insn	2, 0x93c6
+    2266:	4a89                	.insn	2, 0x4a89
+    2268:	db1a                	.insn	2, 0xdb1a
+    226a:	956d                	.insn	2, 0x956d
+    226c:	d77e                	.insn	2, 0xd77e
+    226e:	3f4d                	.insn	2, 0x3f4d
+    2270:	00e9                	.insn	2, 0x00e9
+    2272:	a785                	.insn	2, 0xa785
+    2274:	7bca                	.insn	2, 0x7bca
+    2276:	ddfd                	.insn	2, 0xddfd
+    2278:	9546                	.insn	2, 0x9546
+    227a:	f7f1                	.insn	2, 0xf7f1
+    227c:	4d91                	.insn	2, 0x4d91
+    227e:	b22a                	.insn	2, 0xb22a
+    2280:	b634                	.insn	2, 0xb634
+    2282:	45b6eb63          	bltu	a3,s11,26d8 <f8_pool+0x1da0>
+    2286:	e411                	.insn	2, 0xe411
+    2288:	57be                	.insn	2, 0x57be
+    228a:	4e3a                	.insn	2, 0x4e3a
+    228c:	c2f6                	.insn	2, 0xc2f6
+    228e:	20c9                	.insn	2, 0x20c9
+    2290:	0f1e843f 2929ce9a 	.insn	8, 0x2929ce9a0f1e843f
+    2298:	ea89                	.insn	2, 0xea89
+    229a:	bc90                	.insn	2, 0xbc90
+    229c:	eac84cc7          	.insn	4, 0xeac84cc7
+    22a0:	d3fa                	.insn	2, 0xd3fa
+    22a2:	44d5                	.insn	2, 0x44d5
+    22a4:	3e3f03a3          	sb	gp,999(t5)
+    22a8:	71b4                	.insn	2, 0x71b4
+    22aa:	7158                	.insn	2, 0x7158
+    22ac:	2956                	.insn	2, 0x2956
+    22ae:	b63c                	.insn	2, 0xb63c
+    22b0:	e6ba3573          	.insn	4, 0xe6ba3573
+    22b4:	f9d0                	.insn	2, 0xf9d0
+    22b6:	3aee                	.insn	2, 0x3aee
+    22b8:	faff278b          	.insn	4, 0xfaff278b
+    22bc:	12e0                	.insn	2, 0x12e0
+    22be:	fdca8d73          	.insn	4, 0xfdca8d73
+    22c2:	80dadd33          	.insn	4, 0x80dadd33
+    22c6:	c48d                	.insn	2, 0xc48d
+    22c8:	86cc                	.insn	2, 0x86cc
+    22ca:	631f 06a6 cb5a      	.insn	6, 0xcb5a06a6631f
+    22d0:	2065e65b          	.insn	4, 0x2065e65b
+    22d4:	cbe8                	.insn	2, 0xcbe8
+    22d6:	98fe                	.insn	2, 0x98fe
+    22d8:	658da3e7          	.insn	4, 0x658da3e7
+    22dc:	e476                	.insn	2, 0xe476
+    22de:	e1c4                	.insn	2, 0xe1c4
+    22e0:	1ad1                	.insn	2, 0x1ad1
+    22e2:	87a2a8f7          	.insn	4, 0x87a2a8f7
+    22e6:	b60d                	.insn	2, 0xb60d
+    22e8:	19b76073          	.insn	4, 0x19b76073
+    22ec:	b21d                	.insn	2, 0xb21d
+    22ee:	04f9                	.insn	2, 0x04f9
+    22f0:	1fbc                	.insn	2, 0x1fbc
+    22f2:	951e                	.insn	2, 0x951e
+    22f4:	b5632a9b          	.insn	4, 0xb5632a9b
+    22f8:	1ab8                	.insn	2, 0x1ab8
+    22fa:	311a                	.insn	2, 0x311a
+    22fc:	e3cc                	.insn	2, 0xe3cc
+    22fe:	1140                	.insn	2, 0x1140
+    2300:	c1d8                	.insn	2, 0xc1d8
+    2302:	bd10                	.insn	2, 0xbd10
+    2304:	47da                	.insn	2, 0x47da
+    2306:	077a                	.insn	2, 0x077a
+    2308:	7bac                	.insn	2, 0x7bac
+    230a:	ad6e                	.insn	2, 0xad6e
+    230c:	9b0e                	.insn	2, 0x9b0e
+    230e:	13d0                	.insn	2, 0x13d0
+    2310:	1425                	.insn	2, 0x1425
+    2312:	2e50                	.insn	2, 0x2e50
+    2314:	f104                	.insn	2, 0xf104
+    2316:	da3833b7          	lui	t2,0xda383
+    231a:	3fb9                	.insn	2, 0x3fb9
+    231c:	8eec                	.insn	2, 0x8eec
+    231e:	b0ae                	.insn	2, 0xb0ae
+    2320:	f58d                	.insn	2, 0xf58d
+    2322:	a246                	.insn	2, 0xa246
+    2324:	bf59                	.insn	2, 0xbf59
+    2326:	ba9ebd7b          	.insn	4, 0xba9ebd7b
+    232a:	7fe5                	.insn	2, 0x7fe5
+    232c:	f468                	.insn	2, 0xf468
+    232e:	a6a8                	.insn	2, 0xa6a8
+    2330:	883e9f9b          	.insn	4, 0x883e9f9b
+    2334:	ee65                	.insn	2, 0xee65
+    2336:	fdb1                	.insn	2, 0xfdb1
+    2338:	359c                	.insn	2, 0x359c
+    233a:	3323ccfb          	.insn	4, 0x3323ccfb
+    233e:	3231                	.insn	2, 0x3231
+    2340:	9195cd0b          	.insn	4, 0x9195cd0b
+    2344:	336c                	.insn	2, 0x336c
+    2346:	61a6                	.insn	2, 0x61a6
+    2348:	8517194f          	.insn	4, 0x8517194f
+    234c:	689e668f          	.insn	4, 0x689e668f
+    2350:	06e08f87          	.insn	4, 0x06e08f87
+    2354:	88cd9c0f          	.insn	4, 0x88cd9c0f
+    2358:	dfa087f7          	.insn	4, 0xdfa087f7
+    235c:	7080                	.insn	2, 0x7080
+    235e:	250a                	.insn	2, 0x250a
+    2360:	f731                	.insn	2, 0xf731
+    2362:	5798                	.insn	2, 0x5798
+    2364:	b1b9                	.insn	2, 0xb1b9
+    2366:	8618                	.insn	2, 0x8618
+    2368:	4686                	.insn	2, 0x4686
+    236a:	d7cd7c7b          	.insn	4, 0xd7cd7c7b
+    236e:	5469f53b          	.insn	4, 0x5469f53b
+    2372:	44dc                	.insn	2, 0x44dc
+    2374:	69dd                	.insn	2, 0x69dd
+    2376:	9fd9                	.insn	2, 0x9fd9
+    2378:	8f45                	.insn	2, 0x8f45
+    237a:	feba                	.insn	2, 0xfeba
+    237c:	d2c2                	.insn	2, 0xd2c2
+    237e:	981f c1e1 1f9c      	.insn	6, 0x1f9cc1e1981f
+    2384:	2669e66b          	.insn	4, 0x2669e66b
+    2388:	408e                	.insn	2, 0x408e
+    238a:	6a78                	.insn	2, 0x6a78
+    238c:	b055                	.insn	2, 0xb055
+    238e:	de88                	.insn	2, 0xde88
+    2390:	c92c                	.insn	2, 0xc92c
+    2392:	fe701207          	.insn	4, 0xfe701207
+    2396:	d344                	.insn	2, 0xd344
+    2398:	1516f0ef          	jal	71ce8 <__bss_end+0x6f08c>
+    239c:	c6ea                	.insn	2, 0xc6ea
+    239e:	d07c                	.insn	2, 0xd07c
+    23a0:	54eac0bf 9eead929 	.insn	8, 0x9eead92954eac0bf
+    23a8:	6d74                	.insn	2, 0x6d74
+    23aa:	4814                	.insn	2, 0x4814
+    23ac:	006d                	.insn	2, 0x006d
+    23ae:	1cd6                	.insn	2, 0x1cd6
+    23b0:	68bd                	.insn	2, 0x68bd
+    23b2:	55b5529b          	.insn	4, 0x55b5529b
+    23b6:	0e41                	.insn	2, 0x0e41
+    23b8:	d9595837          	lui	a6,0xd9595
+    23bc:	6f790c7b          	.insn	4, 0x6f790c7b
+    23c0:	f040                	.insn	2, 0xf040
+    23c2:	2731d5af          	.insn	4, 0x2731d5af
+    23c6:	e522                	.insn	2, 0xe522
+    23c8:	66f4                	.insn	2, 0x66f4
+    23ca:	f5e9                	.insn	2, 0xf5e9
+    23cc:	408c                	.insn	2, 0x408c
+    23ce:	1aa2                	.insn	2, 0x1aa2
+    23d0:	d69a                	.insn	2, 0xd69a
+    23d2:	fa1a                	.insn	2, 0xfa1a
+    23d4:	bb49                	.insn	2, 0xbb49
+    23d6:	6200                	.insn	2, 0x6200
+    23d8:	4836                	.insn	2, 0x4836
+    23da:	2d09                	.insn	2, 0x2d09
+    23dc:	3661                	.insn	2, 0x3661
+    23de:	6aae                	.insn	2, 0x6aae
+    23e0:	1994                	.insn	2, 0x1994
+    23e2:	a620d90b          	.insn	4, 0xa620d90b
+    23e6:	371a7683          	.insn	4, 0x371a7683
+    23ea:	0e81                	.insn	2, 0x0e81
+    23ec:	51aa                	.insn	2, 0x51aa
+    23ee:	1a3e                	.insn	2, 0x1a3e
+    23f0:	2675                	.insn	2, 0x2675
+    23f2:	c562                	.insn	2, 0xc562
+    23f4:	7b39                	.insn	2, 0x7b39
+    23f6:	72139cd7          	.insn	4, 0x72139cd7
+    23fa:	60c9                	.insn	2, 0x60c9
+    23fc:	bdda                	.insn	2, 0xbdda
+    23fe:	fb47f6bf 03ccbe86 	.insn	8, 0x03ccbe86fb47f6bf
+    2406:	51c8                	.insn	2, 0x51c8
+    2408:	4ab6                	.insn	2, 0x4ab6
+    240a:	7a88                	.insn	2, 0x7a88
+    240c:	1a25                	.insn	2, 0x1a25
+    240e:	b50e                	.insn	2, 0xb50e
+    2410:	bf674523          	.insn	4, 0xbf674523
+    2414:	525d                	.insn	2, 0x525d
+    2416:	59b6                	.insn	2, 0x59b6
+    2418:	bfa2                	.insn	2, 0xbfa2
+    241a:	4536                	.insn	2, 0x4536
+    241c:	283a                	.insn	2, 0x283a
+    241e:	8f5a                	.insn	2, 0x8f5a
+    2420:	3e58                	.insn	2, 0x3e58
+    2422:	e9ff caf6 9d4d aeac 	.insn	22, 0x1b7c491603cfb0cdc35df2dda698aeac9d4dcaf6e9ff
+    242a:	a698 f2dd c35d b0cd 
+    2432:	03cf 4916 1b7c 
+    2438:	ca6a                	.insn	2, 0xca6a
+    243a:	2c60                	.insn	2, 0x2c60
+    243c:	3f332b13          	slti	s6,t1,1011
+    2440:	8aac                	.insn	2, 0x8aac
+    2442:	5de8                	.insn	2, 0x5de8
+    2444:	1298                	.insn	2, 0x1298
+    2446:	e190e8fb          	.insn	4, 0xe190e8fb
+    244a:	ac66                	.insn	2, 0xac66
+    244c:	04aa                	.insn	2, 0x04aa
+    244e:	f1f0                	.insn	2, 0xf1f0
+    2450:	df161fa7          	.insn	4, 0xdf161fa7
+    2454:	9870                	.insn	2, 0x9870
+    2456:	2e04                	.insn	2, 0x2e04
+    2458:	5bce                	.insn	2, 0x5bce
+    245a:	7044                	.insn	2, 0x7044
+    245c:	0405                	.insn	2, 0x0405
+    245e:	dbd0                	.insn	2, 0xdbd0
+    2460:	db69                	.insn	2, 0xdb69
+    2462:	839c48c3          	.insn	4, 0x839c48c3
+    2466:	b8840def          	jal	s11,fff427ee <__bss_end+0xfff3fb92>
+    246a:	9afe                	.insn	2, 0x9afe
+    246c:	3da6                	.insn	2, 0x3da6
+    246e:	1472                	.insn	2, 0x1472
+    2470:	1e21                	.insn	2, 0x1e21
+    2472:	9190131b          	.insn	4, 0x9190131b
+    2476:	d8ba                	.insn	2, 0xd8ba
+    2478:	e7a0                	.insn	2, 0xe7a0
+    247a:	5a62154b          	.insn	4, 0x5a62154b
+    247e:	4786                	.insn	2, 0x4786
+    2480:	6b0e                	.insn	2, 0x6b0e
+    2482:	50bcc3db          	.insn	4, 0x50bcc3db
+    2486:	e96e                	.insn	2, 0xe96e
+    2488:	ab9d                	.insn	2, 0xab9d
+    248a:	780e                	.insn	2, 0x780e
+    248c:	a200                	.insn	2, 0xa200
+    248e:	d1a0                	.insn	2, 0xd1a0
+    2490:	b441c4e3          	blt	gp,tp,1fd8 <f8_pool+0x16a0>
+    2494:	415e                	.insn	2, 0x415e
+    2496:	e53a                	.insn	2, 0xe53a
+    2498:	3ce2                	.insn	2, 0x3ce2
+    249a:	271c                	.insn	2, 0x271c
+    249c:	8d22                	.insn	2, 0x8d22
+    249e:	2370                	.insn	2, 0x2370
+    24a0:	bd15                	.insn	2, 0xbd15
+    24a2:	c9ed                	.insn	2, 0xc9ed
+    24a4:	982a56ef          	jal	a3,fffa7626 <__bss_end+0xfffa49ca>
+    24a8:	52be                	.insn	2, 0x52be
+    24aa:	c9bfa9e7          	.insn	4, 0xc9bfa9e7
+    24ae:	5351                	.insn	2, 0x5351
+    24b0:	a42721cf          	.insn	4, 0xa42721cf
+    24b4:	4342                	.insn	2, 0x4342
+    24b6:	e7f2                	.insn	2, 0xe7f2
+    24b8:	7428                	.insn	2, 0x7428
+    24ba:	df26                	.insn	2, 0xdf26
+    24bc:	041d                	.insn	2, 0x041d
+    24be:	ad8e                	.insn	2, 0xad8e
+    24c0:	70ed                	.insn	2, 0x70ed
+    24c2:	085e                	.insn	2, 0x085e
+    24c4:	02550377          	.insn	4, 0x02550377
+    24c8:	0590                	.insn	2, 0x0590
+    24ca:	240e                	.insn	2, 0x240e
+    24cc:	654d                	.insn	2, 0x654d
+    24ce:	ed1f 6c16 a273      	.insn	6, 0xa2736c16ed1f
+    24d4:	24ba                	.insn	2, 0x24ba
+    24d6:	afed                	.insn	2, 0xafed
+    24d8:	8d6c                	.insn	2, 0x8d6c
+    24da:	cab1                	.insn	2, 0xcab1
+    24dc:	7a30                	.insn	2, 0x7a30
+    24de:	475c                	.insn	2, 0x475c
+    24e0:	6d4a                	.insn	2, 0x6d4a
+    24e2:	d699                	.insn	2, 0xd699
+    24e4:	5a79                	.insn	2, 0x5a79
+    24e6:	f84d                	.insn	2, 0xf84d
+    24e8:	2e9159bf bd5aca31 	.insn	8, 0xbd5aca312e9159bf
+    24f0:	b7bf1a0b          	.insn	4, 0xb7bf1a0b
+    24f4:	f399                	.insn	2, 0xf399
+    24f6:	1039                	.insn	2, 0x1039
+    24f8:	735f 1642 d21d      	.insn	6, 0xd21d1642735f
+    24fe:	dc68                	.insn	2, 0xdc68
+    2500:	e572b427          	.insn	4, 0xe572b427
+    2504:	5882                	.insn	2, 0x5882
+    2506:	380d                	.insn	2, 0x380d
+    2508:	842e                	.insn	2, 0x842e
+    250a:	75338f47          	.insn	4, 0x75338f47
+    250e:	3dfbe813          	ori	a6,s7,991
+    2512:	7d26                	.insn	2, 0x7d26
+    2514:	92d4                	.insn	2, 0x92d4
+    2516:	9b2e                	.insn	2, 0x9b2e
+    2518:	d53d                	.insn	2, 0xd53d
+    251a:	5eb9                	.insn	2, 0x5eb9
+    251c:	997e                	.insn	2, 0x997e
+    251e:	4b50                	.insn	2, 0x4b50
+    2520:	f4ce                	.insn	2, 0xf4ce
+    2522:	2d86                	.insn	2, 0x2d86
+    2524:	28e0                	.insn	2, 0x28e0
+    2526:	ed51                	.insn	2, 0xed51
+    2528:	3adf 923d 124b      	.insn	6, 0x124b923d3adf
+    252e:	f8ae                	.insn	2, 0xf8ae
+    2530:	b2660573          	.insn	4, 0xb2660573
+    2534:	68f2                	.insn	2, 0x68f2
+    2536:	268e4d3b          	.insn	4, 0x268e4d3b
+    253a:	4da1181b          	.insn	4, 0x4da1181b
+    253e:	9249                	.insn	2, 0x9249
+    2540:	db65                	.insn	2, 0xdb65
+    2542:	7d3b2157          	.insn	4, 0x7d3b2157
+    2546:	06ba884b          	.insn	4, 0x06ba884b
+    254a:	c071                	.insn	2, 0xc071
+    254c:	0284d733          	divu	a4,s1,s0
+    2550:	c07a                	.insn	2, 0xc07a
+    2552:	cf0e                	.insn	2, 0xcf0e
+    2554:	5f92                	.insn	2, 0x5f92
+    2556:	c354                	.insn	2, 0xc354
+    2558:	2336                	.insn	2, 0x2336
+    255a:	1099                	.insn	2, 0x1099
+    255c:	319e                	.insn	2, 0x319e
+    255e:	3d2cf3e7          	.insn	4, 0x3d2cf3e7
+    2562:	8380                	.insn	2, 0x8380
+    2564:	c26e                	.insn	2, 0xc26e
+    2566:	a1a165e3          	bltu	sp,s10,1f70 <f8_pool+0x1638>
+    256a:	ef12                	.insn	2, 0xef12
+    256c:	8ccc                	.insn	2, 0x8ccc
+    256e:	8591                	.insn	2, 0x8591
+    2570:	a935                	.insn	2, 0xa935
+    2572:	5be8                	.insn	2, 0x5be8
+    2574:	1b74                	.insn	2, 0x1b74
+    2576:	e0e0                	.insn	2, 0xe0e0
+    2578:	9e3d                	.insn	2, 0x9e3d
+    257a:	736e                	.insn	2, 0x736e
+    257c:	2545                	.insn	2, 0x2545
+    257e:	b9f170af          	.insn	4, 0xb9f170af
+    2582:	93a9                	.insn	2, 0x93a9
+    2584:	5a6d                	.insn	2, 0x5a6d
+    2586:	27bd                	.insn	2, 0x27bd
+    2588:	7dc9                	.insn	2, 0x7dc9
+    258a:	6f15                	.insn	2, 0x6f15
+    258c:	1e88                	.insn	2, 0x1e88
+    258e:	3b782caf          	.insn	4, 0x3b782caf
+    2592:	02d9                	.insn	2, 0x02d9
+    2594:	c919                	.insn	2, 0xc919
+    2596:	69b6                	.insn	2, 0x69b6
+    2598:	08660df7          	.insn	4, 0x08660df7
+    259c:	d85d                	.insn	2, 0xd85d
+    259e:	a868                	.insn	2, 0xa868
+    25a0:	bb1f 6b92 6513      	.insn	6, 0x65136b92bb1f
+    25a6:	ec3a9d2f          	.insn	4, 0xec3a9d2f
+    25aa:	5b58                	.insn	2, 0x5b58
+    25ac:	7fcf2acb          	.insn	4, 0x7fcf2acb
+    25b0:	551e                	.insn	2, 0x551e
+    25b2:	1375                	.insn	2, 0x1375
+    25b4:	dda0                	.insn	2, 0xdda0
+    25b6:	4ba1db37          	lui	s6,0x4ba1d
+    25ba:	c8e6                	.insn	2, 0xc8e6
+    25bc:	79ea                	.insn	2, 0x79ea
+    25be:	36926e23          	.insn	4, 0x36926e23
+    25c2:	01ac                	.insn	2, 0x01ac
+    25c4:	6ae1                	.insn	2, 0x6ae1
+    25c6:	ffc9502f          	.insn	4, 0xffc9502f
+    25ca:	20aa                	.insn	2, 0x20aa
+    25cc:	5f52                	.insn	2, 0x5f52
+    25ce:	9618                	.insn	2, 0x9618
+    25d0:	627a                	.insn	2, 0x627a
+    25d2:	4180                	.insn	2, 0x4180
+    25d4:	d408                	.insn	2, 0xd408
+    25d6:	d62a                	.insn	2, 0xd62a
+    25d8:	fb60                	.insn	2, 0xfb60
+    25da:	0fcc342f          	.insn	4, 0x0fcc342f
+    25de:	9e54                	.insn	2, 0x9e54
+    25e0:	7920                	.insn	2, 0x7920
+    25e2:	2d90                	.insn	2, 0x2d90
+    25e4:	8e66                	.insn	2, 0x8e66
+    25e6:	c5f9c843          	.insn	4, 0xc5f9c843
+    25ea:	98cc99bf 13f9b47f 	.insn	8, 0x13f9b47f98cc99bf
+    25f2:	60f58eaf          	.insn	4, 0x60f58eaf
+    25f6:	ab36                	.insn	2, 0xab36
+    25f8:	951d                	.insn	2, 0x951d
+    25fa:	0c8d                	.insn	2, 0x0c8d
+    25fc:	6114                	.insn	2, 0x6114
+    25fe:	cc39                	.insn	2, 0xcc39
+    2600:	7985                	.insn	2, 0x7985
+    2602:	351039b3          	.insn	4, 0x351039b3
+    2606:	57b4                	.insn	2, 0x57b4
+    2608:	c39f 7839 c3f2      	.insn	6, 0xc3f27839c39f
+    260e:	800d                	.insn	2, 0x800d
+    2610:	27e4a5b3          	.insn	4, 0x27e4a5b3
+    2614:	b9d26423          	.insn	4, 0xb9d26423
+    2618:	df337727          	.insn	4, 0xdf337727
+    261c:	8949                	.insn	2, 0x8949
+    261e:	5022                	.insn	2, 0x5022
+    2620:	2141                	.insn	2, 0x2141
+    2622:	a48b1657          	.insn	4, 0xa48b1657
+    2626:	3e93efa7          	.insn	4, 0x3e93efa7
+    262a:	6c8e                	.insn	2, 0x6c8e
+    262c:	810e                	.insn	2, 0x810e
+    262e:	c7a1a16b          	.insn	4, 0xc7a1a16b
+    2632:	dfd2                	.insn	2, 0xdfd2
+    2634:	b5ae                	.insn	2, 0xb5ae
+    2636:	b014e02b          	.insn	4, 0xb014e02b
+    263a:	0c8d                	.insn	2, 0x0c8d
+    263c:	6171                	.insn	2, 0x6171
+    263e:	4601                	.insn	2, 0x4601
+    2640:	f4cc                	.insn	2, 0xf4cc
+    2642:	ef7f 0b5a 5cd7 617c 	.insn	22, 0x580e5981c47ff45800795f9a6071617c5cd70b5aef7f
+    264a:	6071 5f9a 0079 f458 
+    2652:	c47f 5981 580e 
+    2658:	48f5                	.insn	2, 0x48f5
+    265a:	e594                	.insn	2, 0xe594
+    265c:	c108                	.insn	2, 0xc108
+    265e:	85ad                	.insn	2, 0x85ad
+    2660:	8510                	.insn	2, 0x8510
+    2662:	9b64                	.insn	2, 0x9b64
+    2664:	bbe8                	.insn	2, 0xbbe8
+    2666:	3a7e                	.insn	2, 0x3a7e
+    2668:	4ff2                	.insn	2, 0x4ff2
+    266a:	ae32bd83          	.insn	4, 0xae32bd83
+    266e:	15e5                	.insn	2, 0x15e5
+    2670:	19f4                	.insn	2, 0x19f4
+    2672:	e8ab04e3          	beq	s6,a0,24fa <f8_pool+0x1bc2>
+    2676:	24b2                	.insn	2, 0x24b2
+    2678:	0ea772c7          	.insn	4, 0x0ea772c7
+    267c:	a75c                	.insn	2, 0xa75c
+    267e:	3b50                	.insn	2, 0x3b50
+    2680:	e630bf97          	auipc	t6,0xe630b
+    2684:	b0581937          	lui	s2,0xb0581
+    2688:	9809                	.insn	2, 0x9809
+    268a:	1fad                	.insn	2, 0x1fad
+    268c:	99e4                	.insn	2, 0x99e4
+    268e:	5d39                	.insn	2, 0x5d39
+    2690:	06f6                	.insn	2, 0x06f6
+    2692:	01e5                	.insn	2, 0x01e5
+    2694:	f31c                	.insn	2, 0xf31c
+    2696:	d03d                	.insn	2, 0xd03d
+    2698:	d7d5                	.insn	2, 0xd7d5
+    269a:	3930                	.insn	2, 0x3930
+    269c:	35a5a9bb          	.insn	4, 0x35a5a9bb
+    26a0:	8294                	.insn	2, 0x8294
+    26a2:	20ebe717          	auipc	a4,0x20ebe
+    26a6:	10d496fb          	.insn	4, 0x10d496fb
+    26aa:	5f8c                	.insn	2, 0x5f8c
+    26ac:	c0c9                	.insn	2, 0xc0c9
+    26ae:	13b5                	.insn	2, 0x13b5
+    26b0:	d2cd                	.insn	2, 0xd2cd
+    26b2:	8e61                	.insn	2, 0x8e61
+    26b4:	6aa8015b          	.insn	4, 0x6aa8015b
+    26b8:	b325                	.insn	2, 0xb325
+    26ba:	6726f8b3          	.insn	4, 0x6726f8b3
+    26be:	63e9f66f          	jal	a2,a1cfc <__bss_end+0x9f0a0>
+    26c2:	b590                	.insn	2, 0xb590
+    26c4:	2352                	.insn	2, 0x2352
+    26c6:	f180b93b          	.insn	4, 0xf180b93b
+    26ca:	5afc                	.insn	2, 0x5afc
+    26cc:	5dbe4e43          	.insn	4, 0x5dbe4e43
+    26d0:	e578                	.insn	2, 0xe578
+    26d2:	ba24                	.insn	2, 0xba24
+    26d4:	23b2                	.insn	2, 0x23b2
+    26d6:	b89a                	.insn	2, 0xb89a
+    26d8:	e415                	.insn	2, 0xe415
+    26da:	9ac4c477          	.insn	4, 0x9ac4c477
+    26de:	7d8d                	.insn	2, 0x7d8d
+    26e0:	8dcc110b          	.insn	4, 0x8dcc110b
+    26e4:	0126                	.insn	2, 0x0126
+    26e6:	1136                	.insn	2, 0x1136
+    26e8:	cc62bdab          	.insn	4, 0xcc62bdab
+    26ec:	cde1                	.insn	2, 0xcde1
+    26ee:	bb81                	.insn	2, 0xbb81
+    26f0:	7e0d                	.insn	2, 0x7e0d
+    26f2:	67d4                	.insn	2, 0x67d4
+    26f4:	65a8                	.insn	2, 0x65a8
+    26f6:	36d8                	.insn	2, 0x36d8
+    26f8:	2236                	.insn	2, 0x2236
+    26fa:	b700                	.insn	2, 0xb700
+    26fc:	d31e                	.insn	2, 0xd31e
+    26fe:	a6f1                	.insn	2, 0xa6f1
+    2700:	27a01c33          	.insn	4, 0x27a01c33
+    2704:	b492                	.insn	2, 0xb492
+    2706:	ece8                	.insn	2, 0xece8
+    2708:	1e30                	.insn	2, 0x1e30
+    270a:	1f8b8eb7          	lui	t4,0x1f8b8
+    270e:	dfd2                	.insn	2, 0xdfd2
+    2710:	e2cd12db          	.insn	4, 0xe2cd12db
+    2714:	882e                	.insn	2, 0x882e
+    2716:	c8bd                	.insn	2, 0xc8bd
+    2718:	31d9                	.insn	2, 0x31d9
+    271a:	b65c                	.insn	2, 0xb65c
+    271c:	1a2a274b          	.insn	4, 0x1a2a274b
+    2720:	03fd                	.insn	2, 0x03fd
+    2722:	02fd                	.insn	2, 0x02fd
+    2724:	cc20                	.insn	2, 0xcc20
+    2726:	0ce55a3b          	.insn	4, 0x0ce55a3b
+    272a:	41d4                	.insn	2, 0x41d4
+    272c:	be4c                	.insn	2, 0xbe4c
+    272e:	15f5                	.insn	2, 0x15f5
+    2730:	aebd                	.insn	2, 0xaebd
+    2732:	042e                	.insn	2, 0x042e
+    2734:	bcbd                	.insn	2, 0xbcbd
+    2736:	b0d5                	.insn	2, 0xb0d5
+    2738:	b632                	.insn	2, 0xb632
+    273a:	8f80                	.insn	2, 0x8f80
+    273c:	208c                	.insn	2, 0x208c
+    273e:	eef4                	.insn	2, 0xeef4
+    2740:	4474                	.insn	2, 0x4474
+    2742:	5689                	.insn	2, 0x5689
+    2744:	76cc0103          	lb	sp,1900(s8)
+    2748:	d8e0                	.insn	2, 0xd8e0
+    274a:	d759                	.insn	2, 0xd759
+    274c:	90ec                	.insn	2, 0x90ec
+    274e:	5798                	.insn	2, 0x5798
+    2750:	50ae                	.insn	2, 0x50ae
+    2752:	095d                	.insn	2, 0x095d
+    2754:	a6fcabb3          	.insn	4, 0xa6fcabb3
+    2758:	78ff                	.insn	2, 0x78ff
+    275a:	7edf 7670 728d      	.insn	6, 0x728d76707edf
+    2760:	356d                	.insn	2, 0x356d
+    2762:	b9dacd43          	.insn	4, 0xb9dacd43
+    2766:	8326                	.insn	2, 0x8326
+    2768:	a4c2                	.insn	2, 0xa4c2
+    276a:	e1f9                	.insn	2, 0xe1f9
+    276c:	3195                	.insn	2, 0x3195
+    276e:	7a3dac77          	.insn	4, 0x7a3dac77
+    2772:	8530                	.insn	2, 0x8530
+    2774:	14c827d7          	.insn	4, 0x14c827d7
+    2778:	eec4                	.insn	2, 0xeec4
+    277a:	2ccd                	.insn	2, 0x2ccd
+    277c:	91dd                	.insn	2, 0x91dd
+    277e:	6908                	.insn	2, 0x6908
+    2780:	1de4                	.insn	2, 0x1de4
+    2782:	0f59                	.insn	2, 0x0f59
+    2784:	af6e                	.insn	2, 0xaf6e
+    2786:	0a78                	.insn	2, 0x0a78
+    2788:	9c66                	.insn	2, 0x9c66
+    278a:	31c6                	.insn	2, 0x31c6
+    278c:	9445                	.insn	2, 0x9445
+    278e:	df4d                	.insn	2, 0xdf4d
+    2790:	c4ce                	.insn	2, 0xc4ce
+    2792:	87b2                	.insn	2, 0x87b2
+    2794:	84c6                	.insn	2, 0x84c6
+    2796:	f38d414f          	.insn	4, 0xf38d414f
+    279a:	ad1e                	.insn	2, 0xad1e
+    279c:	4238                	.insn	2, 0x4238
+    279e:	c925                	.insn	2, 0xc925
+    27a0:	c3c2                	.insn	2, 0xc3c2
+    27a2:	5220                	.insn	2, 0x5220
+    27a4:	c206                	.insn	2, 0xc206
+    27a6:	7342                	.insn	2, 0x7342
+    27a8:	dbca                	.insn	2, 0xdbca
+    27aa:	3514                	.insn	2, 0x3514
+    27ac:	ab89                	.insn	2, 0xab89
+    27ae:	192f665b          	.insn	4, 0x192f665b
+    27b2:	d07c                	.insn	2, 0xd07c
+    27b4:	61c1                	.insn	2, 0x61c1
+    27b6:	5e518d2b          	.insn	4, 0x5e518d2b
+    27ba:	b501                	.insn	2, 0xb501
+    27bc:	6fd4e1d3          	.insn	4, 0x6fd4e1d3
+    27c0:	da39                	.insn	2, 0xda39
+    27c2:	50ac9b1b          	.insn	4, 0x50ac9b1b
+    27c6:	2b48                	.insn	2, 0x2b48
+    27c8:	f911                	.insn	2, 0xf911
+    27ca:	252a978f          	.insn	4, 0x252a978f
+    27ce:	9678                	.insn	2, 0x9678
+    27d0:	6591                	.insn	2, 0x6591
+    27d2:	16c1d6af          	.insn	4, 0x16c1d6af
+    27d6:	8f0e                	.insn	2, 0x8f0e
+    27d8:	5869                	.insn	2, 0x5869
+    27da:	ed7c                	.insn	2, 0xed7c
+    27dc:	6558                	.insn	2, 0x6558
+    27de:	bda5                	.insn	2, 0xbda5
+    27e0:	45ba                	.insn	2, 0x45ba
+    27e2:	8fa0                	.insn	2, 0x8fa0
+    27e4:	e714                	.insn	2, 0xe714
+    27e6:	9d38                	.insn	2, 0x9d38
+    27e8:	9774                	.insn	2, 0x9774
+    27ea:	e8ed                	.insn	2, 0xe8ed
+    27ec:	be81                	.insn	2, 0xbe81
+    27ee:	a1a709d3          	.insn	4, 0xa1a709d3
+    27f2:	60f8                	.insn	2, 0x60f8
+    27f4:	1b24                	.insn	2, 0x1b24
+    27f6:	31e6                	.insn	2, 0x31e6
+    27f8:	060a1037          	lui	zero,0x60a1
+    27fc:	8eed7603          	.insn	4, 0x8eed7603
+    2800:	78c6                	.insn	2, 0x78c6
+    2802:	6a26                	.insn	2, 0x6a26
+    2804:	efa6                	.insn	2, 0xefa6
+    2806:	6b21                	.insn	2, 0x6b21
+    2808:	9146                	.insn	2, 0x9146
+    280a:	a0f2                	.insn	2, 0xa0f2
+    280c:	ca84                	.insn	2, 0xca84
+    280e:	43701a7f b325a6f8 	.insn	12, 0x1abd801cb325a6f843701a7f
+    2816:	1abd801c 
+    281a:	6870                	.insn	2, 0x6870
+    281c:	5eb33063          	.insn	4, 0x5eb33063
+    2820:	a53a                	.insn	2, 0xa53a
+    2822:	1dea37bb          	.insn	4, 0x1dea37bb
+    2826:	3b1940af          	.insn	4, 0x3b1940af
+    282a:	0080                	.insn	2, 0x0080
+    282c:	a531                	.insn	2, 0xa531
+    282e:	10a2                	.insn	2, 0x10a2
+    2830:	58f23013          	sltiu	zero,tp,1423
+    2834:	91fe                	.insn	2, 0x91fe
+    2836:	6022                	.insn	2, 0x6022
+    2838:	0909                	.insn	2, 0x0909
+    283a:	1eb33ef7          	.insn	4, 0x1eb33ef7
+    283e:	3035                	.insn	2, 0x3035
+    2840:	d4a6                	.insn	2, 0xd4a6
+    2842:	e636                	.insn	2, 0xe636
+    2844:	5970                	.insn	2, 0x5970
+    2846:	3d31                	.insn	2, 0x3d31
+    2848:	4036                	.insn	2, 0x4036
+    284a:	b8c9                	.insn	2, 0xb8c9
+    284c:	9f5940b7          	lui	ra,0x9f594
+    2850:	99fe3443          	.insn	4, 0x99fe3443
+    2854:	c906                	.insn	2, 0xc906
+    2856:	4e60                	.insn	2, 0x4e60
+    2858:	6639                	.insn	2, 0x6639
+    285a:	6aa1                	.insn	2, 0x6aa1
+    285c:	f8c4                	.insn	2, 0xf8c4
+    285e:	f114                	.insn	2, 0xf114
+    2860:	eb9c                	.insn	2, 0xeb9c
+    2862:	3bc8                	.insn	2, 0x3bc8
+    2864:	d230                	.insn	2, 0xd230
+    2866:	72e8                	.insn	2, 0x72e8
+    2868:	c78a                	.insn	2, 0xc78a
+    286a:	8030                	.insn	2, 0x8030
+    286c:	7c05                	.insn	2, 0x7c05
+    286e:	f729                	.insn	2, 0xf729
+    2870:	1f98                	.insn	2, 0x1f98
+    2872:	4a25                	.insn	2, 0x4a25
+    2874:	97e6c1fb          	.insn	4, 0x97e6c1fb
+    2878:	c1da                	.insn	2, 0xc1da
+    287a:	2e0c                	.insn	2, 0x2e0c
+    287c:	28c4                	.insn	2, 0x28c4
+    287e:	9a8d                	.insn	2, 0x9a8d
+    2880:	aeee                	.insn	2, 0xaeee
+    2882:	02da                	.insn	2, 0x02da
+    2884:	372eb78f          	.insn	4, 0x372eb78f
+    2888:	fb66                	.insn	2, 0xfb66
+    288a:	b381                	.insn	2, 0xb381
+    288c:	fc78                	.insn	2, 0xfc78
+    288e:	cb6a                	.insn	2, 0xcb6a
+    2890:	0924                	.insn	2, 0x0924
+    2892:	498a                	.insn	2, 0x498a
+    2894:	bae7e6e7          	.insn	4, 0xbae7e6e7
+    2898:	5435                	.insn	2, 0x5435
+    289a:	d86c                	.insn	2, 0xd86c
+    289c:	c46a                	.insn	2, 0xc46a
+    289e:	f9e2                	.insn	2, 0xf9e2
+    28a0:	7965                	.insn	2, 0x7965
+    28a2:	fe092547          	.insn	4, 0xfe092547
+    28a6:	9412                	.insn	2, 0x9412
+    28a8:	10d2                	.insn	2, 0x10d2
+    28aa:	d8d0758f          	.insn	4, 0xd8d0758f
+    28ae:	ba86                	.insn	2, 0xba86
+    28b0:	a0c6                	.insn	2, 0xa0c6
+    28b2:	83e0                	.insn	2, 0x83e0
+    28b4:	ba4b8fbf c13f85e5 	.insn	8, 0xc13f85e5ba4b8fbf
+    28bc:	291d                	.insn	2, 0x291d
+    28be:	4828                	.insn	2, 0x4828
+    28c0:	40ba                	.insn	2, 0x40ba
+    28c2:	9630                	.insn	2, 0x9630
+    28c4:	b8e9                	.insn	2, 0xb8e9
+    28c6:	015f4163          	blt	t5,s5,28c8 <f8_pool+0x1f90>
+    28ca:	e945                	.insn	2, 0xe945
+    28cc:	2a9aaff7          	.insn	4, 0x2a9aaff7
+    28d0:	a03a                	.insn	2, 0xa03a
+    28d2:	99d8                	.insn	2, 0x99d8
+    28d4:	bc7c                	.insn	2, 0xbc7c
+    28d6:	08ec                	.insn	2, 0x08ec
+    28d8:	e0de                	.insn	2, 0xe0de
+    28da:	c8263ffb          	.insn	4, 0xc8263ffb
+    28de:	17cc                	.insn	2, 0x17cc
+    28e0:	399c                	.insn	2, 0x399c
+    28e2:	cc6a                	.insn	2, 0xcc6a
+    28e4:	07e5                	.insn	2, 0x07e5
+    28e6:	83c0                	.insn	2, 0x83c0
+    28e8:	f0c2                	.insn	2, 0xf0c2
+    28ea:	ebf47b57          	.insn	4, 0xebf47b57
+    28ee:	24ad                	.insn	2, 0x24ad
+    28f0:	4af0b7d3          	.insn	4, 0x4af0b7d3
+    28f4:	758e9247          	.insn	4, 0x758e9247
+    28f8:	ab84                	.insn	2, 0xab84
+    28fa:	1b1a                	.insn	2, 0x1b1a
+    28fc:	e805                	.insn	2, 0xe805
+    28fe:	3e1e                	.insn	2, 0x3e1e
+    2900:	3604                	.insn	2, 0x3604
+    2902:	b989                	.insn	2, 0xb989
+    2904:	487dd817          	auipc	a6,0x487dd
+    2908:	bfa0                	.insn	2, 0xbfa0
+    290a:	2dec                	.insn	2, 0x2dec
+    290c:	6b09                	.insn	2, 0x6b09
+    290e:	7b75                	.insn	2, 0x7b75
+    2910:	d036                	.insn	2, 0xd036
+    2912:	869d                	.insn	2, 0x869d
+    2914:	a7d1                	.insn	2, 0xa7d1
+    2916:	8151                	.insn	2, 0x8151
+    2918:	74bd4ddb          	.insn	4, 0x74bd4ddb
+    291c:	706a                	.insn	2, 0x706a
+    291e:	a9f54757          	.insn	4, 0xa9f54757
+    2922:	6724                	.insn	2, 0x6724
+    2924:	a970                	.insn	2, 0xa970
+    2926:	d6229347          	.insn	4, 0xd6229347
+    292a:	6290cc53          	.insn	4, 0x6290cc53
+    292e:	0ce2                	.insn	2, 0x0ce2
+    2930:	0dea                	.insn	2, 0x0dea
+    2932:	10ba                	.insn	2, 0x10ba
+    2934:	e3d93ca7          	.insn	4, 0xe3d93ca7
+
+Disassembly of section .riscv.attributes:
+
+00000000 <.riscv.attributes>:
+   0:	2941                	.insn	2, 0x2941
+   2:	0000                	.insn	2, 0x0000
+   4:	7200                	.insn	2, 0x7200
+   6:	7369                	.insn	2, 0x7369
+   8:	01007663          	bgeu	zero,a6,14 <_start+0x14>
+   c:	001f 0000 1004      	.insn	6, 0x10040000001f
+  12:	7205                	.insn	2, 0x7205
+  14:	3376                	.insn	2, 0x3376
+  16:	6932                	.insn	2, 0x6932
+  18:	7032                	.insn	2, 0x7032
+  1a:	5f31                	.insn	2, 0x5f31
+  1c:	326d                	.insn	2, 0x326d
+  1e:	3070                	.insn	2, 0x3070
+  20:	7a5f 6d6d 6c75      	.insn	6, 0x6c756d6d7a5f
+  26:	7031                	.insn	2, 0x7031
+  28:	0030                	.insn	2, 0x0030
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	3a434347          	.insn	4, 0x3a434347
+   4:	2820                	.insn	2, 0x2820
+   6:	5078                	.insn	2, 0x5078
+   8:	6361                	.insn	2, 0x6361
+   a:	4e47206b          	.insn	4, 0x4e47206b
+   e:	2055                	.insn	2, 0x2055
+  10:	4952                	.insn	2, 0x4952
+  12:	562d4353          	.insn	4, 0x562d4353
+  16:	4520                	.insn	2, 0x4520
+  18:	626d                	.insn	2, 0x626d
+  1a:	6465                	.insn	2, 0x6465
+  1c:	6564                	.insn	2, 0x6564
+  1e:	2064                	.insn	2, 0x2064
+  20:	20434347          	.insn	4, 0x20434347
+  24:	3878                	.insn	2, 0x3878
+  26:	5f36                	.insn	2, 0x5f36
+  28:	3436                	.insn	2, 0x3436
+  2a:	2029                	.insn	2, 0x2029
+  2c:	3531                	.insn	2, 0x3531
+  2e:	322e                	.insn	2, 0x322e
+  30:	302e                	.insn	2, 0x302e
+	...

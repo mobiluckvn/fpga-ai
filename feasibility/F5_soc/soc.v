@@ -18,7 +18,10 @@
 module soc #(
     parameter integer DIV        = 234,              // 27e6/115200
     parameter integer RAM_WORDS  = 16384,            // 64 KB
-    parameter         HEXFILE    = "firmware.hex"
+    parameter         HEXFILE    = "firmware.hex",
+    // WITH_DOT4 = 1: bật PCPI ngoài và gắn khối pcpi_dot4 (dùng ở F8).
+    // Mặc định 0 -> lõi và netlist giống hệt F5/F6/F7.
+    parameter integer WITH_DOT4  = 0
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -44,6 +47,33 @@ module soc #(
 
     assign dbg_trap = trap;
 
+    // ---------------- PCPI: khối DOT4 của F8 ----------------
+    wire        pcpi_valid;
+    wire [31:0] pcpi_insn;
+    wire [31:0] pcpi_rs1;
+    wire [31:0] pcpi_rs2;
+    wire        pcpi_wr;
+    wire [31:0] pcpi_rd;
+    wire        pcpi_wait;
+    wire        pcpi_ready;
+
+    generate
+        if (WITH_DOT4) begin : g_dot4
+            pcpi_dot4 u_dot4 (
+                .clk(clk), .resetn(resetn),
+                .pcpi_valid(pcpi_valid), .pcpi_insn(pcpi_insn),
+                .pcpi_rs1(pcpi_rs1), .pcpi_rs2(pcpi_rs2),
+                .pcpi_wr(pcpi_wr), .pcpi_rd(pcpi_rd),
+                .pcpi_wait(pcpi_wait), .pcpi_ready(pcpi_ready)
+            );
+        end else begin : g_no_dot4
+            assign pcpi_wr    = 1'b0;
+            assign pcpi_rd    = 32'd0;
+            assign pcpi_wait  = 1'b0;
+            assign pcpi_ready = 1'b0;
+        end
+    endgenerate
+
     picorv32 #(
         .ENABLE_COUNTERS   (1),
         .ENABLE_COUNTERS64 (1),
@@ -55,7 +85,7 @@ module soc #(
         .ENABLE_FAST_MUL   (1),
         .ENABLE_DIV        (1),
         .ENABLE_IRQ        (0),
-        .ENABLE_PCPI       (0),     // F8 mới bật
+        .ENABLE_PCPI       (WITH_DOT4 ? 1 : 0),   // F8 bật
         .PROGADDR_RESET    (32'h0000_0000),
         .STACKADDR         (32'h0001_0000)   // đỉnh RAM; start.S cũng đặt lại sp
     ) cpu (
@@ -71,8 +101,10 @@ module soc #(
         .mem_rdata (mem_rdata),
         .mem_la_read (), .mem_la_write (), .mem_la_addr (),
         .mem_la_wdata (), .mem_la_wstrb (),
-        .pcpi_valid(), .pcpi_insn(), .pcpi_rs1(), .pcpi_rs2(),
-        .pcpi_wr(1'b0), .pcpi_rd(32'd0), .pcpi_wait(1'b0), .pcpi_ready(1'b0),
+        .pcpi_valid(pcpi_valid), .pcpi_insn(pcpi_insn),
+        .pcpi_rs1(pcpi_rs1), .pcpi_rs2(pcpi_rs2),
+        .pcpi_wr(pcpi_wr), .pcpi_rd(pcpi_rd),
+        .pcpi_wait(pcpi_wait), .pcpi_ready(pcpi_ready),
         .irq(32'd0), .eoi(),
         .trace_valid(), .trace_data()
     );

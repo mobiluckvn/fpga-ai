@@ -2,6 +2,76 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — Cổng F8 (lệnh tùy biến DOT4 qua PCPI) — ĐẠT · GIAI ĐOẠN KHẢ THI HOÀN TẤT
+
+Cả ba tiêu chí đạt, cho **cả hai biến thể** bitstream, 3/3 lần đọc mỗi bản:
+CRC bản DOT4 = bản vô hướng = Python (`3D68C1ED`), chu kỳ kit = Verilator **bằng tuyệt đối**,
+và có **số tăng tốc thật: 3,985×**.
+
+### Khối DOT4 (`rtl/ext/pcpi_dot4.v`)
+- `rd = Σ_{i=0..3} int8(rs1[8i+7:8i]) · int8(rs2[8i+7:8i])`, opcode custom-0 `0001011`,
+  funct3 `000`, funct7 `0000000`. Phía C: `.insn r 0x0B, 0, 0, rd, rs1, rs2`.
+- Giao thức PCPI lấy **đúng dạng của `picorv32_pcpi_fast_mul`** trong chính lõi: chốt toán hạng,
+  thanh ghi dịch `active[1:0]`, trả lời bằng `pcpi_wr` + `pcpi_ready` cùng một chu kỳ, `pcpi_wait = 0`.
+  Độ trễ 2 chu kỳ, dưới timeout 16 chu kỳ của lõi.
+- Hai đường nhân chọn bằng cờ biên dịch: `PCPI_DOT4_DSP` gọi **trực tiếp `MULT18X18`** (cách PRM đã
+  ĐẠT ở F4), mặc định là nhân hành vi (cho mô phỏng và cho bản `-nodsp` nhân bằng logic).
+- `soc.v` thêm tham số `WITH_DOT4` (mặc định 0). **Đã kiểm hồi quy**: với `WITH_DOT4=0`, F7 cho lại
+  **y hệt** 4.921.446 / 3.533.204 chu kỳ và cùng CRC — thay đổi không ảnh hưởng F5/F6/F7.
+
+### Testbench riêng cho khối (bước 2 của kế hoạch)
+`feasibility/F8_dot4/tb_dot4.v`, Icarus: **1.000.108 phép DOT4 đúng** —
+1.000.000 cặp từ LFSR + 108 giá trị biên (mọi tổ hợp của {−128, −127, −1, 0, 1, 127} trên cả 4 lane,
+cộng quét từng lane trong khi ba lane còn lại giữ giá trị xấu nhất). Tham chiếu tính **độc lập** trong
+testbench (tách lane sang `reg signed [7:0]`, cộng dồn trong `integer`), khác cách của DUT.
+Có thêm một phép kiểm quan trọng: **khối phải IM LẶNG với lệnh không phải của nó** (thử bằng `MUL`) —
+nếu không nó sẽ phá lệnh `MUL`/`DIV` mà lõi xử lý qua PCPI nội bộ.
+
+### Số đo trên kit (bài A, 102.400 MAC, 25.600 lệnh DOT4)
+| Bản | chu kỳ | lệnh | CPI | chu kỳ/MAC |
+|---|---:|---:|---:|---:|
+| vô hướng | 4.921.446 | 717.812 | 6,86 | 48,06 |
+| **DOT4** | **1.235.011** | 180.205 | 6,85 | **12,06** |
+
+- **Tăng tốc 3,985×**; số lệnh giảm **3,983×**.
+- **Tăng tốc bằng đúng tỉ lệ giảm số lệnh** vì CPI gần như không đổi → DOT4 nhanh hơn **không** nhờ
+  phép nhân nhanh hơn, mà nhờ làm 4 MAC trong một lệnh trên lõi mà mỗi lệnh tốn gần 7 chu kỳ.
+- **Độ trễ DOT4 đo được: đắt hơn `ADD` đúng +1,000 chu kỳ/lệnh** (vòng DOT4 3.500.041 vs vòng ADD
+  3.400.041 trên 100.000 vòng).
+- **Bật PCPI tốn +0 chu kỳ**: bản vô hướng trên bitstream CÓ PCPI cho đúng 4.921.446 chu kỳ, bằng
+  tuyệt đối số của F7 trên bitstream KHÔNG có PCPI.
+- CSV: `results/feasibility/F8/dot4.csv`.
+
+### Chi phí phần cứng, so với chính bản nền F5
+| Thiết kế | LUT4 | ΔLUT4 | DFF | ΔDFF | MULT18X18 | Fmax | ΔFmax |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| F5 SoC (nền, không PCPI) | 7.950 | — | 1.069 | — | 0 | 70,05 | — |
+| F8 + DOT4, `MULT18X18` | 8.065 | **+115** | 1.153 | +84 | **4** | 71,89 | **+1,83** |
+| F8 + DOT4, nhân bằng LUT | 9.086 | +1.136 | 1.153 | +84 | 0 | 73,83 | +3,78 |
+
+Fmax **không giảm** ở cả hai bản (nhúc nhích lên, trong phạm vi nhiễu place & route) vì DOT4 trả lời
+trong 2 chu kỳ và phép nhân int8 ngắn hơn đường tới hạn hiện có (bộ nhân 32×32 bằng LUT của lõi).
+
+### Một lỗi đo của chính tôi, bắt được trước khi lên kit
+Lần đầu viết hai vòng đo độ trễ với **toán hạng hằng số**: `dot4(0x01020304, 0x05060708)`. GCC nhấc
+cả lệnh asm ra ngoài vòng lặp (asm không `volatile`, đầu vào bất biến → loop-invariant code motion),
+nên hai vòng trở thành giống hệt nhau và phép đo vô nghĩa — chênh **1 chu kỳ trên 100.000 vòng**.
+Phát hiện bằng cách đọc disassembly: lệnh `.insn` nằm ở `2b4`, **ngoài** thân vòng bắt đầu ở `2b8`.
+Sửa: cho toán hạng phụ thuộc biến đếm (`^ i`, `+ i`) ở **cả hai** vòng, nên chúng vẫn có cùng số lệnh
+chuẩn bị toán hạng. Sau khi sửa, lệnh `.insn` nằm trong thân vòng và chênh thành đúng +1,000 chu kỳ/lệnh.
+**Bài học**: mọi micro-benchmark bằng inline asm phải kiểm disassembly trước khi tin số đo.
+
+### Giới hạn của kết quả, cần nói rõ trong luận văn
+3,985× là tăng tốc của **bài tích vô hướng**, không phải của cả mô hình. Bài conv1 ở F7 tốn
+72,59 chu kỳ/MAC, trong đó phần chỉ số 2 chiều và requantize **không** được DOT4 cắt. Tăng tốc thật
+của một lớp conv sẽ **nhỏ hơn 3,985×** và chỉ đo được ở giai đoạn thí nghiệm chính. Đây cũng là lý do
+kế hoạch có thêm lệnh REQ.
+
+### Trạng thái cuối giai đoạn khả thi
+Chín cổng F0 → F8 **đã làm xong**. Kết luận: **GO CÓ ĐIỀU KIỆN**, ba điều kiện và 11 đề xuất điều chỉnh
+ở `docs/FEASIBILITY_REPORT.md`. Việc duy nhất còn treo: điều kiện 4 của F6 (ba lần tắt/bật nguồn),
+người thực hiện đã quyết định bỏ — báo cáo ghi rõ là "KHÔNG KIỂM", không ghi là đã đạt.
+
 ## 2026-10-17 — Cổng F7 (kernel int8 thật, đúng từng bit) — ĐẠT
 
 Cả ba tiêu chí đều đạt: **CRC trên kit = Python** cho cả hai bài, **chu kỳ kit = Verilator bằng

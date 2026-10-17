@@ -1,7 +1,8 @@
 // F5 — vỏ cho kit Tang Nano 20K: tạo reset đồng bộ sau khi nạp bitstream.
 module top #(
-    parameter integer DIV     = 234,
-    parameter         HEXFILE = "firmware.hex"
+    parameter integer DIV       = 234,
+    parameter         HEXFILE   = "firmware.hex",
+    parameter integer WITH_DOT4 = 0
 ) (
     input  wire       clk,
     output wire       uart_tx,
@@ -16,7 +17,7 @@ module top #(
         else                   rst_c  <= rst_c + 11'd1;
     end
 
-    soc #(.DIV(DIV), .HEXFILE(HEXFILE)) u_soc (
+    soc #(.DIV(DIV), .HEXFILE(HEXFILE), .WITH_DOT4(WITH_DOT4)) u_soc (
         .clk(clk), .resetn(resetn),
         .uart_tx(uart_tx), .uart_rx(uart_rx), .led(led),
         .dbg_tx_valid(), .dbg_tx_byte(), .dbg_trap()

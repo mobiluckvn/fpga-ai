@@ -1,0 +1,4 @@
+OK 1/3: im lang voi lenh khong phai cua minh
+OK 2/3: 108 gia tri bien dung
+F8_TB_PASS: 1000108 phep DOT4 dung (1.000.000 ngau nhien + bien)
+tb_dot4.v:185: $finish called at 10001134000 (1ps)

@@ -5,7 +5,7 @@ FPGA GW2AR-18, rồi thêm lệnh tùy biến (DOT4, REQ) để giảm số chu 
 
 Kế hoạch đầy đủ: https://claude.ai/code/artifact/f8fb8ed1-998c-4dbb-8fa7-dda34aba7bd3
 
-## Trạng thái: giai đoạn kiểm chứng khả thi — **F0 → F7 xong, kết luận GO CÓ ĐIỀU KIỆN**
+## Trạng thái: giai đoạn kiểm chứng khả thi **ĐÃ HOÀN TẤT** (F0 → F8) — kết luận **GO CÓ ĐIỀU KIỆN**
 
 | Cổng | Rủi ro | Kết quả |
 |---|---|---|
@@ -17,7 +17,7 @@ Kế hoạch đầy đủ: https://claude.ai/code/artifact/f8fb8ed1-998c-4dbb-8f
 | F5 | SoC PicoRV32 chạy firmware C | ĐẠT — số chu kỳ kit = Verilator **bằng tuyệt đối** |
 | F6 | Độ tin cậy phép đo | ĐẠT 4/5 điều kiện (xem mục 7 của báo cáo) |
 | F7 | Kernel int8 thật | ĐẠT — CRC kit = Python, **48,06 / 72,59 chu kỳ/MAC** |
-| F8 | DOT4 qua PCPI | chưa làm |
+| F8 | DOT4 qua PCPI | **ĐẠT — tăng tốc 3,985× trên kit, +115 LUT4, Fmax không giảm** |
 
 Chi tiết: **[docs/FEASIBILITY_REPORT.md](docs/FEASIBILITY_REPORT.md)** ·
 Cách chạy lại: **[docs/HUONG_DAN.md](docs/HUONG_DAN.md)** ·
