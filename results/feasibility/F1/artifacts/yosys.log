@@ -1054,9 +1054,9 @@ ABC: Mapping (K=5)  :  lut =      7  edge =      30  lev =    3 (0.32)  levB =  
 ABC: LUT = 7 : 2=0 0.0 %  3=0 0.0 %  4=5 71.4 %  5=2 28.6 %  Ave = 4.29
 ABC: + &write -n <abc-temp-dir>/output.aig 
 ABC: + &verify 
-ABC: Networks are equivalent.  Time =     0.01 sec
+ABC: Networks are equivalent.  Time =     0.02 sec
 ABC: + time 
-ABC: elapse: 0.03 seconds, total: 0.03 seconds
+ABC: elapse: 0.05 seconds, total: 0.05 seconds
 
 2.44.15.6. Executing AIGER frontend.
 <suppressed ~10 debug messages>
@@ -1210,6 +1210,6 @@ Found and reported 0 problems.
 
 2.53. Executing JSON backend.
 
-End of script. Logfile hash: 19427a5743, time: 2.61s, user: 0.65s, system: 0.12s, MEM: 32.12 MB peak
+End of script. Logfile hash: c41b949cb6, time: 0.92s, user: 0.65s, system: 0.14s, MEM: 30.03 MB peak
 Yosys 0.70+145 (git sha1 a31d95ea0, Release, Clang /usr/local/osxcross/target/bin/x86_64-apple-darwin25.5-clang++ 21.1.8)
-Time spent: 31% 26x read_verilog (0 sec), 16% 1x abc9_exe (0 sec), ...
+Time spent: 31% 26x read_verilog (0 sec), 17% 1x abc9_exe (0 sec), ...

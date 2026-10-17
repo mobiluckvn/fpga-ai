@@ -31,7 +31,8 @@ all: build
 # ---------- mô phỏng ----------
 sim: $(BUILD)/tb_top.vvp
 	@echo "=== Icarus Verilog ==="
-	vvp $<
+	vvp $< 2>&1 | tee $(BUILD)/sim.log
+	@grep -q F1_SIM_PASS $(BUILD)/sim.log || (echo "SIM KHONG DAT"; exit 1)
 
 $(BUILD)/tb_top.vvp: $(SRC) $(TB)
 	@mkdir -p $(BUILD)
@@ -58,17 +59,16 @@ $(BUILD)/$(TOP).fs: $(BUILD)/pnr.json
 
 # ---------- nạp (CHỈ SRAM, không ghi flash) ----------
 load: $(BUILD)/$(TOP).fs
-	openFPGALoader -b $(BOARD) $<
+	openFPGALoader -b $(BOARD) $< 2>&1 | tee -a $(BUILD)/load.log
 
 # ---------- thu kết quả ----------
+# Lưu TOÀN BỘ vật phẩm (bitstream, netlist, log) + manifest SHA256 vào results/feasibility/F1/
 check: $(BUILD)/$(TOP).fs
 	@mkdir -p $(RESULTS)
-	@cp -f $(BUILD)/report.json   $(RESULTS)/report.json
-	@cp -f $(BUILD)/yosys.log     $(RESULTS)/yosys.log
-	@cp -f $(BUILD)/nextpnr.log   $(RESULTS)/nextpnr.log
-	@ls -l $(BUILD)/$(TOP).fs | awk '{print "bitstream: "$$NF" ("$$5" byte)"}' | tee $(RESULTS)/bitstream_size.txt
 	@echo "--- tài nguyên & Fmax (từ report.json) ---"
-	@python3 ../../scripts/pnr_report.py $(BUILD)/report.json | tee $(RESULTS)/resources.txt
+	@python3 ../../scripts/pnr_report.py $(BUILD)/report.json | tee $(BUILD)/resources.txt
+	@ls -l $(BUILD)/$(TOP).fs | awk '{print "bitstream: "$$NF" ("$$5" byte)"}' | tee $(BUILD)/bitstream_size.txt
+	@sh ../../scripts/archive_gate.sh F1 $(BUILD)
 
 clean:
 	rm -rf $(BUILD)

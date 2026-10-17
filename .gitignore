@@ -3,26 +3,23 @@
 __pycache__/
 *.pyc
 
-# Build artifacts
+# Thư mục build tạm của từng cổng (vật phẩm đã được lưu lại trong results/ qua
+# scripts/archive_gate.sh, nên thư mục build không cần vào git)
 build/
 obj_dir/
-*.fs
-*.json.gz
+
+# File tạm
 *.o
 *.elf
-*.bin
 *.vvp
 *.vcd
 *.fst
-
-# nextpnr / yosys intermediates
-*_pnr.json
-top.json
-pnr.json
-
-# macOS
 .DS_Store
 
-# Tarballs công cụ (cài ở ~/tools, không nằm trong repo)
+# Tarball công cụ (cài ở ~/tools, không nằm trong repo)
 *.tgz
 *.tar.gz
+
+# ---- NGOẠI LỆ: mọi thứ trong results/ đều phải được commit ----
+# Đây là bằng chứng của báo cáo: bitstream, netlist, log thô, CSV, manifest.
+!results/**

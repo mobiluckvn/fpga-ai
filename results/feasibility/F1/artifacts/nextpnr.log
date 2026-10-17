@@ -147,16 +147,16 @@ Info:     at iteration #5, type ALL: wirelen solved = 139, spread = 287, legal =
 Info:     at iteration #6, type ALL: wirelen solved = 146, spread = 341, legal = 337; time = 0.01s
 Info:     at iteration #7, type ALL: wirelen solved = 141, spread = 245, legal = 307; time = 0.01s
 Info:     at iteration #8, type ALL: wirelen solved = 138, spread = 263, legal = 275; time = 0.01s
-Info:     at iteration #9, type ALL: wirelen solved = 177, spread = 280, legal = 275; time = 0.01s
+Info:     at iteration #9, type ALL: wirelen solved = 177, spread = 280, legal = 275; time = 0.04s
 Info:     at iteration #10, type ALL: wirelen solved = 148, spread = 193, legal = 250; time = 0.01s
 Info:     at iteration #11, type ALL: wirelen solved = 149, spread = 226, legal = 293; time = 0.01s
 Info:     at iteration #12, type ALL: wirelen solved = 151, spread = 228, legal = 306; time = 0.01s
 Info:     at iteration #13, type ALL: wirelen solved = 154, spread = 238, legal = 309; time = 0.01s
 Info:     at iteration #14, type ALL: wirelen solved = 159, spread = 244, legal = 295; time = 0.01s
 Info:     at iteration #15, type ALL: wirelen solved = 165, spread = 257, legal = 297; time = 0.01s
-Info: HeAP Placer Time: 0.29s
+Info: HeAP Placer Time: 0.30s
 Info:   of which solving equations: 0.02s
-Info:   of which spreading cells: 0.06s
+Info:   of which spreading cells: 0.09s
 Info:   of which strict legalisation: 0.00s
 
 Info: Running simulated annealing placer for refinement.
