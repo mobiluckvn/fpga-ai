@@ -1,0 +1,49 @@
+// Ràng buộc chân dùng chung — Sipeed Tang Nano 20K (GW2AR-LV18QN88C8/I7)
+//
+// ĐÃ ĐỐI CHIẾU (2026-10-17) với hai nguồn chính thức, cả hai khớp nhau:
+//  [1] sipeed/TangNano-20K-example @ main
+//      - led/blink_leds/src/blink_leds.cst : clk=4, leds[0..5]=15..20
+//      - uart/src/top.cst                  : uart_tx=69 (FPGA->PC), uart_rx=70, rst=88
+//      - hdmi/src/hdmi.cst                 : I_key=87, I_rst=88
+//      - picorv32/src/fpga_project.cst     : ser_tx=69, resetn=88 (Part Number GW2AR-LV18QN88C8/I7)
+//  [2] YosysHQ/apicula @ master, examples/tangnano20k.cst
+//      - clk=4 (+ CLOCK_LOC BUFG), led[0..5]=15..20, key_i=87, rst_i=88, TXD=69, RXD=70
+//
+// LED tích cực mức THẤP: ghi 0 => sáng.
+//   Nguồn: led/blink_leds/src/blink_leds.v của Sipeed kết thúc bằng `assign leds = ~leds_value;`
+//
+// Nút S1 (chân 88) và S2 (chân 87): Sipeed dùng làm rst / key. Mức nghỉ = cao (có kéo lên),
+//   bấm => về 0. Các ví dụ của Apicula build với -D INV_BTN=1 cho tangnano20k.
+//
+// File này dùng chung cho mọi cổng F<n>; nextpnr chỉ áp ràng buộc cho port nào tồn tại trong thiết kế.
+
+// ---- Xung nhịp 27 MHz (thạch anh trên kit) ----
+IO_LOC  "clk" 4;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+CLOCK_LOC "clk" BUFG;
+
+// ---- 6 LED (tích cực mức thấp) ----
+IO_LOC  "led[0]" 15;
+IO_PORT "led[0]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC  "led[1]" 16;
+IO_PORT "led[1]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC  "led[2]" 17;
+IO_PORT "led[2]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC  "led[3]" 18;
+IO_PORT "led[3]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC  "led[4]" 19;
+IO_PORT "led[4]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC  "led[5]" 20;
+IO_PORT "led[5]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+
+// ---- UART qua cầu USB (nhìn từ phía FPGA) ----
+IO_LOC  "uart_tx" 69;          // FPGA -> PC
+IO_PORT "uart_tx" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC  "uart_rx" 70;          // PC -> FPGA
+IO_PORT "uart_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// ---- Nút bấm ----
+IO_LOC  "btn_s1" 88;           // S1, Sipeed dùng làm reset
+IO_PORT "btn_s1" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "btn_s2" 87;           // S2
+IO_PORT "btn_s2" IO_TYPE=LVCMOS33 PULL_MODE=UP;

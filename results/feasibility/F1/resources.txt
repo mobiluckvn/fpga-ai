@@ -1,0 +1,20 @@
+Tài nguyên          dùng /      có   %
+ALU                   34 /   15552    0.2%
+ALU54D                 0 /      24    0.0%
+BSRAM                  0 /      46    0.0%
+BUFG                   1 /      24    4.2%
+DFF                   30 /   15552    0.2%
+GND                    1 /       1  100.0%
+GSR                    1 /       1  100.0%
+IOB                    7 /     384    1.8%
+LUT4                  30 /   20736    0.1%
+MULT18X18              0 /      48    0.0%
+MULT36X36              0 /      12    0.0%
+MULT9X9                0 /      96    0.0%
+MULTADDALU18X18        0 /      24    0.0%
+MULTALU18X18           0 /      24    0.0%
+MULTALU36X18           0 /      24    0.0%
+MUX2_LUT5              2 /   10368    0.0%
+VCC                    1 /       1  100.0%
+
+Fmax[clk_IBUF_I_O] = 347.58 MHz (ràng buộc 27 MHz) -> ĐẠT

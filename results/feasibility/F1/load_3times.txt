@@ -1,0 +1,32 @@
+### Nạp SRAM 3 lần liên tiếp — Sat Oct 17 09:14:30 +07 2026
+### Lệnh: openFPGALoader -b tangnano20k build/top.fs   (KHÔNG có -f, không ghi flash)
+---------- lần 1: 09:14:30 ----------
+Jtag frequency : requested 6.00MHz    -> real 6.00MHz   
+Parse file Parse build/top.fs: 
+Done
+DONE
+Erase SRAM Load SRAM Load SRAM: [==================================================] 100.00%
+
+Done
+DONE
+exit=0
+---------- lần 2: 09:14:32 ----------
+Jtag frequency : requested 6.00MHz    -> real 6.00MHz   
+Parse file Parse build/top.fs: 
+Done
+DONE
+Erase SRAM Load SRAM Load SRAM: [==================================================] 100.00%
+
+Done
+DONE
+exit=0
+---------- lần 3: 09:14:33 ----------
+Jtag frequency : requested 6.00MHz    -> real 6.00MHz   
+Parse file Parse build/top.fs: 
+Done
+DONE
+Erase SRAM Load SRAM Load SRAM: [==================================================] 100.00%
+
+Done
+DONE
+exit=0
