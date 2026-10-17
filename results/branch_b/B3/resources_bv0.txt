@@ -1,0 +1,25 @@
+Tài nguyên          dùng /      có   %
+ALU                  890 /   15552    5.7%
+ALU54D                 0 /      24    0.0%
+BSRAM                 32 /      46   69.6%
+BUFG                   1 /      24    4.2%
+DFF                  656 /   15552    4.2%
+DUMMY_CELL            16 /       0    0.0%
+GND                    1 /       1  100.0%
+GSR                    1 /       1  100.0%
+IOB                    9 /     384    2.3%
+LUT4                3272 /   20736   15.8%
+MULT18X18              4 /      48    8.3%
+MULT36X36              0 /      12    0.0%
+MULT9X9                0 /      96    0.0%
+MULTADDALU18X18        0 /      24    0.0%
+MULTALU18X18           0 /      24    0.0%
+MULTALU36X18           0 /      24    0.0%
+MUX2_LUT5            596 /   10368    5.7%
+MUX2_LUT6            182 /    5184    3.5%
+MUX2_LUT7             86 /    2592    3.3%
+MUX2_LUT8             25 /    2592    1.0%
+RAM16SDP4             32 /     648    4.9%
+VCC                    1 /       1  100.0%
+
+Fmax[u_soc.clk] = 86.45 MHz (ràng buộc 27 MHz) -> ĐẠT

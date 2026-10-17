@@ -1,0 +1,10 @@
+# M1-S check
+Thời điểm: 2026-10-17 18:14:17 +0700  ·  biến thể: A-V1
+Độ chính xác mô hình (10.000 ảnh test): float 98.29% · int8 98.25%  (chênh +0.04 điểm %)
+Golden từ /Users/v/Documents/NCS/tinyml-riscv-tn20k/fw/weights.h: 10 ảnh thử, nhãn [7, 2, 1, 0, 4, 1, 4, 9, 5, 9], dự đoán golden [7, 2, 1, 0, 4, 1, 4, 9, 5, 9]
+Verilator: biến thể A-V1, tổng/ảnh [1459866, 1460018, 1459678, 1460080, 1459971, 1459706, 1460016, 1459875, 1460029, 1460038]
+== Lần đọc 1/2 ==
+    /dev/cu.usbserial-20250303171: chưa đủ dữ liệu (0 dòng thô)
+== Lần đọc 2/2 ==
+    /dev/cu.usbserial-20250303171: chưa đủ dữ liệu (0 dòng thô)
+M1S_FAIL: không đọc được số đo từ kit

@@ -154,6 +154,9 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--variant", required=True)
+    ap.add_argument("--csv-label", default=None,
+                    help="nhãn ghi vào CSV (mặc định = --variant); dùng khi cùng firmware "
+                         "chạy trên lõi khác, ví dụ nhãn bv0 cho firmware A-V0 trên lõi nhánh B")
     ap.add_argument("--src-hash", default=None,
                     help="dấu vân tay nội dung main.c+weights.h mà firmware PHẢI báo về")
     ap.add_argument("--sim-log", required=True)
@@ -282,7 +285,7 @@ def main() -> int:
                                  "cycles_per_mac"])
                 for i in sorted(kit["cyc"]):
                     c = kit["cyc"][i]
-                    wr.writerow([args.variant, i, kit["img"][i]["label"],
+                    wr.writerow([args.csv_label or args.variant, i, kit["img"][i]["label"],
                                  kit["img"][i]["pred"], g["m1s_pred_golden"][i],
                                  c["conv1"], c["pool1"], c["conv2"], c["pool2"],
                                  c["dense"], c["total"], c["instret"],

@@ -19,7 +19,12 @@
 module soc_b #(
     parameter integer DIV     = 234,              // 27e6/115200
     parameter         HEXFILE = "firmware.hex",
-    parameter         MUL_DSP = 0,
+    parameter integer FAST_ADDR = 1,
+    // BEACON=1: SoC tự phát trạng thái lõi qua UART mỗi ~0,3 s, ĐỘC LẬP với lõi.
+    // Dùng để chẩn đoán "kit không phát byte nào": nếu thấy đèn hiệu thì xung nhịp,
+    // UART và bitstream đều tốt, và vấn đề nằm ở lõi; nếu không thấy gì thì ngược lại.
+    // Khung: 'S' <state> <'T' nếu trap, '.' nếu không> <8 hex PC> '\n'
+    parameter integer BEACON    = 0,
     parameter         WITH_DOT4 = 0
 ) (
     input  wire        clk,
@@ -31,6 +36,11 @@ module soc_b #(
     output reg  [7:0]  dbg_tx_byte,
     output wire        dbg_trap
 );
+    function [7:0] hexc;
+        input [3:0] n;
+        hexc = (n < 4'd10) ? (8'd48 + {4'd0, n}) : (8'd87 + {4'd0, n});
+    endfunction
+
     // ---------------- lõi ----------------
     wire [31:0] mem_addr, mem_wdata;
     wire [3:0]  mem_wstrb;
@@ -40,14 +50,16 @@ module soc_b #(
     mycore #(
         .RESET_PC(32'h0000_0000),
         .WITH_MULDIV(1),
-        .MUL_DSP(MUL_DSP),
+        .FAST_ADDR(FAST_ADDR),
         .WITH_DOT4(WITH_DOT4)
     ) u_core (
         .clk(clk), .resetn(resetn),
         .mem_addr(mem_addr), .mem_wdata(mem_wdata), .mem_wstrb(mem_wstrb),
         .mem_valid(mem_valid), .mem_rdata(mem_rdata),
-        .trap(dbg_trap), .dbg_pc(), .dbg_instr()
+        .trap(dbg_trap), .dbg_pc(core_pc), .dbg_instr(), .dbg_state(core_state)
     );
+    wire [31:0] core_pc;
+    wire [2:0]  core_state;
 
     wire sel_ram = (mem_addr[31:28] == 4'h0);
     wire sel_per = (mem_addr[31:28] == 4'h1);
@@ -75,6 +87,29 @@ module soc_b #(
     );
     reg [7:0] rx_hold = 8'd0;
     reg       rx_full = 1'b0;
+
+    // ---------------- đèn hiệu chẩn đoán ----------------
+    reg [22:0] bcn_div = 23'd0;
+    reg [3:0]  bcn_i   = 4'd0;
+    reg        bcn_run = 1'b0;
+    reg [7:0]  bcn_ch;
+    always @(*) begin
+        case (bcn_i)
+            4'd0:  bcn_ch = "S";
+            4'd1:  bcn_ch = 8'd48 + {5'd0, core_state};
+            4'd2:  bcn_ch = dbg_trap ? "T" : ".";
+            4'd3:  bcn_ch = hexc(core_pc[31:28]);
+            4'd4:  bcn_ch = hexc(core_pc[27:24]);
+            4'd5:  bcn_ch = hexc(core_pc[23:20]);
+            4'd6:  bcn_ch = hexc(core_pc[19:16]);
+            4'd7:  bcn_ch = hexc(core_pc[15:12]);
+            4'd8:  bcn_ch = hexc(core_pc[11:8]);
+            4'd9:  bcn_ch = hexc(core_pc[7:4]);
+            4'd10: bcn_ch = hexc(core_pc[3:0]);
+            4'd11: bcn_ch = 8'h0A;
+            default: bcn_ch = "?";
+        endcase
+    end
 
     // ---------------- bộ đếm phần cứng, LED ----------------
     reg [31:0] hw_cnt = 32'd0;
@@ -138,6 +173,21 @@ module soc_b #(
                 8'h20: led_r <= mem_wdata[5:0];
                 default: ;
             endcase
+        end
+
+        // đèn hiệu: chỉ phát khi lõi không đang gửi và UART rỗi
+        if (BEACON != 0) begin
+            bcn_div <= bcn_div + 23'd1;
+            if (bcn_div == 23'd0 && !bcn_run) begin
+                bcn_run <= 1'b1;
+                bcn_i   <= 4'd0;
+            end else if (bcn_run && !tx_busy && !tx_start
+                         && !(mem_valid && sel_per && is_write)) begin
+                tx_byte  <= bcn_ch;
+                tx_start <= 1'b1;
+                if (bcn_i == 4'd11) bcn_run <= 1'b0;
+                else                bcn_i   <= bcn_i + 4'd1;
+            end
         end
 
         // đọc UART data thì xoá rx_valid

@@ -2,6 +2,67 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — NHÁNH B cổng B3: KHÔNG ĐẠT, DỪNG THEO QUY TẮC — lõi im lặng hoàn toàn trên kit
+
+B2 đã ĐẠT (xem mục dưới). B3 = đưa lõi lên kit. **Chưa đạt.** Theo quy tắc 2 của CLAUDE.md
+(tối đa 3 hướng sửa rồi dừng, ghi log, hỏi người dùng), tôi dừng và ghi lại tại đây.
+
+### Triệu chứng
+Bitstream nạp thành công (`openFPGALoader`: `Done Final`, thanh ghi trạng thái `0x00006020`),
+nhưng kit **không phát một byte nào** qua UART trong 5 giây (`.venv/bin/python` đọc trực tiếp:
+`nhận 0 byte`). Không phải lỗi phân tích dòng — thực sự 0 byte.
+
+### Điều làm triệu chứng này đặc biệt khó
+Tôi đã thêm một **đèn hiệu phần cứng** vào `soc_b.v` (`BEACON=1`): một máy trạng thái nhỏ tự phát
+`S<state><trap><8 hex PC>\n` qua UART mỗi ~0,3 s, **hoàn toàn độc lập với lõi** — nó chỉ cần xung
+nhịp chạy và khối `always` hoạt động. Đã xác nhận logic này **có trong netlist**
+(`grep -c bcn_div bv0/top-synth.json` = 96, `Parameter \BEACON = 1`). **Đèn hiệu cũng im.**
+→ Vấn đề KHÔNG nằm ở lõi. Nó nằm ở tầng dưới: xung nhịp không tới, hoặc thiết kế bị đóng băng.
+
+### Những gì đã kiểm và ĐÚNG (bằng chứng, không phải phỏng đoán)
+| Kiểm | Kết quả |
+|---|---|
+| `riscv-tests` trong Verilator, cả `FAST_ADDR`=1 và 0 | 48/48 RV32IM + `fence_i` ĐẠT |
+| M1-S trong Verilator, cùng file hex của nhánh A | `M1S,sum,10,10,10,10` đúng từng bit |
+| Nội dung BSRAM trong netlist | **giống hệt nhánh A**: 43.925/524.288 bit khác 0 |
+| Tài nguyên | BUFG 1, IOB 9, GSR 1, BSRAM 32, RAM16SDP4 32 — cùng cấu trúc nhánh A |
+| IBUF xung nhịp | `u_soc.clk_IBUF_O` — **cùng tên** như nhánh A |
+| `GSR.GSRI` | nối `$PACKER_VCC` (không kích hoạt) ở **cả hai** nhánh |
+| Fmax nextpnr | 86,45 MHz (ràng buộc 27) |
+| `openFPGALoader` | `Done Final`, `0x00006020` |
+
+### Hai lỗi THẬT đã tìm ra trên đường đi (đều do tôi gây ra)
+1. **Chia xung nhịp trên vải FPGA** → `ERROR: Hold/min time violation for clock 'posedge clk_d'`.
+   Xung nhịp dẫn xuất đi đường routing thường là thực hành sai; muốn hạ tần số phải dùng rPLL.
+2. **Đặt net trung gian cho xung nhịp làm MẤT ràng buộc chân.** Khi viết `wire clk_sys = clk;`,
+   yosys đổi tên net nên IBUF thành `clk_sys_IBUF_O` thay vì mang tên cổng `clk`. Ràng buộc
+   `IO_LOC "clk" 4` và `CLOCK_LOC "clk" BUFG` trong `.cst` **không khớp cell nào** → xung nhịp vào
+   chân bất kỳ. Đây là **cạm bẫy thật của luồng mã nguồn mở**, đáng ghi vào luận văn: *đừng đặt net
+   trung gian trên đường xung nhịp ở tầng top, vì ràng buộc chân khớp theo TÊN*.
+   Đã sửa (nối `clk` trực tiếp, IBUF trở lại đúng tên) — **nhưng kit vẫn im**, nên đây không phải
+   nguyên nhân gốc (lần dựng ĐẦU TIÊN, trước khi có `clk_sys`, cũng đã im).
+
+### Một phát hiện độc lập, vẫn đúng và vẫn đáng ghi
+`grep -c "Sink u_soc.ram\." nextpnr.log` = **0** ở **cả** nhánh A và B: nextpnr-himbaechel **không
+báo đường nào kết thúc ở BSRAM**. Nhánh A không bị ảnh hưởng vì `mem_addr` của PicoRV32 là thanh ghi.
+Thiết kế 1 chu kỳ/lệnh của tôi đặt cả giải mã + tệp thanh ghi + ALU lên đường vào địa chỉ BSRAM, nên
+**con số Fmax mà nextpnr báo không nói gì về đường tới hạn thật của thiết kế đó**. Vì vậy tôi đã làm
+sẵn biến thể `FAST_ADDR=0` (ghi thanh ghi địa chỉ, mọi đường là thanh ghi→thanh ghi): mô phỏng
+3.750.362 chu kỳ, vẫn nhanh hơn A-V0 **2,40×**.
+
+### Phương án đề xuất (chờ người dùng quyết)
+1. **Chia nhỏ để khoanh vùng**: dựng từ cùng Makefile một top **tối giản** (chỉ đèn hiệu UART, không
+   có lõi). Nếu nó cũng im → lỗi ở thiết lập build trong `rtl/mycore`; nếu nó chạy → lỗi ở `soc_b`.
+   Rẻ nhất (~6 phút), thu hẹp mạnh nhất.
+2. **Đối chiếu bằng Gowin EDA Education** cho đúng một bitstream (CLAUDE.md đã ghi đây là phương án
+   dự phòng/đối chiếu). Nếu RTL chạy với công cụ hãng thì luồng mã nguồn mở có lỗi với thiết kế này.
+3. **Giữ nhánh B ở mức mô phỏng**, ghi rõ trong báo cáo là *chưa kiểm trên phần cứng*. Số liệu vẫn
+   có giá trị: lõi qua `riscv-tests`, M1-S đúng từng bit, `instret` khớp tuyệt đối nhánh A, và với
+   nhánh A đã chứng minh **kit = Verilator bằng tuyệt đối** ở F5–F8 và cả 5 biến thể M1-S.
+4. **Chỉ báo cáo nhánh A** — phương án dự phòng ghi trong kế hoạch gốc.
+
+Vật phẩm: `results/branch_b/B3/` (log nạp, nextpnr, yosys, so sánh netlist).
+
 ## 2026-10-17 — NHÁNH B cổng B1 ĐẠT, và SỬA SỐ LIỆU NHÁNH A (baseline sai)
 
 ### B1: lõi tự viết qua riscv-tests ngay lần đầu

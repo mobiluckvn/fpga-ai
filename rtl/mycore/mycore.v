@@ -23,16 +23,21 @@
 // riscv-tests), CSR chỉ đọc cycle/cycleh/instret/instreth, fence và fence.i = nop,
 // ecall/ebreak/lệnh lạ/truy cập lệch địa chỉ = trap.
 //
-// Bộ nhân: MUL_DSP=0 dùng toán tử `*` (mô phỏng, hoặc tổng hợp thành LUT).
-// MUL_DSP=1 (cổng B3) sẽ gọi MULT18X18 trực tiếp — bài học F4: để yosys tự suy
-// luận DSP cho kết quả SAI TRÊN KIT.
+// Bộ nhân: mặc định dùng toán tử `*` (mô phỏng, hoặc tổng hợp thành logic LUT).
+// Định nghĩa MYCORE_MUL_DSP khi tổng hợp để gọi MULT18X18 TRỰC TIẾP — bài học F4:
+// để yosys tự suy luận DSP cho kết quả SAI TRÊN KIT dù mô phỏng vẫn đúng.
 
 `default_nettype none
 
 module mycore #(
     parameter [31:0] RESET_PC    = 32'h0000_0000,
     parameter        WITH_MULDIV = 1,
-    parameter        MUL_DSP     = 0,
+    // FAST_ADDR=1: địa chỉ bộ nhớ là TỔ HỢP -> 1 chu kỳ/lệnh. Đúng trong mô phỏng,
+    //   nhưng KHÔNG CHẠY ĐƯỢC TRÊN KIT: đường "dữ liệu BSRAM -> giải mã -> tệp thanh
+    //   ghi -> ALU -> địa chỉ BSRAM" không được nextpnr ràng buộc (xem top_b.v).
+    // FAST_ADDR=0: ghi thanh ghi địa chỉ -> mọi đường đều thanh ghi->thanh ghi, chạy
+    //   được trên kit, trả giá 1 chu kỳ thêm cho MỖI truy cập bộ nhớ (kể cả nạp lệnh).
+    parameter        FAST_ADDR   = 1,
     parameter        WITH_DOT4   = 0        // hiện thực ở cổng B4
 ) (
     input  wire        clk,
@@ -50,7 +55,8 @@ module mycore #(
 
     output reg         trap,
     output wire [31:0] dbg_pc,
-    output wire [31:0] dbg_instr
+    output wire [31:0] dbg_instr,
+    output wire [2:0]  dbg_state
 );
     // ---------------- mã lệnh ----------------
     localparam [6:0] OP_LUI    = 7'b0110111;
@@ -66,12 +72,18 @@ module mycore #(
     localparam [6:0] OP_SYSTEM = 7'b1110011;
     localparam [6:0] OP_CUSTOM = 7'b0001011;
 
-    localparam [1:0] S_FETCH = 2'd0,   // chờ lệnh đầu tiên về sau reset / sau S_MEM
-                     S_EXEC  = 2'd1,   // giải mã + thực thi + ghi về + nạp lệnh kế
-                     S_MEM   = 2'd2,   // dữ liệu về (load) hoặc ghi xong (store)
-                     S_MD    = 2'd3;   // nhân / chia nhiều chu kỳ
+    localparam [2:0] S_FETCH = 3'd0,   // địa chỉ lệnh đang ở đầu vào BSRAM, chờ 1 chu kỳ
+                     S_EXEC  = 3'd1,   // giải mã + thực thi + ghi về (+ nạp lệnh kế nếu FAST_ADDR)
+                     S_MEM   = 3'd2,   // dữ liệu load đã về / store đã ghi
+                     S_MD    = 3'd3,   // nhân / chia nhiều chu kỳ
+                     S_MEMW  = 3'd4;   // chỉ khi FAST_ADDR=0: địa chỉ dữ liệu đang ở BSRAM
 
-    reg [1:0]  state;
+    reg [2:0]  state;
+    // chỉ dùng khi FAST_ADDR=0
+    reg [31:0] addr_r;
+    reg [31:0] wdata_r;
+    reg [3:0]  wstrb_r;
+    reg        valid_r;
     reg [31:0] pc;            // địa chỉ lệnh ĐANG thực thi trong S_EXEC
     reg [31:0] pc_ret;        // địa chỉ lệnh kế, giữ lại khi phải qua S_MEM/S_MD
 
@@ -231,14 +243,68 @@ module mycore #(
     //   signed(a)*signed(b)   = u - (a31 ? b<<32 : 0) - (b31 ? a<<32 : 0)
     //   signed(a)*unsigned(b) = u - (a31 ? b<<32 : 0)
     wire [63:0] prod_u;
-    generate
-        if (MUL_DSP == 0) begin : g_mul_beh
-            assign prod_u = md_a * md_b;
-        end else begin : g_mul_dsp
-            // cổng B3 thay bằng 4 khối MULT18X18
-            assign prod_u = md_a * md_b;
-        end
-    endgenerate
+    // Phải dùng `ifdef TIỀN XỬ LÝ, không dùng generate: Verilator vẫn phân tích nhánh
+    // generate không được chọn, và MULT18X18 là blackbox không có mô hình mô phỏng
+    // -> lỗi "missing module". F8 đã gặp đúng chuyện này.
+`ifdef MYCORE_MUL_DSP
+            // Bốn phép nhân 16x16 KHÔNG DẤU ghép thành 32x32 -> 64:
+            //   a*b = al*bl + (al*bh + ah*bl)<<16 + ah*bh<<32
+            // Gọi MULT18X18 TRỰC TIẾP ở chế độ không dấu (ASIGN=BSIGN=0), toán hạng
+            // 16 bit mở rộng 0 lên 18 bit. Đây là cách duy nhất ĐÚNG TRÊN KIT theo
+            // kết quả F4: để yosys tự suy luận DSP cho kết quả SAI trên kit dù mô
+            // phỏng vẫn đúng (xem docs/LOG.md mục F4).
+            wire gnd_dsp = 1'b0;
+            wire [35:0] d00, d01, d10, d11;
+
+            MULT18X18 m00 (
+                .A({2'b00, md_a[15:0]}), .B({2'b00, md_b[15:0]}),
+                .SIA({18{gnd_dsp}}), .SIB({18{gnd_dsp}}),
+                .ASIGN(gnd_dsp), .BSIGN(gnd_dsp), .ASEL(gnd_dsp), .BSEL(gnd_dsp),
+                .CE(1'b1), .CLK(clk), .RESET(gnd_dsp), .SOA(), .SOB(), .DOUT(d00)
+            );
+            defparam m00.AREG=1'b0; defparam m00.BREG=1'b0; defparam m00.OUT_REG=1'b0;
+            defparam m00.PIPE_REG=1'b0; defparam m00.ASIGN_REG=1'b0; defparam m00.BSIGN_REG=1'b0;
+            defparam m00.SOA_REG=1'b0; defparam m00.MULT_RESET_MODE="SYNC";
+
+            MULT18X18 m01 (
+                .A({2'b00, md_a[15:0]}), .B({2'b00, md_b[31:16]}),
+                .SIA({18{gnd_dsp}}), .SIB({18{gnd_dsp}}),
+                .ASIGN(gnd_dsp), .BSIGN(gnd_dsp), .ASEL(gnd_dsp), .BSEL(gnd_dsp),
+                .CE(1'b1), .CLK(clk), .RESET(gnd_dsp), .SOA(), .SOB(), .DOUT(d01)
+            );
+            defparam m01.AREG=1'b0; defparam m01.BREG=1'b0; defparam m01.OUT_REG=1'b0;
+            defparam m01.PIPE_REG=1'b0; defparam m01.ASIGN_REG=1'b0; defparam m01.BSIGN_REG=1'b0;
+            defparam m01.SOA_REG=1'b0; defparam m01.MULT_RESET_MODE="SYNC";
+
+            MULT18X18 m10 (
+                .A({2'b00, md_a[31:16]}), .B({2'b00, md_b[15:0]}),
+                .SIA({18{gnd_dsp}}), .SIB({18{gnd_dsp}}),
+                .ASIGN(gnd_dsp), .BSIGN(gnd_dsp), .ASEL(gnd_dsp), .BSEL(gnd_dsp),
+                .CE(1'b1), .CLK(clk), .RESET(gnd_dsp), .SOA(), .SOB(), .DOUT(d10)
+            );
+            defparam m10.AREG=1'b0; defparam m10.BREG=1'b0; defparam m10.OUT_REG=1'b0;
+            defparam m10.PIPE_REG=1'b0; defparam m10.ASIGN_REG=1'b0; defparam m10.BSIGN_REG=1'b0;
+            defparam m10.SOA_REG=1'b0; defparam m10.MULT_RESET_MODE="SYNC";
+
+            MULT18X18 m11 (
+                .A({2'b00, md_a[31:16]}), .B({2'b00, md_b[31:16]}),
+                .SIA({18{gnd_dsp}}), .SIB({18{gnd_dsp}}),
+                .ASIGN(gnd_dsp), .BSIGN(gnd_dsp), .ASEL(gnd_dsp), .BSEL(gnd_dsp),
+                .CE(1'b1), .CLK(clk), .RESET(gnd_dsp), .SOA(), .SOB(), .DOUT(d11)
+            );
+            defparam m11.AREG=1'b0; defparam m11.BREG=1'b0; defparam m11.OUT_REG=1'b0;
+            defparam m11.PIPE_REG=1'b0; defparam m11.ASIGN_REG=1'b0; defparam m11.BSIGN_REG=1'b0;
+            defparam m11.SOA_REG=1'b0; defparam m11.MULT_RESET_MODE="SYNC";
+
+            wire [63:0] t00 = {32'd0, d00[31:0]};
+            wire [63:0] t01 = {16'd0, d01[31:0], 16'd0};
+            wire [63:0] t10 = {16'd0, d10[31:0], 16'd0};
+            wire [63:0] t11 = {d11[31:0], 32'd0};
+            assign prod_u = t00 + t01 + t10 + t11;
+`else
+    // Mô phỏng, và bản tổng hợp nhân bằng logic LUT.
+    assign prod_u = md_a * md_b;
+`endif
 
     wire need_ca = (md_f3 == 3'b001 || md_f3 == 3'b010) && md_a[31];   // mulh, mulhsu
     wire need_cb = (md_f3 == 3'b001)                    && md_b[31];   // mulh
@@ -327,9 +393,16 @@ module mycore #(
 
     assign dbg_pc    = pc;
     assign dbg_instr = instr;
+    assign dbg_state = state;
 
     // ---------------- cổng bộ nhớ (tổ hợp) ----------------
     always @(*) begin
+      if (FAST_ADDR == 0) begin
+        mem_addr  = addr_r;
+        mem_wdata = wdata_r;
+        mem_wstrb = wstrb_r;
+        mem_valid = valid_r && !trap;
+      end else begin
         mem_addr  = pc;
         mem_wdata = 32'd0;
         mem_wstrb = 4'b0000;
@@ -361,8 +434,10 @@ module mycore #(
                     mem_addr  = pc_ret;
                     mem_valid = 1'b1;
                 end
+                default: ;
             endcase
         end
+      end
     end
 
     // ---------------- ghi tệp thanh ghi (tổ hợp) ----------------
@@ -394,6 +469,10 @@ module mycore #(
             cnt_instret <= 64'd0;
             ld_is       <= 1'b0;
             md_cnt      <= 6'd0;
+            addr_r      <= RESET_PC;
+            wstrb_r     <= 4'b0000;
+            wdata_r     <= 32'd0;
+            valid_r     <= 1'b1;
         end else if (!trap) begin
             cnt_cycle <= cnt_cycle + 64'd1;
 
@@ -409,7 +488,15 @@ module mycore #(
                         ld_off <= d_addr[1:0];
                         ld_rd  <= rd;
                         pc_ret <= next_pc;
-                        state  <= S_MEM;
+                        if (FAST_ADDR == 0) begin
+                            addr_r  <= {d_addr[31:2], 2'b00};
+                            wdata_r <= st_data;
+                            wstrb_r <= (opc == OP_STORE) ? st_strb : 4'b0000;
+                            valid_r <= 1'b1;
+                            state   <= S_MEMW;
+                        end else begin
+                            state   <= S_MEM;
+                        end
                     end else if (is_muldiv) begin
                         md_a   <= rv1;
                         md_b   <= rv2;
@@ -441,15 +528,35 @@ module mycore #(
                     end else begin
                         pc          <= next_pc;
                         cnt_instret <= cnt_instret + 64'd1;
-                        state       <= S_EXEC;
+                        if (FAST_ADDR == 0) begin
+                            addr_r  <= next_pc;
+                            wstrb_r <= 4'b0000;
+                            valid_r <= 1'b1;
+                            state   <= S_FETCH;
+                        end else begin
+                            state   <= S_EXEC;
+                        end
                     end
+                end
+
+                // chỉ FAST_ADDR=0: địa chỉ dữ liệu đang ở đầu vào BSRAM
+                S_MEMW: begin
+                    wstrb_r <= 4'b0000;          // ghi chỉ kéo dài một chu kỳ
+                    state   <= S_MEM;
                 end
 
                 S_MEM: begin
                     ld_is       <= 1'b0;
                     pc          <= pc_ret;
                     cnt_instret <= cnt_instret + 64'd1;
-                    state       <= S_EXEC;
+                    if (FAST_ADDR == 0) begin
+                        addr_r  <= pc_ret;
+                        wstrb_r <= 4'b0000;
+                        valid_r <= 1'b1;
+                        state   <= S_FETCH;
+                    end else begin
+                        state   <= S_EXEC;
+                    end
                 end
 
                 S_MD: begin
@@ -463,9 +570,17 @@ module mycore #(
                     end else begin
                         pc          <= pc_ret;
                         cnt_instret <= cnt_instret + 64'd1;
-                        state       <= S_EXEC;
+                        if (FAST_ADDR == 0) begin
+                            addr_r  <= pc_ret;
+                            wstrb_r <= 4'b0000;
+                            valid_r <= 1'b1;
+                            state   <= S_FETCH;
+                        end else begin
+                            state   <= S_EXEC;
+                        end
                     end
                 end
+                default: state <= S_FETCH;
             endcase
         end
     end
