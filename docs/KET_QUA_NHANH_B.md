@@ -98,6 +98,71 @@ tùy biến nào, chạy trên lõi tự viết — vượt bản tối ưu hế
 Với khối lượng công việc này, **vi kiến trúc đáng giá hơn tập lệnh**: 4,54× từ lõi, so với 2,13× từ
 DOT4 (và 1,17× dự báo cho REQ). Đây là câu trả lời định lượng cho RQ3 ở phần vi kiến trúc.
 
+## 4b. B4: DOT4 gắn thẳng vào tầng thực thi — ĐẠT, và trả lời RQ3
+
+Kế hoạch yêu cầu *"lệnh tùy biến gắn thẳng vào tầng thực thi"*, khác hẳn cách nhánh A làm (qua giao
+diện PCPI). Hiện thực: toán hạng đọc từ tệp thanh ghi, 4 phép nhân int8 + cây cộng, kết quả ghi về
+**trong cùng chu kỳ** như một lệnh ALU thường → **1 chu kỳ**. Trên PicoRV32 cùng lệnh đó mất **2 chu
+kỳ** vì phải qua PCPI. Mã hoá giữ y nhánh A (custom-0, `funct3=000`, `funct7=0`) nên **dùng lại đúng
+các file `firmware.hex` của nhánh A**.
+
+Phép nhân int8 để yosys dựng bằng **logic LUT**, không gọi DSP: ở F4 đã chứng minh đường LUT **đúng**
+trên kit còn DSP do yosys tự suy luận thì **sai**; và không gọi `MULT18X18` trực tiếp ở đây để **không
+thêm độ trễ DSP vào đường tới hạn của tầng thực thi** — đường đó đã không được nextpnr ràng buộc
+(mục 6). Đây là đánh đổi có chủ ý: tốn LUT để giữ đường ngắn.
+
+| Biến thể | Nhánh A (kit) | **Nhánh B (kit)** | B nhanh hơn | chu kỳ/MAC | so A-V0 |
+|---|---:|---:|---:|---:|---:|
+| C thẳng + DOT4 | 5.758.001 · 213,3 ms | **1.169.073 · 43,3 ms** | 4,93× | 6,09 | **7,69×** |
+| +tối ưu PM + DOT4 | 2.917.079 · 108,0 ms | **631.153 · 23,4 ms** | 4,62× | 3,29 | **14,24×** |
+| **+bố cục 4 pha** | 2.450.494 · 90,8 ms | **487.888 · 18,1 ms** | **5,02×** | **2,54** | **18,4×** |
+
+Cả ba: `instret` **khớp tuyệt đối** nhánh A, CRC 5 lớp × 10 ảnh khớp golden, **kit = Verilator bằng
+tuyệt đối**, 2/2 lần đọc, đối chứng đường đo ĐẠT trước và sau từng phép đo.
+
+**Biến thể nhanh nhất của cả dự án: 487.888 chu kỳ = 18,1 ms = 2,54 chu kỳ/MAC = 55,3 ảnh/giây** trên
+FPGA 27 MHz, tức **18,4×** so với điểm khởi đầu A-V0.
+
+### Trả lời RQ3
+
+| DOT4 cho | Hệ số |
+|---|---|
+| trên PicoRV32 (qua PCPI, 2 chu kỳ mỗi DOT4) | **2,13×** |
+| **trên lõi tự viết (tầng thực thi, 1 chu kỳ mỗi DOT4)** | **2,31×** |
+
+**Có — và còn tốt hơn một chút.** Lợi ích của lệnh tùy biến **chuyển giao được** sang một vi kiến trúc
+khác hẳn; nó không phải hiện tượng riêng của PicoRV32. Hệ số cao hơn đúng như cơ chế dự đoán: gắn
+thẳng vào tầng thực thi tốn 1 chu kỳ thay vì 2.
+
+Tương tự, **bố cục 4 pha cho conv1** cho **1,29×** trên lõi tự viết so với 1,19× trên PicoRV32 — trên
+lõi nhanh hơn, phần chi phí cố định mà thủ thuật này cắt chiếm tỷ trọng lớn hơn.
+
+### Phân rã toàn bộ 18,4×
+
+| Nguồn | Hệ số | Trả giá phần cứng |
+|---|---|---|
+| Tối ưu phần mềm (A-V0 → A-V1) | 1,45× | **0** |
+| Vi kiến trúc (lõi tự viết thay PicoRV32) | **4,26×** | **−58,8 % LUT4** (ít hơn!) |
+| DOT4 trong tầng thực thi | 2,31× | +1.122 LUT4 |
+| Bố cục 4 pha cho conv1 | 1,29× | **0** (3.584 byte `.bss`) |
+| **Tích** | **18,4×** | +1.122 LUT4 so với PicoRV32 gốc, vẫn **ít hơn 4.669 LUT4** |
+
+Đọc theo thứ tự đóng góp: **vi kiến trúc (4,26×) lớn hơn lệnh tùy biến (2,31×) gần gấp đôi**, và nó
+còn *tiết kiệm* tài nguyên. Đây là kết luận định lượng chính của nhánh B.
+
+### Tài nguyên sau khi thêm DOT4
+
+| | mycore không DOT4 | **mycore + DOT4** | PicoRV32 + PCPI_DOT4 (nhánh A) |
+|---|---:|---:|---:|
+| LUT4 | 3.235 (15,6 %) | **4.357 (21,0 %)** | 8.065 (38,9 %) |
+| MULT18X18 | 4 | 4 | 4 |
+| Fmax nextpnr | 53,05 MHz | 53,65 MHz | 71,89 MHz |
+
+Chi phí DOT4 khác nhau giữa hai nhánh **vì hiện thực khác nhau, không phải vì lõi khác nhau**: nhánh A
+tốn **+124 LUT4** nhờ dùng 4 khối DSP cho phép nhân int8; nhánh B tốn **+1.122 LUT4** vì cố ý dựng
+bằng logic để giữ đường tới hạn ngắn. Dù vậy tổng của nhánh B (4.357) vẫn **ít hơn gần một nửa** so
+với nhánh A (8.065).
+
 ## 5. Tài nguyên FPGA — lõi tự viết NHỎ HƠN
 
 | | PicoRV32 + `soc.v` | **mycore + `soc_b.v`** | chênh |
@@ -158,8 +223,15 @@ Về hiện tượng: UART chết sau khoảng mười mấy phút không dùng 
 | B1 | lõi qua `riscv-tests` | **ĐẠT** 48/48 + `fence_i` |
 | B2 | M1-S trong Verilator, `instret` khớp nhánh A | **ĐẠT** |
 | B3 | M1-S trên kit | **ĐẠT** — 73,3 ms (B-V0), 54,1 ms (B-V1) |
-| B4 | DOT4 **trong tầng thực thi** (B-V2, B-V1+DOT4) | chưa làm — phần còn lại của RQ3 |
+| B4 | DOT4 **trong tầng thực thi** | **ĐẠT** — 18,1 ms; RQ3: 2,31× so với 2,13× trên PicoRV32 |
 | B5 | lệnh REQ (B-V3) | chưa làm |
 | B6 | 100 ảnh đúng từng bit + tổng kết RQ3 | chưa làm |
+
+### Số đo còn thiếu trong CSV
+`m1s_b.csv` hiện có 40 dòng (4 biến thể × 10 ảnh): `bv1dc`, `bv1d`, `bv2`, `bv0r`.
+Thiếu `bv0`, `bv1` (đã đo xong, số đã dùng trong mục 4; **mất dữ liệu thô** vì một lỗi trong
+`branch_b_measure.sh` — biến thể đo đầu tiên ghi CSV mới nên xoá các dòng trước đó; đã sửa để script
+luôn đo đủ cả bảy biến thể trong một lượt) và `bv1r` (chỉ đạt **1/2** lần đọc vì UART chết đúng lúc
+đó → **không ghi nhận**, đã xoá 10 dòng đã lọt vào CSV; tiêu chí của dự án là 2/2).
 
 Vật phẩm: `results/branch_b/` (B0, B1, B3, `m1s_b.csv` 20 dòng) · mã nguồn `rtl/mycore/`.

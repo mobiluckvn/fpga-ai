@@ -1,0 +1,26 @@
+# M1-S check
+Thời điểm: 2026-10-17 19:32:59 +0700  ·  biến thể: A-V1
+Độ chính xác mô hình (10.000 ảnh test): float 98.29% · int8 98.25%  (chênh +0.04 điểm %)
+Golden từ /Users/v/Documents/NCS/tinyml-riscv-tn20k/fw/weights.h: 10 ảnh thử, nhãn [7, 2, 1, 0, 4, 1, 4, 9, 5, 9], dự đoán golden [7, 2, 1, 0, 4, 1, 4, 9, 5, 9]
+Verilator: biến thể A-V1, tổng/ảnh [2712980, 2713284, 2712604, 2713408, 2713190, 2712660, 2713280, 2712998, 2713306, 2713324]
+== Lần đọc 1/2 ==
+    (xả 1625 byte tồn)
+    ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
+== Lần đọc 2/2 ==
+    /dev/cu.usbserial-20250303171: chưa đủ dữ liệu (0 dòng thô)
+
+## Số đo trên kit (27 MHz)
+    10 ảnh · tổng chu kỳ/ảnh: min 2,712,604 · trung vị 2,713,280 · max 2,713,408
+    trung vị = 100.5 ms @27 MHz · 14.13 chu kỳ/MAC trên 192,064 MAC
+    dự đoán đúng nhãn: 10/10 · khớp golden: 10/10 · CRC khớp hết 5 lớp: 10/10
+
+    | lớp | chu kỳ (trung vị) | % tổng | MAC | chu kỳ/MAC |
+    |---|---:|---:|---:|---:|
+    | conv1 | 680,330 | 25.1 % | 48672 | 13.98 |
+    | pool1 | 84,986 | 3.1 % | — | — |
+    | conv2 | 1,867,574 | 68.8 % | 139392 | 13.40 |
+    | pool2 | 25,044 | 0.9 % | — | — |
+    | dense | 55,304 | 2.0 % | 4000 | 13.83 |
+Đã ghi ../../results/branch_b/m1s_b.csv
+
+M1S_FAIL bien_the=A-V1: 1/2 lần đọc đạt

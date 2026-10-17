@@ -38,7 +38,7 @@ module mycore #(
     // FAST_ADDR=0: ghi thanh ghi địa chỉ -> mọi đường đều thanh ghi->thanh ghi, chạy
     //   được trên kit, trả giá 1 chu kỳ thêm cho MỖI truy cập bộ nhớ (kể cả nạp lệnh).
     parameter        FAST_ADDR   = 1,
-    parameter        WITH_DOT4   = 0        // hiện thực ở cổng B4
+    parameter        WITH_DOT4   = 0
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -142,6 +142,29 @@ module mycore #(
             3'b111: alu_r = rv1 & alu_b;
         endcase
     end
+
+    // ---------------- lệnh tùy biến DOT4 (cổng B4) ----------------
+    // Gắn THẲNG vào tầng thực thi, không qua PCPI: toán hạng đọc từ tệp thanh ghi,
+    // kết quả ghi về trong CÙNG chu kỳ như một lệnh ALU thường -> **1 chu kỳ**.
+    // Trên PicoRV32 cùng lệnh này mất 2 chu kỳ vì phải đi qua giao diện PCPI.
+    //
+    // Mã hoá giống nhánh A (rtl/ext/pcpi_dot4.v) để **dùng được đúng firmware đó**:
+    //   custom-0 (opcode 0001011), funct3 = 000, funct7 = 0000000
+    //   rd = sum_{i=0..3} (int8)rs1[i] * (int8)rs2[i]
+    //
+    // Phép nhân int8 để yosys dựng bằng LOGIC LUT, không gọi DSP: ở F4 đã chứng minh
+    // đường LUT ĐÚNG trên kit, còn DSP do yosys tự suy luận thì SAI. Không gọi
+    // MULT18X18 trực tiếp ở đây vì nó sẽ thêm độ trễ DSP vào đường tới hạn của tầng
+    // thực thi — đường đó đã không được nextpnr ràng buộc (xem docs/KET_QUA_NHANH_B.md).
+    wire signed [15:0] dp0 = $signed(rv1[7:0])   * $signed(rv2[7:0]);
+    wire signed [15:0] dp1 = $signed(rv1[15:8])  * $signed(rv2[15:8]);
+    wire signed [15:0] dp2 = $signed(rv1[23:16]) * $signed(rv2[23:16]);
+    wire signed [15:0] dp3 = $signed(rv1[31:24]) * $signed(rv2[31:24]);
+    wire signed [17:0] dot = dp0 + dp1 + dp2 + dp3;
+    wire [31:0] dot4_val = {{14{dot[17]}}, dot};
+
+    wire is_dot4 = (WITH_DOT4 != 0) && (opc == OP_CUSTOM)
+                && (f3 == 3'b000) && (f7 == 7'b0000000);
 
     // ---------------- rẽ nhánh ----------------
     reg br_take;
@@ -354,7 +377,7 @@ module mycore #(
                                    (f7 == 7'b0000001 && (WITH_MULDIV != 0)));
             OP_MISC:   illegal = 1'b0;                       // fence, fence.i = nop
             OP_SYSTEM: illegal = is_csr ? !csr_ok : 1'b0;
-            OP_CUSTOM: illegal = (WITH_DOT4 == 0);
+            OP_CUSTOM: illegal = !is_dot4;
             default:   illegal = 1'b1;
         endcase
     end
@@ -383,6 +406,7 @@ module mycore #(
             OP_OPIMM:       begin wb_en = 1'b1; wb_val = alu_r; end
             OP_OP:          begin wb_en = 1'b1; wb_val = alu_r; end
             OP_SYSTEM:      begin wb_en = is_csr; wb_val = csr_val; end
+            OP_CUSTOM:      begin wb_en = is_dot4; wb_val = dot4_val; end
             default:        begin wb_en = 1'b0; end
         endcase
     end

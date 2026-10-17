@@ -2,6 +2,49 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — NHÁNH B cổng B4 ĐẠT: DOT4 trong tầng thực thi — 18,1 ms, và RQ3 có câu trả lời
+
+Gắn DOT4 **thẳng vào tầng thực thi** của lõi tự viết (không qua PCPI): toán hạng từ tệp thanh ghi,
+4 phép nhân int8 + cây cộng, ghi về trong **cùng chu kỳ** như lệnh ALU → **1 chu kỳ**, so với **2 chu
+kỳ** qua PCPI trên PicoRV32. Mã hoá giữ y nhánh A nên **dùng lại đúng firmware.hex của nhánh A**.
+
+Phép nhân int8 cố ý dựng bằng **logic LUT** chứ không gọi `MULT18X18`: F4 đã chứng minh đường LUT đúng
+trên kit còn DSP suy luận thì sai, và gọi DSP ở đây sẽ thêm độ trễ vào đường tới hạn của tầng thực thi
+— đường mà nextpnr **không ràng buộc**. Trả giá +1.122 LUT4 để giữ đường ngắn.
+
+| Biến thể | A (kit) | **B (kit)** | B nhanh hơn | chu kỳ/MAC | so A-V0 |
+|---|---:|---:|---:|---:|---:|
+| C thẳng + DOT4 | 213,3 ms | **43,3 ms** | 4,93× | 6,09 | 7,69× |
+| +tối ưu PM + DOT4 | 108,0 ms | **23,4 ms** | 4,62× | 3,29 | 14,24× |
+| **+bố cục 4 pha** | 90,8 ms | **18,1 ms** | **5,02×** | **2,54** | **18,4×** |
+
+`instret` khớp tuyệt đối nhánh A ở cả ba; CRC 5 lớp × 10 ảnh khớp golden; kit = Verilator bằng tuyệt
+đối; 2/2 lần đọc; đối chứng đường đo ĐẠT trước và sau từng phép đo.
+
+### RQ3 — trả lời được
+| DOT4 cho | Hệ số |
+|---|---|
+| PicoRV32 (PCPI, 2 chu kỳ) | **2,13×** |
+| lõi tự viết (tầng thực thi, 1 chu kỳ) | **2,31×** |
+
+**Có, và tốt hơn một chút.** Lợi ích của lệnh tùy biến chuyển giao được sang vi kiến trúc khác hẳn.
+Bố cục 4 pha cũng vậy: 1,29× trên lõi tự viết so với 1,19× trên PicoRV32.
+
+### Phân rã 18,4×, kèm giá phần cứng
+1,45× phần mềm (**miễn phí**) × 4,26× vi kiến trúc (**tiết kiệm 58,8 % LUT4**) × 2,31× DOT4
+(+1.122 LUT4) × 1,29× bố cục (**miễn phí**). → **Vi kiến trúc đóng góp gần gấp đôi lệnh tùy biến,
+và còn rẻ hơn.** Đây là kết luận định lượng chính của nhánh B.
+
+### Hai lỗi của chính tôi trong buổi này
+1. `branch_b_measure.sh`: biến thể đo **đầu tiên** ghi CSV không `--append` nên **xoá** các dòng đã đo
+   trước đó → mất dữ liệu thô của `bv0`/`bv1` (số liệu vẫn còn trong `check.log`, nhưng không còn dòng
+   từng ảnh). Đã sửa: script luôn đo **đủ cả bảy** biến thể trong một lượt.
+2. `bv1r` bị ghi vào CSV dù chỉ đạt **1/2** lần đọc (UART chết đúng lúc đọc lần hai). Đã xoá 10 dòng
+   đó — tiêu chí dự án là 2/2, không thoả thì không ghi nhận.
+
+Script đã làm đúng việc của nó: in `[đối chứng KHÔNG ĐẠT sau bv1r — đường UART chết, số đo sau mốc
+này VÔ GIÁ TRỊ]` rồi tự dừng. Đúng như thiết kế sau bài học B3.
+
 ## 2026-10-17 — NHÁNH B cổng B3 ĐẠT: lõi tự viết chạy trên kit, 73,3 ms
 
 Sau khi người dùng cắm lại cáp USB, đo lại trong **một lượt liên tục** với đối chứng trước/sau mỗi

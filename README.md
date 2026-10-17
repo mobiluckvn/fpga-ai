@@ -62,7 +62,10 @@ khớp golden Python từng bit**, 0 lần phải gửi lại trên 7,85 MB truy
 | A-V3 | + lệnh REQ | | | | chưa làm — đã định lượng ~1,17× |
 | **B-V0** | **lõi tự viết, C thẳng** | **1.978.697** | **73,3 ms** | **10,30** | **4,54×** |
 | **B-V1** | **lõi tự viết + tối ưu phần mềm** | **1.459.993** | **54,1 ms** | **7,60** | **6,16×** |
-| B-V2/B-V3 | lõi tự viết + DOT4/REQ | | | | chưa làm |
+| B-V2 | lõi tự viết + DOT4, C thẳng | **1.169.073** | **43,3 ms** | **6,09** | **7,69×** |
+| B-V1+DOT4 | lõi tự viết + tối ưu PM + DOT4 | **631.153** | **23,4 ms** | **3,29** | **14,24×** |
+| **B-V1+DOT4+C1** | **+ bố cục 4 pha** | **487.888** | **18,1 ms** | **2,54** | **18,4×** |
+| B-V3 | lõi tự viết + REQ | | | | chưa làm |
 
 **Kết quả nhánh B**: lõi RISC-V tự viết (`rtl/mycore/`, 2 tầng, bộ nhớ 1 chu kỳ, không hình phạt rẽ
 nhánh) qua **48/48** bài `riscv-tests` RV32IM **cộng `fence_i`** mà PicoRV32 trượt. Chạy **đúng các
@@ -71,6 +74,13 @@ file firmware.hex của nhánh A** nên `rdinstret` **khớp tuyệt đối** �
 nào, vượt bản tối ưu hết mức *có* lệnh tùy biến trên PicoRV32. Lõi tự viết còn **nhỏ hơn 58,8 % LUT4**
 (3.272 so với 7.941). Với khối lượng này, **vi kiến trúc đáng giá hơn tập lệnh**: 4,54× từ lõi so với
 2,13× từ DOT4. Chi tiết: **[docs/KET_QUA_NHANH_B.md](docs/KET_QUA_NHANH_B.md)**.
+
+**Trả lời RQ3** (*cùng lệnh đó gắn vào lõi tự viết có cho cải thiện tương đương?*): **có, và tốt hơn
+một chút** — DOT4 cho **2,31×** trên lõi tự viết (gắn thẳng vào tầng thực thi, 1 chu kỳ) so với
+**2,13×** trên PicoRV32 (qua PCPI, 2 chu kỳ). Nhanh nhất của cả dự án: **487.888 chu kỳ = 18,1 ms =
+2,54 chu kỳ/MAC = 55,3 ảnh/giây**, tức **18,4×** so với A-V0. Phân rã: 1,45× (phần mềm, miễn phí)
+× 4,26× (vi kiến trúc, **còn tiết kiệm 58,8 % LUT4**) × 2,31× (DOT4, +1.122 LUT4) × 1,29× (bố cục,
+miễn phí). **Vi kiến trúc đóng góp gần gấp đôi lệnh tùy biến.**
 
 **Kết quả quan trọng nhất**: lệnh tùy biến cho lợi ích **LỚN HƠN** khi phần mềm đã tối ưu —
 DOT4 cho **1,56×** trên C thẳng nhưng **2,13×** trên C đã tối ưu (gấp 1,37 lần). Hai tối ưu
