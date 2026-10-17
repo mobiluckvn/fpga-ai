@@ -1,0 +1,28 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Build artifacts
+build/
+obj_dir/
+*.fs
+*.json.gz
+*.o
+*.elf
+*.bin
+*.vvp
+*.vcd
+*.fst
+
+# nextpnr / yosys intermediates
+*_pnr.json
+top.json
+pnr.json
+
+# macOS
+.DS_Store
+
+# Tarballs công cụ (cài ở ~/tools, không nằm trong repo)
+*.tgz
+*.tar.gz

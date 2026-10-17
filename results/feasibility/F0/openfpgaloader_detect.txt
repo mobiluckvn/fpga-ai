@@ -1,0 +1,15 @@
+### Sat Oct 17 09:06:33 +07 2026
+--- $ openFPGALoader --detect -b tangnano20k ---
+Jtag frequency : requested 6.00MHz    -> real 6.00MHz   
+index 0:
+	idcode 0x81b
+	manufacturer Gowin
+	family GW2A
+	model  GW2A(R)-18(C)
+	irlength 8
+exit=0
+
+--- $ openFPGALoader --scan-usb ---
+Bus device vid:pid       probe_type manufacturer serial     product
+020 003    0x0403:0x6010 FTDI2232   SIPEED       2025030317 USB Debugger
+exit=0

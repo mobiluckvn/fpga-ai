@@ -1,0 +1,177 @@
+--- nextpnr-himbaechel available uarches ---
+unrecognised option '--uarch'
+
+--- gowin device list (sample GW2AR-18) ---
+unrecognised option '--uarch'
+
+--- apycula version ---
+?
+
+--- yosys help synth_gowin ---
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.70+145 (git sha1 a31d95ea0, Release, Clang /usr/local/osxcross/target/bin/x86_64-apple-darwin25.5-clang++ 21.1.8)
+
+-- Running command `help synth_gowin' --
+
+    synth_gowin [options]
+
+This command runs synthesis for Gowin FPGAs. This work is experimental.
+
+    -top <module>
+        use the specified module as top module (default='top')
+
+    -vout <file>
+        write the design to the specified Verilog netlist file. writing of an
+        output file is omitted if this parameter is not specified.
+
+    -json <file>
+        write the design to the specified JSON netlist file. writing of an
+        output file is omitted if this parameter is not specified.
+        This disables features not yet supported by nexpnr-gowin.
+
+    -run <from_label>:<to_label>
+        only run the commands between the labels (see below). an empty
+        from label is synonymous to 'begin', and empty to label is
+        synonymous to the end of the command list.
+
+    -nodffe
+        do not use flipflops with CE in output netlist
+
+    -strict-gw5a-dffs
+        use only DFFSE/DFFRE/DFFPE/DFFCE flipflops for the GW5A family
+
+    -nobram
+        do not use BRAM cells in output netlist
+
+    -nolutram
+        do not use distributed RAM cells in output netlist
+
+    -noflatten
+        do not flatten design before synthesis
+--- nextpnr-himbaechel --help ---
+"nextpnr-himbaechel" -- Next Generation Place and Route (Version nextpnr-0.11.1-63-g44a6c739)
+
+General options:
+  -h [ --help ]                         show help
+  -v [ --verbose ]                      verbose output
+  -q [ --quiet ]                        quiet mode, only errors and warnings 
+                                        displayed
+  --Werror                              Turn warnings into errors
+  -l [ --log ] arg                      log file, all log messages are written 
+                                        to this file regardless of -q
+  --debug                               debug output
+  --debug-placer                        debug output from placer only
+  --debug-router                        debug output from router only
+  --threads arg                         number of threads for passes where this
+                                        is configurable
+  -f [ --force ]                        keep running after errors
+  --gui                                 start gui
+  --gui-no-aa                           disable anti aliasing (use together 
+                                        with --gui option)
+  --run arg                             python file to execute instead of 
+                                        default flow
+  --pre-pack arg                        python file to run before packing
+  --pre-place arg                       python file to run before placement
+  --pre-route arg                       python file to run before routing
+  --post-route arg                      python file to run after routing
+  --on-failure arg                      python file to run in event of crash 
+                                        for design introspection
+  --json arg                            JSON design file to ingest
+  --write arg                           JSON design file to write
+  --top arg                             name of top module
+  --seed arg                            seed value for random number generator
+  -r [ --randomize-seed ]               randomize seed value for random number 
+                                        generator
+  --placer arg                          placer algorithm to use; available: sa,
+                                        heap, static; default: heap
+  --router arg                          router algorithm to use; available: 
+                                        default, router1, router2; default: 
+                                        default
+  --cstrweight arg                      placer weighting for relative 
+                                        constraint satisfaction
+  --starttemp arg                       placer SA start temperature
+  --pack-only                           pack design only without placement or 
+                                        routing
+  --no-route                            process design without routing
+  --no-place                            process design without placement
+  --no-pack                             process design without packing
+  --ignore-loops                        ignore combinational loops in timing 
+                                        analysis
+  --ignore-rel-clk                      ignore clock-to-clock relations in 
+                                        timing checks
+  -V [ --version ]                      show version
+  --test                                check architecture database integrity
+  --freq arg                            set target frequency for design in MHz
+  --timing-allow-fail                   allow timing to fail in design
+  --no-tmdriv                           disable timing-driven placement
+  --sdc arg                             Generic timing constraints SDC file to 
+                                        load
+  --sdf arg                             SDF delay back-annotation file to write
+  --sdf-cvc                             enable tweaks for SDF file 
+                                        compatibility with the CVC simulator
+--- himbaechel-specific options ---
+                                        compatibility with the CVC simulator
+  --no-print-critical-path-source       disable printing of the line numbers 
+                                        associated with each net in the 
+                                        critical path
+  --placer-heap-alpha arg               placer heap alpha value (float, 
+                                        default: 0.1)
+  --placer-heap-beta arg                placer heap maximum placement density 
+                                        (float, default: 0.9)
+  --placer-heap-critexp arg             placer heap criticality exponent (int, 
+                                        default: 2)
+  --placer-heap-timingweight arg        placer heap timing weight (int, 
+                                        default: 10)
+  --placer-heap-cell-placement-timeout arg
+                                        allow placer to attempt up to 
+                                        max(10000, total cells^2 / N) 
+                                        iterations to place a cell (int N, 
+                                        default: 8, 0 for no timeout)
+  --placer-heap-no-ctrl-set             disable control set awareness in placer
+                                        heap
+  --static-dump-density                 write density csv files during 
+                                        placer-static flow
+  --parallel-refine                     use new experimental parallelised 
+                                        engine for placement refinement
+  --router2-heatmap arg                 prefix for router2 resource congestion 
+                                        heatmaps
+  --tmg-ripup                           enable experimental timing-driven ripup
+                                        in router
+  --router2-tmg-ripup                   enable experimental timing-driven ripup
+                                        in router (deprecated; use --tmg-ripup 
+                                        instead)
+  --router2-alt-weights                 use alternate router2 weights
+  --report arg                          write timing and utilization report in 
+                                        JSON format to file
+  --detailed-timing-report              Append detailed net timing data to the 
+                                        JSON report
+  --placed-svg arg                      write render of placement to SVG file
+  --routed-svg arg                      write render of routing to SVG file
+
+Architecture specific options:
+  --device arg                          name of device to use
+  --chipdb arg                          override path to chip database file
+  --list-uarch                          list included uarches
+  -o [ --vopt ] arg                     options to pass to the himbächel uarch
+                                        (use help as argument to get more info)
+
+--- nextpnr-himbaechel --list-uarch ---
+Info: Supported uarches: gatemate, gowin
+
+--- gowin uarch vopt help ---
+Info: Using uarch 'gowin' for device 'GW2AR-LV18QN88C8/I7'
+Allowed --vopt options:
+  --vopt family=<arg>              GOWIN chip family
+  --vopt cst=<arg>                 name of constraints file
+  --vopt ireg_in_iob               place input registers in IOB
+  --vopt oreg_in_iob               place output registers in IOB
+  --vopt ioreg_in_iob              place I/O registers in IOB
+  --vopt disable_gp_clock_routing  disable clock network routing from GP pins
+  --vopt sspi_as_gpio              use SSPI pins as GPIO
+  --vopt i2c_as_gpio               use I2C pins as GPIO
+  --vopt help                      show help

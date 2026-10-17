@@ -1,0 +1,29 @@
+### Sat Oct 17 09:06:43 +07 2026
+--- ls /dev/cu.usbserial* ---
+crw-rw-rw-  1 root  wheel  0x900000b Oct 17 09:00 /dev/cu.usbserial-20250303170
+crw-rw-rw-  1 root  wheel  0x9000009 Oct 17 09:00 /dev/cu.usbserial-20250303171
+
+--- pyserial list_ports ---
+6 ports found
+/dev/cu.BLTH        
+    desc: n/a
+    hwid: n/a
+/dev/cu.Bluetooth-Incoming-Port
+    desc: n/a
+    hwid: n/a
+/dev/cu.HC-05       
+    desc: n/a
+    hwid: n/a
+/dev/cu.JBLTune520BT
+    desc: n/a
+    hwid: n/a
+/dev/cu.usbserial-20250303170
+    desc: USB Debugger
+    hwid: USB VID:PID=0403:6010 SER=2025030317 LOCATION=20-3.4.1
+/dev/cu.usbserial-20250303171
+    desc: USB Debugger
+    hwid: USB VID:PID=0403:6010 SER=2025030317 LOCATION=20-3.4.1
+
+--- thử mở từng cổng @115200, 1.5s (chưa nạp bitstream nên không kỳ vọng dữ liệu) ---
+/dev/cu.usbserial-20250303170: MỞ ĐƯỢC, 0 byte sẵn có, mẫu=b''
+/dev/cu.usbserial-20250303171: MỞ ĐƯỢC, 0 byte sẵn có, mẫu=b''

@@ -1,0 +1,28 @@
+### OSS CAD Suite VERSION: 20261016
+### Date: Sat Oct 17 09:04:24 +07 2026
+--- $ yosys -V ---
+Yosys 0.70+145 (git sha1 a31d95ea0, Release, Clang /usr/local/osxcross/target/bin/x86_64-apple-darwin25.5-clang++ 21.1.8)
+--- $ nextpnr-himbaechel --version ---
+"nextpnr-himbaechel" -- Next Generation Place and Route (Version nextpnr-0.11.1-63-g44a6c739)
+--- $ openFPGALoader -V ---
+openFPGALoader v1.1.1
+--- $ verilator --version ---
+Verilator 5.053 devel rev v5.052-448-g1272f7355 (mod)
+--- $ iverilog -V ---
+Icarus Verilog version 14.0 (devel) (s20260301-583-g5d7612759-dirty)
+
+Copyright (c) 2000-2026 Stephen Williams (steve@icarus.com)
+
+--- $ gowin_pack -h ---
+usage: gowin_pack [-h] [-d DEVICE] [-o OUTPUT] [-c] [-s CST] [--jtag_as_gpio]
+                  [--sspi_as_gpio] [--mspi_as_gpio] [--ready_as_gpio]
+                  [--done_as_gpio] [--reconfign_as_gpio] [--cpu_as_gpio]
+                  [--i2c_as_gpio] [--multiboot_address MULTIBOOT_ADDRESS]
+                  netlist
+
+Pack Gowin bitstream
+
+positional arguments:
+  netlist
+
+options:
