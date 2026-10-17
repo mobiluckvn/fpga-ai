@@ -1,0 +1,14 @@
+# F7 gen_f7_data
+file            : build/f7_data_check.h (45869 byte)
+seed            : 0x5EEDF007
+Bài A           : 100 cặp x 1024 = 102,400 MAC, pool 8192 byte
+  dot[0], dot[1]: -27724, -28782
+  dot min/max   : -434947 / 403186
+  CRC32_A       : 64F298C2
+Bài B           : Conv 3x3 1->8 kênh, 28x28 -> 26x26x8 = 48,672 MAC
+  acc max (ReLU): 31227
+  M0, shift     : 1936565777, 8
+  out min/max   : 0 / 110
+  CRC32_B       : 661C5304
+Dữ liệu tĩnh    : pool 8192 + ảnh 784 + w 72 + bias 32 + off 400 = 9,480 byte
+Đệm đầu ra (.bss): 5,408 byte

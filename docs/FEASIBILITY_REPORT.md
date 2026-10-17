@@ -3,7 +3,7 @@
 **Ngày thực hiện**: 2026-10-17 · **Người thực hiện**: Vũ Trí Công (học viên cao học PTIT)
 **Máy**: Mac Intel — x86_64, macOS 26.6.2 (build 25G83)
 **Kit**: Sipeed Tang Nano 20K, FPGA GW2AR-LV18QN88C8/I7 (họ GW2A-18C), thạch anh 27 MHz
-**Phạm vi**: các cổng F0 → F6 của `docs/FEASIBILITY_PLAN.md`. F7 và F8 **chưa làm**.
+**Phạm vi**: các cổng F0 → F7 của `docs/FEASIBILITY_PLAN.md`. F8 **chưa làm**.
 
 **Bản chia sẻ/xuất PDF**: https://claude.ai/code/artifact/bb8b43e4-8aaf-4a75-94c3-ea4ab6ea5834
 (bản rút gọn của tài liệu này; file trong repo là bản gốc đầy đủ).
@@ -25,7 +25,7 @@ SHA256 của từng file để truy nguyên. Nhật ký chi tiết từng cổng
 | F4 | Khối nhân DSP suy luận đúng | **ĐẠT có dự phòng** | **có** — phải gọi primitive `MULT18X18` trực tiếp |
 | F5 | SoC PicoRV32 chạy firmware C; mô phỏng = kit | **ĐẠT** | `synth_gowin -nodsp` |
 | F6 | Phép đo chu kỳ tất định, ba nguồn khớp | **ĐẠT** (4/5 điều kiện kiểm được; xem mục 7) | không |
-| F7 | Kernel int8 thật chạy đúng từng bit | *chưa làm* | — |
+| F7 | Kernel int8 thật chạy đúng từng bit | **ĐẠT** | không |
 | F8 | Lệnh tùy biến DOT4 qua PCPI | *chưa làm* | — |
 
 ### Số đo chính từng cổng
@@ -225,17 +225,23 @@ Ba điều kiện kèm theo, tất cả đã có cách xử lý đã kiểm ch�
 
 ### Việc còn lại của giai đoạn khả thi
 
-- **F7** — kernel int8 thật, đúng từng bit, đo được chu kỳ/MAC.
-- **F8** — lệnh tùy biến DOT4 qua PCPI, đo tăng tốc thật.
+- **F8** — lệnh tùy biến DOT4 qua PCPI, đo tăng tốc thật. Chưa làm.
 
-Hai cổng này chưa làm. Bảng dưới để trống chờ số đo thật — **không điền ước tính**.
+F7 đã xong (xem mục số đo bên dưới). Dòng DOT4 trong bảng để trống chờ số đo thật của F8.
 
-| Bài | Biến thể | Chu kỳ | hw_count | instret | CPI | CRC khớp |
-|---|---|---|---|---|---|---|
-| A dot 1024 ×100 | C thẳng | | | | | |
-| A dot 1024 ×100 | DOT4 | | | | | |
-| B conv1 28×28×8 | C thẳng | | | | | |
+| Bài | Biến thể | MAC | Chu kỳ | hw_count | instret | CPI | chu kỳ/MAC | CRC khớp Python |
+|---|---|---:|---:|---:|---:|---:|---:|---|
+| A dot 1024 ×100 | C thẳng (A-V0) | 102.400 | 4.921.446 | 4.921.485 | 717.812 | 6,86 | **48,06** | **có** (`64F298C2`) |
+| A dot 1024 ×100 | DOT4 | | | | | | | *F8 chưa làm* |
+| B conv1 28×28×8 | C thẳng (A-V0) | 48.672 | 3.533.204 | 3.533.252 | 570.232 | 6,20 | **72,59** | **có** (`661C5304`) |
 
-Ước tính thô thời gian suy luận M1-S (192.064 MAC): **chưa có cơ sở để ước tính** — cần số chu kỳ/MAC
-thật từ F7. Mô hình duy nhất đã kiểm được tới giờ là `mcycle = 14·N + 1` cho vòng lặp 2 lệnh, không
-dùng để suy ra chu kỳ/MAC được.
+Số liệu gốc: `results/feasibility/F7/kernel.csv`. Chu kỳ kit = Verilator **bằng tuyệt đối** ở cả ba cột
+(cycles, hw_count, instret), lặp lại 3/3 lần đọc độc lập.
+
+**Ước tính THÔ thời gian suy luận M1-S** (192.064 MAC), ngoại suy từ chu kỳ/MAC của bài B (72,59):
+**≈ 13,94 triệu chu kỳ ≈ 516 ms @27 MHz**.
+
+Đây là **ước tính, không phải số đo**. Ba lý do nó có thể lệch: (a) M1-S còn MaxPool và Dense với chi phí
+trên mỗi MAC khác conv; (b) conv2 có 16 kênh vào nên tỉ lệ nạp lại trọng số/activation khác conv1;
+(c) chu kỳ/MAC của conv1 đo được đã bao gồm chi phí requantize cho 5.408 điểm đầu ra, phần này không
+tỉ lệ với số MAC. Con số thật chỉ có khi chạy cả mô hình ở giai đoạn thí nghiệm chính.

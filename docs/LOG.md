@@ -2,6 +2,66 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — Cổng F7 (kernel int8 thật, đúng từng bit) — ĐẠT
+
+Cả ba tiêu chí đều đạt: **CRC trên kit = Python** cho cả hai bài, **chu kỳ kit = Verilator bằng
+tuyệt đối** (cả `cycles`, `hw_count`, `instret`), và **có số chu kỳ/MAC**. Lặp lại 3/3 lần đọc độc lập.
+
+### Ràng buộc phải giải trước khi viết code
+Kế hoạch ghi "100 cặp vector int8 dài 1.024". Lưu rời cần 100 × 2 × 1024 = **204.800 byte**, vượt RAM
+64 KB tới 139.264 byte. **Sai lệch có chủ ý**: lưu một **pool 8.192 byte** int8 và lấy 100 cặp **cửa sổ**
+khác offset trong pool (`off_a = (i·71) mod span`, `off_b = (i·131 + 3000) mod span`). Vẫn là 100 phép
+tích vô hướng dài 1.024 trên dữ liệu khác nhau, nhưng chỉ tốn 8 KB. Chính bước 5 của F7 ("kiểm tra dung
+lượng") là lý do buộc phải làm vậy.
+
+### Dữ liệu và golden
+- `scripts/gen_f7_data.py` (numpy, seed `0x5EEDF007`) sinh `f7_data.h` và in CRC32 kỳ vọng.
+- Bài A: 100 × 1.024 = **102.400 MAC**; dot nhỏ/lớn = −434.947 / 403.186; **CRC32 = 64F298C2**.
+- Bài B: Conv 3×3, 1→8 kênh, ảnh 28×28 int8, ra 26×26×8 (không đệm biên) = **48.672 MAC** — đúng con số
+  của kế hoạch và đúng lớp conv1 của M1-S. Bias int32, **ReLU trên int32**, rồi requantize
+  `(M0 int32, shift)` kiểu gemmlowp. `acc` lớn nhất sau ReLU = 31.227 → chọn `M0 = 1936565777`,
+  `shift = 8` để đầu ra rơi vào **0..110** (không bão hoà, không dồn về 0). **CRC32 = 661C5304**.
+- Hai hàm requantize `sat_rdhmul` (SaturatingRoundingDoublingHighMul) và `rdiv_pot`
+  (RoundingDivideByPOT) được cài **y hệt** ở Python và C, nên khớp từng bit. Bản C dùng
+  `(int64_t)a*(int64_t)b` → lệnh `mulh` của rv32im; CRC khớp cũng đồng thời chứng minh `mulh` đúng
+  trên kit (bổ sung cho khoá `arith` của F5 chỉ kiểm `mul`/`div`/`rem`).
+- CRC32 trong firmware tính **ngoài cửa sổ đo**, không tính vào số chu kỳ của kernel.
+
+### Số đo (kit = Verilator bằng tuyệt đối, 3/3 lần)
+| Bài | MAC | chu kỳ | hw_count | instret | CPI | chu kỳ/MAC | thời gian @27 MHz |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| A — dot int8 1024 ×100 | 102.400 | 4.921.446 | 4.921.485 | 717.812 | 6,86 | **48,06** | 182,3 ms |
+| B — conv1 3×3 1→8 kênh | 48.672 | 3.533.204 | 3.533.252 | 570.232 | 6,20 | **72,59** | 130,9 ms |
+
+CSV: `results/feasibility/F7/kernel.csv`.
+
+**Dung lượng**: `.text` 11.296 + `.bss` 5.808 = **17.104 / 65.536 byte (26,1 %)**. Trong `.text` có
+9.480 byte dữ liệu tĩnh (pool 8.192 + ảnh 784 + w 72 + bias 32 + offset 400). Còn dư 48 KB.
+
+**Tài nguyên FPGA**: y hệt F5/F6 (RTL không đổi): BSRAM 32/46, LUT4 7.950, Fmax 70,05 MHz.
+
+### Ước tính THÔ cho M1-S — ghi rõ là ước tính
+Ngoại suy từ chu kỳ/MAC của bài B (72,59) cho 192.064 MAC: **≈ 13,94 triệu chu kỳ ≈ 516 ms @27 MHz**.
+Ba lý do nó có thể lệch, đã ghi vào báo cáo: (a) MaxPool và Dense có chi phí/MAC khác conv; (b) conv2
+có 16 kênh vào nên tỉ lệ nạp lại trọng số khác conv1; (c) chu kỳ/MAC của conv1 đã gồm chi phí
+requantize cho 5.408 điểm đầu ra, phần này không tỉ lệ với số MAC.
+
+### Hai nhận xét đáng ghi cho các bước sau
+1. **Conv đắt hơn dot 1,51 lần trên mỗi MAC** (72,59 so với 48,06) dù cùng là nhân-cộng int8. Chênh này
+   đến từ chỉ số 2 chiều, nạp lại trọng số cho từng vị trí, và requantize. **Đó chính là khoảng trống
+   DOT4 ở F8 nhắm vào** — và cũng là lời cảnh báo rằng DOT4 chỉ cắt được phần nhân-cộng, không cắt
+   phần chỉ số.
+2. **Chênh `hw_count − cycles` ở F7 là 39 (bài A) và 48 (bài B)**, không phải 24 như F6. Không mâu thuẫn:
+   F6 chứng minh chênh đó là hằng số **theo độ dài đoạn đo**; giá trị hằng số phụ thuộc chuỗi lệnh giữa
+   lúc ghi `HWC_CTRL` và lúc đọc `HWC_VALUE`, mà hai bài có đoạn mã bao quanh khác nhau.
+   **Kết luận thực dụng: hiệu chuẩn chênh này cho từng điểm đo, không dùng một hằng số chung.**
+
+### Việc tiếp theo
+- **F8** — lệnh tùy biến DOT4 qua PCPI. Theo F4, khối nhân phải **gọi trực tiếp `MULT18X18`** (cách PRM);
+  cần giữ cả đường LUT để mô phỏng đối chiếu vì `MULT18X18` là blackbox không có mô hình mô phỏng.
+  Bài A của F7 sẽ được viết lại với `dot4()` để so trực tiếp với 4.921.446 chu kỳ hiện tại.
+- Không cần người dùng làm gì ở F8.
+
 ## 2026-10-17 — Cổng F6 (độ tin cậy của phép đo) — ĐANG LÀM, 4/5 bước xong
 
 **Chưa đánh ĐẠT**: bước 4 (đo lại qua 3 lần tắt/bật nguồn kit) cần người dùng rút/cắm cáp USB,
