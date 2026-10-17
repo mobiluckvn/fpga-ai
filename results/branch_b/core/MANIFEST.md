@@ -1,7 +1,7 @@
 # Vật phẩm cổng core
 
-- Ngày lưu: `2026-10-17 19:55:42 +0700`
-- Git commit lúc lưu: `2a1f5ba`
+- Ngày lưu: `2026-10-17 21:15:34 +0700`
+- Git commit lúc lưu: `542764e`
 - Thư mục build nguồn: `.`
 - Máy: `Darwin 25.6.0 x86_64` · macOS `26.6.2`
 - File lớn hơn 524288 byte được lưu dạng `.gz` (giải nén: `gunzip -k <file>.gz`).
@@ -47,7 +47,7 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/HiFiveUnleashed.py` | 663 | 663 | `f7d2b74b0bd36c61536d42db65c73a5c384716a480f65b70002de7864cbd8ac2` |
 | `artifacts/HiFiveUnleashed_setup.bin` | 25296 | 25296 | `5bed9942aa3739636ec3f8fc07d9b6cff1492889dcff2993860062378102987a` |
 | `artifacts/LICENSE` | 1402 | 1402 | `43b7309213293b4323d65301a90e05472579abcd51feb260a850354bcb49ff8f` |
-| `artifacts/Makefile` | 6180 | 6180 | `018c075fba4c9796aaa8f34a0581018ecf55894825ae373069308ac5e4474a26` |
+| `artifacts/Makefile` | 8252 | 8252 | `4ca39958c8e2071aca352586cde06d0826bc80c29e112badcd1c3c465a697f1e` |
 | `artifacts/Makefile.in` | 1667 | 1667 | `76cf0af3798b3066fc1f1fb1fbcca888da3b6c0950bcf721c875de9416e8d0de` |
 | `artifacts/Makefrag` | 4545 | 4545 | `55cb0c3b2aef78db23db2e48aa3b76853b574f34fc3a0c964b25c9bb81f316c8` |
 | `artifacts/README.md` | 2419 | 2419 | `42fbe17c6c83b9ee674789d7258266600038593a1c4092e94f17f437864ac9a9` |
@@ -60,7 +60,9 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/Vsoc_b.mk` | 2156 | 2156 | `c9e0f8595d4a75ba6a62c223f604db20787cefe0a5d1f4ee83630de3b294abc0` |
 | `artifacts/Vsoc_b0` | 286424 | 286424 | `b82136bdc0033d6d7db9a8411a4580d2d8aac6dcc3ae22cbc82af00e6b20207d` |
 | `artifacts/Vsoc_b1` | 286424 | 286424 | `89cb3f53bd1eae2ad273349f26dce1e25245a7e8dfd313151f6097e51d3025db` |
+| `artifacts/Vsoc_b10k` | 290944 | 290944 | `3f932613e1babf7fc372dff292dda92c29a7b3def67e546d6420ccf35b1ef66a` |
 | `artifacts/Vsoc_b11` | 290704 | 290704 | `bf4e318791c0508e9c144c6d2625bd5fbe3480e26e6608acb4f7f83bd5ccef11` |
+| `artifacts/Vsoc_b111` | 290704 | 290704 | `2769ed2a68158feac2142770a8dcbb5a6c73f7c1419dd78cced60e76e58ffe21` |
 | `artifacts/Vsoc_b__ALL.cpp` | 262 | 262 | `0b8e4a695d56538cde055b686a7b1d52b29885be27e050b96251ca0acdff7317` |
 | `artifacts/Vsoc_b__Syms.h` | 1000 | 1000 | `8f36e7479aa8c9c8918a01151af88956701aafb5df5ae231db713d47613ecf9e` |
 | `artifacts/Vsoc_b__Syms__Slow.cpp` | 1106 | 1106 | `41e79bb79c94db1ee075b0e3a3ce4291c2313a318581b7183cb7593cd5aff3cb` |
@@ -206,8 +208,8 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/ce_matmul.c` | 3639 | 3639 | `ad7c6a8b70a454a35c8325fe4ac81f3330c48a28eb21dc0a740943380372dc1b` |
 | `artifacts/cf_matmul.c` | 3773 | 3773 | `527131daf94d3eefa11e5ceefe0bad82b635d72a80baaf491cefb06fd7a07ee2` |
 | `artifacts/cg_matmul.c` | 2815 | 2815 | `9782c13cba9b5890843bca22c22a63fdfe443f2df5d0103ffb9856d8f642b9a2` |
-| `artifacts/check.log` | 1601 | 1601 | `34be1975b6192b2e09f2f26b7a8bebdd331978174539cbb7b9527a39338a8fea` |
-| `artifacts/check_stdout.log` | 1601 | 1601 | `34be1975b6192b2e09f2f26b7a8bebdd331978174539cbb7b9527a39338a8fea` |
+| `artifacts/check.log` | 1619 | 1619 | `50c1c08eb8ec239324890b0070a8b9e3b0bff57658602dd3b0e3196bf6a22095` |
+| `artifacts/check_stdout.log` | 1619 | 1619 | `50c1c08eb8ec239324890b0070a8b9e3b0bff57658602dd3b0e3196bf6a22095` |
 | `artifacts/checksum.c` | 1177 | 1177 | `a04c6fb896744080baae6bbb4f0d676dcedc1ec5d0d2ac566e95e5c77e05b3c3` |
 | `artifacts/ci_matmul.c` | 1926 | 1926 | `c0bfe9e2b1b07e560220a665815eb42bed84e28e4bfb5928854286404ae3a722` |
 | `artifacts/ck_matmul.c` | 1687 | 1687 | `8ec237782bec42c6e7d45be2b7007c54782e3153a2b414f94f5c5d254788803a` |
@@ -280,7 +282,7 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/fence_i.cc.log` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | `artifacts/fence_i.err` | 29 | 29 | `351c8d3707eb0ee6f7717ba44e5d75abaf5f321479a88bd7c539b2127eb14224` |
 | `artifacts/fence_i.log` | 26 | 26 | `bd432e468f2ab02a3ffc844c4755679f70d12195ea21f6a5121bafd10eb3b624` |
-| `artifacts/firmware.hex` | 147456 | 147456 | `813890acf4d7da14fa2dd0230435f65386901b71df6627b604f7c865ba8fbb9e` |
+| `artifacts/firmware.hex` | 147456 | 147456 | `4fa31bebe3cf07d6310f6a4aa70e1b66d1451d84c8816c112bb3c911a3d60d37` |
 | `artifacts/fmadd.S` | 147 | 147 | `b18de235190eb8887ce89cecaf3051998374cff3239248830f9bbdf21254dfc4` |
 | `artifacts/fmin.S` | 146 | 146 | `99bcc2fdc2d5f84c59f0f856c846c2ffaf76693269aeeb82563de7b75fc33aa5` |
 | `artifacts/fsmonitor-watchman.sample` | 4726 | 4726 | `e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0` |
@@ -289,6 +291,7 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/hifive1_excludes.yaml` | 618 | 618 | `fe985f035b4648c87efc42b154613d3f2bc0a777ba7e3a18e481b4fef384210a` |
 | `artifacts/icache-alias.S` | 2493 | 2493 | `9d99655c575d3648d34e64b089eb1ed2cf64d47357c3068d4e60b9565bdf50ff` |
 | `artifacts/illegal.S` | 3409 | 3409 | `c79df5491f08a941624993fadf4dab1ea28f282ecab3a3eff90dabffca5158da` |
+| `artifacts/imgs3.bin` | 2352 | 2352 | `51543bfe5616f9be1b999f951094c9caabc19388fb49eb6949c0c499b467f238` |
 | `artifacts/index` | 128005 | 128005 | `bf54f3bc7c620c912f31c9aafcc95781f545a1bcbae3e68a672efa79fd44696c` |
 | `artifacts/infinite_loop.S` | 1153 | 1153 | `cf290a79931f096e7c4a090409957b6762809ade60071cd0a89f20358a7d4cde` |
 | `artifacts/init.c` | 839 | 839 | `3ad1f0c44e1c1ba702c957f891d4eb7d6ddfa20f8c359da315211031e34b59fa` |
@@ -465,7 +468,7 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/mulw.S` | 2420 | 2420 | `5ba74f0205d5ad49e9da5689168759f0d889c8e70f8fac63eda0c3b68d1f2665` |
 | `artifacts/mvm.S` | 1818 | 1818 | `51f7eb91f6a564b7e07c16fd1ded9344e2f50ba0767d0d9e18c9bbb0e19dc0be` |
 | `artifacts/mvmn.S` | 1825 | 1825 | `8fc3adb02246c0167be7ad106afd18e413f4ad89911f89e0fb51165bc1a56978` |
-| `artifacts/mycore.v` | 27441 | 27441 | `7ce2f3342c85ec073e510095ecbe023b75f0159b935d826bf863a52d90a75e69` |
+| `artifacts/mycore.v` | 29468 | 29468 | `fc318804f59a48967fef1fbfd4f6c0da7c2e067aae792fa555f950abcf53aa81` |
 | `artifacts/napot.S` | 3180 | 3180 | `f7ef06565139fed5688afb9bf087ee44f63083e034c9e348d54fa4c681ccfe90` |
 | `artifacts/nclip.S` | 1787 | 1787 | `c7ac00612cfb7d6381fd81b9883a058323cf1c5dfa5e4de188bdafe57447e083` |
 | `artifacts/nclipi.S` | 1712 | 1712 | `242b4bdd431e1ef45143c3a6f31be44cec8b58aa977a31af11569fde8d338c08` |
@@ -475,7 +478,7 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/nclipriu.S` | 1745 | 1745 | `1de0bb93e8c44e16a3ecb28ab4594430dbffd23b30860953dc1ffd7c10216b84` |
 | `artifacts/nclipru.S` | 1820 | 1820 | `f58fe7799d3ceed9121f60bd44559a907548d77b544b42d5a16b7e3357b7e695` |
 | `artifacts/nclipu.S` | 1799 | 1799 | `c9712291d52b923148b8e47828053d569eaa351d11c5a565a0bc48bfadcf8836` |
-| `artifacts/nextpnr.log` | 79215 | 79215 | `1e86f36822385c1c207f629b243d9f8735ec5253d46e5bbd849192d87790875c` |
+| `artifacts/nextpnr.log` | 138529 | 138529 | `904e0a7f1ceeca661f2525f7fa50efe7c19309f4519cf9eda4458c31c358655f` |
 | `artifacts/nsra.S` | 1536 | 1536 | `f208671283db4c845b7e34451e65fad2ca1b0cc7351ab6cd609bd83ef8d2f2e5` |
 | `artifacts/nsrai.S` | 1461 | 1461 | `454dd0d7e0decee9d15e8ca70e3f9cfaffc11edcdf8801b75945c43e90859742` |
 | `artifacts/nsrar.S` | 1561 | 1561 | `5675a631e7413d6d2f3d736828645d1d427aeaa0fb142e2b1388dd870f591cc9` |
@@ -764,7 +767,7 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/pnclipup_b.S` | 1746 | 1746 | `69400b4d729d770a3e5ab25154279acda3b147313d50223b6f3dfce961ba1b87` |
 | `artifacts/pnclipup_h.S` | 1756 | 1756 | `564e4b0634f4cd30e474a80e5c0d71b8ada9f9ffdda36c2e70a904c475418e01` |
 | `artifacts/pnclipup_w.S` | 1736 | 1736 | `b7fd342d4ee45923f00a18627abfd7cd460b2a620e7ca74fe41ea310ec325fb6` |
-| `artifacts/pnr.json.gz` | 14561537 | 726758 | `af84fa87183a7acdf1aaaac4e55c13c3a8c6c7d2c67a2ac72beee72c585be103` |
+| `artifacts/pnr.json.gz` | 17218917 | 816007 | `6338e20c35192cc47a1c323c3a3d9cef531beb7fd63f602c230fe266b4fe1371` |
 | `artifacts/pnsra_bs.S` | 1482 | 1482 | `2286a49c839cb365d896b1c18014489a108b7bd4f2269729619a8d15cbdbdb21` |
 | `artifacts/pnsra_hs.S` | 1445 | 1445 | `c79c2c94f5093a2799d8de45d633eb25de542cd74fd3b619c1577287fed5e027` |
 | `artifacts/pnsrai_b.S` | 1152 | 1152 | `e958d699c35732299d95b5f7ce65ef3d320133dfa8cdfde2908642d46cfc44b8` |
@@ -992,9 +995,9 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/remu.log` | 23 | 23 | `d672b79797a76264f29388c49d65401f5d2bea56bf23d5b1733a8a63359eff26` |
 | `artifacts/remuw.S` | 953 | 953 | `cf99595b875b12670eef32396d762ffb6f86002d699bf08598e7c9f31637bd71` |
 | `artifacts/remw.S` | 997 | 997 | `b9e8d360d5947d4c65e4491a0d64d4f69e0e5efdd40bfa3edc5a8217e3e94f98` |
-| `artifacts/report.json` | 92430 | 92430 | `a39298bb55644baee4b692741596758806e5b230d01f5315433fba1e628927df` |
+| `artifacts/report.json` | 193301 | 193301 | `142115dc2487555a57337e6c0d12690db6656c5d8379b43aa4b4bacd6a7080c1` |
 | `artifacts/requirements.txt` | 28 | 28 | `9d096d53f0a268a4994da965bc277f4b806ba7c485c86f6c40681b32f2a6b339` |
-| `artifacts/resources.txt` | 1050 | 1050 | `b5551239203b932ab086db191257682af91b4f40a41bc7093cf5d91f12e77568` |
+| `artifacts/resources.txt` | 1050 | 1050 | `6574919184c4ebd9f00af3151a1145bec9db37fa139b59237e4a07681eeb0554` |
 | `artifacts/rev.S` | 1737 | 1737 | `fbd78f2d2b36a9decdb83e746985fe36b381f5eb43e06f83a2e39484359b6206` |
 | `artifacts/rev16.S` | 1625 | 1625 | `39bf1ed22a081809e852ce59a24bbc38d440f44bb947784bf2f99db0e0d73156` |
 | `artifacts/rev8.S` | 2613 | 2613 | `0cb4b26f41d14527ba6511950df5262dd2a0e62ab09974c39c4a60d31842ddc2` |
@@ -1006,7 +1009,11 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/roriw.S` | 2616 | 2616 | `6c19be69cd09e0cbf5947332e48e1c4d36137e9c2e410a9944349e22cf110410` |
 | `artifacts/rorw.S` | 4068 | 4068 | `f6d20f054bfb6e917c7b6a7dca86e475382f0dc20b2c4ca87a979aa76c7fc946` |
 | `artifacts/rsort.c` | 3256 | 3256 | `b002dff552ecd228e1a866e6c6882974b653d894964443f4bb816db3eb61e409` |
+| `artifacts/run_100.log` | 530 | 530 | `94ddb4c5369622732102c640a133c9b9d046d34f92c8b4dc6261a0ec9ee13f9c` |
+| `artifacts/run_10000.log` | 554 | 554 | `2a8ab66738291a6787992033101800aca9e6939f4e49de262d3d13b2c0d35776` |
 | `artifacts/run_halt_timing.S` | 356 | 356 | `cdbd99ce312378b246bfa444a4872d444a4e36ea0984d0de3c88557aae3120a6` |
+| `artifacts/run_stdout_100.log` | 676 | 676 | `ed218bcc30ad88512131468c6a905991bc39ea2c5c0d5fb64e7cd325e0eb676b` |
+| `artifacts/run_stdout_10000.log` | 1716 | 1716 | `56c4bef1e2ee752a4043cc275d878f1f8e195a9e7d854587a1b0709e4c42348b` |
 | `artifacts/rvc.S` | 142 | 142 | `6437d05b8156a2ce817ca217556f1564cbb88e9eb9080fdae29f48deceed9a04` |
 | `artifacts/sadd.S` | 1019 | 1019 | `75075c18b8d640b9ae5e3daf98fb6dc0f400d7cda129b8a0e8370186d24113f4` |
 | `artifacts/saddu.S` | 1029 | 1029 | `61ca23b4030a05302b2c1865a677fc0c57a77a8e3bc9ec7b3ab55c933ecacee3` |
@@ -1045,7 +1052,8 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/shar.S` | 1431 | 1431 | `11a75cc4748053a01b621ddbde7aa0dba823302c36f7755082ec9f1ce9b8f063` |
 | `artifacts/shl.S` | 2577 | 2577 | `6bd806e38b0680f6a394d297f4574834a842acf229ec787b3201843fc1b22201` |
 | `artifacts/shlr.S` | 2437 | 2437 | `8d1ec9c56c6d196faafb469cca3a9937c25d9d14f0502a1a4c3376876d109a28` |
-| `artifacts/sim.log` | 1406 | 1406 | `980f304430b0b2ee6746c1bbdf6830e1c00da363c792082d18908eb89a7abe92` |
+| `artifacts/sim.log` | 1408 | 1408 | `794f7670508728b325bb0d63a75562659a733605b120f76825f24d62977ff318` |
+| `artifacts/sim_main_10k_b.cpp` | 5009 | 5009 | `df366b1ffcd934d55cc7d92d441eed2d79870847f6d00a53244b2d8a80de8a55` |
 | `artifacts/sim_main_b.cpp` | 2114 | 2114 | `189d2e0be8f663409ba32e64ddb114c63e4f80b6e006e77044ef3d8948f5a86a` |
 | `artifacts/simple.S` | 560 | 560 | `52e2f9515a604acd2b1b5e72cd776bf13b9af4a00b2b6f1280baf60d22eee404` |
 | `artifacts/simple.cc.log` | 0 | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
@@ -1079,7 +1087,7 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/sltu.err` | 29 | 29 | `08ebf8c0488be3d6759780cbacaf30d68172b7ff5de1b2cbba16eebb963fcf6c` |
 | `artifacts/sltu.log` | 23 | 23 | `473816d9e3a68f30d3b135711c7898025b73778e26a5b4ddc5ad502276178778` |
 | `artifacts/slx.S` | 1919 | 1919 | `5219aeedf1699ee454c9dddec54258b534bc412b65b14cffdb75caffa0ed86b1` |
-| `artifacts/soc_b.v` | 7686 | 7686 | `51c86e278fb2ab36467282d0fbaf3b30e2930768cb187eca30fb50bb0e1ee2df` |
+| `artifacts/soc_b.v` | 7752 | 7752 | `67147bae8ae4efd16a01baacc8cdb7f44216e1da04dfd2b13929eb6a6e27512c` |
 | `artifacts/spike-1.cfg` | 880 | 880 | `7b818a27478ff3f0d786953ee9145f66f807adbe62f9baa7a2f4023d9318c651` |
 | `artifacts/spike-2-hwthread.cfg` | 1033 | 1033 | `1d8407486359a08ae7f456c1bf3280170098d6626ef98b23d8327349ff203851` |
 | `artifacts/spike-2.cfg` | 961 | 961 | `bb05938f0f6d06851aa00599a46d196ebddb5b492b7621aace358606b57b5a4c` |
@@ -1133,6 +1141,7 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/st_ld.err` | 29 | 29 | `0c5d90d0a4ff9c75f86095ed2ccd344e3ea0c0130a7f7ccfefab33539fe5a0e1` |
 | `artifacts/st_ld.log` | 24 | 24 | `04935ea3734a7a9ae0b28f97e5627e8d4b069bede60cb02846f22978c5497dc8` |
 | `artifacts/start_test.S` | 902 | 902 | `64ca2f47ebc59da4f8633360bc46fe4a073604bb79357ee214f33c9e10b99f6f` |
+| `artifacts/stats_10000.txt` | 1257 | 1257 | `7dff7af182a404208a495eeaf453adf7e13e4e8df3025a4c4312645aa24005fc` |
 | `artifacts/step.S` | 841 | 841 | `22fc052eb167e0db45697dd6047caf82ef2a702fd08a2dcb6d16173c9bd7e5c1` |
 | `artifacts/structural.S` | 1159 | 1159 | `42ed7f3efbb8a44362e3f979ae1e0539c4dc2d5a84dd1d7943bf1f07e7e19700` |
 | `artifacts/sub.S` | 3122 | 3122 | `261a9625eec0be3070831c2cfcfb9c58b0a966b7156d806a066d2ff8094f79f8` |
@@ -1155,9 +1164,9 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/test_macros.h` | 29573 | 29573 | `b09abb7eec47539dde829096ca973a33b2d293d38f0902133ad2aaa6fab892dc` |
 | `artifacts/testlib.py` | 59654 | 59654 | `63001987d3325d247004b50d1e5572fdb72a147af554da57047762785d988d91` |
 | `artifacts/tiny-malloc.c` | 15782 | 15782 | `f4756edef8223560e2fa3dd97039ffe041c5bac59c3c9cc67ef991341efbc3e3` |
-| `artifacts/top-synth.json.gz` | 12112690 | 327244 | `ed11d0b73eb09f374266f240312aa392adff0e95389482e20bb14793f73ad8e2` |
-| `artifacts/top.fs.gz` | 7261470 | 216340 | `c174313a40d042602082078ac46faf00a01c9fa6954f2e3821434198783dc5dc` |
-| `artifacts/top_b.v` | 2325 | 2325 | `69d12813c2b49b47f5e1f74bfe55a39c55d1ab66e1498e976275bf0c2c8bdad1` |
+| `artifacts/top-synth.json.gz` | 14242055 | 362251 | `90816977c070efa81028192eeb5bbed0e7d9cef47844452be759e52bd89d4792` |
+| `artifacts/top.fs.gz` | 7261470 | 232111 | `2e37bc4ef7a9c89140391adb28769fdc96e9ce262daba0620b2168a76857c8c2` |
+| `artifacts/top_b.v` | 2383 | 2383 | `545e0773d2b493265b428211b1e884a44598c8638a680b840b634c3b2fff2590` |
 | `artifacts/top_min.v` | 2053 | 2053 | `bace003a61cadc3c5cedf1a8b9e7c123b53d7289dc40b4d0ca7a97e801011da6` |
 | `artifacts/towers_main.c` | 4819 | 4819 | `6a8be04c4b696d0c02b571f36a81a155d45056e748bc88e17e0e867b4fe02a93` |
 | `artifacts/translate.c` | 5683 | 5683 | `46a2fd22a05098c3bf5fd6e785b27405f2b23187da402ccc2de1da78b9f550eb` |
@@ -1182,7 +1191,9 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/verilator.log` | 4373 | 4373 | `24377940649e9cd40f6230392b0de587581473dd0d971cbe2d161c0decf3e36a` |
 | `artifacts/verilator0.log` | 4374 | 4374 | `99618ba1c5523a99661e788d7c783c8568db1274f7b830a587fb1a91d40c910b` |
 | `artifacts/verilator1.log` | 4374 | 4374 | `3b11dc65c0b9bbf04df50477c8b0e0d9c3cab6cfa0011135922e128394a56393` |
+| `artifacts/verilator10k.log` | 5831 | 5831 | `f5f0df707dace20a5b1419e744f5e2b12573d05bc39c3c449a276da4e558add2` |
 | `artifacts/verilator11.log` | 5818 | 5818 | `c066cffec1c4070cbd6c44ed78b01df2e080e51fa4705c5173039a0a7973e46b` |
+| `artifacts/verilator111.log` | 5821 | 5821 | `58db2bf084df0a3fc9dbe9efe1135b61e5eb9f0f6f9b26dedd2ac08ee3d833c7` |
 | `artifacts/vvadd.c` | 409 | 409 | `005bd42454021e7686417733df80da5807b00f043163d783e8e523e6f0a56ffd` |
 | `artifacts/vvadd0.c` | 400 | 400 | `f17ce21db8fb600cd58d79ca0ba3e4c5bd0a5a160a02700269fdc8b48a3e4076` |
 | `artifacts/vvadd1.c` | 586 | 586 | `421a1841d30a8ee251c2f5b046119c16eb113488ceeeb54d637dafc36b861fd3` |
@@ -1223,7 +1234,7 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/xori.log` | 23 | 23 | `d29c9785d5de38d2ebb8fa40338ca38114571e16895730c3933f628e87d1efd5` |
 | `artifacts/xperm4.S` | 3673 | 3673 | `03180c5d49d513d80e171067264c38172c3409979c458f5eec82cd299b51aa48` |
 | `artifacts/xperm8.S` | 3680 | 3680 | `8917a7797f21b1692d955a1db37b83d3fde90edb9fb42daaeb63d84bf758951d` |
-| `artifacts/yosys.log.gz` | 525248 | 58117 | `cd32e99fb16ba5dee1fced78254c4f8a269058eb3fcd706acdecedece2215e6f` |
+| `artifacts/yosys.log.gz` | 632369 | 53194 | `747a5f154529349381a31e3e1dbc3860ec856ee7fad383afa9f3887dc3b4cb53` |
 | `artifacts/zero.S` | 739 | 739 | `815a592675d4e03d4df8f1eac200921f9ee08d426f3ee87cbe954e82ab8633f6` |
 | `artifacts/zext_h.S` | 2667 | 2667 | `fefab82ced06e3ac75fdd3572c031d49577cffc77d92e92f10b1739ed544ac04` |
 | `artifacts/ziccid.S` | 2211 | 2211 | `234c052fc3aca5ff28be2f0bf497a3e3948bfd1a539d0bb36328a3a4d56f76ee` |
@@ -1233,3 +1244,82 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | `artifacts/zip16p.S` | 1310 | 1310 | `17e12c73fff229a693528da812f2690f4273eb79e731b51de303b2357d5cb7a0` |
 | `artifacts/zip8hp.S` | 1378 | 1378 | `03b01702ac65e6a71ce200759944ae5f0e26ba8b4144541e44348e2374f60f63` |
 | `artifacts/zip8p.S` | 1351 | 1351 | `b8b6cacb5ab7c995c0852e9329ed712e555421071169e16e98abaaa74868bc06` |
+| `bv0/artifacts/check.log` | 1607 | 1607 | `50b6bf5ac97e467d0976e699133edf7d1d14bf93283c579e46bbdf84c26300f4` |
+| `bv0/artifacts/check_stdout.log` | 1607 | 1607 | `50b6bf5ac97e467d0976e699133edf7d1d14bf93283c579e46bbdf84c26300f4` |
+| `bv0/artifacts/firmware.hex` | 147456 | 147456 | `4a8ffd272933fbaef6b35df2135bc91eaa082fec80c9253db7020ec05b811d29` |
+| `bv0/artifacts/load.log` | 1730 | 1730 | `678912a9f85ff1ace2779f6fedd70aa631abb0697b42cc43236258a97be5a26a` |
+| `bv0/artifacts/nextpnr.log` | 102772 | 102772 | `83c0ca366cd03baa3c6d9a8a075fb82fefe1bd7fd96465873a2fef436f377311` |
+| `bv0/artifacts/pnr.json.gz` | 11673809 | 587720 | `76a85efb15faa94565f166ea2ad13dd86d1507ce000c5bc241e2fc89173a0e9d` |
+| `bv0/artifacts/report.json` | 135685 | 135685 | `efea85d83a7d8fd634262c233e399b47eb421f2c5dac7f9d45515ee36334613b` |
+| `bv0/artifacts/resources.txt` | 1050 | 1050 | `c16484184791eadd122fc361e233f94086e8fc147919dfc93ba23cebb05a99f5` |
+| `bv0/artifacts/sim.log` | 1436 | 1436 | `56807a94864a94cd3e319078bceba363951e6d3a600ca9ea785c562f89371c94` |
+| `bv0/artifacts/top-synth.json.gz` | 10007280 | 275472 | `6b92c5282bd429c0a2add92dfefab90bd7e1af0c4c7104e7b8c642ba8da10b75` |
+| `bv0/artifacts/top.fs.gz` | 7261470 | 193322 | `39ce3fff202fe34b7537c3540a5324574a145996949556152552078938f4bf1b` |
+| `bv0/artifacts/yosys.log` | 466282 | 466282 | `135a60f4c38ae487819905dd5e8e854aabfaf852deb3bb322b0b0685d20a1a8e` |
+| `bv0r/artifacts/check.log` | 1612 | 1612 | `aef2c4b6ae2199dadd0441fcc94449eebabbbe325e9d8dea097f8edd63b54bf6` |
+| `bv0r/artifacts/check_stdout.log` | 1612 | 1612 | `aef2c4b6ae2199dadd0441fcc94449eebabbbe325e9d8dea097f8edd63b54bf6` |
+| `bv0r/artifacts/firmware.hex` | 147456 | 147456 | `4a8ffd272933fbaef6b35df2135bc91eaa082fec80c9253db7020ec05b811d29` |
+| `bv0r/artifacts/nextpnr.log` | 107786 | 107786 | `6a228c80806d348b8d35a62da205ee618e715d3c15aa7dcf6e2422537176b0cb` |
+| `bv0r/artifacts/pnr.json.gz` | 10319776 | 530266 | `0cb3e9b92c8900cddb97b409a066e0f5000deceb7ba37d98560bd1fa02995d47` |
+| `bv0r/artifacts/report.json` | 145990 | 145990 | `5ec9c991e4e4bb3fb5b80d691deba6733520d70010eb0268e3d7aadd6301ecb6` |
+| `bv0r/artifacts/resources.txt` | 1050 | 1050 | `348a66c4d89c1218dc17150cbace8bf353786a48e252884038f7a489580146e2` |
+| `bv0r/artifacts/sim.log` | 1446 | 1446 | `78fbb4425f3cf325d97c1a6c06bde187dfc3d42850ffdc52453757527a6dd1d8` |
+| `bv0r/artifacts/top-synth.json.gz` | 8740394 | 247219 | `5fc424c187362644869a826b1bd3c0a5d0ce3dc51870172b4b28c717eb911737` |
+| `bv0r/artifacts/top.fs.gz` | 7261470 | 181735 | `2e22283822c5a94ef55d7230698c80bb217c2a837e78e2b5ec9d6e7f8d18b05a` |
+| `bv0r/artifacts/yosys.log` | 297904 | 297904 | `811a1f77f5a43c4f992a551324d502a8503255d7b55f5d0a1644e74f957669d6` |
+| `bv1/artifacts/check.log` | 1603 | 1603 | `a3c7d5483b288693005417026ab9638d133607d66b1d1e16197584da4cb6a8ff` |
+| `bv1/artifacts/check_stdout.log` | 1603 | 1603 | `a3c7d5483b288693005417026ab9638d133607d66b1d1e16197584da4cb6a8ff` |
+| `bv1/artifacts/firmware.hex` | 147456 | 147456 | `ca35bfccddbb8aa36f8497ae4019bb475bb59722c66916b8a7add6af78586bbb` |
+| `bv1/artifacts/load.log` | 692 | 692 | `e9f4d136b0c171fc9b4dae79bd9561bdff979314aa97330328b795bab5976ee1` |
+| `bv1/artifacts/nextpnr.log` | 102772 | 102772 | `3d54884109eaf593db1116a6894fde701a803081bf4c240bf702fce28fbb735e` |
+| `bv1/artifacts/pnr.json.gz` | 11673809 | 589219 | `52e9cfc925ddd32477fb316da2b16264b6c7b934c552737da830ad2f4794ae14` |
+| `bv1/artifacts/report.json` | 135685 | 135685 | `efea85d83a7d8fd634262c233e399b47eb421f2c5dac7f9d45515ee36334613b` |
+| `bv1/artifacts/resources.txt` | 1050 | 1050 | `c16484184791eadd122fc361e233f94086e8fc147919dfc93ba23cebb05a99f5` |
+| `bv1/artifacts/sim.log` | 1426 | 1426 | `86482e5ffc1f1c22e3218afb937189a0c47e1e78f2fc6b86e813ba3d3e4b249d` |
+| `bv1/artifacts/top-synth.json.gz` | 10007280 | 278608 | `3da1ea104dedaea62b7cd739dfbc84b2d2db2d54bfc18d8c3c20d537b6d57d30` |
+| `bv1/artifacts/top.fs.gz` | 7261470 | 196056 | `18ba1ac0d33c0624822c0ff052e7345acf9bd5a93ed2be8aa02ebb97937c84d6` |
+| `bv1/artifacts/yosys.log` | 466258 | 466258 | `c26729a03c2ee1da246c5038f742ad46ff080c52d7d63cb0861e7324b8aaa7d4` |
+| `bv1d/artifacts/check.log` | 1597 | 1597 | `521317bf746ee338594deb629489b0740d762b7782ea36784cd00b1bea843677` |
+| `bv1d/artifacts/check_stdout.log` | 1597 | 1597 | `521317bf746ee338594deb629489b0740d762b7782ea36784cd00b1bea843677` |
+| `bv1d/artifacts/firmware.hex` | 147456 | 147456 | `ac76c77be3430951d077060d1823915e406c8f18a6d4e9a173e3be35fd1573a5` |
+| `bv1d/artifacts/nextpnr.log` | 79215 | 79215 | `4603d36c498a9944788ed5710a52b8a23d76b0843c21a5265f4657174912a490` |
+| `bv1d/artifacts/pnr.json.gz` | 14561537 | 726992 | `b0090114caffef12e0df11207176a36d767241a5b297e388b53f9499a9ace737` |
+| `bv1d/artifacts/report.json` | 92430 | 92430 | `a39298bb55644baee4b692741596758806e5b230d01f5315433fba1e628927df` |
+| `bv1d/artifacts/resources.txt` | 1050 | 1050 | `b5551239203b932ab086db191257682af91b4f40a41bc7093cf5d91f12e77568` |
+| `bv1d/artifacts/sim.log` | 1401 | 1401 | `b4efb4d3fbeb809d85140bbe01263f5f3ad940f48c19da0a086fb1a935e8b548` |
+| `bv1d/artifacts/top-synth.json.gz` | 12112690 | 327845 | `e567a21a1b6e51c7a28adce3c7a3e9e1ec0abdfbca7cb8d160e211f5ceff6e3d` |
+| `bv1d/artifacts/top.fs.gz` | 7261470 | 216967 | `a6a068b85c1bb63abfd403f87063db3b19fc4777dea9e777cd7abbb133f1d0af` |
+| `bv1d/artifacts/yosys.log.gz` | 525248 | 58113 | `7977f272c6a8081418b8e4b8898ebe0a611b1feae9ccf5c0a9c6a95984dffa5e` |
+| `bv1dc/artifacts/check.log` | 1606 | 1606 | `9468dfb2aa393fd0ed449d035525ba6043191944b0b81b9f4dfbe8e199cced35` |
+| `bv1dc/artifacts/check_stdout.log` | 1606 | 1606 | `9468dfb2aa393fd0ed449d035525ba6043191944b0b81b9f4dfbe8e199cced35` |
+| `bv1dc/artifacts/firmware.hex` | 147456 | 147456 | `7d38c122e156953b5bf7a4e0ce1e3d233518fb8aaa5ce14126ae2e1d7768d462` |
+| `bv1dc/artifacts/nextpnr.log` | 79215 | 79215 | `8474956f08101ae8e491d53a50588c0688d2483d21bfe56053ec7a51c7f21415` |
+| `bv1dc/artifacts/pnr.json.gz` | 14561537 | 727641 | `d08f27bc859fb61ae3491fa9cfe5e9e9186e231b70dc85fb9574e34b1c0fcc64` |
+| `bv1dc/artifacts/report.json` | 92430 | 92430 | `a39298bb55644baee4b692741596758806e5b230d01f5315433fba1e628927df` |
+| `bv1dc/artifacts/resources.txt` | 1050 | 1050 | `b5551239203b932ab086db191257682af91b4f40a41bc7093cf5d91f12e77568` |
+| `bv1dc/artifacts/sim.log` | 1432 | 1432 | `27e5380686110d41171bc0115150c80d3f674ee59f6382a84b4f52135496026f` |
+| `bv1dc/artifacts/top-synth.json.gz` | 12112690 | 329525 | `394affac31996bc1956a5880f81860de39e2a95442dba847c02f668686c2503c` |
+| `bv1dc/artifacts/top.fs.gz` | 7261470 | 218396 | `3b511bc91f77ea680590a7973c9a440ac1d121a670cf727de85a39bc4ef1d772` |
+| `bv1dc/artifacts/yosys.log.gz` | 525248 | 58122 | `5391217c79b5c06f874587975d8c4a5a460283423f642c7be25e71621df279c8` |
+| `bv1r/artifacts/check.log` | 1610 | 1610 | `1e60ad6b64aba5ed5d777c2a257e08840f2848437ab5f931a69d7217ea71df82` |
+| `bv1r/artifacts/check_stdout.log` | 1610 | 1610 | `1e60ad6b64aba5ed5d777c2a257e08840f2848437ab5f931a69d7217ea71df82` |
+| `bv1r/artifacts/firmware.hex` | 147456 | 147456 | `ca35bfccddbb8aa36f8497ae4019bb475bb59722c66916b8a7add6af78586bbb` |
+| `bv1r/artifacts/nextpnr.log` | 107786 | 107786 | `ac0307b1ac349d1ecea2e9e71d547ebac5860594b9df74b819579153af92da10` |
+| `bv1r/artifacts/pnr.json.gz` | 10319776 | 531457 | `2e16ea54cc659d1824df774c999e6bd4879d4d92eb45048d3301501fb9c2be6e` |
+| `bv1r/artifacts/report.json` | 145990 | 145990 | `5ec9c991e4e4bb3fb5b80d691deba6733520d70010eb0268e3d7aadd6301ecb6` |
+| `bv1r/artifacts/resources.txt` | 1050 | 1050 | `348a66c4d89c1218dc17150cbace8bf353786a48e252884038f7a489580146e2` |
+| `bv1r/artifacts/sim.log` | 1426 | 1426 | `29c43deea156871039c10712adf90a996bde03aab67807fd81dcc4d9d812d2fb` |
+| `bv1r/artifacts/top-synth.json.gz` | 8740394 | 249831 | `a6c29924a2cb4ea72ce8151e39bc00b552bcde95e23dfb686b9b895b6890f267` |
+| `bv1r/artifacts/top.fs.gz` | 7261470 | 184733 | `51d0da5e6eb6b5a57a7a96cc89c5aefacb20ecd8b76bdc3622acfecc9262ec68` |
+| `bv1r/artifacts/yosys.log` | 297904 | 297904 | `b83e5a180059c81ecaccfc058a4e0ae06018dfa6aca3261053a37f59275631ee` |
+| `bv2/artifacts/check.log` | 1601 | 1601 | `34be1975b6192b2e09f2f26b7a8bebdd331978174539cbb7b9527a39338a8fea` |
+| `bv2/artifacts/check_stdout.log` | 1601 | 1601 | `34be1975b6192b2e09f2f26b7a8bebdd331978174539cbb7b9527a39338a8fea` |
+| `bv2/artifacts/firmware.hex` | 147456 | 147456 | `813890acf4d7da14fa2dd0230435f65386901b71df6627b604f7c865ba8fbb9e` |
+| `bv2/artifacts/nextpnr.log` | 79215 | 79215 | `1e86f36822385c1c207f629b243d9f8735ec5253d46e5bbd849192d87790875c` |
+| `bv2/artifacts/pnr.json.gz` | 14561537 | 726758 | `af84fa87183a7acdf1aaaac4e55c13c3a8c6c7d2c67a2ac72beee72c585be103` |
+| `bv2/artifacts/report.json` | 92430 | 92430 | `a39298bb55644baee4b692741596758806e5b230d01f5315433fba1e628927df` |
+| `bv2/artifacts/resources.txt` | 1050 | 1050 | `b5551239203b932ab086db191257682af91b4f40a41bc7093cf5d91f12e77568` |
+| `bv2/artifacts/sim.log` | 1406 | 1406 | `980f304430b0b2ee6746c1bbdf6830e1c00da363c792082d18908eb89a7abe92` |
+| `bv2/artifacts/top-synth.json.gz` | 12112690 | 327244 | `ed11d0b73eb09f374266f240312aa392adff0e95389482e20bb14793f73ad8e2` |
+| `bv2/artifacts/top.fs.gz` | 7261470 | 216340 | `c174313a40d042602082078ac46faf00a01c9fa6954f2e3821434198783dc5dc` |
+| `bv2/artifacts/yosys.log.gz` | 525248 | 58117 | `cd32e99fb16ba5dee1fced78254c4f8a269058eb3fcd706acdecedece2215e6f` |

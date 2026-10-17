@@ -1,0 +1,24 @@
+nạp dữ liệu golden cho 10000 ảnh...
+  xong: 10000 ảnh · golden acc = 98.25%
+  1000/10000 · acc kit 98.10% · khớp golden 1000/1000 · crc logit 1000/1000 · còn ~15.2 phút
+  2000/10000 · acc kit 97.75% · khớp golden 2000/2000 · crc logit 2000/2000 · còn ~13.4 phút
+  3000/10000 · acc kit 97.43% · khớp golden 3000/3000 · crc logit 3000/3000 · còn ~11.7 phút
+  4000/10000 · acc kit 97.47% · khớp golden 4000/4000 · crc logit 4000/4000 · còn ~10.0 phút
+  5000/10000 · acc kit 97.46% · khớp golden 5000/5000 · crc logit 5000/5000 · còn ~8.3 phút
+  6000/10000 · acc kit 97.63% · khớp golden 6000/6000 · crc logit 6000/6000 · còn ~6.7 phút
+  7000/10000 · acc kit 97.86% · khớp golden 7000/7000 · crc logit 7000/7000 · còn ~5.0 phút
+  8000/10000 · acc kit 98.08% · khớp golden 8000/8000 · crc logit 8000/8000 · còn ~3.3 phút
+  9000/10000 · acc kit 98.24% · khớp golden 9000/9000 · crc logit 9000/9000 · còn ~1.7 phút
+  10000/10000 · acc kit 98.25% · khớp golden 10000/10000 · crc logit 10000/10000 · còn ~0.0 phút
+
+biến thể       : B-V1+DOT4+C1
+số ảnh gửi     : 10000  ·  nhận đúng khung: 10000  ·  thất bại: 0
+gửi lại        : 0 lần (trong đó CRC ảnh lệch: 0)
+CRC logit khớp : 10000/10000  (100.00%)
+khớp golden    : 10000/10000
+ĐỘ CHÍNH XÁC TRÊN KIT: 9825/10000 = 98.25%
+chu kỳ/ảnh     : trung vị 487,857 · nhỏ nhất 487,416 · lớn nhất 488,181 · lệch 765
+               : 18.1 ms @27 MHz · 2.54 chu kỳ/MAC
+thời gian chạy : 16.7 phút
+M1S10K_PASS n=10000 acc=98.25% crc=10000/10000 golden=10000/10000
+đã ghi 10000 dòng vào ../../results/branch_b/m1s_b_10000.csv

@@ -1,7 +1,7 @@
 # Vật phẩm cổng core/bv0r
 
-- Ngày lưu: `2026-10-17 19:56:51 +0700`
-- Git commit lúc lưu: `2a1f5ba`
+- Ngày lưu: `2026-10-17 21:16:49 +0700`
+- Git commit lúc lưu: `542764e`
 - Thư mục build nguồn: `bv0r`
 - Máy: `Darwin 25.6.0 x86_64` · macOS `26.6.2`
 - File lớn hơn 524288 byte được lưu dạng `.gz` (giải nén: `gunzip -k <file>.gz`).

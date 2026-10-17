@@ -1,7 +1,7 @@
 # Vật phẩm cổng m1s/v10k
 
-- Ngày lưu: `2026-10-17 17:58:53 +0700`
-- Git commit lúc lưu: `34e44ea`
+- Ngày lưu: `2026-10-17 21:15:04 +0700`
+- Git commit lúc lưu: `542764e`
 - Thư mục build nguồn: `v10k`
 - Máy: `Darwin 25.6.0 x86_64` · macOS `26.6.2`
 - File lớn hơn 524288 byte được lưu dạng `.gz` (giải nén: `gunzip -k <file>.gz`).
@@ -23,12 +23,12 @@ riscv-none-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0
 | File (như đã lưu) | Byte gốc | Byte lưu | SHA256 (nội dung gốc) |
 |---|---:|---:|---|
 | `artifacts/Vsoc_10k` | 299488 | 299488 | `3eabfc35ab55fc99c91a91158c54f5280ac5c339da73dc7e9a025101d835f0e6` |
-| `artifacts/firmware.bin` | 8876 | 8876 | `a0e87f1030476e43e5bc2f580f8d821bc81a57182476490ec5ae8aee0161adff` |
-| `artifacts/firmware.dis` | 140492 | 140492 | `fdfe15a2ba29d2c2cbb21b66d6ee2f06a31fb1f5d9f657fc17da26d8b67ae086` |
-| `artifacts/firmware.elf` | 14344 | 14344 | `6d66dddfd3a37d2a645017af968eef0dddb151be32d3a9c6c83724941188bd7c` |
-| `artifacts/firmware.hex` | 147456 | 147456 | `4eb94745c302d5957eada64e184f5002a22e1794dde727ab0fc69440c18c09d1` |
-| `artifacts/firmware.map` | 3163 | 3163 | `edae18c1263cac2f2cb83db290c959086943bf44a7aed602fe4031a1031a1c71` |
-| `artifacts/firmware.size.txt` | 247 | 247 | `471bcae64645e4616204b6ff980bd4ab477cc5dfaba3dfc90f8e91bbbcc2e232` |
+| `artifacts/firmware.bin` | 8940 | 8940 | `d8548af177d3c39ab52f8e08b8b30d36bc821d718f0dda44d4f810da77066f8d` |
+| `artifacts/firmware.dis` | 141391 | 141391 | `594678d2dd8b80d4071cbea2ea5b8148c1be5c7bd64a7d4c4f3fe71a08b0a1b9` |
+| `artifacts/firmware.elf` | 14408 | 14408 | `60b6f2d937c629cc2cbe2149d2370063ccb62077e0c925a436d770de1a0ee4ea` |
+| `artifacts/firmware.hex` | 147456 | 147456 | `cdbe82e8eda14986f69fab56fe4e2fb521767e7da21d7c9a931cf0340190a285` |
+| `artifacts/firmware.map` | 3163 | 3163 | `726b800c19e5c3e43bb3b557353c39a4db6ccf9615179cd8cef2a4661a48a035` |
+| `artifacts/firmware.size.txt` | 247 | 247 | `e5a50dc01514831e61b644846b41717f916ab9f398f7dffe6beea2453618303e` |
 | `artifacts/imgs3.bin` | 2352 | 2352 | `51543bfe5616f9be1b999f951094c9caabc19388fb49eb6949c0c499b467f238` |
 | `artifacts/load.log` | 347 | 347 | `9ebab0b4387f1ff03f8e347820457b354e0622ac1de4fc806967337adc08f9b1` |
 | `artifacts/nextpnr.log` | 67823 | 67823 | `36975b5743a45071e2d31d9ba870fba001e2a0cd3db4154faffd17cb0198b447` |

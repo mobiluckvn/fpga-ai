@@ -39,6 +39,24 @@ openFPGALoader --detect -b tangnano20k          # phải thấy GW2A(R)-18(C)
 cd feasibility/F5_soc && make fw sim build load f5check
 ```
 
+## Kết quả cuối: 332,9 ms → 13,6 ms (24,6×) trên cùng FPGA 27 MHz
+
+**[docs/KET_QUA_TONG_HOP.md](docs/KET_QUA_TONG_HOP.md)** — bảng 14 cấu hình đã đo trên phần cứng thật,
+phân rã đóng góp từng hướng, trả lời RQ1/RQ2/RQ3, 7 cạm bẫy và 3 bài học phương pháp.
+
+| Hướng tối ưu | Hệ số | Giá phần cứng |
+|---|---|---|
+| Tối ưu phần mềm | 1,45× | **0** |
+| **Vi kiến trúc** (lõi RISC-V tự viết) | **4,26×** | **ít LUT4 hơn ~2,4 lần** |
+| Lệnh DOT4 (tầng thực thi) | 2,31× | 4 × MULT18X18 |
+| Bố cục 4 pha cho conv1 | 1,29× | **0** |
+| Lệnh REQ | 1,33× | 4 × MULT18X18 |
+| **Tích** | **24,6×** | 8/48 DSP |
+
+Nhanh nhất: **B-V3 = 365.992 chu kỳ = 13,6 ms = 1,91 chu kỳ/MAC = 73,8 ảnh/giây**, mọi lớp vẫn đúng
+từng bit so với golden Python. **Vi kiến trúc đóng góp gần gấp đôi lệnh tùy biến mạnh nhất, và là
+hướng duy nhất vừa nhanh hơn vừa rẻ hơn.**
+
 ## Thí nghiệm chính — M1-S đã chạy thật trên kit
 
 Mô hình M1-S (CNN int8, MNIST, 192.064 MAC) đã huấn luyện, lượng tử hoá và **chạy suy luận đầy đủ
@@ -59,14 +77,14 @@ khớp golden Python từng bit**, 0 lần phải gửi lại trên 7,85 MB truy
 | A-V2 | C thẳng + DOT4 | 5.758.001 | 213,3 ms | 29,98 | 1,56× |
 | **A-V1+DOT4** | **tối ưu phần mềm + DOT4** | 2.917.079 | 108,0 ms | 15,19 | **3,08×** |
 | **A-V1+DOT4+C1** | **+ bố cục 4 pha cho conv1** | **2.450.494** | **90,8 ms** | **12,76** | **3,67×** |
-| A-V3 | + lệnh REQ | | | | chưa làm — đã định lượng ~1,17× |
+| **A-V3** | **+ lệnh REQ** | **1.842.219** | **68,2 ms** | **9,59** | **4,88×** |
 | **B-V0** | **lõi tự viết, C thẳng** | **1.978.697** | **73,3 ms** | **10,30** | **4,54×** |
 | **B-V1** | **lõi tự viết + tối ưu phần mềm** | **1.459.993** | **54,1 ms** | **7,60** | **6,16×** |
 | B-V2 | lõi tự viết + DOT4, C thẳng | **1.169.073** | **43,3 ms** | **6,09** | **7,69×** |
 | B-V1+DOT4 | lõi tự viết + tối ưu PM + DOT4 | **631.153** | **23,4 ms** | **3,29** | **14,24×** |
 | **B-V1+DOT4+C1** | **+ bố cục 4 pha** | **487.888** | **18,1 ms** | **2,54** | **18,4×** |
 | B-V0r/B-V1r | lõi tự viết, địa chỉ bộ nhớ ghi thanh ghi | 3.750.662 / 2.713.280 | 138,9 / 100,5 ms | 19,53 / 14,13 | 2,40× / 3,31× |
-| B-V3 | lõi tự viết + REQ | | | | chưa làm |
+| **B-V3** | **lõi tự viết + DOT4 + REQ** | **365.992** | **13,6 ms** | **1,91** | **24,6×** |
 
 Nhánh B cũng đã chạy **đủ 10.000 ảnh test trên kit**: **10.000/10.000 CRC32 logit khớp golden**,
 độ chính xác **98,25 %** — bằng tuyệt đối nhánh A và bằng golden Python. Cùng một mô hình cho **cùng

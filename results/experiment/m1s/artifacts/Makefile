@@ -309,6 +309,62 @@ check-v1dc:
 	    --port $(UART_PORT) --drain 2 --repeat 2 --src-hash $(SRC_HASH) \
 	    --log v1dc/check.log 2>&1 | tee v1dc/check_stdout.log
 
+# ======== A-V1+DOT4+C1+REQ (v1dcr): thêm lệnh REQ — firmware dùng cho A-V3 và B-V3 ========
+.PHONY: fw-v1dcr
+fw-v1dcr: v1dcr/firmware.hex
+
+v1dcr/firmware.elf: main.c $(FWDIR)/weights.h $(FWDIR)/start.S $(FWDIR)/link.ld $(FWDIR)/soc.h
+	@mkdir -p v1dcr
+	$(CROSS)gcc $(CFLAGS) -DUSE_DOT4 -DOPT_KERNELS -DCONV1_DOT4 -DUSE_REQ $(LDF) \
+	    -Wl,-Map=v1dcr/firmware.map -o $@ $(FWDIR)/start.S main.c
+	$(CROSS)objdump -D $@ > v1dcr/firmware.dis
+	@echo "--- kích thước A-V1+DOT4+C1+REQ (RAM 65536 byte) ---"
+	$(CROSS)size -A $@ | tee v1dcr/firmware.size.txt
+
+v1dcr/firmware.hex: v1dcr/firmware.elf
+	$(CROSS)objcopy -O binary $< v1dcr/firmware.bin
+	python3 ../../scripts/bin2hex.py v1dcr/firmware.bin $@ --words 16384
+
+# ---- bitstream A-V3 (lệnh REQ qua PCPI) ----
+.PHONY: sim-v1dcr build-v1dcr load-v1dcr check-v1dcr
+
+sim-v1dcr: v1dcr/Vsoc_f8r v1dcr/firmware.hex
+	cd v1dcr && ./Vsoc_f8r --stop-on "M1S,done" 2>&1 | tee sim.log
+	@grep -q "M1S,sum,10,10,10,10" v1dcr/sim.log || (echo "SIM KHONG DAT"; exit 1)
+
+v1dcr/Vsoc_f8r: $(F8)/soc_f8.v $(CORE) $(F8)/sim_main.cpp v1dcr/firmware.hex
+	@mkdir -p v1dcr
+	verilator --cc --exe --build -j 0 -O2 -Wno-fatal -CFLAGS "$(TN20K_CXX_INC)" \
+	    -GWITH_REQ=1 --top-module soc_f8 -Mdir v1dcr/obj_dir -o ../Vsoc_f8r \
+	    $(F8)/soc_f8.v $(CORE) $(F8)/sim_main.cpp 2>&1 | tee v1dcr/verilator.log
+
+v1dcr/top-synth.json: $(F8)/top_f8.v $(CORE) v1dcr/firmware.hex
+	@mkdir -p v1dcr
+	cd v1dcr && yosys -l yosys.log -p "read_verilog -DPCPI_DOT4_DSP ../$(F8)/top_f8.v \
+	    ../$(F5)/soc.v ../../../rtl/picorv32/picorv32.v ../../../rtl/uart/uart_tx.v \
+	    ../../../rtl/uart/uart_rx.v ../../../rtl/ext/pcpi_dot4.v; \
+	    chparam -set WITH_REQ 1 top; \
+	    synth_gowin -top top -family $(YOSYS_FAM) -nodsp -json top-synth.json -setundef"
+
+v1dcr/pnr.json: v1dcr/top-synth.json $(CST)
+	nextpnr-himbaechel -l v1dcr/nextpnr.log --json $< --write $@ \
+	    --device "$(DEVICE)" --vopt family=$(FAMILY) --vopt cst=$(CST) \
+	    --freq $(FREQ) --report v1dcr/report.json
+
+v1dcr/top.fs: v1dcr/pnr.json
+	gowin_pack -d $(FAMILY) -o $@ $<
+
+build-v1dcr: v1dcr/top.fs
+
+load-v1dcr: v1dcr/top.fs
+	openFPGALoader -b $(BOARD) $< 2>&1 | tee -a v1dcr/load.log
+
+check-v1dcr:
+	python3 ../../scripts/m1s_check.py --variant A-V1+DOT4+C1+REQ --sim-log v1dcr/sim.log \
+	    --size v1dcr/firmware.size.txt --csv $(RESULTS)/m1s.csv --append \
+	    --port $(UART_PORT) --drain 2 --repeat 2 --src-hash $(SRC_HASH) \
+	    --log v1dcr/check.log 2>&1 | tee v1dcr/check_stdout.log
+
 # ============ A-V1+DOT4+C1, chế độ 10.000 ảnh qua UART (v10k) ============
 # Phần cứng GIỐNG HỆT v1dc (cùng DOT4); chỉ firmware khác: ảnh đến từ UART thay vì
 # nhúng sẵn, nên chạy được đủ tập test 10.000 ảnh trên kit.
@@ -375,14 +431,14 @@ cmp-v10k:
 # ============================ chung ============================
 archive:
 	@mkdir -p $(RESULTS)
-	@for v in v0 v1 v2 v1d v1dc v10k; do \
+	@for v in v0 v1 v2 v1d v1dc v1dcr v10k; do \
 	    if [ -f $$v/report.json ]; then \
 	        echo "===== $$v ====="; \
 	        python3 ../../scripts/pnr_report.py $$v/report.json | tee $$v/resources.txt; \
 	    fi; \
 	done
 	@RESULTS_BASE=results/experiment sh ../../scripts/archive_gate.sh m1s . main.c Makefile $(FWDIR)/weights.h
-	@for v in v0 v1 v2 v1d v1dc v10k; do [ -d $$v ] && RESULTS_BASE=results/experiment sh ../../scripts/archive_gate.sh m1s/$$v $$v; done
+	@for v in v0 v1 v2 v1d v1dc v1dcr v10k; do [ -d $$v ] && RESULTS_BASE=results/experiment sh ../../scripts/archive_gate.sh m1s/$$v $$v; done
 
 clean:
-	rm -rf v0 v1 v2 v1d v1dc v10k
+	rm -rf v0 v1 v2 v1d v1dc v1dcr v10k

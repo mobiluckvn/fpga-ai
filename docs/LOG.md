@@ -2,6 +2,38 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — HOÀN TẤT: A-V3 và B-V3 đo trên kit · 14 cấu hình · 332,9 ms → 13,6 ms (24,6×)
+
+Cổng B5 ĐẠT và biến thể A-V3 xong. Toàn bộ kế hoạch gốc (nhánh A V0–V3, nhánh B V0–V3) đã **đo trên
+phần cứng thật**.
+
+| | chu kỳ | ms | chu kỳ/MAC | so A-V0 |
+|---|---:|---:|---:|---:|
+| A-V3 (PicoRV32+DOT4+REQ) | 1.842.219 | 68,2 | 9,59 | 4,88× |
+| **B-V3 (mycore+DOT4+REQ)** | **365.992** | **13,6** | **1,91** | **24,56×** |
+
+Cả hai 2/2 lần đọc, CRC 5 lớp × 10 ảnh khớp golden, kit = Verilator bằng tuyệt đối. Phép đo A-V3 trên
+kit cũng **xác nhận netlist A-V3 đúng chức năng** dù cách phủ của nó lạ (mục 6b của KET_QUA_NHANH_B).
+
+### Phân rã 24,6× — và câu trả lời cho câu hỏi "nên đầu tư vào đâu"
+| Hướng | Hệ số | Giá phần cứng |
+|---|---|---|
+| Tối ưu phần mềm | 1,45× | 0 |
+| **Vi kiến trúc** | **4,26×** | **ít LUT4 hơn ~2,4 lần** |
+| DOT4 | 2,31× | 4 DSP |
+| Bố cục 4 pha | 1,29× | 0 |
+| REQ | 1,33× | 4 DSP |
+
+**Vi kiến trúc là hướng lớn nhất và là hướng duy nhất vừa nhanh hơn vừa rẻ hơn.**
+
+### RQ3 có thêm bằng chứng mạnh nhất
+REQ chuyển giao **gần như chính xác**: 1,330× trên PicoRV32 so với 1,333× trên lõi tự viết — lệch
+0,2 %. Hợp lý vì REQ là khối tính toán thuần, ít phụ thuộc vi kiến trúc, khác với DOT4 (2,131 → 2,313)
+và bố cục (1,190 → 1,294) vốn phụ thuộc chi phí cố định xung quanh.
+
+Đã viết `docs/KET_QUA_TONG_HOP.md` (136 dòng): bảng 14 cấu hình, phân rã, RQ1/RQ2/RQ3, 7 cạm bẫy,
+3 bài học phương pháp, và bảng "những gì KHÔNG kết luận được".
+
 ## 2026-10-17 — NHÁNH B cổng B6 ĐẠT: 100 và 10.000 ảnh đúng từng bit trên lõi tự viết
 
 Tiêu chí ĐẠT của cả nhánh B trong kế hoạch gốc (*"lõi qua riscv-tests; 100 ảnh đúng từng bit"*) nay

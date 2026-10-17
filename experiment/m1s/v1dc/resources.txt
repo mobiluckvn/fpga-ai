@@ -8,18 +8,18 @@ DUMMY_CELL            16 /       0    0.0%
 GND                    1 /       1  100.0%
 GSR                    1 /       1  100.0%
 IOB                    9 /     384    2.3%
-LUT4                8065 /   20736   38.9%
+LUT4                8054 /   20736   38.8%
 MULT18X18              4 /      48    8.3%
 MULT36X36              0 /      12    0.0%
 MULT9X9                0 /      96    0.0%
 MULTADDALU18X18        0 /      24    0.0%
 MULTALU18X18           0 /      24    0.0%
 MULTALU36X18           0 /      24    0.0%
-MUX2_LUT5           1956 /   10368   18.9%
-MUX2_LUT6            596 /    5184   11.5%
+MUX2_LUT5           1946 /   10368   18.8%
+MUX2_LUT6            595 /    5184   11.5%
 MUX2_LUT7            256 /    2592    9.9%
 MUX2_LUT8             80 /    2592    3.1%
 RAM16SDP4             32 /     648    4.9%
 VCC                    1 /       1  100.0%
 
-Fmax[u_soc.clk] = 71.89 MHz (ràng buộc 27 MHz) -> ĐẠT
+Fmax[u_soc.clk] = 70.66 MHz (ràng buộc 27 MHz) -> ĐẠT

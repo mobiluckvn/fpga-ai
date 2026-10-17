@@ -69,7 +69,7 @@ Vẫn hiện thực `div divu rem remu mulhsu` để qua **trọn bộ** `rv32ui
 | **B2** ✅ | Chạy firmware M1-S trong Verilator | CRC 5 lớp × 10 ảnh khớp golden; `rdinstret` **bằng tuyệt đối** nhánh A trên cùng file hex |
 | **B3** ✅ | Lên kit | Nạp được; 10 ảnh CRC khớp; **kit = Verilator bằng tuyệt đối**; báo LUT4/DFF/BSRAM/Fmax |
 | **B4** ✅ | B-V2: DOT4 trong tầng thực thi | CRC khớp; đo tăng tốc; so trực tiếp với A-V2/A-V1+DOT4 → **RQ3** |
-| **B5** | B-V3: lệnh REQ | CRC khớp; đo; so với dự báo 1,17× ở nhánh A |
+| **B5** ✅ | B-V3: lệnh REQ | CRC khớp; đo; so với dự báo 1,17× ở nhánh A |
 | **B6** ✅ | Tổng kết | **100 ảnh đúng từng bit** trên kit; bảng tài nguyên/Fmax/chu kỳ A ↔ B; kết luận RQ3 |
 
 Quy tắc chung của dự án vẫn áp dụng: mỗi cổng mô phỏng trước khi tổng hợp, tối đa 3 hướng sửa rồi

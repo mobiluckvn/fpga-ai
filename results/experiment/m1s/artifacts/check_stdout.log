@@ -1,28 +1,28 @@
 # M1-S check
-Thời điểm: 2026-10-17 17:52:45 +0700  ·  biến thể: A-V1+DOT4+C1
+Thời điểm: 2026-10-17 21:11:21 +0700  ·  biến thể: A-V1+DOT4+C1+REQ
 Độ chính xác mô hình (10.000 ảnh test): float 98.29% · int8 98.25%  (chênh +0.04 điểm %)
 Golden từ /Users/v/Documents/NCS/tinyml-riscv-tn20k/fw/weights.h: 10 ảnh thử, nhãn [7, 2, 1, 0, 4, 1, 4, 9, 5, 9], dự đoán golden [7, 2, 1, 0, 4, 1, 4, 9, 5, 9]
-Verilator: biến thể A-V1+DOT4+C1, tổng/ảnh [2450367, 2450519, 2450179, 2450581, 2450472, 2450207, 2450517, 2450376, 2450530, 2450539]
-RAM: .text 19776 + .bss 12820 = 32,596 / 65.536 byte (49.7 %)
+Verilator: biến thể A-V1+DOT4+C1+REQ, tổng/ảnh [1842092, 1842244, 1841904, 1842306, 1842197, 1841932, 1842242, 1842101, 1842255, 1842264]
+RAM: .text 19040 + .bss 12816 = 31,856 / 65.536 byte (48.6 %)
 == Lần đọc 1/2 ==
-    (xả 1149 byte tồn)
+    (xả 1246 byte tồn)
     ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
 == Lần đọc 2/2 ==
-    (xả 1006 byte tồn)
+    (xả 1003 byte tồn)
     ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
 
 ## Số đo trên kit (27 MHz)
-    10 ảnh · tổng chu kỳ/ảnh: min 2,450,179 · trung vị 2,450,517 · max 2,450,581
-    trung vị = 90.8 ms @27 MHz · 12.76 chu kỳ/MAC trên 192,064 MAC
+    10 ảnh · tổng chu kỳ/ảnh: min 1,841,904 · trung vị 1,842,242 · max 1,842,306
+    trung vị = 68.2 ms @27 MHz · 9.59 chu kỳ/MAC trên 192,064 MAC
     dự đoán đúng nhãn: 10/10 · khớp golden: 10/10 · CRC khớp hết 5 lớp: 10/10
 
     | lớp | chu kỳ (trung vị) | % tổng | MAC | chu kỳ/MAC |
     |---|---:|---:|---:|---:|
-    | conv1 | 1,133,668 | 46.3 % | 48672 | 23.29 |
-    | pool1 | 225,621 | 9.2 % | — | — |
-    | conv2 | 986,226 | 40.2 % | 139392 | 7.08 |
-    | pool2 | 65,924 | 2.7 % | — | — |
-    | dense | 39,057 | 1.6 % | 4000 | 9.76 |
+    | conv1 | 692,464 | 37.6 % | 48672 | 14.23 |
+    | pool1 | 225,621 | 12.2 % | — | — |
+    | conv2 | 819,160 | 44.5 % | 139392 | 5.88 |
+    | pool2 | 65,924 | 3.6 % | — | — |
+    | dense | 39,052 | 2.1 % | 4000 | 9.76 |
 Đã ghi ../../results/experiment/m1s/m1s.csv
 
-M1S_PASS bien_the=A-V1+DOT4+C1 cổng=/dev/cu.usbserial-20250303171 lần_đọc_đạt=2/2 trung_vị=2,450,517 chu kỳ (90.8 ms) chu_kỳ/MAC=12.76 RAM=32,596/65536
+M1S_PASS bien_the=A-V1+DOT4+C1+REQ cổng=/dev/cu.usbserial-20250303171 lần_đọc_đạt=2/2 trung_vị=1,842,242 chu kỳ (68.2 ms) chu_kỳ/MAC=9.59 RAM=31,856/65536

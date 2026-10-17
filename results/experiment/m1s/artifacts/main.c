@@ -71,7 +71,9 @@
 #define RUN_IMGS M1S_NIMG
 #endif
 
-#if defined(OPT_KERNELS) && defined(USE_DOT4) && defined(CONV1_DOT4)
+#if defined(OPT_KERNELS) && defined(USE_DOT4) && defined(CONV1_DOT4) && defined(USE_REQ)
+#define VARIANT "A-V1+DOT4+C1+REQ"
+#elif defined(OPT_KERNELS) && defined(USE_DOT4) && defined(CONV1_DOT4)
 #define VARIANT "A-V1+DOT4+C1"
 #elif defined(OPT_KERNELS) && defined(USE_DOT4)
 #define VARIANT "A-V1+DOT4"
@@ -215,6 +217,27 @@ static i8 requant(i32 acc, i32 m0, int shift)
     return (i8)q;
 }
 
+/* ---------- lệnh tùy biến REQ (nhánh B cổng B5, nhánh A cổng A-V3) ----------
+ * Thay CẢ hàm requant() bằng một lệnh. funct7 mang số bit dịch, nên nó phải là
+ * HẰNG SỐ lúc biên dịch — dùng hai tầng macro để bung M1S_SH_x thành chữ số.
+ * Ngữ nghĩa: rd = clamp(rdiv_pot(sat_rdhmul(ReLU(rs1), rs2), funct7), 0, 127),
+ * khớp từng bit với requant() ở trên.
+ */
+#ifdef USE_REQ
+#define REQ_STR_(x) #x
+#define REQ_STR(x)  REQ_STR_(x)
+#define REQ_INSN(ACC, M0, SH) ({                                              \
+    i32 _rq;                                                                  \
+    __asm__ (".insn r 0x0B, 1, " REQ_STR(SH) ", %0, %1, %2"                   \
+             : "=r"(_rq) : "r"(ACC), "r"(M0));                                \
+    _rq; })
+#define REQUANT1(ACC) ((i8)REQ_INSN((ACC), M1S_M0_1, M1S_SH_1))
+#define REQUANT2(ACC) ((i8)REQ_INSN((ACC), M1S_M0_2, M1S_SH_2))
+#else
+#define REQUANT1(ACC) requant((ACC), M1S_M0_1, M1S_SH_1)
+#define REQUANT2(ACC) requant((ACC), M1S_M0_2, M1S_SH_2)
+#endif
+
 /* ---------- đệm activation (channels-last), thẳng hàng 4 byte ---------- */
 static i8  a1[M1S_OUT1 * M1S_OUT1 * M1S_C1]   __attribute__((aligned(4)));  /* 26x26x8  */
 static i8  p1[M1S_POOL1 * M1S_POOL1 * M1S_C1] __attribute__((aligned(4)));  /* 13x13x8  */
@@ -282,7 +305,7 @@ static __attribute__((noinline)) void conv1(const i8 *img)
                             + dot4(r[0],            wr0)
                             + dot4(r[PHS / 4],      wr1)
                             + dot4(r[2 * (PHS / 4)], wr2);
-                    *o = requant(acc, M1S_M0_1, M1S_SH_1);
+                    *o = REQUANT1(acc);
                     r += 1;                       /* +4 byte = x += 4 */
                     o += 4 * M1S_C1;
                 }
@@ -311,7 +334,7 @@ static __attribute__((noinline)) void conv1(const i8 *img)
                         + (i32)r[0]  * w0 + (i32)r[1]  * w1 + (i32)r[2]  * w2
                         + (i32)r[28] * w3 + (i32)r[29] * w4 + (i32)r[30] * w5
                         + (i32)r[56] * w6 + (i32)r[57] * w7 + (i32)r[58] * w8;
-                *o = requant(acc, M1S_M0_1, M1S_SH_1);
+                *o = REQUANT1(acc);
             }
         }
     }
@@ -331,7 +354,7 @@ static __attribute__((noinline)) void conv1(const i8 *img)
                         acc += (i32)row[kx] * (i32)w[ky * 3 + kx];
                 }
                 a1[(y * M1S_OUT1 + x) * M1S_C1 + oc] =
-                    requant(acc, M1S_M0_1, M1S_SH_1);
+                    REQUANT1(acc);
             }
         }
     }
@@ -382,7 +405,7 @@ static __attribute__((noinline)) void conv2(void)
                         + MAC8(base + 208, w + 48)
                         + MAC8(base + 216, w + 56)
                         + MAC8(base + 224, w + 64);
-                o[oc] = requant(acc, M1S_M0_2, M1S_SH_2);
+                o[oc] = REQUANT2(acc);
             }
         }
     }
@@ -403,7 +426,7 @@ static __attribute__((noinline)) void conv2(void)
                     }
                 }
                 a2[(y * M1S_OUT2 + x) * M1S_C2 + oc] =
-                    requant(acc, M1S_M0_2, M1S_SH_2);
+                    REQUANT2(acc);
             }
         }
     }

@@ -25,7 +25,8 @@ module soc_b #(
     // UART và bitstream đều tốt, và vấn đề nằm ở lõi; nếu không thấy gì thì ngược lại.
     // Khung: 'S' <state> <'T' nếu trap, '.' nếu không> <8 hex PC> '\n'
     parameter integer BEACON    = 0,
-    parameter         WITH_DOT4 = 0
+    parameter         WITH_DOT4 = 0,
+    parameter         WITH_REQ  = 0
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -51,7 +52,8 @@ module soc_b #(
         .RESET_PC(32'h0000_0000),
         .WITH_MULDIV(1),
         .FAST_ADDR(FAST_ADDR),
-        .WITH_DOT4(WITH_DOT4)
+        .WITH_DOT4(WITH_DOT4),
+        .WITH_REQ(WITH_REQ)
     ) u_core (
         .clk(clk), .resetn(resetn),
         .mem_addr(mem_addr), .mem_wdata(mem_wdata), .mem_wstrb(mem_wstrb),
