@@ -12,7 +12,7 @@ Ngày bắt đầu: 2026-10-17 · Máy: Mac Intel (x86_64, macOS 26.6.2 build 25
 | F3 BSRAM 64 KB | **ĐẠT** | Khối BSRAM: **32/46** (69,6 %); Fmax: **157,36 MHz** · CRC32 ROM=C7CD86AA và RW=D63B5AB4 **khớp Python 3/3 lần đọc** · thêm phép phản chứng: đổi hạt giống LFSR → CRC ROM đổi đúng thành 454701B8, CRC RW giữ nguyên | **không** | results/feasibility/F3/ |
 | F4 DSP | **ĐẠT có dự phòng** | acc=FEF834C3 khớp Python 3/3 lần với biến thể **PRM** (gọi trực tiếp MULT18X18) và **LUT**; **sai** với cả hai biến thể để yosys tự suy luận DSP. LUT4: PRM 811 / LUT 1764; Fmax: PRM 233,64 / LUT 73,08 MHz | **có**: không dùng DSP do yosys suy luận; phải gọi primitive MULT18X18 trực tiếp | results/feasibility/F4/ |
 | F5 SoC PicoRV32 | **ĐẠT** | loop kit = sim? **CÓ, bằng tuyệt đối** (14.006 chu kỳ, 3/3 lần đọc; thêm 7 khoá nữa cũng khớp tuyệt đối) ; .text: **1.220 byte** · BSRAM 32/46 · LUT4 7.950/20.736 · Fmax 70,05 MHz | `synth_gowin -nodsp` (bắt buộc, do kết quả F4) | results/feasibility/F5/ |
-| F6 Đo lường | | overhead: ; offset hw: | | results/feasibility/F6/ |
+| F6 Đo lường | **CHƯA ĐẠT — còn thiếu 1/5 bước** (người dùng hoãn bước bật/tắt nguồn 3 lần) | overhead: **5 chu kỳ, hằng số 1000/1000 lần**; offset hw: **24 chu kỳ, hằng số ở cả 5 độ dài** (10/100/1k/10k/100k); kit = Verilator **bằng tuyệt đối** cả 5 độ dài; `rdcycleh` 0→1 sau 4.480.000.015 chu kỳ (165,9 s) | — | results/feasibility/F6/ |
 | F7 Kernel int8 | | chu kỳ/MAC (conv): | | results/feasibility/F7/ |
 | F8 DOT4 qua PCPI | | tăng tốc bài A: ; ΔLUT: ; ΔFmax: | | results/feasibility/F8/ |
 
@@ -61,6 +61,21 @@ Ngày bắt đầu: 2026-10-17 · Máy: Mac Intel (x86_64, macOS 26.6.2 build 25
 ## Tài nguyên tổng của chip (từ report.json của nextpnr, dùng để lập ngân sách các cổng sau)
 LUT4 20.736 · DFF 15.552 · ALU 15.552 · IOB 384 · **BSRAM 46** · MULT9X9 96 · **MULT18X18 48** ·
 MULT36X36 12 · MULTALU18X18 24 · MULTADDALU18X18 24 · ALU54D 24 · rPLL 2 · BUFG 24 · RAM16SDP4 648
+
+## Trạng thái F6 (đang làm)
+Bốn trong năm điều kiện ĐẠT đã kiểm xong, số đo ở `results/feasibility/F6/measure.csv`:
+
+| Điều kiện | Kết quả |
+|---|---|
+| 1. Overhead của phép đo là một hằng số | **ĐẠT** — `rdcycle` hai lần liên tiếp: **đúng 5 chu kỳ, 1000/1000 lần**, chỉ một giá trị duy nhất |
+| 2. `hw_count − mcycle` là hằng số ở mọi độ dài | **ĐẠT** — **24 chu kỳ** ở cả 10, 100, 1.000, 10.000, 100.000 vòng |
+| 3. Kit = mô phỏng | **ĐẠT** — `mcycle`, `hw_count`, `instret` khớp **bằng tuyệt đối** ở cả 5 độ dài |
+| 5. `rdcycleh` tăng khi vượt 2^32 | **ĐẠT** — 0 → 1; tổng 4.480.000.015 chu kỳ (165,9 s), lệch 15 chu kỳ so với mô hình 14 chu kỳ/vòng |
+| 4. Ba lần tắt/bật nguồn cho số giống hệt | **CHƯA LÀM** — người dùng hoãn; chạy bằng `make cycle RUN=2/3/4` sau mỗi lần rút/cắm cáp |
+
+Mô hình chu kỳ suy ra được: `mcycle = 14·N + 1` và `instret = 2·N + 3` cho `busy_loop(N)`,
+đúng tuyệt đối ở cả 5 độ dài — tức mỗi vòng lặp 2 lệnh tốn đúng 14 chu kỳ (7 chu kỳ/lệnh với
+bus 1 chu kỳ chờ).
 
 ## Ghi chú quan trọng sau F5 — nền tảng CPU đã có
 `F5,loop` trên kit **bằng tuyệt đối** Verilator (14.006 chu kỳ cho `busy_loop(1000)`), và 7 khoá khác

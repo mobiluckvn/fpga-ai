@@ -2,6 +2,66 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-17 — Cổng F6 (độ tin cậy của phép đo) — ĐANG LÀM, 4/5 bước xong
+
+**Chưa đánh ĐẠT**: bước 4 (đo lại qua 3 lần tắt/bật nguồn kit) cần người dùng rút/cắm cáp USB,
+người dùng chọn **hoãn làm sau**. Theo quy tắc 1 trong CLAUDE.md, **không sang F7** khi F6 chưa ĐẠT.
+
+### Cách làm
+- Dùng **đúng SoC của F5** (`feasibility/F5_soc/soc.v`, `top.v`), chỉ thay firmware
+  (`feasibility/F6_measure/main.c`) — nên mọi kết luận vẫn áp dụng cho nền tảng đã kiểm ở F5.
+- Firmware in CSV: `F6,cal,<delta>,<số lần>` cho từng giá trị overhead khác nhau;
+  `F6,len,<N>,<mcycle>,<hwc>,<instret>` cho 5 độ dài; `F6,hi,...` cho bài `rdcycleh`.
+- `scripts/f6_check.py` đọc kit, so với log Verilator, kiểm từng điều kiện ĐẠT và ghi
+  `results/feasibility/F6/measure.csv` (cộng dồn qua các lần bật nguồn).
+
+### Kết quả 4 điều kiện đã kiểm
+1. **Overhead là hằng số**: đo `rdcycle` hai lần liên tiếp 1.000 lần → **đúng một giá trị duy nhất:
+   5 chu kỳ**, xuất hiện 1000/1000 lần. Cả trên kit và trong Verilator.
+2. **`hw_count − mcycle` là hằng số**: **24 chu kỳ** ở cả 5 độ dài.
+
+   | N | mcycle | hw_count | instret | hw−mcycle |
+   |---:|---:|---:|---:|---:|
+   | 10 | 141 | 165 | 23 | 24 |
+   | 100 | 1.401 | 1.425 | 203 | 24 |
+   | 1.000 | 14.001 | 14.025 | 2.003 | 24 |
+   | 10.000 | 140.001 | 140.025 | 20.003 | 24 |
+   | 100.000 | 1.400.001 | 1.400.025 | 200.003 | 24 |
+
+3. **Kit = Verilator bằng tuyệt đối** ở cả 5 độ dài, cho cả ba cột.
+4. **`rdcycleh`**: `busy_loop(320.000.000)` → `rdcycleh` **0 → 1**, `rdcycle` 115.922.609 → 300.955.328.
+   Tổng = 2^32 + 300.955.328 − 115.922.609 = **4.480.000.015 chu kỳ** = **165,9 s @27 MHz**.
+   Mô hình 14 chu kỳ/vòng cho 4.480.000.000 → **lệch đúng 15 chu kỳ** (vào/ra vòng lặp + đọc counter).
+
+**Mô hình chu kỳ suy ra**: `mcycle = 14·N + 1`, `instret = 2·N + 3` — đúng tuyệt đối ở cả 5 độ dài.
+Mỗi vòng 2 lệnh tốn đúng 14 chu kỳ (7 chu kỳ/lệnh với bus 1 chu kỳ chờ). Đây là cơ sở để F7
+ngoại suy số chu kỳ/MAC.
+
+### Ba lỗi của chính tôi, đã sửa
+1. `f6_check.py` lúc đầu **xả 1,5 s bộ đệm trước khi đọc** (cách làm đúng ở F3) nhưng ở F6 thì sai:
+   khối đo đầu tiên được in ngay sau reset và nằm sẵn trong bộ đệm, nên bị xả mất; sau đó kit im
+   166 s để chạy bài `rdcycleh` → không đọc được gì. Sửa: dùng `--drain 0` cho F6.
+2. `parse_block` trả về cả khối **chưa đầy đủ** (chưa thấy `F6,done`) → báo thiếu độ dài 100.000.
+   Sửa: chỉ trả về khối đã thấy `F6,done`.
+3. Script thử cổng JTAG (`...170`) trước với timeout 12–15 s, tiêu hết cửa sổ in của kit.
+   Sửa: Makefile truyền `--port /dev/cu.usbserial-20250303171` (cổng UART đã xác định ở F2).
+   Thêm đích `make cycle RUN=n` (nạp lại SRAM rồi đo ngay) và `make f6check-hi`.
+
+### Thay đổi firmware do phản hồi của người dùng
+Người dùng phản hồi **"LED sáng hết chói mắt quá"**. Firmware F5/F6 trước đó bật cả 6 LED
+(`LED_REG = 0x3F`) trong lúc nghỉ. Đã sửa **chính sách LED: nhiều nhất MỘT LED sáng, tắt hết khi
+rảnh**, cho cả `fw/main.c` (F5) và `feasibility/F6_measure/main.c`. Đồng thời nạp ngay bitstream
+F4-PRM để tắt đèn cho người dùng trong lúc sửa.
+Ghi chú về F5: thay đổi này chỉ ở các lệnh ghi LED **nằm ngoài cửa sổ đo**, nên không ảnh hưởng
+bất kỳ số đo nào của F5; vật phẩm đã lưu của F5 là của bản đã kiểm chứng.
+Cũng vì chờ 166 s mỗi lần bật nguồn là quá lâu, firmware F6 đổi sang chạy bài `rdcycleh`
+**sau 5 khối in** (`HI_AFTER=5`) thay vì sau khối đầu.
+
+### Việc tiếp theo / cần người dùng
+- **Bước còn thiếu của F6**: 3 lần rút/cắm cáp USB. Mỗi lần, sau khi anh cắm lại, tôi chạy
+  `make cycle RUN=2` (rồi 3, 4) — nạp SRAM và đo, mất ~15 giây mỗi lần.
+- Chỉ khi bước này xong, F6 mới được đánh ĐẠT và mới sang F7.
+
 ## 2026-10-17 — Cổng F5 (SoC PicoRV32 chạy firmware C) — ĐẠT
 
 Tiêu chí quan trọng nhất của cổng này — **`F5,loop` trên kit bằng TUYỆT ĐỐI Verilator** — đã đạt:

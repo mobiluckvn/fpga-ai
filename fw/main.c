@@ -118,7 +118,7 @@ int main(void)
     hwc         = h1 - h0;
     instret     = i1 - i0;
 
-    LED_REG = 0x03u;
+    LED_REG = 0x00u;
 
     for (;;) {
         puts_("F5,hello,"); puts_(GIT_HASH); eol();
@@ -131,9 +131,9 @@ int main(void)
         puts_("F5,ram,");    put_hex32(ram_sum()); eol();
         puts_("F5,done");    eol();
 
-        LED_REG = 0x3Fu;
+        LED_REG = 0x01u;           /* chỉ 1 LED: bật cả 6 thì quá chói */
         busy_loop(2000000u);       /* ~ 2 lệnh/vòng, nghỉ giữa hai lần in */
-        LED_REG = 0x03u;
+        LED_REG = 0x00u;
     }
     return 0;
 }

@@ -1,0 +1,9 @@
+build/firmware.elf  :
+section             size   addr
+.text               1400      0
+.bss                 196   1400
+.riscv.attributes     42      0
+.comment              51      0
+Total               1689
+
+

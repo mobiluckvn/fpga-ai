@@ -1,0 +1,17 @@
+# F6 check
+Thời điểm: 2026-10-17 11:12:07 +0700  ·  lần bật nguồn: 99
+Verilator: cal=[(5, 1000)]  độ dài=[10, 100, 1000, 10000, 100000]
+Cổng sẽ thử: ['/dev/cu.usbserial-20250303171']
+--- Thử cổng /dev/cu.usbserial-20250303171 ---
+    (đã đóng /dev/cu.usbserial-20250303171)
+Kit (cổng /dev/cu.usbserial-20250303171): hello=6916bb9
+    cal = [(5, 1000)]
+    len      10: mcycle=     141 hwc=     165 instret=      23  hwc-mcycle=24
+    len     100: mcycle=    1401 hwc=    1425 instret=     203  hwc-mcycle=24
+    len    1000: mcycle=   14001 hwc=   14025 instret=    2003  hwc-mcycle=24
+    len   10000: mcycle=  140001 hwc=  140025 instret=   20003  hwc-mcycle=24
+    len  100000: mcycle= 1400001 hwc= 1400025 instret=  200003  hwc-mcycle=24
+    hi: rdcycleh 0 -> 1 (tăng 1); rdcycle 115922609 -> 300955328; 320000000 vòng
+Đã ghi 5 dòng vào /private/tmp/claude-501/-Users-v-Documents-NCS/2c7c16d6-01cc-43ba-96d3-f3dda04e8e6c/scratchpad/hi_tmp.csv (run=99)
+
+F6_PASS run=99 overhead=5 hwc_offset=24 số_độ_dài=5 kit=verilator

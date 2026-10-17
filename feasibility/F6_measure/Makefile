@@ -1,0 +1,121 @@
+# F6 — độ tin cậy của phép đo. Dùng ĐÚNG SoC của F5 (feasibility/F5_soc/soc.v, top.v),
+# chỉ thay firmware. Nhờ vậy mọi kết luận về số chu kỳ vẫn áp dụng cho nền tảng đã kiểm ở F5.
+#
+# Đích: fw sim build load f6check check clean
+# Cần: source ../../env/setup_env.sh
+
+SOCDIR     := ../F5_soc
+FWDIR      := ../../fw
+HEX        := firmware.hex
+SRC        := $(SOCDIR)/top.v $(SOCDIR)/soc.v ../../rtl/picorv32/picorv32.v \
+              ../../rtl/uart/uart_tx.v ../../rtl/uart/uart_rx.v
+SIMSRC     := $(SOCDIR)/soc.v ../../rtl/picorv32/picorv32.v \
+              ../../rtl/uart/uart_tx.v ../../rtl/uart/uart_rx.v
+BUILD      := build
+RESULTS    := ../../results/feasibility/F6
+
+CROSS      := riscv-none-elf-
+ARCH       := -march=rv32im -mabi=ilp32
+GIT_HASH   := $(shell git -C ../.. rev-parse --short HEAD 2>/dev/null || echo nogit)
+CAL_N      ?= 1000
+HI_N       ?= 320000000
+HI_AFTER   ?= 5
+CFLAGS     := $(ARCH) -Os -ffreestanding -fno-builtin -nostdlib -nostartfiles \
+              -fno-pic -mno-relax -Wall -Wextra -I$(FWDIR) \
+              -DGIT_HASH=\"$(GIT_HASH)\" -DCAL_N=$(CAL_N)u -DHI_N=$(HI_N)u -DHI_AFTER=$(HI_AFTER)u
+LDFLAGS    := $(ARCH) -nostdlib -nostartfiles -T $(FWDIR)/link.ld \
+              -Wl,--gc-sections -Wl,-Map=$(BUILD)/firmware.map
+
+DEVICE     := GW2AR-LV18QN88C8/I7
+FAMILY     := GW2A-18C
+YOSYS_FAM  := gw2a
+BOARD      := tangnano20k
+FREQ       := 27
+CST        := ../../hw/tangnano20k.cst
+
+.PHONY: all fw sim build load f6check check clean
+all: build
+
+# ---------- firmware ----------
+fw: $(HEX)
+
+$(BUILD)/firmware.elf: main.c $(FWDIR)/start.S $(FWDIR)/link.ld $(FWDIR)/soc.h
+	@mkdir -p $(BUILD)
+	$(CROSS)gcc $(CFLAGS) $(LDFLAGS) -o $@ $(FWDIR)/start.S main.c
+	$(CROSS)objdump -D $@ > $(BUILD)/firmware.dis
+	$(CROSS)size -A $@ | tee $(BUILD)/firmware.size.txt
+
+$(HEX): $(BUILD)/firmware.elf
+	$(CROSS)objcopy -O binary $< $(BUILD)/firmware.bin
+	python3 ../../scripts/bin2hex.py $(BUILD)/firmware.bin $@ --words 16384
+
+# ---------- mô phỏng Verilator (dừng ở F6,done, không chạy phần rdcycleh dài) ----------
+sim: $(BUILD)/Vsoc $(HEX)
+	@echo "=== Verilator ==="
+	$(BUILD)/Vsoc --stop-on "F6,done" 2>&1 | tee $(BUILD)/sim.log
+	@grep -q "F6,done" $(BUILD)/sim.log || (echo "SIM KHONG DAT"; exit 1)
+
+$(BUILD)/Vsoc: $(SIMSRC) $(SOCDIR)/sim_main.cpp $(HEX)
+	@mkdir -p $(BUILD)
+	verilator --cc --exe --build -j 0 -O2 -Wno-fatal \
+	    -CFLAGS "$(TN20K_CXX_INC)" \
+	    --top-module soc -Mdir $(BUILD)/obj_dir -o ../Vsoc \
+	    $(SIMSRC) $(SOCDIR)/sim_main.cpp 2>&1 | tee $(BUILD)/verilator.log
+
+# ---------- bitstream ----------
+build: $(BUILD)/top.fs
+
+$(BUILD)/top-synth.json: $(SRC) $(HEX)
+	@mkdir -p $(BUILD)
+	yosys -l $(BUILD)/yosys.log \
+	      -p "read_verilog $(SRC); synth_gowin -top top -family $(YOSYS_FAM) -nodsp -json $@ -setundef"
+
+$(BUILD)/pnr.json: $(BUILD)/top-synth.json $(CST)
+	nextpnr-himbaechel -l $(BUILD)/nextpnr.log --json $< --write $@ \
+	      --device "$(DEVICE)" --vopt family=$(FAMILY) --vopt cst=$(CST) \
+	      --freq $(FREQ) --report $(BUILD)/report.json
+
+$(BUILD)/top.fs: $(BUILD)/pnr.json
+	gowin_pack -d $(FAMILY) -o $@ $<
+
+load: $(BUILD)/top.fs
+	openFPGALoader -b $(BOARD) $< 2>&1 | tee -a $(BUILD)/load.log
+
+# ---------- đọc kit, so Verilator, ghi CSV ----------
+# RUN = số thứ tự lần bật nguồn. UART_PORT chỉ định rõ cổng vì cổng còn lại là JTAG
+# và nếu thử nó trước thì hết mất cửa sổ 5 khối in đầu (đã gặp).
+# --drain 0: KHÔNG xả bộ đệm, vì khối đo đầu tiên nằm sẵn trong bộ đệm ngay sau khi nạp.
+RUN       ?= 1
+UART_PORT ?= /dev/cu.usbserial-20250303171
+
+f6check:
+	python3 ../../scripts/f6_check.py --sim-log $(BUILD)/sim.log \
+	    --csv $(RESULTS)/measure.csv --run $(RUN) \
+	    --port $(UART_PORT) --drain 0 --timeout 12 \
+	    --log $(BUILD)/f6_check_run$(RUN).log 2>&1 | tee $(BUILD)/f6_check_stdout.log
+
+# nạp lại SRAM rồi đo ngay (dùng sau mỗi lần bật/tắt nguồn kit)
+.PHONY: cycle
+cycle: $(BUILD)/top.fs
+	openFPGALoader -b $(BOARD) $< 2>&1 | tee -a $(BUILD)/load.log
+	$(MAKE) f6check RUN=$(RUN)
+
+# chờ cả dòng F6,hi (vòng lặp vượt 2^32 chu kỳ, ~166 s)
+.PHONY: f6check-hi
+f6check-hi:
+	python3 ../../scripts/f6_check.py --sim-log $(BUILD)/sim.log \
+	    --csv /dev/null --run 0 --port $(UART_PORT) --drain 0 \
+	    --wait-hi --hi-timeout 260 \
+	    --log $(BUILD)/f6_check_hi.log 2>&1 | tee $(BUILD)/f6_check_hi_stdout.log
+
+# ---------- thu kết quả ----------
+check: $(BUILD)/top.fs
+	@mkdir -p $(RESULTS)
+	@python3 ../../scripts/pnr_report.py $(BUILD)/report.json | tee $(BUILD)/resources.txt
+	@(printf 'bitstream: '; wc -c < $(BUILD)/top.fs | tr -d ' '; echo ' byte') | tr -d '\n' > $(BUILD)/bitstream_size.txt
+	@echo >> $(BUILD)/bitstream_size.txt
+	@cp -f $(HEX) $(BUILD)/firmware.hex
+	@sh ../../scripts/archive_gate.sh F6 $(BUILD) main.c
+
+clean:
+	rm -rf $(BUILD) $(HEX)

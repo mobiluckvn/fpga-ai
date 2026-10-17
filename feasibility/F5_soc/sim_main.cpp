@@ -6,7 +6,7 @@
 // Vì khối uart_tx THẬT vẫn được dùng, tx_busy diễn ra y như trên kit, nên số chu kỳ
 // mà firmware đo được (rdcycle, bộ đếm phần cứng) giống hệt phần cứng.
 //
-// Dùng: Vsoc [--max-cycles N] [--vcd file]
+// Dùng: Vsoc [--max-cycles N] [--stop-on "F5,done"]
 #include "Vsoc.h"
 #include "verilated.h"
 #include <cstdio>
@@ -18,9 +18,12 @@ int main(int argc, char **argv)
     Verilated::commandArgs(argc, argv);
 
     long max_cycles = 200000000L;
+    std::string stop_on = "F5,done";
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "--max-cycles") && i + 1 < argc)
             max_cycles = atol(argv[++i]);
+        else if (!strcmp(argv[i], "--stop-on") && i + 1 < argc)
+            stop_on = argv[++i];
     }
 
     Vsoc *dut = new Vsoc;
@@ -47,7 +50,7 @@ int main(int argc, char **argv)
             if (c == '\n') {
                 printf("%s\n", line.c_str());
                 fflush(stdout);
-                if (line.rfind("F5,done", 0) == 0) {
+                if (line.rfind(stop_on, 0) == 0) {
                     if (++done_seen >= 1)
                         done = true;
                 }
@@ -58,18 +61,18 @@ int main(int argc, char **argv)
         }
 
         if (dut->dbg_trap) {
-            fprintf(stderr, "F5_SIM_TRAP: loi o chu ky %ld\n", cycle);
+            fprintf(stderr, "SIM_TRAP: loi o chu ky %ld\n", cycle);
             delete dut;
             return 2;
         }
     }
 
     if (!done) {
-        fprintf(stderr, "F5_SIM_TIMEOUT: khong thay F5,done sau %ld chu ky\n", cycle);
+        fprintf(stderr, "SIM_TIMEOUT: khong thay %s sau %ld chu ky\n", stop_on.c_str(), cycle);
         delete dut;
         return 1;
     }
-    fprintf(stderr, "F5_SIM_OK: xong sau %ld chu ky\n", cycle);
+    fprintf(stderr, "SIM_OK: xong sau %ld chu ky\n", cycle);
     delete dut;
     return 0;
 }
