@@ -304,17 +304,80 @@ check-v1dc:
 	    --port $(UART_PORT) --drain 2 --repeat 2 \
 	    --log v1dc/check.log 2>&1 | tee v1dc/check_stdout.log
 
+# ============ A-V1+DOT4+C1, chế độ 10.000 ảnh qua UART (v10k) ============
+# Phần cứng GIỐNG HỆT v1dc (cùng DOT4); chỉ firmware khác: ảnh đến từ UART thay vì
+# nhúng sẵn, nên chạy được đủ tập test 10.000 ảnh trên kit.
+.PHONY: fw-v10k sim-v10k build-v10k load-v10k run-v10k cmp-v10k
+fw-v10k: v10k/firmware.hex
+
+v10k/firmware.elf: main.c $(FWDIR)/weights.h $(FWDIR)/start.S $(FWDIR)/link.ld $(FWDIR)/soc.h
+	@mkdir -p v10k
+	$(CROSS)gcc $(CFLAGS) -DUSE_DOT4 -DOPT_KERNELS -DCONV1_DOT4 -DSTREAM_10K $(LDF) \
+	    -Wl,-Map=v10k/firmware.map -o $@ $(FWDIR)/start.S main.c
+	$(CROSS)objdump -D $@ > v10k/firmware.dis
+	@echo "--- kích thước v10k (RAM 65536 byte) ---"
+	$(CROSS)size -A $@ | tee v10k/firmware.size.txt
+
+v10k/firmware.hex: v10k/firmware.elf
+	$(CROSS)objcopy -O binary $< v10k/firmware.bin
+	python3 ../../scripts/bin2hex.py v10k/firmware.bin $@ --words 16384
+
+v10k/imgs3.bin:
+	@mkdir -p v10k
+	../../.venv/bin/python ../../scripts/m1s_10k.py --n 3 --export $@
+
+v10k/Vsoc_10k: $(F8)/soc_f8.v $(CORE) sim_main_10k.cpp v10k/firmware.hex
+	@mkdir -p v10k
+	verilator --cc --exe --build -j 0 -O2 -Wno-fatal -CFLAGS "$(TN20K_CXX_INC)" \
+	    --top-module soc_f8 -Mdir v10k/obj_dir -o ../Vsoc_10k \
+	    $(F8)/soc_f8.v $(CORE) sim_main_10k.cpp 2>&1 | tee v10k/verilator.log
+
+sim-v10k: v10k/Vsoc_10k v10k/imgs3.bin
+	cd v10k && ./Vsoc_10k --imgs imgs3.bin --n 3 2>&1 | tee sim.log
+	@grep -c "^M1S10K," v10k/sim.log
+
+build-v10k: v10k/top.fs
+
+v10k/top-synth.json: $(F8)/top_f8.v $(CORE) v10k/firmware.hex
+	@mkdir -p v10k
+	cd v10k && yosys -l yosys.log -p "read_verilog -DPCPI_DOT4_DSP ../$(F8)/top_f8.v \
+	    ../$(F5)/soc.v ../../../rtl/picorv32/picorv32.v ../../../rtl/uart/uart_tx.v \
+	    ../../../rtl/uart/uart_rx.v ../../../rtl/ext/pcpi_dot4.v; \
+	    synth_gowin -top top -family $(YOSYS_FAM) -nodsp -json top-synth.json -setundef"
+
+v10k/pnr.json: v10k/top-synth.json $(CST)
+	nextpnr-himbaechel -l v10k/nextpnr.log --json $< --write $@ \
+	    --device "$(DEVICE)" --vopt family=$(FAMILY) --vopt cst=$(CST) \
+	    --freq $(FREQ) --report v10k/report.json
+
+v10k/top.fs: v10k/pnr.json
+	gowin_pack -d $(FAMILY) -o $@ $<
+
+load-v10k: v10k/top.fs
+	openFPGALoader -b $(BOARD) $< 2>&1 | tee -a v10k/load.log
+
+N10K ?= 10000
+run-v10k:
+	../../.venv/bin/python ../../scripts/m1s_10k.py --port $(UART_PORT) --n $(N10K) \
+	    --variant A-V1+DOT4+C1 --csv $(RESULTS)/m1s_10k.csv --log v10k/run.log \
+	    2>&1 | tee v10k/run_stdout.log
+
+# bằng chứng các lớp tính toán KHÔNG đổi giữa v1dc (đã kiểm kit=Verilator) và v10k
+cmp-v10k:
+	python3 ../../scripts/cmp_layers.py v1dc/firmware.dis v10k/firmware.dis \
+	    conv1 conv1_prep pool1 conv2 pool2 dense requant sat_rdhmul rdiv_pot
+
 # ============================ chung ============================
 archive:
 	@mkdir -p $(RESULTS)
-	@for v in v0 v1 v2 v1d v1dc; do \
+	@for v in v0 v1 v2 v1d v1dc v10k; do \
 	    if [ -f $$v/report.json ]; then \
 	        echo "===== $$v ====="; \
 	        python3 ../../scripts/pnr_report.py $$v/report.json | tee $$v/resources.txt; \
 	    fi; \
 	done
 	@RESULTS_BASE=results/experiment sh ../../scripts/archive_gate.sh m1s . main.c Makefile $(FWDIR)/weights.h
-	@for v in v0 v1 v2 v1d v1dc; do [ -d $$v ] && RESULTS_BASE=results/experiment sh ../../scripts/archive_gate.sh m1s/$$v $$v; done
+	@for v in v0 v1 v2 v1d v1dc v10k; do [ -d $$v ] && RESULTS_BASE=results/experiment sh ../../scripts/archive_gate.sh m1s/$$v $$v; done
 
 clean:
-	rm -rf v0 v1 v2 v1d v1dc
+	rm -rf v0 v1 v2 v1d v1dc v10k

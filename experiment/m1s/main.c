@@ -43,6 +43,15 @@
  * làm conv1/pool1/pool2 sinh ra mã GIỐNG HỆT ở cả hai biến thể, nên so sánh
  * A-V0 với A-V2 theo từng lớp mới công bằng.
  *
+ * Chế độ STREAM_10K: thay vì 10 ảnh nhúng sẵn, nhận ảnh qua UART để chạy ĐỦ 10.000
+ * ảnh test trên kit. Khung truyền: 1 byte đồng bộ 0xA5 + 784 byte ảnh int8. Pixel
+ * lượng tử hoá nằm trong [0,127] nên KHÔNG BAO GIỜ bằng 0xA5 -> nếu mất byte thì
+ * khung sau tự đồng bộ lại. Kit báo CRC32 của chính 784 byte nó nhận được, nhờ vậy
+ * phân biệt được "lỗi đường truyền" với "lỗi tính toán". In ra:
+ *   M1S10K,hello,<git hash>,<biến thể>
+ *   M1S10K,<idx>,<dự đoán>,<crc ảnh>,<crc logit>,<conv1>,<pool1>,<conv2>,<pool2>,
+ *          <dense>,<tổng>,<instret>
+ *
  * Chính sách LED: nhiều nhất một LED sáng.
  */
 #include "soc.h"
@@ -140,6 +149,15 @@ static void put_hex32(u32 v)
 }
 
 static void eol(void) { puts_("\r\n"); }
+
+#ifdef STREAM_10K
+static u8 getch(void)
+{
+    while (!(UART_STAT & UART_RX_VALID))
+        ;
+    return (u8)(UART_DATA & 0xFFu);
+}
+#endif
 
 /* ---------- CRC32 chuẩn (zlib) ---------- */
 static u32 crc32_buf(const u8 *p, u32 n)
@@ -479,6 +497,74 @@ static __attribute__((noinline)) u32 bench_clamp(u32 n)
 }
 #endif
 
+#ifdef STREAM_10K
+/* ---------- chế độ nhận ảnh qua UART: chạy đủ 10.000 ảnh test ---------- */
+#define SYNC_BYTE 0xA5u
+static i8 img_buf[M1S_IMG * M1S_IMG] __attribute__((aligned(4)));
+/* Con trỏ volatile: chặn GCC lan truyền hằng số địa chỉ img_buf vào conv1 (nó sẽ
+ * sinh bản nhân bản conv1.constprop.0 với mã KHÁC v1dc, làm mất tính so sánh được).
+ * Nhờ biến này, mã của cả 5 lớp giữ nguyên như bản v1dc đã kiểm kit = Verilator. */
+static i8 *volatile img_p = img_buf;
+
+int main(void)
+{
+    u32 idx = 0;
+
+    LED_REG = 0x00u;
+    puts_("M1S10K,hello,"); puts_(GIT_HASH); putch(','); puts_(VARIANT); eol();
+
+    for (;;) {
+        u32 i, t0, t1, i0, i1;
+        u32 c_conv1, c_pool1, c_conv2, c_pool2, c_dense, c_tot, instr;
+        u32 cr_img, cr_lg;
+        int c, best;
+        i32 bestv;
+
+        /* chờ byte đồng bộ (0xA5 không thể là pixel) */
+        while (getch() != (u8)SYNC_BYTE)
+            ;
+        for (i = 0; i < (u32)sizeof(img_buf); i++)
+            img_buf[i] = (i8)getch();
+
+        LED_REG = 0x01u;
+        i0 = rdinstret();
+        t0 = rdcycle(); conv1(img_p);  t1 = rdcycle(); c_conv1 = t1 - t0;
+        t0 = rdcycle(); pool1();        t1 = rdcycle(); c_pool1 = t1 - t0;
+        t0 = rdcycle(); conv2();        t1 = rdcycle(); c_conv2 = t1 - t0;
+        t0 = rdcycle(); pool2();        t1 = rdcycle(); c_pool2 = t1 - t0;
+        t0 = rdcycle(); dense();        t1 = rdcycle(); c_dense = t1 - t0;
+        i1 = rdinstret();
+        LED_REG = 0x00u;
+        instr = i1 - i0;
+        c_tot = c_conv1 + c_pool1 + c_conv2 + c_pool2 + c_dense;
+
+        best = 0;
+        bestv = logit[0];
+        for (c = 1; c < M1S_NCLS; c++) {
+            if (logit[c] > bestv) { bestv = logit[c]; best = c; }
+        }
+
+        cr_img = crc32_buf((const u8 *)img_buf, (u32)sizeof(img_buf));
+        cr_lg  = crc32_buf((const u8 *)logit,   (u32)sizeof(logit));
+
+        puts_("M1S10K,");
+        put_u32(idx);     putch(',');
+        put_u32((u32)best); putch(',');
+        put_hex32(cr_img); putch(',');
+        put_hex32(cr_lg);  putch(',');
+        put_u32(c_conv1); putch(',');
+        put_u32(c_pool1); putch(',');
+        put_u32(c_conv2); putch(',');
+        put_u32(c_pool2); putch(',');
+        put_u32(c_dense); putch(',');
+        put_u32(c_tot);   putch(',');
+        put_u32(instr);   eol();
+        idx++;
+    }
+    return 0;
+}
+#else
+
 int main(void)
 {
     u32 n_label_ok = 0, n_pred_ok = 0, n_crc_ok = 0;
@@ -588,3 +674,4 @@ int main(void)
     }
     return 0;
 }
+#endif /* STREAM_10K */
