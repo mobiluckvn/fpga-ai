@@ -2,7 +2,8 @@ ung_vien,tang,co_so,phuong_phap,chu_ky_co_so,du_bao_chu_ky,du_bao_tang_toc,la_ch
 DOT4 (nhân-cộng SIMD 4 làn int8),L2,B-V1,B_pattern_lower_bound,1459993,958121,1.5238,không,631130,2.3133,-34.13
 Bố cục dữ liệu cho conv1 dùng được lệnh 4 làn,L2,B-V1,B_pattern_lower_bound,631130,460778,1.3697,không,487865,1.2937,5.88
 REQ (gộp chuỗi lượng tử hoá lại thành một lệnh),L1,B-V1+DOT4+C1,B2_class_replacement_lower_bound,487865,413468,1.1799,không,365992,1.333,-11.48
-PMAX4 (lấy max gói 4 làn int8 cho pooling),L2,B-V3,C_amdahl_ceiling,365992,,1.1635,có,,,
+PMAX4 (lấy max gói 4 làn int8 cho pooling),L2,B-V3,C_amdahl_ceiling,365992,,1.1635,có,317878,1.1514,
+PMAX4 (lấy max gói 4 làn int8 cho pooling),L2,B-V3,B_pattern_lower_bound,365992,316695,1.1557,không,317878,1.1514,0.37
 Bộ nhớ hai cổng (load/store 2 → 1 chu kỳ),L3,B-V1,A_lambda_exact,1459993,1118656,1.3051,không,,,
 Bộ nhớ hai cổng (load/store 2 → 1 chu kỳ),L3,B-V3,A_lambda_exact,365992,285167,1.2834,không,,,
 Nhân 1 chu kỳ (λ_mul 2 → 1),L3,B-V1,A_lambda_exact,1459993,1253241,1.165,không,,,

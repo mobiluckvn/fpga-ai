@@ -184,6 +184,13 @@ $S \le 1/(1-f_X)$.
 | **L4 mảng MAC $P\times Q$** | $C \ge n_{\text{mac}}/(PQ) + C_{\text{chuyển dữ liệu}}$ | byte/MAC, mức tái sử dụng |
 | **L5 phát $W$ lệnh** | $C \ge \max(C/W,\ L_{\text{crit}})$ | đường găng $L_{\text{crit}}$ |
 
+> **Các công thức L1/L2 ở trên KHÔNG phải chặn dưới thật của lợi ích.** Chúng giả định vòng lặp sau
+> khi viết lại chỉ còn đúng các lệnh tính toán trong mẫu, không phát sinh thêm lệnh địa chỉ và điều
+> khiển vòng. Giả định đó đã bị **bác bỏ bằng số đo**: PMAX4 dự báo mức B 316.695 chu kỳ (1,1557×),
+> đo thật trên kit **317.878** (1,1514×) — lợi ích thật **thấp hơn** "chặn dưới" 0,37 %
+> (`results/pipeline/S6/kit/README.md`). Vì vậy từ đây gọi chúng là **ước lượng có điều kiện**, và mỗi
+> dự báo phải ghi kèm điều kiện. Chỉ hai chặn dưới đây là tuyệt đối:
+
 Hai chặn trên tuyệt đối, không phụ thuộc cách hiện thực:
 
 - **Chặn ILP**: $C \ge L_{\text{crit}}$ (độ dài đường găng phụ thuộc dữ liệu qua thanh ghi) ⟹ $\text{IPC} \le N/L_{\text{crit}}$.
@@ -218,11 +225,26 @@ trước khi đụng rào số học — đây là dự đoán của lý thuyế
 | K0 | $C_{\text{mô hình}} = C_{\text{Verilator}}$ **tuyệt đối** cho `mycore` trên **8** cấu hình | S2 |
 | K0' | sai số ≤ 2 % cho PicoRV32 trên **6** cấu hình | S2 |
 | K1 | $n_{\text{mem}}, n_{\text{mul}}$ do ISS đếm = số **[suy ra]** ở mục 1.3 (413.720 / 341.322 và 206.777 / 206.751) | S2 |
-| K2 | dự báo của $\Delta C=\sum n_c\Delta\lambda_c$ cho một thay đổi L3 so với đo thật | S6 |
-| K3 | dự báo cho một **lệnh mới** (L1/L2) so với đo thật | S6 |
+| K2 | dự báo của $\Delta C=\sum n_c\Delta\lambda_c$ cho một thay đổi L3 so với đo thật | S6 — **chưa chạy** (ứng viên bộ nhớ hai cổng, dự báo 1,2834× trên B-V3 đã ghi sẵn) |
+| K3 | dự báo cho một **lệnh mới** (L1/L2) so với đo thật | S6 — **ĐÃ CHẠY**: PMAX4, dự báo 316.695 / đo 317.878, **sai số +0,37 %** |
 
 Mọi dự báo ghi vào sổ cái **trước** khi hiện thực. Sai số dự báo là dữ liệu nghiên cứu, **không được sửa
 lùi** (SPEC 0.3).
+
+**Kết quả K3 (PMAX4) và điều nó bác bỏ.** Dự báo đóng băng ở
+`results/pipeline/S6/du_bao_PMAX4_truoc_khi_hien_thuc.json` trước khi sửa `mycore.v`:
+
+| | chu kỳ | tăng tốc | được tôn trọng? |
+|---|---:|---:|---|
+| chặn trên Amdahl (mức C) | 314.561 | 1,1635× | **có** — 1,1514× < 1,1635× |
+| dự báo mức B ("chặn dưới") | 316.695 | 1,1557× | **KHÔNG** — vi phạm 0,37 % |
+| đo thật trên kit | **317.878** | **1,1514×** | |
+
+Mô hình **đúng về độ lớn** (sai số 0,37 %) nhưng **sai về loại**: mức B không phải chặn dưới. Lợi ích
+thật thấp hơn vì vòng pooling viết lại vẫn còn chi phí địa chỉ/điều khiển vòng. Điều kiện này đã được
+ghi **trước** trong file dự báo (*"nếu trình biên dịch sinh thêm lệnh địa chỉ/vòng lặp thì lợi ích thấp
+hơn"*) và nó chỉ **đúng hướng lệch** — nên ta biết **tại sao** lệch, không chỉ biết **là** lệch. Đây là
+lý do SPEC 0.3 buộc ghi dự báo kèm giả định, không chỉ ghi con số.
 
 ---
 
@@ -240,3 +262,7 @@ lùi** (SPEC 0.3).
    **đổi số lời gọi hàm** trên PicoRV32 vì vậy kém tin cậy hơn phần còn lại.
 5. **Mục 1.3 giả định $n_{\text{div}}=0$** (firmware không dùng chia) và giả định cặp FA=1/FA=0 chạy đúng
    cùng một firmware — cả hai đã kiểm bằng `rdinstret` khớp tuyệt đối.
+6. **Mô hình không tính chi phí địa chỉ và điều khiển vòng của mã viết lại.** Đã đo: PMAX4 lệch
+   +0,37 % theo đúng hướng này (mục 5). Hệ quả: dự báo L1/L2 là **ước lượng**, và với mẫu càng nhỏ
+   (ít lệnh tính toán trên mỗi lần lặp) thì phần chi phí chưa mô hình hoá càng chiếm tỷ trọng lớn,
+   sai số càng tăng. Dự báo L3 (đổi $\lambda$) **không** chịu giới hạn này vì không sửa mã.

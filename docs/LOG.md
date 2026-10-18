@@ -2,6 +2,97 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — S6 phần 3: đo PMAX4 trên kit thật — 317.878 chu kỳ, 28,27× so A-V0
+
+Người dùng cắm kit. Ba phép đo, log đầy đủ ở `results/pipeline/S6/kit/`.
+
+### Kết quả
+
+| biến thể | chu kỳ/ảnh | ms | chu kỳ/MAC | ảnh/s | so A-V0 | run |
+|---|---:|---:|---:|---:|---:|---|
+| B-V3 (`WITH_PMAX4=0`) | 365.992 | 13,6 | 1,91 | 73,8 | 24,56× | `20261018-190322-kit` |
+| B-V3+PMAX4 | **317.878** | **11,8** | **1,66** | **84,9** | **28,27×** | `20261018-190740-kit` |
+
+Hai lớp pooling: 54.991 → 6.899 chu kỳ (**−48.092**). pool1 42.472 → 4.978, pool2 12.519 → 1.921.
+
+**B-V3 = 365.992 tái lập CHÍNH XÁC con số đã công bố** (dòng 14 bảng chính), nhưng dựng từ bản RTL
+**đã chứa** logic PMAX4 với `WITH_PMAX4=0`. Đây là bằng chứng trên phần cứng thật rằng tham số mới
+không làm hồi quy hành vi cũ — đúng quy tắc "biến thể mới chỉ thêm qua tham số mới, mặc định giữ
+hành vi cũ". Phép đo này cũng đóng lại việc kiểm kit còn treo từ S1.
+
+### Dự báo vs đo — mức B tự nhận là chặn dưới, và bị số đo vượt qua
+
+| | chu kỳ | tăng tốc | vai trò |
+|---|---:|---:|---|
+| chặn trên Amdahl (mức C) | 314.561 | 1,1635× | lợi ích nhiều nhất có thể |
+| dự báo mức B (chặn dưới của lợi ích) | 316.695 | 1,1557× | lợi ích ít nhất theo mô hình |
+| **đo thật** | **317.878** | **1,1514×** | |
+
+Sai số **+0,37 %**. Thứ tự: `314.561 < 316.695 < 317.878`.
+
+- Chặn trên Amdahl **được tôn trọng** (1,1514× < 1,1635×) — mức C làm đúng việc.
+- Chặn dưới mức B **bị vi phạm 0,37 %** → **mức B không phải chặn dưới thật, chỉ là ước lượng có
+  điều kiện.** Phải sửa cách gọi nó trong `docs/MO_HINH_CHI_PHI.md`.
+- Nhưng điều kiện đã ghi TRƯỚC và chỉ **đúng hướng lệch**: file dự báo đóng băng viết sẵn *"nếu
+  trình biên dịch sinh thêm lệnh địa chỉ/vòng lặp thì lợi ích thấp hơn"*. Lợi ích thật đúng là
+  thấp hơn. Ghi giả định ra trước nên biết **tại sao** lệch, không chỉ biết **là** lệch.
+
+### Giá phần cứng — cùng một file RTL, chỉ khác `WITH_PMAX4`
+
+| | LUT4 | ALU | DFF | Fmax |
+|---|---:|---:|---:|---:|
+| `WITH_PMAX4=0` | 4.211 | 968 | 580 | 65,89 MHz |
+| `WITH_PMAX4=1` | 4.359 | 1.008 | 580 | 55,26 MHz |
+| chênh | **+148** (+3,5 %) | +40 | 0 | −10,6 MHz |
+
+Cả hai ĐẠT ràng buộc 27 MHz. **148 LUT4 cho 1,1514×.**
+
+### Hai lỗi của tôi
+
+1. **So LUT4 giữa hai bản RTL khác nhau.** Lần đầu tôi lấy 4.359 (PMAX4) trừ 5.073 (`bv1dcr` dựng
+   từ bản RTL **cũ**) → kết luận vô lý *"thêm một lệnh tiết kiệm 714 LUT4"*. Tự phát hiện vì con số
+   vô nghĩa. Sửa: dựng `WITH_PMAX4=0` trên **đúng file RTL đó** → 4.211 → giá thật **+148 LUT4**.
+   Bằng chứng mới cho cạm bẫy số 5: hai văn bản RTL tương đương logic lệch tới 862 LUT4 / 10 MHz.
+2. **`cdp kit` ghi nối CSV không xoá dòng cũ** → `m1s_s6.csv` có 20 dòng cho một biến thể.
+   `scripts/branch_b_measure.sh` đã có `drop()` đúng cho việc này mà tôi không bọc lại. Đã thêm
+   `csv_drop()` vào `pipeline/cdp/kit.py`. Lần này vô hại (cả 20 dòng đều 317.878) nhưng nếu hai
+   lần đo khác nhau thì trung vị vô nghĩa. Đã dọn CSV về 10 dòng.
+
+### UART của kit chết giữa phép đo — phân loại được nhờ đối chứng
+
+Run `20261018-190840-kit` (lần đo lại có chốt `--src-hash`):
+
+| đối chứng trước | đo | đối chứng sau |
+|---|---|---|
+| **ĐẠT** — 9 lần "MIN" ở `...171`, 0 ở `...170` | lần đọc 1 **ĐẠT đủ tiêu chí**, lần đọc 2 **0 dòng thô** | **0/0 ở cả hai cổng** |
+
+Kiểm thêm bằng tay: `openFPGALoader` nạp `min/top.fs` vào SRAM **thành công** (JTAG tốt), đọc 8.000
+byte từ cả hai cổng được **0 byte**. Đúng triệu chứng đã ghi: UART của BL616 chết sau vài phép đo,
+JTAG vẫn tốt, chỉ rút/cắm lại cáp USB mới hồi phục. **Phép đối chứng đã làm đúng việc của nó:
+phân biệt "thiết kế sai" với "đường đo chết".** Không có nó thì `M1S_FAIL` sẽ bị đọc oan là PMAX4 sai.
+
+### Điều còn thiếu — nói thẳng
+
+Tiêu chí ghi nhận đòi **đồng thời** 2/2 lần đọc **và** chốt `SRC_HASH`:
+
+| dòng | CRC+dự đoán+kit=Verilator | 2/2 lần đọc | chốt `SRC_HASH` |
+|---|---|---|---|
+| B-V3 | ĐẠT | **2/2** | **có** (`c3966b0011df`) |
+| PMAX4 run `190740` | ĐẠT | **2/2** | không chốt |
+| PMAX4 run `190840` | ĐẠT ở lần đọc 1 | 1/2 | **có** (`a7dca19c8cec`) |
+
+Hai run PMAX4 nạp **cùng tệp nhị phân giống từng bit** (`firmware.hex sha256 = e477ee6122…` ở cả hai
+`meta.json`), nên lần đọc 1 của `190840` chứng minh chính tệp cho 2/2 ở `190740` có `SRC_HASH` khớp
+mã nguồn hiện tại. Mọi tiêu chí **đều** có bằng chứng, nhưng **rải trên hai run**, không phải một run.
+
+Đã kiểm chốt `--src-hash` không vô hiệu: `m1s_s6/main.c:176` phát `M1S,src,<hash>`,
+`m1s_check.py:218` so sánh `k.get("src")` — firmware không phát thì giá trị là `None` và vẫn bị từ chối.
+
+→ **Chưa đưa dòng PMAX4 vào bảng chính** `docs/KET_QUA_TONG_HOP.md`. Ghi ở mục riêng, nói rõ mức bảo
+đảm. Vào bảng chính sau một run duy nhất đạt 2/2 **và** chốt hash — việc đó cần **rút/cắm lại cáp USB**
+(quy tắc 4: thao tác vật lý do người dùng làm). Đã hỏi người dùng.
+
+
 ## 2026-10-18 — S6 phần 2: hiện thực PMAX4 — dự báo sai 0,37 %, đúng từng bit, 5/5 cổng kiểm ĐẠT
 
 Người dùng giao toàn quyền quyết. Tôi chọn hiện thực **PMAX4** trước (lệnh mới thêm được bằng

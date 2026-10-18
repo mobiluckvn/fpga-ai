@@ -73,10 +73,37 @@ def control(w: Path, ports: list[str], run) -> dict:
     counts = {p: read_serial(p, 2.5, b"MIN") for p in ports}
     best = max(counts.values()) if counts else 0
     ok = best >= 2
+    # Cổng nào thật sự phát byte thì dùng chính cổng đó để đo. FT2232 hiện ra HAI cổng
+    # (một cho JTAG, một cho UART) và thứ tự không bảo đảm, nên ĐOÁN là sai cách —
+    # phép đối chứng đã biết câu trả lời, cứ dùng nó.
+    port = max(counts, key=lambda k: counts[k]) if counts else None
     run.say(f"    [đối chứng] số lần thấy 'MIN': {counts} → "
-            + ("ĐẠT" if ok else "KHÔNG ĐẠT — đường UART của kit đã chết; "
-                              "cần rút/cắm lại cáp USB"))
-    return {"ok": ok, "load_rc": c.rc, "counts": counts}
+            + ("ĐẠT, cổng phát byte: " + str(port) if ok
+               else "KHÔNG ĐẠT — đường UART của kit đã chết; cần rút/cắm lại cáp USB"))
+    return {"ok": ok, "load_rc": c.rc, "counts": counts, "port": port}
+
+
+def csv_drop(path: Path, label: str, run) -> int:
+    """Xoá các dòng của biến thể `label` trước khi đo lại.
+
+    `scripts/branch_b_measure.sh` có đúng cơ chế này và có lý do: nếu không xoá thì
+    đo lại sẽ GHI NỐI, CSV thành 20 dòng cho một biến thể và trung vị mất nghĩa.
+    (Đã xảy ra thật ở phiên S6 khi đo lại cấu hình PMAX4.)
+    """
+    if not path.exists():
+        return 0
+    rows = list(csv.DictReader(open(path)))
+    if not rows:
+        return 0
+    keep = [r for r in rows if r["bien_the"] != label]
+    n = len(rows) - len(keep)
+    if n:
+        with open(path, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+            w.writeheader()
+            w.writerows(keep)
+        run.say(f"    xoá {n} dòng cũ của `{label}` trong CSV trước khi đo lại")
+    return n
 
 
 def csv_rows(path: Path, label: str) -> list[dict]:
@@ -137,13 +164,15 @@ def main(args, run) -> int:
                 run.finish("fail", res)
                 return 1
 
+        csv_drop(w / t.kit_csv, t.kit_csv_label, run)
         run.say(f"    nạp {t.var_dir}/top.fs (SRAM)")
         cl = wrap.make(w, t.make_dir, t.t_load, mvars=t.make_vars, run=run,
                        log_name=f"make-{t.t_load}.log")
         res["load"] = {"rc": cl.rc}
 
         mvars = dict(t.make_vars)
-        mvars["UART_PORT"] = ports[0]
+        # Dùng cổng mà phép đối chứng đã chứng minh là có phát byte.
+        mvars["UART_PORT"] = (res.get("control_before", {}) or {}).get("port") or ports[-1]
         if t.branch == "B":
             mvars["CSV_APPEND"] = "--append"
         cc = wrap.make(w, t.make_dir, t.t_check, mvars=mvars, run=run,

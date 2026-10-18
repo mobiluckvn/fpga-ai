@@ -1,0 +1,14 @@
+# S6 — cấu hình mới: B-V3 + PMAX4 (ứng viên do bước S5 sinh ra ở chế độ mù)
+# Dự báo đóng băng trước khi hiện thực: 316.695 chu kỳ (1,1557x). Đo ISS: 317.878.
+name: s6_pmax4
+model: m1s
+firmware:
+  source: experiment/m1s_s6/cand/pmax4.c
+  flags: [-DOPT_KERNELS, -DUSE_DOT4, -DCONV1_DOT4, -DUSE_REQ, -DUSE_PMAX4]
+core:
+  name: mycore
+  rtl_params: {FAST_ADDR: 1, WITH_DOT4: 1, WITH_REQ: 1, WITH_PMAX4: 1, WITH_MULDIV: 1}
+clock_mhz: 27
+budget: {lut4: 20736, mult18x18: 48, bsram_blocks: 46, fmax_min_mhz: 27}
+evaluate: {images: 10, iss: true, verilator: true, kit: true}
+expect: {target: B-V3+PMAX4, total_cycles: 317878}

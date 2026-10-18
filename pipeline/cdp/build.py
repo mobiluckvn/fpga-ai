@@ -45,7 +45,8 @@ def read_size(p: Path) -> dict:
 
 def ensure_firmware(w: Path, t, run) -> dict:
     """make -C experiment/m1s fw-<id>. Nhánh B dùng lại ĐÚNG file hex này."""
-    c = wrap.make(w, t.fw_dir, t.t_fw, run=run, log_name=f"make-{t.t_fw}.log")
+    c = wrap.make(w, t.fw_dir, t.t_fw, mvars=t.fw_make_vars, run=run,
+                  log_name=f"make-{t.t_fw}-{t.fw_id}.log")
     fp = fw_paths(w, t)
     info = {"target": t.t_fw, "rc": c.rc, "seconds": round(c.seconds, 1),
             "hex": rel(fp["hex"]) if fp["hex"].exists() else None,

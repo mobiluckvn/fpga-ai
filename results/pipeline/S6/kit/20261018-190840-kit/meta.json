@@ -1,0 +1,115 @@
+{
+  "run_id": "20261018-190840-kit",
+  "cmd": "kit",
+  "step": "S1",
+  "argv": [
+    "kit",
+    "--spec",
+    "pipeline/specs/s6_pmax4.yaml"
+  ],
+  "spec": "pipeline/specs/s6_pmax4.yaml",
+  "target": "B-V3+PMAX4",
+  "params": {
+    "spec": "pipeline/specs/s6_pmax4.yaml",
+    "work": "s1",
+    "fresh": false,
+    "port": null,
+    "repeat": 2,
+    "no_control": false,
+    "lock_timeout": null
+  },
+  "started_at": "2026-10-18T19:08:40+0700",
+  "finished_at": "2026-10-18T19:09:46+0700",
+  "duration_s": 65.481,
+  "status": "fail",
+  "git": {
+    "commit": "2058e3721a8dc54d89e916e100c0ae402c06450b",
+    "short": "2058e37",
+    "branch": "main",
+    "dirty": true,
+    "dirty_files": 7
+  },
+  "src_hash": "c3966b0011df",
+  "tools": {
+    "python": "3.14.7",
+    "numpy": "2.5.4",
+    "openFPGALoader": "openFPGALoader v1.1.1",
+    "make": "GNU Make 3.81",
+    "git": "git version 2.50.1 (Apple Git-155)"
+  },
+  "host": {
+    "platform": "macOS-26.6.2-x86_64-i386-64bit-Mach-O",
+    "machine": "x86_64",
+    "python": "3.14.7"
+  },
+  "cwd": "/Users/v/Documents/NCS/tinyml-riscv-tn20k",
+  "run_dir": "pipeline/runs/20261018-190840-kit",
+  "note": null,
+  "result": {
+    "target": "B-V3+PMAX4",
+    "spec": "pipeline/specs/s6_pmax4.yaml",
+    "work": "pipeline/work/s1",
+    "ports": [
+      "/dev/cu.usbserial-20250303170",
+      "/dev/cu.usbserial-20250303171"
+    ],
+    "src_hash": "c3966b0011df",
+    "firmware": {
+      "target": "fw",
+      "rc": 0,
+      "seconds": 0.1,
+      "hex": "pipeline/work/s1/experiment/m1s_s6/cpmax4/firmware.hex",
+      "hex_sha256": "e477ee612247d892abc3c82cf34f0bb1490acbd3d34c6cfaf2e4bbcca7bfd3f7",
+      "size": {
+        ".text": 18772,
+        ".bss": 12816,
+        ".riscv.attributes": 42,
+        ".comment": 51,
+        "_used": 31588,
+        "_ram_pct": 48.2
+      }
+    },
+    "detect": {
+      "rc": 0,
+      "out": [
+        "\tmanufacturer Gowin",
+        "\tfamily GW2A",
+        "\tmodel  GW2A(R)-18(C)",
+        "\tirlength 8"
+      ],
+      "ok": true
+    },
+    "control_before": {
+      "ok": true,
+      "load_rc": 0,
+      "counts": {
+        "/dev/cu.usbserial-20250303170": 0,
+        "/dev/cu.usbserial-20250303171": 9
+      },
+      "port": "/dev/cu.usbserial-20250303171"
+    },
+    "load": {
+      "rc": 0
+    },
+    "check": {
+      "rc": 0,
+      "passed": false
+    },
+    "control_after": {
+      "ok": false,
+      "load_rc": 0,
+      "counts": {
+        "/dev/cu.usbserial-20250303170": 0,
+        "/dev/cu.usbserial-20250303171": 0
+      },
+      "port": "/dev/cu.usbserial-20250303170"
+    },
+    "kit_csv": "pipeline/work/s1/results/branch_b/m1s_s6.csv",
+    "n_csv_rows": 20,
+    "median_total": 317878,
+    "kit_eq_sim_per_image": true,
+    "expect_total": 317878,
+    "median_ok": true,
+    "measurements_written": 20
+  }
+}

@@ -1,0 +1,24 @@
+# cdp kit · đặc tả s1_bv3.yaml → cấu hình B-V3 (mycore + DOT4 + REQ)
+    cổng UART thấy được: ['/dev/cu.usbserial-20250303170', '/dev/cu.usbserial-20250303171']
+[cây bóng] pipeline/work/s1 (dùng lại)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1dcr   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1dcr → rc=0 · 0.1 s · log logs/make-fw-v1dcr.log
+    firmware v1dcr: .text 19,040 + .data 0 + .bss 12,816 = 31,856/65.536 byte (48.6 %)
+    sha256(firmware.hex) = 7310380cf8df6c9e…
+    [đối chứng] dựng + nạp min/top.fs (thiết kế đã biết chạy)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore build-min   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make build-min → rc=0 · 11.1 s · log logs/make-build-min.log
+    [đối chứng] số lần thấy 'MIN': {'/dev/cu.usbserial-20250303170': 0, '/dev/cu.usbserial-20250303171': 8} → ĐẠT, cổng phát byte: /dev/cu.usbserial-20250303171
+    nạp bv1dcr/top.fs (SRAM)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore load-bv1dcr FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make load-bv1dcr → rc=0 · 202.9 s · log logs/make-load-bv1dcr.log
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore check-bv1dcr FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1 UART_PORT=/dev/cu.usbserial-20250303171 CSV_APPEND=--append   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make check-bv1dcr → rc=0 · 6.8 s · log logs/make-check-bv1dcr.log
+
+    số dòng CSV          : 10 (mong đợi 10)
+    trung vị chu kỳ/ảnh  : 365.992 · bảng 365.992 ✓
+    kit = Verilator từng ảnh: BẰNG TUYỆT ĐỐI
+    m1s_check.py         : M1S_PASS
+
+=> ĐẠT
+[run 20261018-190322-kit] ok · 229.3 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-190322-kit

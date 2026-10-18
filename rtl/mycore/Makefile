@@ -9,6 +9,10 @@
 
 M1S        := ../../experiment/m1s
 S6         := ../../experiment/m1s_s6
+# Dấu vân tay nội dung mã nguồn của biến thể S6 — PHẢI tính cùng công thức với
+# experiment/m1s_s6/Makefile, nếu không thì m1s_check.py sẽ từ chối số đo.
+S6_KERNELS ?= cand/pmax4.c
+S6_SRC_HASH := $(shell cat $(S6)/main.c $(S6)/$(S6_KERNELS) ../../fw/weights.h | shasum -a 256 | cut -c1-12)
 RESULTS    := ../../results/branch_b
 CORE       := soc_b.v mycore.v ../uart/uart_tx.v ../uart/uart_rx.v
 
@@ -215,6 +219,7 @@ check-$(1):
 	python3 ../../scripts/m1s_check.py --variant $(3) --sim-log $(1)/sim.log \
 	    --csv $(RESULTS)/m1s_s6.csv $$(if $$(CSV_APPEND_SET),$$(CSV_APPEND),$(4)) \
 	    --port $(UART_PORT) --drain 2 --repeat 2 --csv-label $(1) \
+	    --src-hash $(S6_SRC_HASH) \
 	    --log $(1)/check.log 2>&1 | tee $(1)/check_stdout.log
 endef
 

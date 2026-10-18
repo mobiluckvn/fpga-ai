@@ -37,6 +37,27 @@ kiểm **từ chối** ghi nhận nếu lệch.
 Nhánh B chạy **đúng các file `firmware.hex` của nhánh A, không biên dịch lại**, nên `rdinstret` khớp
 **tuyệt đối** từng cặp — mọi chênh lệch giữa hai nhánh là **thuần vi kiến trúc**.
 
+### Dòng thứ 15 đã đo nhưng CHƯA vào bảng trên: B-V3+PMAX4 — 317.878 chu kỳ, 28,27×
+
+Lệnh thứ ba (`PMAX4`, lấy max gói 4 làn int8 cho pooling) do pipeline đồng thiết kế S5/S6 đề xuất,
+đã hiện thực và **đo trên kit thật**:
+
+| # | Biến thể | Phần cứng | Chu kỳ/ảnh | ms | chu kỳ/MAC | IPC | ảnh/s | so A-V0 |
+|---|---|---|---:|---:|---:|---:|---:|---:|
+| (15) | B-V3+PMAX4 | mycore + DOT4 + REQ + PMAX4 | 317.878 | 11,8 | 1,66 | 0,743 | 84,9 | 28,27× |
+
+Hai lớp pooling: 54.991 → 6.899 chu kỳ. Giá phần cứng **+148 LUT4** (+3,5 %), Fmax 65,89 → 55,26 MHz
+(vẫn ĐẠT ràng buộc 27 MHz). Dự báo ghi **trước** khi viết RTL: 316.695 chu kỳ — **sai số +0,37 %**.
+
+**Vì sao chưa vào bảng trên.** Tiêu chí ghi nhận đòi **đồng thời** 2/2 lần đọc **và** chốt `SRC_HASH`
+trong **một** phép đo. Hiện có: một run đạt 2/2 nhưng chưa chốt hash, và một run chốt hash với lần đọc
+1 đạt đủ tiêu chí trước khi **UART của kit chết** ở lần đọc 2 (phép đối chứng sau cho 0 byte ở cả hai
+cổng; JTAG vẫn nạp được — triệu chứng đã ghi trong `docs/LOG.md`). Hai run nạp **cùng một tệp nhị phân
+giống từng bit**, nên mọi tiêu chí **đều** có bằng chứng — nhưng **rải trên hai run**. Dòng này vào bảng
+chính sau một run duy nhất thoả cả hai, việc đó cần rút/cắm lại cáp USB.
+
+Chi tiết và log thô: `results/pipeline/S6/kit/README.md`.
+
 ## 2. Phân rã 24,6×: mỗi hướng đóng góp bao nhiêu, trả giá gì
 
 | Hướng | Hệ số | Giá phần cứng | Giá phần mềm |

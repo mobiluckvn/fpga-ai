@@ -1,0 +1,27 @@
+# M1-S check
+Thời điểm: 2026-10-18 19:07:05 +0700  ·  biến thể: A-V1+DOT4+C1+REQ
+Độ chính xác mô hình (10.000 ảnh test): float 98.29% · int8 98.25%  (chênh +0.04 điểm %)
+Golden từ /Users/v/Documents/NCS/tinyml-riscv-tn20k/fw/weights.h: 10 ảnh thử, nhãn [7, 2, 1, 0, 4, 1, 4, 9, 5, 9], dự đoán golden [7, 2, 1, 0, 4, 1, 4, 9, 5, 9]
+Verilator: biến thể A-V1+DOT4+C1+REQ, tổng/ảnh [365865, 366017, 365677, 366079, 365970, 365705, 366015, 365874, 366028, 366037]
+== Lần đọc 1/2 ==
+    (xả 7331 byte tồn)
+    ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
+== Lần đọc 2/2 ==
+    (xả 4696 byte tồn)
+    ĐẠT: CRC 5 lớp × 10 ảnh khớp golden; dự đoán khớp golden; chu kỳ kit = Verilator
+
+## Số đo trên kit (27 MHz)
+    10 ảnh · tổng chu kỳ/ảnh: min 365,677 · trung vị 366,015 · max 366,079
+    trung vị = 13.6 ms @27 MHz · 1.91 chu kỳ/MAC trên 192,064 MAC
+    dự đoán đúng nhãn: 10/10 · khớp golden: 10/10 · CRC khớp hết 5 lớp: 10/10
+
+    | lớp | chu kỳ (trung vị) | % tổng | MAC | chu kỳ/MAC |
+    |---|---:|---:|---:|---:|
+    | conv1 | 138,213 | 37.8 % | 48672 | 2.84 |
+    | pool1 | 42,493 | 11.6 % | — | — |
+    | conv2 | 165,152 | 45.1 % | 139392 | 1.18 |
+    | pool2 | 12,522 | 3.4 % | — | — |
+    | dense | 7,614 | 2.1 % | 4000 | 1.90 |
+Đã ghi ../../results/branch_b/m1s_b.csv
+
+M1S_PASS bien_the=A-V1+DOT4+C1+REQ cổng=/dev/cu.usbserial-20250303171 lần_đọc_đạt=2/2 trung_vị=366,015 chu kỳ (13.6 ms) chu_kỳ/MAC=1.91

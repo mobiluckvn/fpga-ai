@@ -1,0 +1,58 @@
+{
+  "target": "B-V3",
+  "spec": "pipeline/specs/s1_bv3.yaml",
+  "work": "pipeline/work/s1",
+  "ports": [
+    "/dev/cu.usbserial-20250303170",
+    "/dev/cu.usbserial-20250303171"
+  ],
+  "src_hash": "c3966b0011df",
+  "firmware": {
+    "target": "fw-v1dcr",
+    "rc": 0,
+    "seconds": 0.1,
+    "hex": "pipeline/work/s1/experiment/m1s/v1dcr/firmware.hex",
+    "hex_sha256": "7310380cf8df6c9e6ccc504929b72e709227f4ebb2f22a331be59947bd48ac40",
+    "size": {
+      ".text": 19040,
+      ".bss": 12816,
+      ".riscv.attributes": 42,
+      ".comment": 51,
+      "_used": 31856,
+      "_ram_pct": 48.6
+    }
+  },
+  "detect": {
+    "rc": 0,
+    "out": [
+      "\tmanufacturer Gowin",
+      "\tfamily GW2A",
+      "\tmodel  GW2A(R)-18(C)",
+      "\tirlength 8"
+    ],
+    "ok": true
+  },
+  "control_before": {
+    "ok": true,
+    "load_rc": 0,
+    "counts": {
+      "/dev/cu.usbserial-20250303170": 0,
+      "/dev/cu.usbserial-20250303171": 8
+    },
+    "port": "/dev/cu.usbserial-20250303171"
+  },
+  "load": {
+    "rc": 0
+  },
+  "check": {
+    "rc": 0,
+    "passed": true
+  },
+  "kit_csv": "pipeline/work/s1/results/branch_b/m1s_b.csv",
+  "n_csv_rows": 10,
+  "median_total": 365992,
+  "kit_eq_sim_per_image": true,
+  "expect_total": 365992,
+  "median_ok": true,
+  "measurements_written": 10
+}

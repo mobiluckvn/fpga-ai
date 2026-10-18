@@ -42,16 +42,20 @@ class Target:
     kit_csv: str = ""               # CSV số đo kit đã có
     kit_csv_label: str = ""         # nhãn trong cột bien_the của CSV đó
     expect_total_median: int = 0    # chu kỳ/ảnh, trung vị 10 ảnh
+    fw_root: str = "experiment/m1s" # thư mục dựng firmware (S6 dùng m1s_s6)
+    fw_make_target: str = ""        # đích make dựng firmware, nếu khác fw-<id>
+    fw_make_vars: dict = field(default_factory=dict)
 
     # ---- đích make, suy ra theo quy ước của chính hai Makefile ----
     @property
     def fw_dir(self) -> str:
-        """Firmware LUÔN dựng trong experiment/m1s — nhánh B dùng lại đúng file hex đó."""
-        return "experiment/m1s"
+        """Thư mục dựng firmware. Mặc định experiment/m1s (nhánh B dùng lại đúng file
+        hex đó); cấu hình của bước S6 dùng experiment/m1s_s6."""
+        return self.fw_root
 
     @property
     def t_fw(self) -> str:
-        return f"fw-{self.fw_id}"
+        return self.fw_make_target or f"fw-{self.fw_id}"
 
     @property
     def t_sim(self) -> str:
@@ -157,6 +161,21 @@ for _row, _name, _fw, _vdir, _fa, _dot4, _req, _hw, _med in [
                 make_vars={"FAST_ADDR": _fa, "WITH_DOT4": _dot4, "WITH_REQ": _req},
                 kit_csv=_CSVB, kit_csv_label=_vdir,
                 expect_total_median=_med))
+
+# ---------------- bước S6: ứng viên phần cứng mới ----------------
+# Firmware dựng trong experiment/m1s_s6 (thư mục MỚI), kernel pooling dùng PMAX4.
+_add(Target(name="B-V3+PMAX4", row=15, branch="B", core="mycore",
+            hw="mycore + DOT4 + REQ + PMAX4",
+            fw_id="cpmax4", fw_flags=FW_FLAGS["v1dcr"] | frozenset({"USE_PMAX4"}),
+            fw_variant="A-V1+DOT4+C1+REQ",
+            rtl_params={"FAST_ADDR": 1, "WITH_DOT4": 1, "WITH_REQ": 1,
+                        "WITH_PMAX4": 1, "WITH_MULDIV": 1},
+            make_dir=_B, var_dir="bs6pmax4",
+            make_vars={"FAST_ADDR": 1, "WITH_DOT4": 1, "WITH_REQ": 1, "WITH_PMAX4": 1},
+            fw_root="experiment/m1s_s6", fw_make_target="fw",
+            fw_make_vars={"KERNELS": "cand/pmax4.c", "OUT": "cpmax4"},
+            kit_csv="results/branch_b/m1s_s6.csv", kit_csv_label="bs6pmax4",
+            expect_total_median=317878))
 
 BASELINE = TARGETS["A-V0"]
 
