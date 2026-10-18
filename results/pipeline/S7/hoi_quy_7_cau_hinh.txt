@@ -1,0 +1,15 @@
+# Kiểm hồi quy sau khi thêm DUAL_PORT vào mycore.v / soc_b.v / top_b.v
+# 2026-10-18T20:37:18+07:00
+# Mọi cấu hình dựng lại từ RTL MỚI; trung vị 10 ảnh phải khớp số đã công bố.
+# Lệnh: make sim-<v> FAST_ADDR=1 WITH_DOT4=? WITH_REQ=? WITH_PMAX4=? DUAL_PORT=?
+
+biến thể     trung vị   mong đợi  kết quả
+bv0         1.978.697  1.978.697  KHỚP
+bv1         1.459.993  1.459.993  KHỚP
+bv1dc         487.865    487.865  KHỚP
+bv1dcr        365.992    365.992  KHỚP
+bs6pmax4      317.878    317.878  KHỚP
+bs7ref        317.878    317.878  KHỚP
+bs7dp         243.641    243.641  KHỚP
+
+=> 7/7 KHÔNG HỒI QUY

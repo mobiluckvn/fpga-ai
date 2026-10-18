@@ -2,6 +2,107 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — S7: hiện thực bộ nhớ hai cổng — K2 sai số 0,00 %, nhưng LUT4 gấp 3,5 lần
+
+Kit vẫn chết (kiểm lại: nạp `min/top.fs` được, đọc 0 byte cả hai cổng) nên làm trọn phần
+không cần kit: hiện thực ứng viên bộ nhớ hai cổng và kiểm bằng Verilator + riscv-tests +
+tổng hợp.
+
+### K2: dự báo mức A đúng TUYỆT ĐỐI
+
+| | chu kỳ | tăng tốc |
+|---|---:|---:|
+| dự báo mức A, đóng băng trước khi viết RTL | 243.641 | 1,3047× |
+| **đo bằng Verilator** | **243.641** | **1,3047×** |
+
+**Sai số 0,00 %.** ISS khớp Verilator tuyệt đối từng lớp từng ảnh. So với K3 (PMAX4, mức B,
+lệch 0,37 %): mức A đúng tuyệt đối vì **không sửa mã, không thêm lệnh** → `n_c` giữ nguyên
+từng con số (`instret` giống hệt 236.313) → `ΔC = Σ n_c·Δλ_c` là **đẳng thức**.
+
+### Thiết kế
+
+`DUAL_PORT=1` thêm cổng lệnh riêng (`imem_addr`/`imem_rdata`). Ở `S_EXEC` lõi đặt đồng thời
+địa chỉ dữ liệu và địa chỉ lệnh kế → bỏ hẳn `S_MEM`, load/store về 1 chu kỳ. Kéo theo hai
+thứ bắt buộc: **cổng ghi thứ hai** của tệp thanh ghi (cổng 1 ưu tiên khi trùng) và **đường
+chuyển tiếp** `ld_fwd` cho lệnh ngay sau load (18,3 % số load). RAM thu 64 KB → 32 KB.
+
+Mọi thứ thêm qua tham số mới mặc định tắt: `DUAL_PORT=0`, `RAMKB=64`, `RVT_LD/RVT_WORDS/
+RVT_STACK` mặc định như cũ, `fw/link32.ld` và `tests/link_test32.ld` là tệp THÊM. Đã kiểm
+`fw/start.S` sau khi tham số hoá `STACK_TOP`: dựng hai bản cùng `GIT_HASH`, firmware
+**giống hệt từng bit**.
+
+### Hai phép đối chứng
+
+1. **Liên kết lại 32 KB không đổi số chu kỳ**: firmware 32 KB trên lõi MỘT cổng cho đúng
+   **317.878** chu kỳ, y bản 64 KB. Hai bản khác đúng một lệnh (`lui sp,0x8`). Nên chênh
+   lệch là **thuần vi kiến trúc**.
+2. **Đúng từng bit**: CRC 5 tensor × 10 ảnh giống hệt giữa một cổng và hai cổng; `instret`
+   giống hệt; cả 10 ảnh đều 317.878 → 243.641.
+
+### Kết quả B-V4
+
+243.641 chu kỳ = **9,02 ms = 110,8 ảnh/s = 36,89× so A-V0** · 1,269 chu kỳ/MAC ·
+**IPC = 0,970** (nhánh A trên PicoRV32: 0,151). `conv2` xuống **0,89 chu kỳ/MAC** — dưới 1,
+vì DOT4 làm 4 MAC mỗi lệnh.
+
+Cổng kiểm: riscv-tests **48/48 ĐẠT**, `fence_i` ĐẠT, `ma_data` KHÔNG (y mọi cấu hình trước,
+lệch địa chỉ cố ý trap) · Fmax **53,01 MHz** ĐẠT.
+
+### Giá phần cứng: đắt, và phải truy mới hiểu
+
+Cùng file RTL, chỉ khác `DUAL_PORT`: LUT4 **4.459 → 15.736** (×3,5; **75,9 %** chip),
+DFF 580 → 1.661, BSRAM **32 → 32 khối** (`SP` → `DPB`, đúng như phép dò đoán),
+Fmax 59,08 → 53,01 MHz.
+
+LUT4 gấp 3,5 lần là bất thường nên tôi quy trách nhiệm bằng ba lần tổng hợp Yosys, mỗi lần
+đổi đúng một thứ:
+
+| | LUT1-4 | MUX2_LUT* | `RAM16SDP4` |
+|---|---:|---:|---:|
+| `DUAL_PORT=0` | 4.263 | 978 | **32** |
+| `DUAL_PORT=1`, MỘT cổng ghi (bản dò, sai chức năng) | 5.943 | 2.538 | **32** |
+| `DUAL_PORT=1`, HAI cổng ghi (bản thật) | **14.667** | **8.637** | **0** |
+
+- bộ nhớ hai cổng tự nó: **+1.680 LUT**
+- **riêng cổng ghi thứ hai: +8.724 LUT, +6.099 MUX**
+
+Nguyên nhân: tệp thanh ghi 32×32 với MỘT cổng ghi + hai cổng đọc tổ hợp được map vào **32
+khối `RAM16SDP4`** (RAM phân tán GW2A). Thêm cổng ghi thứ hai thì **không map được nữa** và
+rơi về flip-flop + mux 32:1 mỗi bit.
+
+**Đây là tương tác vi kiến trúc ↔ nguyên thuỷ FPGA mà mô hình λ hoàn toàn không thấy** —
+đúng giới hạn số 2 đã ghi TRƯỚC ở `docs/MO_HINH_CHI_PHI.md`, nay đo thành con số.
+
+Hiệu quả diện tích hai ứng viên đã hiện thực: PMAX4 **9,8 LUT4** cho mỗi 1 % tăng tốc, bộ
+nhớ hai cổng **370** — **chênh 38 lần**. Cả hai đều ĐẠT ràng buộc, nhưng dưới ngân sách LUT
+chặt thì PMAX4 thắng áp đảo.
+
+### Lỗi hạ tầng phát hiện và sửa
+
+- `cdp sim` so `SRC_HASH` do firmware tự báo với hash của `experiment/m1s` cho **mọi** cấu
+  hình → mọi cấu hình S6/S7 bị báo lệch oan (`a7dca19c8cec` vs `c3966b0011df`) và run bị
+  đánh KHÔNG ĐẠT dù mọi số đều đúng. Thêm `provenance.src_hash_for(t)` tính theo `fw_root`
+  và `KERNELS` của chính cấu hình đó, cùng công thức với Makefile của nó.
+- `riscv_tests.sh` ghim cứng `link_test.ld` và `--words 16384` → mọi bài hỏng trên RAM
+  32 KB với lỗi `$readmem file address beyond bounds of array`. Thêm `RVT_LD/RVT_WORDS/
+  RVT_STACK`, mặc định y cũ.
+- Hai lần đọc Fmax khác nhau trong cùng log nextpnr: **29,76 MHz sau khi ĐẶT** và
+  **53,01 MHz sau khi ĐỊNH TUYẾN**. Số cuối cùng (và số trong `report.json`) là 53,01.
+  Tôi đã đọc nhầm số sau khi đặt trước khi kiểm — phải lấy dòng cuối.
+
+### Bước tiếp theo mà kết quả chỉ ra
+
+Cổng ghi thứ hai là **77 %** chi phí LUT của ứng viên. Kỹ thuật FPGA chuẩn cho tệp thanh ghi
+nhiều cổng ghi mà vẫn dùng RAM phân tán: **hai bản sao** tệp thanh ghi (mỗi bản một cổng
+ghi) cộng **bảng giá trị sống** 32 × 1 bit. Dự kiến ~64 `RAM16SDP4` + vài chục LUT thay vì
++8.724 LUT. Lần này phải đóng băng dự báo **diện tích** trước, không chỉ dự báo chu kỳ.
+
+### Còn thiếu
+
+**Chưa đo trên kit.** `bs7dp/top.fs` đã dựng xong, sẵn sàng nạp. Chưa đưa B-V4 vào bảng
+chính `docs/KET_QUA_TONG_HOP.md` — y như dòng PMAX4.
+
+
 ## 2026-10-18 — S7: dò khả thi bộ nhớ hai cổng, và đóng băng dự báo mức A đầu tiên (phép kiểm K2)
 
 Kit chết nên chuyển sang việc không cần kit: ứng viên **bộ nhớ hai cổng**, dự báo **mức A**

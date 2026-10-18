@@ -27,7 +27,13 @@ module soc_b #(
     parameter integer BEACON    = 0,
     parameter         WITH_DOT4 = 0,
     parameter         WITH_REQ  = 0,
-    parameter         WITH_PMAX4 = 0
+    parameter         WITH_PMAX4 = 0,
+    // DUAL_PORT=1: RAM hai cổng kiểu Harvard. Phải thu RAM 64 KB -> 32 KB vì chế độ hai
+    // cổng của BSRAM GW2AR mất một nửa mật độ mỗi khối: 64 KB hai cổng cần 64 khối (chip
+    // chỉ có 46), còn 32 KB hai cổng cần 32 khối — đúng bằng số đang dùng. Số đo ở
+    // results/pipeline/S6/kha_thi_BONHO2CONG.md. Firmware dùng 31.588 byte + 256 byte
+    // ngăn xếp = 31.844 / 32.768 byte.
+    parameter         DUAL_PORT  = 0
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -49,17 +55,23 @@ module soc_b #(
     wire        mem_valid;
     reg  [31:0] mem_rdata;
 
+    wire [31:0] imem_addr;
+    wire        imem_valid;
+    wire [31:0] imem_rdata;
+
     mycore #(
         .RESET_PC(32'h0000_0000),
         .WITH_MULDIV(1),
         .FAST_ADDR(FAST_ADDR),
         .WITH_DOT4(WITH_DOT4),
         .WITH_REQ(WITH_REQ),
-        .WITH_PMAX4(WITH_PMAX4)
+        .WITH_PMAX4(WITH_PMAX4),
+        .DUAL_PORT(DUAL_PORT)
     ) u_core (
         .clk(clk), .resetn(resetn),
         .mem_addr(mem_addr), .mem_wdata(mem_wdata), .mem_wstrb(mem_wstrb),
         .mem_valid(mem_valid), .mem_rdata(mem_rdata),
+        .imem_addr(imem_addr), .imem_valid(imem_valid), .imem_rdata(imem_rdata),
         .trap(dbg_trap), .dbg_pc(core_pc), .dbg_instr(), .dbg_state(core_state)
     );
     wire [31:0] core_pc;
@@ -69,11 +81,26 @@ module soc_b #(
     wire sel_per = (mem_addr[31:28] == 4'h1);
     wire is_write = (mem_wstrb != 4'b0000);
 
-    // ---------------- RAM 64 KB ----------------
-    reg [31:0] ram [0:16383];
-    wire [13:0] ram_addr = mem_addr[15:2];
+    // ---------------- RAM: 64 KB một cổng, hoặc 32 KB hai cổng ----------------
+    localparam integer RAM_WORDS = (DUAL_PORT != 0) ? 8192 : 16384;   // 32 KB / 64 KB
+    localparam integer RAM_AW    = (DUAL_PORT != 0) ? 13   : 14;
+
+    reg [31:0] ram [0:RAM_WORDS-1];
+    wire [RAM_AW-1:0] ram_addr = mem_addr[RAM_AW+1:2];
     reg  [31:0] ram_q;
     initial $readmemh(HEXFILE, ram);
+
+    // Cổng ĐỌC LỆNH, chỉ tồn tại khi DUAL_PORT=1. Dùng generate để khi DUAL_PORT=0 thì
+    // RAM không có cổng đọc thứ hai nào cả -> Yosys suy ra đúng 32 khối SP như trước,
+    // thiết kế cũ không đổi một bit.
+    reg [31:0] iram_q;
+    generate if (DUAL_PORT != 0) begin : g_iport
+        wire [RAM_AW-1:0] iram_addr = imem_addr[RAM_AW+1:2];
+        always @(posedge clk) iram_q <= ram[iram_addr];
+    end else begin : g_no_iport
+        initial iram_q = 32'd0;
+    end endgenerate
+    assign imem_rdata = iram_q;
 
     // ---------------- UART ----------------
     reg  [7:0] tx_byte;

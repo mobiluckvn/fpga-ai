@@ -22,13 +22,27 @@ SRC_HASH   := $(shell cat main.c $(KERNELS) $(FWDIR)/weights.h | shasum -a 256 |
 CFLAGS     := $(ARCH) $(OPT) -ffreestanding -fno-builtin -nostdlib -nostartfiles \
               -fno-pic -mno-relax -Wall -Wextra -I$(FWDIR) -I. \
               -DGIT_HASH=\"$(GIT_HASH)\" -DSRC_HASH=\"$(SRC_HASH)\"
-LDF        := $(ARCH) -nostdlib -nostartfiles -T $(FWDIR)/link.ld -Wl,--gc-sections
+# RAMKB: 64 (mặc định, như cũ) hoặc 32 cho cấu hình bộ nhớ HAI CỔNG của S7.
+# Mặc định giữ nguyên script liên kết, đỉnh ngăn xếp và số từ của hex -> firmware
+# mặc định giống hệt từng bit bản trước.
+RAMKB      ?= 64
+ifeq ($(RAMKB),32)
+  LDSCRIPT := $(FWDIR)/link32.ld
+  STACKTOP := 0x00008000
+  HEXWORDS := 8192
+else
+  LDSCRIPT := $(FWDIR)/link.ld
+  STACKTOP := 0x00010000
+  HEXWORDS := 16384
+endif
+CFLAGS     += -DSTACK_TOP=$(STACKTOP)
+LDF        := $(ARCH) -nostdlib -nostartfiles -T $(LDSCRIPT) -Wl,--gc-sections
 
 .PHONY: fw clean
 fw: $(OUT)/firmware.hex
 
 $(OUT)/firmware.elf: main.c $(KERNELS) $(FWDIR)/weights.h $(FWDIR)/start.S \
-                     $(FWDIR)/link.ld $(FWDIR)/soc.h
+                     $(LDSCRIPT) $(FWDIR)/soc.h
 	@mkdir -p $(OUT)
 	@cp $(KERNELS) $(OUT)/kernels.c
 	$(CROSS)gcc $(CFLAGS) -I$(OUT) $(LDF) -Wl,-Map=$(OUT)/firmware.map -o $@ \
@@ -38,7 +52,7 @@ $(OUT)/firmware.elf: main.c $(KERNELS) $(FWDIR)/weights.h $(FWDIR)/start.S \
 
 $(OUT)/firmware.hex: $(OUT)/firmware.elf
 	$(CROSS)objcopy -O binary $< $(OUT)/firmware.bin
-	python3 ../../scripts/bin2hex.py $(OUT)/firmware.bin $@ --words 16384
+	python3 ../../scripts/bin2hex.py $(OUT)/firmware.bin $@ --words $(HEXWORDS)
 
 clean:
 	rm -rf v3 c*

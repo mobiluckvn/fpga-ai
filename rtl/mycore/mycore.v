@@ -42,7 +42,15 @@ module mycore #(
     parameter        WITH_REQ    = 0,
     // WITH_PMAX4=1: thêm lệnh PMAX4 (ứng viên sinh ra ở bước S5 của pipeline CDP).
     // Mặc định 0 -> lõi giữ nguyên hành vi cũ từng bit, mọi số đo trước vẫn tái lập được.
-    parameter        WITH_PMAX4  = 0
+    parameter        WITH_PMAX4  = 0,
+    // DUAL_PORT=1: bộ nhớ hai cổng kiểu Harvard — cổng lệnh riêng (imem_*) và cổng dữ
+    //   liệu riêng (mem_*). Nhờ đó ở S_EXEC lõi đặt được ĐỒNG THỜI địa chỉ dữ liệu và
+    //   địa chỉ lệnh kế -> load/store hết 1 chu kỳ thay vì 2 (bỏ hẳn trạng thái S_MEM).
+    //   Kết quả load về ở chu kỳ SAU, nên cần (a) cổng ghi thứ hai của tệp thanh ghi và
+    //   (b) đường CHUYỂN TIẾP cho lệnh ngay sau dùng thanh ghi vừa nạp — 18,3 % số load
+    //   trong tải này (results/pipeline/S6/kha_thi_BONHO2CONG.md).
+    //   Chỉ dùng với FAST_ADDR=1. Mặc định 0 -> lõi giữ nguyên hành vi cũ từng bit.
+    parameter        DUAL_PORT   = 0
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -56,6 +64,12 @@ module mycore #(
     output reg  [3:0]  mem_wstrb,
     output reg         mem_valid,
     input  wire [31:0] mem_rdata,
+
+    // Cổng LỆNH, chỉ dùng khi DUAL_PORT=1 (khi =0 thì imem_valid=0 và lệnh vẫn lấy
+    // từ mem_rdata như cũ). Cũng là tổ hợp, cùng lý do như mem_addr.
+    output reg  [31:0] imem_addr,
+    output reg         imem_valid,
+    input  wire [31:0] imem_rdata,
 
     output reg         trap,
     output wire [31:0] dbg_pc,
@@ -105,7 +119,7 @@ module mycore #(
 `endif
 
     // ---------------- giải mã ----------------
-    wire [31:0] instr = mem_rdata;
+    wire [31:0] instr = (DUAL_PORT != 0) ? imem_rdata : mem_rdata;
     wire [6:0]  opc   = instr[6:0];
     wire [4:0]  rd    = instr[11:7];
     wire [2:0]  f3    = instr[14:12];
@@ -119,8 +133,47 @@ module mycore #(
     wire [31:0] imm_u = {instr[31:12], 12'd0};
     wire [31:0] imm_j = {{11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1'b0};
 
-    wire [31:0] rv1 = (rs1 == 5'd0) ? 32'd0 : regs[rs1];
-    wire [31:0] rv2 = (rs2 == 5'd0) ? 32'd0 : regs[rs2];
+    // ---------------- tách dữ liệu load ----------------
+    // Khối này nằm TRƯỚC rv1/rv2 vì đường chuyển tiếp của DUAL_PORT cần ld_val.
+    // Nó chỉ phụ thuộc ld_off/ld_f3/mem_rdata nên dời lên không đổi hành vi.
+    reg [2:0]  ld_f3;
+    reg [1:0]  ld_off;
+    reg [4:0]  ld_rd;
+    reg        ld_is;
+    // ld_pend (chỉ DUAL_PORT=1): chu kỳ NÀY đang có kết quả load chờ ghi về.
+    reg        ld_pend;
+
+    reg [7:0]  ld_b;
+    reg [15:0] ld_h;
+    reg [31:0] ld_val;
+    always @(*) begin
+        case (ld_off)
+            2'd0: ld_b = mem_rdata[7:0];
+            2'd1: ld_b = mem_rdata[15:8];
+            2'd2: ld_b = mem_rdata[23:16];
+            2'd3: ld_b = mem_rdata[31:24];
+        endcase
+        ld_h = ld_off[1] ? mem_rdata[31:16] : mem_rdata[15:0];
+        case (ld_f3)
+            3'b000:  ld_val = {{24{ld_b[7]}},  ld_b};      // lb
+            3'b001:  ld_val = {{16{ld_h[15]}}, ld_h};      // lh
+            3'b100:  ld_val = {24'd0, ld_b};               // lbu
+            3'b101:  ld_val = {16'd0, ld_h};               // lhu
+            default: ld_val = mem_rdata;                   // lw
+        endcase
+    end
+
+
+    // CHUYỂN TIẾP (chỉ DUAL_PORT=1): ở chu kỳ ngay sau một lệnh load, dữ liệu nạp mới
+    // nằm trên mem_rdata và CHƯA vào tệp thanh ghi (nó được ghi ở cuối chu kỳ này).
+    // Lệnh đang chạy mà đọc đúng thanh ghi đó thì phải lấy giá trị chuyển tiếp, nếu
+    // không sẽ đọc giá trị cũ. Không có đường này thì phải chèn một chu kỳ dừng và
+    // λ_load không về được 1.
+    wire ld_fwd = (DUAL_PORT != 0) && ld_pend && (ld_rd != 5'd0);
+    wire [31:0] rv1 = (rs1 == 5'd0) ? 32'd0
+                    : (ld_fwd && (ld_rd == rs1)) ? ld_val : regs[rs1];
+    wire [31:0] rv2 = (rs2 == 5'd0) ? 32'd0
+                    : (ld_fwd && (ld_rd == rs2)) ? ld_val : regs[rs2];
 
     // ---------------- ALU ----------------
     wire        is_imm = (opc == OP_OPIMM);
@@ -250,32 +303,6 @@ module mycore #(
                 st_strb = 4'b1111;
                 st_data = rv2;
             end
-        endcase
-    end
-
-    // ---------------- tách dữ liệu load (chu kỳ S_MEM) ----------------
-    reg [2:0]  ld_f3;
-    reg [1:0]  ld_off;
-    reg [4:0]  ld_rd;
-    reg        ld_is;
-
-    reg [7:0]  ld_b;
-    reg [15:0] ld_h;
-    reg [31:0] ld_val;
-    always @(*) begin
-        case (ld_off)
-            2'd0: ld_b = mem_rdata[7:0];
-            2'd1: ld_b = mem_rdata[15:8];
-            2'd2: ld_b = mem_rdata[23:16];
-            2'd3: ld_b = mem_rdata[31:24];
-        endcase
-        ld_h = ld_off[1] ? mem_rdata[31:16] : mem_rdata[15:0];
-        case (ld_f3)
-            3'b000:  ld_val = {{24{ld_b[7]}},  ld_b};      // lb
-            3'b001:  ld_val = {{16{ld_h[15]}}, ld_h};      // lh
-            3'b100:  ld_val = {24'd0, ld_b};               // lbu
-            3'b101:  ld_val = {16'd0, ld_h};               // lhu
-            default: ld_val = mem_rdata;                   // lw
         endcase
     end
 
@@ -492,7 +519,7 @@ module mycore #(
         mem_valid = 1'b0;
         if (!trap) begin
             case (state)
-                S_FETCH: begin
+                S_FETCH: if (DUAL_PORT == 0) begin
                     mem_addr  = pc;
                     mem_valid = 1'b1;
                 end
@@ -504,16 +531,16 @@ module mycore #(
                         mem_wdata = st_data;
                         mem_wstrb = (opc == OP_STORE) ? st_strb : 4'b0000;
                         mem_valid = 1'b1;
-                    end else if (!is_muldiv) begin
+                    end else if (!is_muldiv && DUAL_PORT == 0) begin
                         mem_addr  = next_pc;               // nạp lệnh kế NGAY chu kỳ này
                         mem_valid = 1'b1;
                     end
                 end
-                S_MEM: begin
+                S_MEM: if (DUAL_PORT == 0) begin
                     mem_addr  = pc_ret;
                     mem_valid = 1'b1;
                 end
-                S_MD: if (md_cnt == 6'd0) begin
+                S_MD: if (md_cnt == 6'd0 && DUAL_PORT == 0) begin
                     mem_addr  = pc_ret;
                     mem_valid = 1'b1;
                 end
@@ -521,6 +548,32 @@ module mycore #(
             endcase
         end
       end
+    end
+
+    // ---------------- cổng LỆNH (tổ hợp, chỉ DUAL_PORT=1) ----------------
+    // Điểm then chốt của ứng viên này: ở S_EXEC, kể cả khi lệnh là load/store (cổng dữ
+    // liệu đang bị chiếm), cổng lệnh vẫn đặt được địa chỉ lệnh kế -> không mất chu kỳ.
+    always @(*) begin
+        imem_addr  = pc;
+        imem_valid = 1'b0;
+        if ((DUAL_PORT != 0) && !trap) begin
+            case (state)
+                S_FETCH: begin
+                    imem_addr  = pc;
+                    imem_valid = 1'b1;
+                end
+                S_EXEC: if (!bad && !is_muldiv) begin
+                    // Đúng ở CẢ hai trường hợp: lệnh thường VÀ lệnh load/store.
+                    imem_addr  = next_pc;
+                    imem_valid = 1'b1;
+                end
+                S_MD: if (md_cnt == 6'd0) begin
+                    imem_addr  = pc_ret;
+                    imem_valid = 1'b1;
+                end
+                default: ;
+            endcase
+        end
     end
 
     // ---------------- ghi tệp thanh ghi (tổ hợp) ----------------
@@ -551,6 +604,7 @@ module mycore #(
             cnt_cycle   <= 64'd0;
             cnt_instret <= 64'd0;
             ld_is       <= 1'b0;
+            ld_pend     <= 1'b0;
             md_cnt      <= 6'd0;
             md_is_req   <= 1'b0;
             addr_r      <= RESET_PC;
@@ -561,11 +615,15 @@ module mycore #(
             cnt_cycle <= cnt_cycle + 64'd1;
 
             case (state)
-                S_FETCH: state <= S_EXEC;
+                S_FETCH: begin
+                    ld_pend <= 1'b0;
+                    state   <= S_EXEC;
+                end
 
                 S_EXEC: begin
                     if (bad) begin
-                        trap <= 1'b1;
+                        trap    <= 1'b1;
+                        ld_pend <= 1'b0;
                     end else if (acc_data) begin
                         ld_is  <= (opc == OP_LOAD);
                         ld_f3  <= f3;
@@ -578,10 +636,19 @@ module mycore #(
                             wstrb_r <= (opc == OP_STORE) ? st_strb : 4'b0000;
                             valid_r <= 1'b1;
                             state   <= S_MEMW;
+                        end else if (DUAL_PORT != 0) begin
+                            // MỘT chu kỳ: lệnh kế đã được nạp qua cổng lệnh ngay chu kỳ
+                            // này, nên không cần S_MEM. Kết quả load ghi về ở chu kỳ sau
+                            // qua cổng ghi 2, và chuyển tiếp lo cho lệnh dùng ngay.
+                            ld_pend     <= (opc == OP_LOAD);
+                            pc          <= next_pc;
+                            cnt_instret <= cnt_instret + 64'd1;
+                            state       <= S_EXEC;
                         end else begin
                             state   <= S_MEM;
                         end
                     end else if (is_muldiv) begin
+                        ld_pend <= 1'b0;
                         md_a   <= is_req ? (rv1[31] ? 32'd0 : rv1) : rv1;  /* ReLU trong REQ */
                         md_b   <= rv2;
                         md_f3  <= f3;
@@ -612,6 +679,7 @@ module mycore #(
                         end
                         state <= S_MD;
                     end else begin
+                        ld_pend     <= 1'b0;
                         pc          <= next_pc;
                         cnt_instret <= cnt_instret + 64'd1;
                         if (FAST_ADDR == 0) begin
@@ -633,6 +701,7 @@ module mycore #(
 
                 S_MEM: begin
                     ld_is       <= 1'b0;
+                    ld_pend     <= 1'b0;
                     pc          <= pc_ret;
                     cnt_instret <= cnt_instret + 64'd1;
                     if (FAST_ADDR == 0) begin
@@ -646,6 +715,7 @@ module mycore #(
                 end
 
                 S_MD: begin
+                    ld_pend <= 1'b0;
                     if (md_cnt != 6'd0) begin
                         if (md_is_div) begin
                             rmd <= rmd_ge ? rmd_sub[31:0] : rmd_sh[31:0];
@@ -671,8 +741,20 @@ module mycore #(
         end
     end
 
-    always @(posedge clk)
-        if (resetn && rf_we) regs[rf_wa] <= rf_wd;
+    // Cổng ghi THỨ HAI (chỉ DUAL_PORT=1): kết quả load về ở chu kỳ sau, đúng lúc lệnh
+    // kế cũng có thể đang ghi thanh ghi của nó -> cần hai cổng ghi.
+    wire        rf2_we = (DUAL_PORT != 0) && ld_pend && (ld_rd != 5'd0);
+    wire [4:0]  rf2_wa = ld_rd;
+    wire [31:0] rf2_wd = ld_val;
+
+    always @(posedge clk) begin
+        if (resetn) begin
+            // Cổng 2 ghi TRƯỚC, cổng 1 ghi SAU: nếu hai cổng trùng thanh ghi thì giá trị
+            // của cổng 1 (lệnh đang chạy) phải thắng, vì kết quả load là của lệnh CŨ hơn.
+            if (rf2_we) regs[rf2_wa] <= rf2_wd;
+            if (rf_we)  regs[rf_wa]  <= rf_wd;
+        end
+    end
 
 endmodule
 

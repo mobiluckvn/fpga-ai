@@ -1,0 +1,25 @@
+# S7 — cấu hình mới: B-V4 = B-V3 + PMAX4 + bộ nhớ HAI CỔNG kiểu Harvard.
+#
+# Đây là ứng viên MỨC A đầu tiên (phép kiểm K2 của docs/MO_HINH_CHI_PHI.md): không sửa
+# một dòng mã phần mềm, không thêm lệnh nào — chỉ hạ λ_load và λ_store từ 2 về 1. Vì n_c
+# giữ nguyên nên ΔC = Σ n_c·Δλ_c là ĐẲNG THỨC, không phải chặn.
+#
+# Dự báo đóng băng TRƯỚC khi viết RTL: 243.641 chu kỳ (1,3047x) — xem
+# results/pipeline/S6/du_bao_BONHO2CONG_truoc_khi_hien_thuc.json.
+# Biến thể không chuyển tiếp (chặn dưới): 255.057 chu kỳ (1,2463x).
+#
+# RAM phải là 32 KB: BSRAM hai cổng của GW2AR mất một nửa mật độ mỗi khối, nên 64 KB hai
+# cổng cần 64 khối (chip chỉ có 46) còn 32 KB hai cổng cần 32 khối — bằng số đang dùng.
+name: s7_dualport
+model: m1s
+firmware:
+  source: experiment/m1s_s6/cand/pmax4.c
+  flags: [-DOPT_KERNELS, -DUSE_DOT4, -DCONV1_DOT4, -DUSE_REQ, -DUSE_PMAX4]
+core:
+  name: mycore
+  rtl_params: {FAST_ADDR: 1, WITH_DOT4: 1, WITH_REQ: 1, WITH_PMAX4: 1, WITH_MULDIV: 1,
+               DUAL_PORT: 1}
+clock_mhz: 27
+budget: {lut4: 20736, mult18x18: 48, bsram_blocks: 46, fmax_min_mhz: 27}
+evaluate: {images: 10, iss: true, verilator: true, kit: true}
+expect: {target: B-V4, total_cycles: 243641}

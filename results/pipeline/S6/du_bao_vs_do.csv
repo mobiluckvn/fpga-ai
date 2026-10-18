@@ -12,3 +12,4 @@ Hạ λ của lệnh lượng tử hoá lại (2 → 1 chu kỳ),L3,B-V1,A_lambd
 Hạ λ của lệnh lượng tử hoá lại (2 → 1 chu kỳ),L3,B-V3,A_lambda_exact,365992,358648,1.0205,không,,,
 Cả hai: bộ nhớ hai cổng + mọi phép nhân 1 chu kỳ,L3,B-V1,A_lambda_exact,1459993,911904,1.601,không,,,
 Cả hai: bộ nhớ hai cổng + mọi phép nhân 1 chu kỳ,L3,B-V3,A_lambda_exact,365992,277823,1.3174,không,,,
+Bộ nhớ hai cổng (load/store 2 → 1 chu kỳ),L3,B-V3+PMAX4,A_lambda_exact,317878,243641,1.3047,không,243641,1.3047,0.00

@@ -5,8 +5,13 @@
     .section .text.start, "ax"
     .global _start
 _start:
-    /* ngăn xếp ở đỉnh RAM, thẳng hàng 16 byte */
-    li      sp, 0x00010000
+    /* ngăn xếp ở đỉnh RAM, thẳng hàng 16 byte.
+     * STACK_TOP cho phép dựng biến thể RAM 32 KB (cấu hình bộ nhớ hai cổng của S7)
+     * mà KHÔNG đổi hành vi mặc định: không định nghĩa thì vẫn là 0x10000 như cũ. */
+#ifndef STACK_TOP
+#define STACK_TOP 0x00010000
+#endif
+    li      sp, STACK_TOP
 
     /* xoá .bss */
     la      a0, __bss_start

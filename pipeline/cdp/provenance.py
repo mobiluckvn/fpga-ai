@@ -16,6 +16,24 @@ from .util import sh, tool_env
 SRC_FILES = (paths.M1S / "main.c", paths.FW / "weights.h")
 
 
+def src_hash_for(t) -> str | None:
+    """SRC_HASH của ĐÚNG cấu hình `t`, theo cùng công thức Makefile của nó.
+
+    experiment/m1s:    cat main.c          ../../fw/weights.h
+    experiment/m1s_s6: cat main.c KERNELS ../../fw/weights.h   (xem m1s_s6/Makefile)
+
+    Cần hàm này vì `cdp sim` trước đây so dòng SRC_HASH do firmware tự báo với hash của
+    experiment/m1s cho MỌI cấu hình — nên mọi cấu hình S6/S7 đều bị báo lệch oan.
+    """
+    root = paths.ROOT / getattr(t, "fw_root", "experiment/m1s")
+    files = [root / "main.c"]
+    kern = (getattr(t, "fw_make_vars", None) or {}).get("KERNELS")
+    if kern:
+        files.append(root / kern)
+    files.append(paths.FW / "weights.h")
+    return src_hash(tuple(files))
+
+
 def src_hash(files=SRC_FILES) -> str | None:
     h = hashlib.sha256()
     for f in files:

@@ -37,6 +37,9 @@ WITH_REQ   ?= 0
 # Lệnh PMAX4 — ứng viên do bước S5 của pipeline CDP sinh ra. Mặc định 0: lõi giữ
 # nguyên hành vi cũ từng bit, nên mọi số đo trước vẫn tái lập được.
 WITH_PMAX4 ?= 0
+# DUAL_PORT=1: bộ nhớ hai cổng kiểu Harvard (ứng viên S7). Kéo theo RAM 32 KB, nên
+# firmware phải dựng với RAMKB=32. Mặc định 0 -> mọi biến thể cũ không đổi.
+DUAL_PORT  ?= 0
 # CSV_APPEND: ghi đè cờ --append (scripts/branch_b_measure.sh dùng để biến thể đầu
 # tiên ghi mới và các biến thể sau nối thêm, bất kể thứ tự khai báo trong file này)
 CSV_APPEND_SET := $(if $(filter CSV_APPEND,$(.VARIABLES)),1,)
@@ -108,11 +111,11 @@ all: build-bv0 build-bv1
 # ---------------- mô phỏng dùng chung ----------------
 # Mô hình Verilator phải dùng CÙNG FAST_ADDR với bitstream, nếu không thì phép so
 # "kit = Verilator" vô nghĩa. Vì vậy tên nhị phân mang theo giá trị FAST_ADDR.
-VTAG := $(FAST_ADDR)$(WITH_DOT4)$(WITH_REQ)$(if $(filter-out 0,$(WITH_PMAX4)),p,)
+VTAG := $(FAST_ADDR)$(WITH_DOT4)$(WITH_REQ)$(if $(filter-out 0,$(WITH_PMAX4)),p,)$(if $(filter-out 0,$(DUAL_PORT)),d,)
 Vsoc_b$(VTAG): $(CORE) sim_main_b.cpp
 	verilator --cc --exe --build -j 0 -O2 -Wno-fatal -CFLAGS "$(TN20K_CXX_INC)" \
 	    -GFAST_ADDR=$(FAST_ADDR) -GWITH_DOT4=$(WITH_DOT4) -GWITH_REQ=$(WITH_REQ) \
-	    -GWITH_PMAX4=$(WITH_PMAX4) \
+	    -GWITH_PMAX4=$(WITH_PMAX4) -GDUAL_PORT=$(DUAL_PORT) \
 	    --top-module soc_b -Mdir obj_dir$(VTAG) \
 	    -o ../Vsoc_b$(VTAG) $(CORE) sim_main_b.cpp \
 	    2>&1 | tee verilator$(VTAG).log
@@ -120,7 +123,7 @@ Vsoc_b$(VTAG): $(CORE) sim_main_b.cpp
 rvtests: Vsoc_b$(VTAG)
 	sh ../../scripts/riscv_tests.sh rvt$(VTAG) \
 	    ./Vsoc_b$(VTAG) 2>&1 \
-	    | tee $(RESULTS)/B1/riscv_tests_fa$(FAST_ADDR)_dot4$(WITH_DOT4)_req$(WITH_REQ)_pmax$(WITH_PMAX4).txt
+	    | tee $(RESULTS)/B1/riscv_tests_fa$(FAST_ADDR)_dot4$(WITH_DOT4)_req$(WITH_REQ)_pmax$(WITH_PMAX4)$(if $(filter-out 0,$(DUAL_PORT)),_dp1,).txt
 
 # ---------------- B-V0 / B-V1 ----------------
 # $(1) = tên biến thể nhánh B, $(2) = thư mục firmware nhánh A, $(3) = nhãn kit báo
@@ -139,7 +142,7 @@ sim-$(1): Vsoc_b$$(VTAG) $(1)/firmware.hex
 $(1)/top-synth.json: top_b.v $(CORE) $(1)/firmware.hex
 	cd $(1) && yosys -l yosys.log -p "read_verilog -DMYCORE_MUL_DSP ../top_b.v ../soc_b.v ../mycore.v \
 	    ../../uart/uart_tx.v ../../uart/uart_rx.v; \
-	    chparam -set DIV_UART $(DIV_UART) -set FAST_ADDR $(FAST_ADDR) -set BEACON $(BEACON) -set WITH_DOT4 $(WITH_DOT4) -set WITH_REQ $(WITH_REQ) -set WITH_PMAX4 $(WITH_PMAX4) top; \
+	    chparam -set DIV_UART $(DIV_UART) -set FAST_ADDR $(FAST_ADDR) -set BEACON $(BEACON) -set WITH_DOT4 $(WITH_DOT4) -set WITH_REQ $(WITH_REQ) -set WITH_PMAX4 $(WITH_PMAX4) -set DUAL_PORT $(DUAL_PORT) top; \
 	    synth_gowin -top top -family $(YOSYS_FAM) -nodsp -json top-synth.json -setundef"
 
 $(1)/pnr.json: $(1)/top-synth.json $(CST)
@@ -199,7 +202,7 @@ sim-$(1): Vsoc_b$$(VTAG) $(1)/firmware.hex
 $(1)/top-synth.json: top_b.v $(CORE) $(1)/firmware.hex
 	cd $(1) && yosys -l yosys.log -p "read_verilog -DMYCORE_MUL_DSP ../top_b.v ../soc_b.v ../mycore.v \
 	    ../../uart/uart_tx.v ../../uart/uart_rx.v; \
-	    chparam -set DIV_UART $(DIV_UART) -set FAST_ADDR $(FAST_ADDR) -set BEACON $(BEACON) -set WITH_DOT4 $(WITH_DOT4) -set WITH_REQ $(WITH_REQ) -set WITH_PMAX4 $(WITH_PMAX4) top; \
+	    chparam -set DIV_UART $(DIV_UART) -set FAST_ADDR $(FAST_ADDR) -set BEACON $(BEACON) -set WITH_DOT4 $(WITH_DOT4) -set WITH_REQ $(WITH_REQ) -set WITH_PMAX4 $(WITH_PMAX4) -set DUAL_PORT $(DUAL_PORT) top; \
 	    synth_gowin -top top -family $(YOSYS_FAM) -nodsp -json top-synth.json -setundef"
 
 $(1)/pnr.json: $(1)/top-synth.json $(CST)
@@ -230,6 +233,16 @@ $(eval $(call S6VAR,bs6ref,$(M1S)/v1dcr/firmware.hex,A-V1+DOT4+C1+REQ,--append))
 # tham số. So với số LUT của bv1dcr đo trước khi thêm PMAX4 vào mycore.v là SAI —
 # đó là so hai phiên bản RTL khác nhau (cạm bẫy số 5 của KET_QUA_TONG_HOP.md).
 $(eval $(call S6VAR,bs6off,$(M1S)/v1dcr/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+
+# ---------------- bước S7: bộ nhớ hai cổng (Harvard) ----------------
+# Cả hai dùng CÙNG firmware 32 KB (dựng bằng `make fw RAMKB=32` trong experiment/m1s_s6):
+#   bs7ref — DUAL_PORT=0. ĐỐI CHỨNG: phải cho đúng 317.878 chu kỳ như bản 64 KB, chứng
+#            minh việc liên kết lại cho RAM 32 KB KHÔNG đổi số chu kỳ (chỉ đổi đúng một
+#            lệnh `lui sp`), nên so sánh dưới đây là thuần vi kiến trúc.
+#   bs7dp  — DUAL_PORT=1. Cấu hình thật của ứng viên.
+# Chạy:  make sim-bs7ref DUAL_PORT=0 ... ; make sim-bs7dp DUAL_PORT=1 ...
+$(eval $(call S6VAR,bs7ref,$(S6)/cdp32/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+$(eval $(call S6VAR,bs7dp,$(S6)/cdp32/firmware.hex,A-V1+DOT4+C1+REQ,--append))
 
 archive:
 	@mkdir -p $(RESULTS)

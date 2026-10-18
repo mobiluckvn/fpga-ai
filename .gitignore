@@ -10,7 +10,7 @@ __pycache__/
 # Thư mục build tạm của từng cổng (vật phẩm đã được lưu lại trong results/ qua
 # scripts/archive_gate.sh, nên thư mục build không cần vào git)
 build/
-obj_dir/
+obj_dir*/
 
 # File tạm
 *.o
@@ -38,3 +38,12 @@ pipeline/runs/*
 
 # Cây bóng để cdp dựng ngoài cây (chỉ symlink + thư mục build mới)
 pipeline/work/
+
+# Thư mục dựng firmware/biến thể RTL (vật phẩm đã lưu trong results/pipeline/)
+experiment/m1s_s6/c*/
+experiment/m1s_s6/v*/
+rtl/mycore/bs6*/
+rtl/mycore/bs7*/
+rtl/mycore/Vsoc_b*
+rtl/mycore/rvt*/
+rtl/mycore/verilator*.log

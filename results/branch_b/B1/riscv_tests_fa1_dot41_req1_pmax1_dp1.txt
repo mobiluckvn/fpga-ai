@@ -1,0 +1,54 @@
+rv32ui-p-add ĐẠT
+rv32ui-p-addi ĐẠT
+rv32ui-p-and ĐẠT
+rv32ui-p-andi ĐẠT
+rv32ui-p-auipc ĐẠT
+rv32ui-p-beq ĐẠT
+rv32ui-p-bge ĐẠT
+rv32ui-p-bgeu ĐẠT
+rv32ui-p-blt ĐẠT
+rv32ui-p-bltu ĐẠT
+rv32ui-p-bne ĐẠT
+rv32ui-p-fence_i ĐẠT (ngoài RV32IM)
+rv32ui-p-jal ĐẠT
+rv32ui-p-jalr ĐẠT
+rv32ui-p-lb ĐẠT
+rv32ui-p-lbu ĐẠT
+rv32ui-p-ld_st ĐẠT
+rv32ui-p-lh ĐẠT
+rv32ui-p-lhu ĐẠT
+rv32ui-p-lui ĐẠT
+rv32ui-p-lw ĐẠT
+rv32ui-p-ma_data KHÔNG ĐẠT (ngoài RV32IM) [SIM_TRAP: loi o chu ky 1119] ra: rv32ui-p-ma_data.. 
+rv32ui-p-or ĐẠT
+rv32ui-p-ori ĐẠT
+rv32ui-p-sb ĐẠT
+rv32ui-p-sh ĐẠT
+rv32ui-p-simple ĐẠT
+rv32ui-p-sll ĐẠT
+rv32ui-p-slli ĐẠT
+rv32ui-p-slt ĐẠT
+rv32ui-p-slti ĐẠT
+rv32ui-p-sltiu ĐẠT
+rv32ui-p-sltu ĐẠT
+rv32ui-p-sra ĐẠT
+rv32ui-p-srai ĐẠT
+rv32ui-p-srl ĐẠT
+rv32ui-p-srli ĐẠT
+rv32ui-p-st_ld ĐẠT
+rv32ui-p-sub ĐẠT
+rv32ui-p-sw ĐẠT
+rv32ui-p-xor ĐẠT
+rv32ui-p-xori ĐẠT
+rv32um-p-div ĐẠT
+rv32um-p-divu ĐẠT
+rv32um-p-mul ĐẠT
+rv32um-p-mulh ĐẠT
+rv32um-p-mulhsu ĐẠT
+rv32um-p-mulhu ĐẠT
+rv32um-p-rem ĐẠT
+rv32um-p-remu ĐẠT
+
+RV32IM: ĐẠT 48 · KHÔNG ĐẠT 0
+ngoài RV32IM (ma_data, fence_i): ĐẠT 1 · KHÔNG ĐẠT 1 · fence_i=ĐẠT ma_data=KHÔNG
+RISCV_TESTS_PASS n=48 ngoai=1/2

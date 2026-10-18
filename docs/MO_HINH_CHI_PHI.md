@@ -225,11 +225,33 @@ trước khi đụng rào số học — đây là dự đoán của lý thuyế
 | K0 | $C_{\text{mô hình}} = C_{\text{Verilator}}$ **tuyệt đối** cho `mycore` trên **8** cấu hình | S2 |
 | K0' | sai số ≤ 2 % cho PicoRV32 trên **6** cấu hình | S2 |
 | K1 | $n_{\text{mem}}, n_{\text{mul}}$ do ISS đếm = số **[suy ra]** ở mục 1.3 (413.720 / 341.322 và 206.777 / 206.751) | S2 |
-| K2 | dự báo của $\Delta C=\sum n_c\Delta\lambda_c$ cho một thay đổi L3 so với đo thật | S6 — **chưa chạy** (ứng viên bộ nhớ hai cổng, dự báo 1,2834× trên B-V3 đã ghi sẵn) |
+| K2 | dự báo của $\Delta C=\sum n_c\Delta\lambda_c$ cho một thay đổi L3 so với đo thật | S7 — **ĐÃ CHẠY**: bộ nhớ hai cổng, dự báo 243.641 / đo 243.641, **sai số 0,00 %** |
 | K3 | dự báo cho một **lệnh mới** (L1/L2) so với đo thật | S6 — **ĐÃ CHẠY**: PMAX4, dự báo 316.695 / đo 317.878, **sai số +0,37 %** |
 
 Mọi dự báo ghi vào sổ cái **trước** khi hiện thực. Sai số dự báo là dữ liệu nghiên cứu, **không được sửa
 lùi** (SPEC 0.3).
+
+**Kết quả K2 (bộ nhớ hai cổng) — mức A đúng như nó tự nhận.** Dự báo đóng băng ở
+`results/pipeline/S6/du_bao_BONHO2CONG_truoc_khi_hien_thuc.json` trước khi sửa `mycore.v`:
+**243.641 chu kỳ (1,3047×)**. Đo bằng Verilator sau khi hiện thực: **243.641 chu kỳ**.
+**Sai số 0,00 %**, và ISS khớp Verilator **tuyệt đối** từng lớp từng ảnh.
+
+Vì sao mức A đúng tuyệt đối còn mức B lệch: ứng viên này **không sửa một dòng mã phần mềm
+và không thêm lệnh nào**, nên `n_c` giữ nguyên **từng con số** (`instret` đo được giống hệt:
+236.313) và `ΔC = Σ n_c·Δλ_c` là **đẳng thức**. Mức B thì buộc phải giả định mã viết lại gọn
+tới đâu — giả định đó là chỗ sai số sinh ra.
+
+**Nhưng mô hình này không thấy giá phần cứng, và lần này giá rất đắt.** Cùng một file RTL,
+chỉ khác tham số: LUT4 **4.459 → 15.736** (×3,5; 75,9 % chip), Fmax 59,08 → 53,01 MHz.
+Quy trách nhiệm bằng ba lần tổng hợp: bản thân bộ nhớ hai cổng chỉ +1.680 LUT, còn **+8.724
+LUT là của riêng cổng ghi thứ hai** — vì tệp thanh ghi 32×32 một cổng ghi được map vào 32
+khối `RAM16SDP4` (RAM phân tán), thêm cổng ghi thứ hai thì **không map được nữa** và rơi về
+flip-flop cộng mux 32:1. Chi tiết: `results/pipeline/S7/README.md` mục 4.
+
+Hệ quả cho lý thuyết: **mô hình λ dự báo chu kỳ chính xác tuyệt đối, và không nói gì về
+diện tích.** So hiệu quả hai ứng viên đã hiện thực — PMAX4 tốn 9,8 LUT4 cho mỗi 1 % tăng
+tốc, bộ nhớ hai cổng tốn 370 — **chênh 38 lần**. Đây đúng giới hạn số 2 đã ghi trước ở mục 6,
+và nó vừa được đo thành con số.
 
 **Kết quả K3 (PMAX4) và điều nó bác bỏ.** Dự báo đóng băng ở
 `results/pipeline/S6/du_bao_PMAX4_truoc_khi_hien_thuc.json` trước khi sửa `mycore.v`:

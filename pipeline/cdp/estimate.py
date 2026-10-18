@@ -37,7 +37,10 @@ SEM = ("mac", "load_data", "store_data", "addr", "loop_ctrl", "requant", "other"
 
 def _lam(t: targets.Target) -> dict:
     doc = yaml.safe_load((paths.CDP / "iss/timing/mycore.yaml").read_text())
-    return doc["profiles"][f"fast_addr_{int(t.rtl_params.get('FAST_ADDR', 1))}"]
+    key = f"fast_addr_{int(t.rtl_params.get('FAST_ADDR', 1))}"
+    if int(t.rtl_params.get("DUAL_PORT", 0)):
+        key += "_dual_port"
+    return doc["profiles"][key]
 
 
 # Cấu hình của S3 nằm ở results/pipeline/S3; cấu hình MỚI do S6 sinh ra nằm ở

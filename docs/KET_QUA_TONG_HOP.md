@@ -37,7 +37,13 @@ kiểm **từ chối** ghi nhận nếu lệch.
 Nhánh B chạy **đúng các file `firmware.hex` của nhánh A, không biên dịch lại**, nên `rdinstret` khớp
 **tuyệt đối** từng cặp — mọi chênh lệch giữa hai nhánh là **thuần vi kiến trúc**.
 
-### Dòng thứ 15 đã đo nhưng CHƯA vào bảng trên: B-V3+PMAX4 — 317.878 chu kỳ, 28,27×
+### Hai dòng nữa đã làm xong nhưng CHƯA vào bảng trên
+
+Pipeline đồng thiết kế (S5–S7) đã đề xuất, dự báo, hiện thực và kiểm hai thay đổi phần cứng
+tiếp theo. Cả hai **chưa** vào bảng chính vì chưa có một phép đo kit thoả **đủ** tiêu chí —
+xem cuối mỗi mục.
+
+#### Dòng 15: B-V3+PMAX4 — 317.878 chu kỳ, 28,27× (đã đo trên kit)
 
 Lệnh thứ ba (`PMAX4`, lấy max gói 4 làn int8 cho pooling) do pipeline đồng thiết kế S5/S6 đề xuất,
 đã hiện thực và **đo trên kit thật**:
@@ -57,6 +63,34 @@ giống từng bit**, nên mọi tiêu chí **đều** có bằng chứng — nh
 chính sau một run duy nhất thoả cả hai, việc đó cần rút/cắm lại cáp USB.
 
 Chi tiết và log thô: `results/pipeline/S6/kit/README.md`.
+
+#### Dòng 16: B-V4 = + bộ nhớ hai cổng — 243.641 chu kỳ, 36,89× (chưa đo trên kit)
+
+| # | Biến thể | Phần cứng | Chu kỳ/ảnh | ms | chu kỳ/MAC | IPC | ảnh/s | so A-V0 |
+|---|---|---|---:|---:|---:|---:|---:|---:|
+| (16) | B-V4 | mycore + DOT4 + REQ + PMAX4 + bộ nhớ hai cổng | 243.641 | 9,0 | 1,27 | **0,970** | 110,8 | **36,89×** |
+
+Bộ nhớ hai cổng kiểu Harvard: cổng lệnh riêng nên load/store hết **1 chu kỳ** thay vì 2.
+Không sửa một dòng mã phần mềm, không thêm lệnh — chỉ hạ λ. **IPC = 0,970**, gần một lệnh
+mỗi chu kỳ (nhánh A trên PicoRV32: 0,151); `conv2` xuống 0,89 chu kỳ/MAC, dưới 1.
+
+**Dự báo mức A ghi trước khi viết RTL: 243.641 chu kỳ. Đo được: 243.641. Sai số 0,00 %** —
+phép kiểm K2 của mô hình chi phí. Mức A là đẳng thức chứ không phải ước lượng, vì `n_c` giữ
+nguyên từng con số (`instret` giống hệt 236.313).
+
+**Giá phần cứng thì đắt, và mô hình λ không thấy được**: LUT4 4.459 → **15.736** (×3,5;
+75,9 % chip), Fmax 59,08 → 53,01 MHz (vẫn ĐẠT 27 MHz), BSRAM không tăng (32 khối).
+Truy ra: **+8.724 LUT là của riêng cổng ghi thứ hai** — tệp thanh ghi một cổng ghi được map
+vào 32 khối `RAM16SDP4` (RAM phân tán), thêm cổng thứ hai thì không map được nữa. Hiệu quả
+diện tích: PMAX4 tốn **9,8** LUT4 cho mỗi 1 % tăng tốc, bộ nhớ hai cổng tốn **370** — chênh
+38 lần.
+
+Đã kiểm: ISS = Verilator bằng tuyệt đối · CRC 5 tensor × 10 ảnh = golden · `instret` giống
+hệt bản một cổng · riscv-tests 48/48 · Fmax ĐẠT · firmware 32 KB trên lõi một cổng cho đúng
+317.878 (nên chênh lệch là thuần vi kiến trúc). **Chưa đo trên kit** vì UART của kit chết;
+`bs7dp/top.fs` đã dựng xong, sẵn sàng nạp.
+
+Chi tiết và log thô: `results/pipeline/S7/README.md`.
 
 ## 2. Phân rã 24,6×: mỗi hướng đóng góp bao nhiêu, trả giá gì
 

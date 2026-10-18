@@ -27,6 +27,28 @@ profiles:
     custom_dot4: 1           # gắn thẳng tầng thực thi, ghi về cùng chu kỳ
     custom_req: 2            # dùng lại bộ nhân -> đi qua S_MD như lệnh mul
     custom_pmax4: 1          # so sánh/chọn thuần tổ hợp -> ghi về ngay trong S_EXEC
+  # DUAL_PORT=1 (kèm FAST_ADDR=1): bộ nhớ hai cổng kiểu Harvard. Cổng lệnh riêng nên ở
+  # S_EXEC lõi đặt được đồng thời địa chỉ dữ liệu và địa chỉ lệnh kế -> bỏ hẳn S_MEM,
+  # load/store về 1 chu kỳ. Kết quả load ghi qua cổng ghi 2 của tệp thanh ghi, và đường
+  # CHUYỂN TIẾP lo cho lệnh dùng ngay, nên KHÔNG có chu kỳ dừng (xem mycore.v, ld_pend).
+  # Mọi λ khác giữ nguyên.
+  fast_addr_1_dual_port:
+    reset_cycles: 1
+    alu: 1
+    shift: 1
+    branch_taken: 1
+    branch_nt: 1
+    jal: 1
+    jalr: 1
+    csr: 1
+    misc: 1
+    load: 1                  # chỉ S_EXEC — đây là toàn bộ lợi ích của ứng viên
+    store: 1                 # chỉ S_EXEC
+    mul: 2                   # vẫn S_EXEC + S_MD
+    div: 34
+    custom_dot4: 1
+    custom_req: 2
+    custom_pmax4: 1
   # FAST_ADDR=0: ghi thanh ghi địa chỉ -> mọi lệnh +1 chu kỳ, mỗi truy cập dữ liệu +1 nữa
   fast_addr_0:
     reset_cycles: 1

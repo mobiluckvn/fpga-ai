@@ -177,6 +177,39 @@ _add(Target(name="B-V3+PMAX4", row=15, branch="B", core="mycore",
             kit_csv="results/branch_b/m1s_s6.csv", kit_csv_label="bs6pmax4",
             expect_total_median=317878))
 
+# ---------------- bước S7: bộ nhớ hai cổng kiểu Harvard ----------------
+# CÙNG firmware với hai cấu hình dưới, chỉ khác tham số DUAL_PORT của RTL. Firmware phải
+# liên kết cho RAM 32 KB (RAMKB=32) vì BSRAM hai cổng mất một nửa mật độ: 64 KB hai cổng
+# cần 64 khối > 46 của chip, 32 KB hai cổng cần 32 khối (bằng số đang dùng).
+# Đã kiểm: bản 32 KB với DUAL_PORT=0 cho ĐÚNG 317.878 chu kỳ như bản 64 KB, nên chênh
+# lệch dưới đây là thuần vi kiến trúc (chỉ đổi một lệnh `lui sp`).
+_S7_FW = dict(fw_root="experiment/m1s_s6", fw_make_target="fw",
+              fw_make_vars={"KERNELS": "cand/pmax4.c", "OUT": "cdp32", "RAMKB": "32"})
+
+_add(Target(name="B-V3+PMAX4@32K", row=15, branch="B", core="mycore",
+            hw="mycore + DOT4 + REQ + PMAX4, RAM 32 KB một cổng (đối chứng)",
+            fw_id="cdp32", fw_flags=FW_FLAGS["v1dcr"] | frozenset({"USE_PMAX4"}),
+            fw_variant="A-V1+DOT4+C1+REQ",
+            rtl_params={"FAST_ADDR": 1, "WITH_DOT4": 1, "WITH_REQ": 1,
+                        "WITH_PMAX4": 1, "WITH_MULDIV": 1, "DUAL_PORT": 0},
+            make_dir=_B, var_dir="bs7ref",
+            make_vars={"FAST_ADDR": 1, "WITH_DOT4": 1, "WITH_REQ": 1,
+                       "WITH_PMAX4": 1, "DUAL_PORT": 0},
+            kit_csv="results/branch_b/m1s_s6.csv", kit_csv_label="bs7ref",
+            expect_total_median=317878, **_S7_FW))
+
+_add(Target(name="B-V4", row=16, branch="B", core="mycore",
+            hw="mycore + DOT4 + REQ + PMAX4 + bộ nhớ hai cổng",
+            fw_id="cdp32", fw_flags=FW_FLAGS["v1dcr"] | frozenset({"USE_PMAX4"}),
+            fw_variant="A-V1+DOT4+C1+REQ",
+            rtl_params={"FAST_ADDR": 1, "WITH_DOT4": 1, "WITH_REQ": 1,
+                        "WITH_PMAX4": 1, "WITH_MULDIV": 1, "DUAL_PORT": 1},
+            make_dir=_B, var_dir="bs7dp",
+            make_vars={"FAST_ADDR": 1, "WITH_DOT4": 1, "WITH_REQ": 1,
+                       "WITH_PMAX4": 1, "DUAL_PORT": 1},
+            kit_csv="results/branch_b/m1s_s6.csv", kit_csv_label="bs7dp",
+            expect_total_median=243641, **_S7_FW))
+
 BASELINE = TARGETS["A-V0"]
 
 

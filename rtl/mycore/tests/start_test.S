@@ -8,7 +8,10 @@
     .section .text.start
     .global _start
 _start:
-    li      sp, 0x00010000
+#ifndef STACK_TOP
+#define STACK_TOP 0x00010000
+#endif
+    li      sp, STACK_TOP
     jal     ra, mytest
 
     .global mytest_ret

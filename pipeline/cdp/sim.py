@@ -12,7 +12,7 @@ import json
 import statistics as st
 from pathlib import Path
 
-from . import build as build_mod
+from . import build as build_mod, provenance
 from . import ledger, paths, spec as spec_mod, targets, wrap
 from .util import fmt_int, rel
 
@@ -116,7 +116,10 @@ def main(args, run) -> int:
         run.finish("fail", res)
         return 1
 
-    res["check"] = evaluate(blk, ref, t, run.src_hash, run)
+    # SRC_HASH phải tính theo fw_root của CHÍNH cấu hình này, không phải của
+    # experiment/m1s cho mọi cấu hình (xem provenance.src_hash_for).
+    res["src_hash_target"] = provenance.src_hash_for(t)
+    res["check"] = evaluate(blk, ref, t, res["src_hash_target"], run)
     s_path = s.path
 
     con = ledger.connect()

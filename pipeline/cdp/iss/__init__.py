@@ -30,6 +30,8 @@ def load_timing(t: targets.Target) -> tuple[dict, dict]:
     if t.core == "mycore":
         doc = yaml.safe_load((TIMING_DIR / "mycore.yaml").read_text())
         key = f"fast_addr_{int(t.rtl_params.get('FAST_ADDR', 1))}"
+        if int(t.rtl_params.get("DUAL_PORT", 0)):
+            key += "_dual_port"
         prof = doc["profiles"][key]
         meta = {"core": "mycore", "profile": key, "deterministic": True,
                 "source": doc["derived_from"], "file": "timing/mycore.yaml"}

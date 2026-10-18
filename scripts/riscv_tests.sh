@@ -1,4 +1,10 @@
 #!/bin/sh
+
+# RVT_LD / RVT_WORDS / RVT_STACK: cho phép chạy bộ kiểm trên cấu hình RAM 32 KB của
+# bước S7 (bộ nhớ hai cổng). Mặc định y nguyên hành vi cũ: 64 KB, 16384 từ.
+RVT_LD=${RVT_LD:-link_test.ld}
+RVT_WORDS=${RVT_WORDS:-16384}
+RVT_STACK=${RVT_STACK:-0x00010000}
 # Dựng và chạy bộ riscv-tests (rv32ui-p + rv32um-p) trên một lõi.
 #
 #   scripts/riscv_tests.sh <thư mục làm việc> <đường dẫn Vsoc>
@@ -36,13 +42,13 @@ for suite in rv32ui rv32um; do
              -I "$T" -I "$RT/isa/macros/scalar" -I "$RT/env" \
              -DTEST_FUNC_NAME=mytest -DTEST_FUNC_RET=mytest_ret \
              -DTEST_FUNC_TXT="\"$suite-p-$name\"" \
-             -T "$T/link_test.ld" -Wl,--no-warn-rwx-segments \
+             -T "$T/$RVT_LD" -Wl,--no-warn-rwx-segments -DSTACK_TOP=$RVT_STACK \
              -o "$WORK/t.elf" "$T/start_test.S" "$src" 2> "$WORK/$name.cc.log"; then
             echo "$suite-p-$name KHÔNG DỊCH ĐƯỢC (xem $name.cc.log)"
             n_fail=$((n_fail+1)); failed="$failed $suite-p-$name(dịch)"; continue
         fi
         "${CROSS}objcopy" -O binary "$WORK/t.elf" "$WORK/t.bin"
-        python3 "$ROOT/scripts/bin2hex.py" "$WORK/t.bin" "$WORK/firmware.hex" --words 16384 > /dev/null
+        python3 "$ROOT/scripts/bin2hex.py" "$WORK/t.bin" "$WORK/firmware.hex" --words $RVT_WORDS > /dev/null
         ( cd "$WORK" && "$VSOC" --stop-on "DONE" --max-cycles $MAXC > "$name.log" 2> "$name.err" ) || true
         if grep -q "^$suite-p-$name\.\.OK" "$WORK/$name.log" && grep -q "^DONE" "$WORK/$name.log"; then
             if [ $extra -eq 1 ]; then
