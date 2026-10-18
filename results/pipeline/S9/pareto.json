@@ -1,0 +1,58 @@
+[
+  {
+    "ten": "B-V1",
+    "lut4": 3054,
+    "chu_ky": 1459993,
+    "fmax": 54.37,
+    "pareto": true,
+    "mau": "#2a78d6",
+    "nhan": [
+      12,
+      -6
+    ],
+    "ha": "left",
+    "nguon": "rtl/mycore/p9_v1/report.json"
+  },
+  {
+    "ten": "B-V3",
+    "lut4": 4640,
+    "chu_ky": 365992,
+    "fmax": 61.3,
+    "pareto": false,
+    "mau": "#2a78d6",
+    "nhan": [
+      14,
+      6
+    ],
+    "ha": "left",
+    "nguon": "rtl/mycore/p9_v3/report.json"
+  },
+  {
+    "ten": "B-V3+PMAX4",
+    "lut4": 4459,
+    "chu_ky": 317878,
+    "fmax": 59.08,
+    "pareto": true,
+    "mau": "#1baf7a",
+    "nhan": [
+      10,
+      -22
+    ],
+    "ha": "left",
+    "nguon": "rtl/mycore/p9_pmax4/report.json"
+  },
+  {
+    "ten": "B-V4",
+    "lut4": 15736,
+    "chu_ky": 243641,
+    "fmax": 53.01,
+    "pareto": true,
+    "mau": "#eb6834",
+    "nhan": [
+      -12,
+      10
+    ],
+    "ha": "right",
+    "nguon": "results/pipeline/S7/report_bs7dp.json"
+  }
+]

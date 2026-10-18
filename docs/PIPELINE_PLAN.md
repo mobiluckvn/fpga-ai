@@ -141,8 +141,9 @@ Bố cục 4 pha (C1) KHÔNG tính vào B1 vì nó chỉ có ý nghĩa khi đã 
 - Dự báo đóng băng **243.641** chu kỳ · Verilator **243.641** · **đo trên kit 243.641** ·
   **sai số 0,00 %** — mức A đúng tuyệt đối, phép kiểm K2 ĐẠT.
 - Giá phần cứng: LUT4 **4.459 → 15.736** (×3,5; 75,9 % chip), trong đó **riêng cổng ghi thứ hai +8.724 LUT**
-  vì tệp thanh ghi mất khả năng map vào `RAM16SDP4`. Hiệu quả diện tích: PMAX4 **9,8 LUT4** cho mỗi 1 %
-  tăng tốc, bộ nhớ hai cổng **370** — chênh 38 lần.
+  vì tệp thanh ghi mất khả năng map vào `RAM16SDP4`. (S9 đã **rút lại** con số diện tích của PMAX4:
+  quét lại trên cùng bản RTL cho −181 LUT4 thay vì +148, tức nằm trong dải nhiễu đóng gói. Con số
+  của bộ nhớ hai cổng vẫn đứng vững vì lớn gấp ~60 lần dải đó.)
 - riscv-tests 48/48 ĐẠT · Fmax 53,01 MHz ĐẠT.
 - **Đo kit ĐẠT** (run `20261018-214712-kit`): 2/2 lần đọc, chốt `SRC_HASH`, CRC 10/10,
   kit = Verilator bằng tuyệt đối từng ảnh. Dòng 16 đã vào bảng chính `docs/KET_QUA_TONG_HOP.md`.

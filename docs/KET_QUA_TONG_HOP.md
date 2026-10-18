@@ -65,6 +65,9 @@ Lệnh thứ ba (`PMAX4`, lấy max gói 4 làn int8 cho pooling) do pipeline đ
 |---|---|---|---:|---:|---:|---:|---:|---:|
 | (15) | B-V3+PMAX4 | mycore + DOT4 + REQ + PMAX4 | 317.878 | 11,8 | 1,66 | 0,743 | 84,9 | 28,27× |
 
+
+> **Đính chính (S9, 2026-10-18).** Con số diện tích của PMAX4 dưới đây đã được **rút lại**: quét lại trên cùng một bản RTL, cùng firmware, khác đúng một tham số cho **−181 LUT4** thay vì +148. Chi phí LUT của một lệnh nhỏ không đo được bằng một cặp A/B duy nhất — |Δ| < 200 LUT4 và dấu không ổn định. Con số của bộ nhớ hai cổng (+11.277, ×3,5) vẫn đứng vững vì lớn gấp ~60 lần dải nhiễu. Xem `results/pipeline/S9/README.md` mục 2.
+
 Hai lớp pooling: 54.991 → 6.899 chu kỳ. Giá phần cứng **+148 LUT4** (+3,5 %), Fmax 65,89 → 55,26 MHz
 (vẫn ĐẠT ràng buộc 27 MHz). Dự báo ghi **trước** khi viết RTL: 316.695 chu kỳ — **sai số +0,37 %**.
 

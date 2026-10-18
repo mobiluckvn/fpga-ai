@@ -153,7 +153,7 @@ Hai ứng viên chưa từng ai làm trong dự án này đã được hiện th
 | | chu kỳ | so B-V3 | ms | ảnh/s | giá LUT4 |
 |---|---:|---:|---:|---:|---|
 | B-V3 (mốc) | 365.992 | 1,000× | 13,6 | 73,8 | — |
-| **+ PMAX4** | 317.878 | **1,151×** | 11,8 | 84,9 | **+148** (+3,5 %) |
+| **+ PMAX4** | 317.878 | **1,151×** | 11,8 | 84,9 | **không đo nổi** (\|Δ\| < 200) |
 | **+ bộ nhớ hai cổng** | **243.641** | **1,502×** | **9,0** | **110,8** | **+11.277** (×3,5) |
 
 ![phân rã theo lớp](../report/pipeline/hinh5_phan_ra_theo_lop.png)
@@ -162,12 +162,10 @@ Mỗi lệnh cắt đúng phần việc nó nhắm tới và gần như không �
 PMAX4 cắt pool1 **8,5×** và pool2 **6,5×**, còn conv thì PMAX4 không đụng tới.
 
 **Trả lời PQ5**: thêm **1,502×** so với B-V3 — từ 13,6 ms xuống **9,0 ms**, tức tổng **36,89×** so
-với mốc A-V0 ban đầu. Nhưng hai ứng viên đó có **hiệu quả diện tích chênh nhau 38 lần**:
+với mốc A-V0 ban đầu. Nhưng hai ứng viên đó **khác hẳn nhau về giá diện tích** — và việc đo giá đó lại làm lộ một
+giới hạn của chính phương pháp, xem mục 7.3.
 
-| | LUT4 cho mỗi 1 % tăng tốc |
-|---|---:|
-| PMAX4 | **9,8** |
-| bộ nhớ hai cổng | **370** |
+![Pareto chu kỳ–diện tích](../report/pipeline/hinh2_pareto_chuky_lut.png)
 
 ---
 
@@ -205,7 +203,7 @@ viên rẻ lẫn một ứng viên đắt, cộng một mô hình thứ hai.
 | loại giá | mô hình λ thấy? | PMAX4 | bộ nhớ hai cổng |
 |---|---|---|---|
 | **chu kỳ** | **có** — dự báo sai 0,37 % / **0,00 %** | −13,2 % chu kỳ | −23,4 % chu kỳ |
-| **diện tích** | **không** | +148 LUT4 (+3,5 %) | **+11.277 LUT4 (×3,5)** |
+| **diện tích** | **không** | **nhỏ hơn ngưỡng đo được** | **+11.277 LUT4 (×3,5)** |
 | **dung lượng** | **không** | không đổi | **RAM 64 → 32 KB** |
 
 Giá thứ hai đã được ghi là giới hạn **trước khi đo** trong `docs/MO_HINH_CHI_PHI.md`, rồi đo thành
@@ -219,6 +217,35 @@ ba loại giá thì PMAX4 thắng áp đảo dưới ngân sách chặt.
 
 **Hướng gỡ đã ghi, chưa làm**: Harvard tách hẳn — 32 KB bộ nhớ lệnh + 32 KB bộ nhớ dữ liệu, mỗi bên
 BSRAM một cổng. Lấy được λ_load = 1 mà không cần BSRAM hai cổng, tổng vẫn 64 KB.
+
+### 7.3 Và giá diện tích của một lệnh NHỎ thì phương pháp này không đo nổi
+
+Ở bước S9 tôi tổng hợp lại ba cấu hình trên **cùng một bản RTL, cùng một firmware**, khác nhau
+**đúng một tham số** — đúng cách mà S6 đã tự đặt ra để tránh bẫy so LUT giữa hai lần tổng hợp
+khác nhau. Kết quả:
+
+    bật WITH_PMAX4 (0 → 1):   LUT4  4.640 → 4.459   =  −181
+
+Tức **thêm một lệnh lại TỐN ÍT LUT HƠN** — trong khi S6 đo đúng lệnh đó, đúng kiểu cặp A/B, trên
+bản RTL thời điểm ấy, ra **+148**.
+
+Không phải ngẫu nhiên: tổng hợp **tất định** khi tham số giống nhau. Ba lần dựng độc lập cho cùng
+bộ tham số, ở ba thư mục khác nhau, với **ba firmware khác nhau**, đều cho **đúng 4.459 LUT4**.
+Nên nội dung firmware không ảnh hưởng, và luồng lặp lại được.
+
+Nguyên nhân là: đổi một tham số **đổi netlist**, và với một lệnh nhỏ như PMAX4, phần logic nó
+thêm vào **cùng bậc độ lớn** với mức xê dịch do đóng gói lại.
+
+> **Chi phí LUT của một lệnh nhỏ không đo được bằng một cặp A/B duy nhất.** Với PMAX4,
+> |Δ| < 200 LUT4 (dưới 1 % chip) và **dấu còn không ổn định** giữa hai bản RTL.
+
+**Hai con số bị rút lại**: "PMAX4 tốn +148 LUT4" và "PMAX4 tốn 9,8 LUT4 cho mỗi 1 % tăng tốc".
+**Hai con số được giữ**: "+11.277 LUT4 (×3,5)" của bộ nhớ hai cổng và "+8.724 LUT4 của riêng cổng
+ghi thứ hai" — chúng lớn gấp khoảng **60 lần** dải nhiễu.
+
+Kết luận định tính **không đổi, và còn mạnh hơn**: PMAX4 rẻ tới mức **không đo nổi**; bộ nhớ hai
+cổng đắt tới mức không thể nhầm. Điều phải bỏ là việc gán cho PMAX4 một con số diện tích cụ thể.
+Muốn con số có nghĩa thì phải tổng hợp **riêng khối**, hoặc lấy trung vị trên nhiều bản RTL.
 
 ---
 

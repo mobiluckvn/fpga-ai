@@ -249,6 +249,9 @@ khối `RAM16SDP4` (RAM phân tán), thêm cổng ghi thứ hai thì **không ma
 flip-flop cộng mux 32:1. Chi tiết: `results/pipeline/S7/README.md` mục 4.
 
 Hệ quả cho lý thuyết: **mô hình λ dự báo chu kỳ chính xác tuyệt đối, và không nói gì về
+
+> **Đính chính (S9, 2026-10-18).** Con số diện tích của PMAX4 dưới đây đã được **rút lại**: quét lại trên cùng một bản RTL, cùng firmware, khác đúng một tham số cho **−181 LUT4** thay vì +148. Chi phí LUT của một lệnh nhỏ không đo được bằng một cặp A/B duy nhất — |Δ| < 200 LUT4 và dấu không ổn định. Con số của bộ nhớ hai cổng (+11.277, ×3,5) vẫn đứng vững vì lớn gấp ~60 lần dải nhiễu. Xem `results/pipeline/S9/README.md` mục 2.
+
 diện tích.** So hiệu quả hai ứng viên đã hiện thực — PMAX4 tốn 9,8 LUT4 cho mỗi 1 % tăng
 tốc, bộ nhớ hai cổng tốn 370 — **chênh 38 lần**. Đây đúng giới hạn số 2 đã ghi trước ở mục 6,
 và nó vừa được đo thành con số.

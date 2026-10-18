@@ -1,0 +1,2 @@
+
+chparam -set DIV_UART 234 -set FAST_ADDR 1 -set BEACON 0 -set WITH_DOT4 1 -set WITH_REQ 1 -set WITH_PMAX4 0 -set DUAL_PORT 0 top

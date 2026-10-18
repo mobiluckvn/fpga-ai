@@ -2,6 +2,65 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — S9: báo cáo tổng hợp, năm biểu đồ, và một con số của chính tôi bị bác bỏ
+
+### Báo cáo và biểu đồ
+
+`docs/KET_QUA_PIPELINE.md` trả lời PQ1–PQ6 bằng số, kèm một mục nói thẳng điều pipeline
+**không** làm được. Năm hình trong `report/pipeline/` (PNG 300 dpi + PDF vector), sinh bằng
+`scripts/s9_figures.py` đọc thẳng từ tệp kết quả — không số nào nhập tay.
+
+Bảng màu kiểm bằng công cụ của hướng dẫn trực quan hoá (all-pairs, chế độ sáng: CVD ΔE 9,2 ·
+thường 24,0 — ĐẠT). Tôi đã **xem lại từng hình** và sửa năm lỗi bố cục mà script không thể tự
+biết: thanh dài 0 nên vô hình, nhãn đè nhãn trục, cột chồng bị bẹp 7,7 lần nên phải đổi sang
+nhóm theo lớp trên thang log, ghi chú đè đường tham chiếu, nhãn log phụ dạng `6×10⁵` lẫn với
+nhãn chính.
+
+### Phát hiện: con số diện tích của PMAX4 mà tôi ghi ở S6 là SAI
+
+Để biểu đồ Pareto có nghĩa, tôi tổng hợp lại ba cấu hình trên **cùng một bản RTL, cùng một
+firmware**, khác nhau **đúng một tham số** — đúng kỷ luật mà chính S6 đã đặt ra.
+
+| | LUT4 | Fmax |
+|---|---:|---:|
+| B-V1 (`WITH_DOT4=0 WITH_REQ=0 WITH_PMAX4=0`) | 3.054 | 54,37 |
+| B-V3 (`...=1 ...=1 WITH_PMAX4=0`) | 4.640 | 61,30 |
+| B-V3+PMAX4 (`...=1 ...=1 WITH_PMAX4=1`) | **4.459** | 59,08 |
+
+**Bật PMAX4 làm GIẢM 181 LUT4.** S6 đo đúng lệnh đó, đúng kiểu cặp A/B, ra **+148**.
+
+**Không phải ngẫu nhiên.** Tổng hợp tất định khi tham số giống nhau: ba lần dựng độc lập cho
+cùng bộ tham số, ở ba thư mục khác nhau, với **ba firmware khác nhau** (`bs7ref` 32 KB M1-S,
+`gl_dcrp` M1-L, `p9_pmax4` 64 KB M1-S) đều cho **đúng 4.459**. Nên nội dung firmware không ảnh
+hưởng số LUT, và luồng lặp lại được.
+
+Nguyên nhân: đổi một tham số **đổi netlist**, và phần logic mà một lệnh nhỏ như PMAX4 thêm vào
+**cùng bậc độ lớn** với mức xê dịch do đóng gói lại.
+
+**Rút lại hai con số**: "PMAX4 tốn +148 LUT4 (+3,5 %)" và "PMAX4 tốn 9,8 LUT4 cho mỗi 1 % tăng
+tốc". Đã đính chính tại `KET_QUA_TONG_HOP.md`, `MO_HINH_CHI_PHI.md`, `PIPELINE_PLAN.md` và
+`KET_QUA_PIPELINE.md` — **không xoá số cũ**, mà ghi rõ nó bị rút lại và vì sao.
+
+**Giữ hai con số**: "+11.277 LUT4 (×3,5)" của bộ nhớ hai cổng và "+8.724 LUT4 của riêng cổng ghi
+thứ hai" — lớn gấp khoảng 60 lần dải nhiễu.
+
+Kết luận định tính **không đổi và còn mạnh hơn**: PMAX4 rẻ tới mức không đo nổi; bộ nhớ hai cổng
+đắt tới mức không thể nhầm. Điều phải bỏ là việc gán cho PMAX4 một con số diện tích cụ thể.
+
+### Điều đáng rút ra
+
+S6 đã tự đặt ra đúng kỷ luật ("chỉ so LUT giữa hai bản khác đúng một tham số trên cùng một file")
+và tôi đã làm đúng kỷ luật đó — **nhưng kỷ luật đó vẫn chưa đủ**. Nó loại được nhiễu giữa hai bản
+RTL, không loại được nhiễu do chính việc đổi tham số gây ra cho bộ đóng gói. Muốn con số có nghĩa
+thì phải tổng hợp **riêng khối**, hoặc lấy trung vị trên nhiều bản.
+
+### Trạng thái
+
+**S0–S9 ĐẠT hết.** Bảng chính 16 cấu hình đo trên kit. Việc còn mở: dòng PicoRV32 cho M1-L;
+ứng viên Harvard tách hẳn (32 KB lệnh + 32 KB dữ liệu) để gỡ ràng buộc RAM của B-V4; đo chi phí
+diện tích bằng cách tổng hợp riêng khối.
+
+
 ## 2026-10-18 — Dòng 15 ĐẠT: nguyên nhân nằm ở script đo của chính tôi, không phải ở kit
 
 Người dùng đồng ý hướng `--keep-open`. Làm xong, đo lại, **ĐẠT ngay lần đầu**.

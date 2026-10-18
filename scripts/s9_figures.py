@@ -19,7 +19,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import FuncFormatter, NullFormatter
 
 ROOT = Path(__file__).resolve().parent.parent
 RES = ROOT / "results" / "pipeline"
@@ -115,9 +115,18 @@ def fig_pareto():
             color=INK3, lw=1.2, ls="--", zorder=2)
     ax.set_xlabel("LUT4 của lõi (trên tổng 20.736 của GW2AR-18C)")
     ax.set_ylabel("chu kỳ mỗi ảnh (M1-S)")
-    ax.set_yscale("log"); ax.yaxis.set_major_formatter(VN); ax.xaxis.set_major_formatter(VN)
+    ax.set_yscale("log")
+    # Thang log mặc định chèn nhãn phụ dạng 6x10^5 lẫn với nhãn chính -> đặt nhãn tay.
+    ax.set_yticks([250_000, 400_000, 700_000, 1_200_000])
+    ax.yaxis.set_major_formatter(VN); ax.yaxis.set_minor_formatter(NullFormatter())
+    ax.xaxis.set_major_formatter(VN)
+    ax.set_ylim(200_000, 2_100_000); ax.set_xlim(1_800, 18_400)
     ax.set_title("Đánh đổi chu kỳ ↔ diện tích: ba lệnh rẻ, bộ nhớ hai cổng đắt",
                  loc="left", pad=10)
+    ax.annotate("chênh LUT4 giữa B-V3 và B-V3+PMAX4 là −181 —\n"
+                "DƯỚI ngưỡng phân giải của phép đo này (xem mục 7)",
+                (0.97, 0.80), xycoords="axes fraction", ha="right", va="top",
+                fontsize=8, color=INK2)
     save(fig, "hinh2_pareto_chuky_lut")
 
 
