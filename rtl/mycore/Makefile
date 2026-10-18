@@ -268,6 +268,20 @@ $(eval $(call S6VAR,gl_dcr,$(S6)/gl_dcr/firmware.hex,A-V1+DOT4+C1+REQ,--append))
 $(eval $(call S6VAR,gs_dcrp,$(S6)/gs_dcrp/firmware.hex,A-V1+DOT4+C1+REQ,--append))
 $(eval $(call S6VAR,gl_dcrp,$(S6)/gl_dcrp/firmware.hex,A-V1+DOT4+C1+REQ,--append))
 
+# ---------------- bước S9: quét Pareto trên MỘT bản RTL, MỘT firmware ----------------
+# Bốn điểm chu kỳ-LUT chỉ so sánh được nếu chúng đến từ CÙNG file RTL và khác nhau
+# ĐÚNG ở tham số chparam (bài học đã ghi ở results/pipeline/S6/README_pmax4.md: số LUT
+# giữa hai lần tổng hợp khác nhau có thể dẫn tới kết luận vô lý). Ba biến thể dưới đây
+# dùng CÙNG firmware gs_dcrp (M1-S, 64 KB) và chỉ khác WITH_DOT4/WITH_REQ/WITH_PMAX4.
+# Điểm thứ tư (B-V4, DUAL_PORT=1) KHÔNG dùng được firmware này vì bộ nhớ hai cổng chỉ
+# có 32 KB — nó dùng cặp A/B riêng bs7ref/bs7dp, đã đo ở S7.
+#   make build-p9_v1    WITH_DOT4=0 WITH_REQ=0 WITH_PMAX4=0
+#   make build-p9_v3    WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=0
+#   make build-p9_pmax4 WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1
+$(eval $(call S6VAR,p9_v1,$(S6)/gs_dcrp/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+$(eval $(call S6VAR,p9_v3,$(S6)/gs_dcrp/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+$(eval $(call S6VAR,p9_pmax4,$(S6)/gs_dcrp/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+
 archive:
 	@mkdir -p $(RESULTS)
 	@for v in bv0 bv1 bv0r bv1r bv2 bv1d bv1dc bv1dcr; do \

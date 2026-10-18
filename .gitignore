@@ -48,6 +48,7 @@ experiment/m1s_s6/v*/
 # S8: thư mục dựng của 6 biến thể mô hình giữ lại (gs_*/gl_* = M1-S/M1-L)
 experiment/m1s_s6/g[sl]_*/
 rtl/mycore/g[sl]_*/
+rtl/mycore/p9_*/
 # Thư mục/vật phẩm build của các biến thể MỚI (S6, S7). Bằng chứng đã lưu trong
 # results/pipeline/S6 và S7, nên không commit thư mục build như các biến thể bv*.
 # KHÔNG dùng mẫu rộng (obj_dir*/, rvt*/, Vsoc_b*) vì các biến thể bv* cũ ĐÃ được
