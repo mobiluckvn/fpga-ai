@@ -75,11 +75,19 @@ GIẢM 714 LUT4**. Tôi đã mắc đúng bẫy này trong phiên và phải t�
 một lệnh" chỉ đáng tin nếu nó đến từ một cặp A/B khác nhau đúng một tham số trên cùng
 một file nguồn.**
 
-## 4. Chưa làm: đo trên kit
+## 4. Đo trên kit — ĐẠT (2026-10-18)
 
-Chưa thấy `/dev/cu.usbserial*` (kit chưa cắm) nên **chưa có số đo phần cứng thật**.
-Bitstream `bs6pmax4/top.fs` đã dựng xong và sẵn sàng nạp SRAM. Khi đo, gộp luôn phép
-kiểm đường đo `cdp kit` đã hoãn từ S1.
+**317.878 chu kỳ trên kit thật, bằng tuyệt đối số Verilator. Dự báo mức B ghi trước khi
+viết RTL: 316.695 — sai số +0,37 %.**
+
+Run `kit/20261018-221645-kit` thoả **đủ** tiêu chí trong một run: CRC 5 tensor × 10 ảnh =
+golden 10/10 · dự đoán khớp golden 10/10 · chu kỳ kit = Verilator bằng tuyệt đối từng ảnh ·
+**2/2 lần đọc độc lập** · chốt `SRC_HASH` = `a7dca19c8cec` · 10/10 dòng CSV. Dòng 15 đã vào
+bảng chính của `docs/KET_QUA_TONG_HOP.md`.
+
+Phải mất **năm** lần thử, và nguyên nhân bốn lần hỏng trước nằm ở **script đo**, không phải
+ở kit: `m1s_check.py` đóng cổng serial giữa hai lần đọc rồi mở lại, làm kẹt kênh FT2232.
+Tuỳ chọn `--keep-open` sửa được ngay. Chi tiết: `kit/README.md`.
 
 ## 5. File
 
