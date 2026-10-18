@@ -19,7 +19,7 @@ chứng mạnh nhất cho phương pháp. Sau đó mới cho pipeline đi tiếp
 | S6 | Phễu: dự báo → hiện thực top-K → đo kit; vòng mở lần 1 (PMAX4 trên B-V3) | PQ1, PQ5 |
 | S7 | Vòng mở lần 2: bộ nhớ hai cổng (B-V4) — ứng viên **mức A** đầu tiên, **ĐẠT** | PQ1, PQ5 |
 | S8 | Mô hình giữ lại — **ĐẠT** | PQ6 |
-| S9 | Báo cáo tổng hợp, biểu đồ cho bài báo | — |
+| S9 | Báo cáo tổng hợp, biểu đồ cho bài báo — **ĐẠT** | — |
 
 > **Ghi chú đánh số (sửa 2026-10-18).** Kế hoạch gốc gộp cả vòng mở vào S6 và đặt "mô hình giữ lại" ở S7.
 > Thực tế vòng mở sinh ra **hai** ứng viên phần cứng được hiện thực trọn vẹn, mỗi cái một khối lượng
