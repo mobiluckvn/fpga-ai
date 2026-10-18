@@ -1,0 +1,74 @@
+{
+  "candidate": "PMAX4",
+  "base_config": "B-V3",
+  "base_cycles": 365992,
+  "prediction_frozen": {
+    "predicted_cycles": 316695,
+    "predicted_speedup": 1.1557,
+    "method": "B_pattern_lower_bound",
+    "file": "du_bao_PMAX4_truoc_khi_hien_thuc.json"
+  },
+  "measured_iss": {
+    "cycles": 317878,
+    "speedup": 1.1514,
+    "layers": {
+      "conv1": 138213,
+      "pool1": 4978,
+      "conv2": 165152,
+      "pool2": 1921,
+      "dense": 7614
+    },
+    "n_pmax4_per_image": 1314
+  },
+  "prediction_error_pct": 0.374,
+  "verify": {
+    "bit_exact_m1s": "ĐẠT — CRC32 5 tensor x 10 ảnh khớp golden",
+    "iss_eq_verilator": "ĐẠT — 317.878 = 317.878, bằng tuyệt đối từng lớp từng ảnh",
+    "random_vectors": "ĐẠT — RTL và plugin ISS cùng CRC 649A9D5E trên 1.000.000 vector",
+    "riscv_tests": "ĐẠT — 48/48 RV32IM (fence_i ĐẠT, ma_data không, như lõi gốc)",
+    "no_regression": "ĐẠT — A-V0/B-V1/B-V3 với WITH_PMAX4=0 bằng tuyệt đối"
+  },
+  "cost_isolated": {
+    "note": "Phép so DUY NHẤT có nghĩa: cùng file RTL, cùng firmware, khác đúng tham số WITH_PMAX4. So với số LUT của bv1dcr đo TRƯỚC khi thêm PMAX4 vào mycore.v là sai — đó là so hai phiên bản RTL khác nhau.",
+    "with_pmax4_0": {
+      "LUT4": 4211,
+      "ALU": 968,
+      "DFF": 580,
+      "BSRAM": 32,
+      "MULT18X18": 4,
+      "fmax_mhz": 65.89
+    },
+    "with_pmax4_1": {
+      "LUT4": 4359,
+      "ALU": 1008,
+      "DFF": 580,
+      "BSRAM": 32,
+      "MULT18X18": 4,
+      "fmax_mhz": 55.26
+    },
+    "delta": {
+      "LUT4": 148,
+      "ALU": 40,
+      "DFF": 0,
+      "BSRAM": 0,
+      "MULT18X18": 0,
+      "fmax_mhz": -10.630000000000003
+    }
+  },
+  "covering_variance_evidence": {
+    "note": "bv1dcr cũ (cùng tham số, mycore.v tương đương logic nhưng khác văn bản) cho LUT4 5.073 / Fmax 55,82 MHz; bs6off cho 4.211 / 65,89 MHz -> lệch 862 LUT4 (-17 %) và 10 MHz. Bằng chứng mới cho cạm bẫy số 5.",
+    "bv1dcr_old": {
+      "LUT4": 5073,
+      "fmax_mhz": 55.82
+    },
+    "bs6off_now": {
+      "LUT4": 4211,
+      "ALU": 968,
+      "DFF": 580,
+      "BSRAM": 32,
+      "MULT18X18": 4,
+      "fmax_mhz": 65.89
+    }
+  },
+  "kit": "CHƯA ĐO — chưa thấy /dev/cu.usbserial*; bitstream bs6pmax4/top.fs đã sẵn sàng"
+}

@@ -61,4 +61,5 @@ profiles:
     csr: 5
     misc: 0
     custom_dot4: 6
+    custom_pmax4: 6   # không hiện thực trên PicoRV32 (n = 0); để cùng giá PCPI
     custom_req: 6

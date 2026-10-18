@@ -24,15 +24,17 @@ import time
 from pathlib import Path
 
 from .ext import dot4 as ext_dot4
+from .ext import pmax4 as ext_pmax4
 from .ext import req as ext_req
 
 # ---- lớp lệnh (thứ tự này là thứ tự cột trong mọi báo cáo) ----
 # Tách `shift` khỏi `alu` và tách nhánh nhảy/không nhảy: trên mycore cả bốn đều
 # 1 chu kỳ, nhưng PicoRV32 trả giá khác nhau -> cần tách để mô hình hiệu chuẩn được.
 CLASSES = ("alu", "shift", "branch_taken", "branch_nt", "jal", "jalr", "load",
-           "store", "mul", "div", "csr", "misc", "custom_dot4", "custom_req")
+           "store", "mul", "div", "csr", "misc", "custom_dot4", "custom_req",
+           "custom_pmax4")
 (C_ALU, C_SHIFT, C_BRT, C_BRN, C_JAL, C_JALR, C_LD, C_ST, C_MUL, C_DIV, C_CSR,
- C_MISC, C_DOT4, C_REQ) = range(14)
+ C_MISC, C_DOT4, C_REQ, C_PMAX4) = range(15)
 
 RAM_WORDS = 16384
 RAM_BYTES = RAM_WORDS * 4
@@ -151,7 +153,7 @@ class Prof:
 
 class Iss:
     def __init__(self, hexfile, timing: dict, with_dot4=False, with_req=False,
-                 pc_hist=False, profile=False, memdep=False):
+                 pc_hist=False, profile=False, memdep=False, with_pmax4=False):
         self.mem = load_hex(hexfile)
         self.regs = [0] * 32
         self.pc = 0
@@ -160,6 +162,7 @@ class Iss:
         self.instret = 0
         self.with_dot4 = with_dot4
         self.with_req = with_req
+        self.with_pmax4 = with_pmax4
         self.pc_hist = pc_hist
         self.profile = profile
         self.memdep = memdep
@@ -454,6 +457,9 @@ class Iss:
                     elif self.with_req and f3 == 1:
                         k = C_REQ
                         val = ext_req.sem(regs[rs1], regs[rs2], sh=f7 & 0x1F)[0]
+                    elif self.with_pmax4 and f3 == 2 and f7 == 0:
+                        k = C_PMAX4
+                        val = ext_pmax4.sem(regs[rs1], regs[rs2])[0]
                     else:
                         raise Trap(pc, instr, "lệnh custom-0 không được bật")
                 else:

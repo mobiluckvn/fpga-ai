@@ -18,6 +18,7 @@ module top #(
     parameter integer FAST_ADDR = 1,
     parameter integer WITH_DOT4 = 0,
     parameter integer WITH_REQ  = 0,
+    parameter integer WITH_PMAX4 = 0,
     parameter integer BEACON    = 0
 ) (
     input  wire       clk,
@@ -38,7 +39,7 @@ module top #(
         else                   rst_c  <= rst_c + 11'd1;
     end
 
-    soc_b #(.DIV(DIV_UART), .HEXFILE(HEXFILE), .FAST_ADDR(FAST_ADDR), .WITH_DOT4(WITH_DOT4), .WITH_REQ(WITH_REQ), .BEACON(BEACON)) u_soc (
+    soc_b #(.DIV(DIV_UART), .HEXFILE(HEXFILE), .FAST_ADDR(FAST_ADDR), .WITH_DOT4(WITH_DOT4), .WITH_REQ(WITH_REQ), .WITH_PMAX4(WITH_PMAX4), .BEACON(BEACON)) u_soc (
         .clk(clk), .resetn(resetn),
         .uart_tx(uart_tx), .uart_rx(uart_rx), .led(led),
         .dbg_tx_valid(), .dbg_tx_byte(), .dbg_trap()

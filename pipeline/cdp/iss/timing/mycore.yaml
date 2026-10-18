@@ -26,6 +26,7 @@ profiles:
     div: 34                  # S_EXEC + 33 x S_MD (32 bước dịch-trừ + 1 chu kỳ ghi về)
     custom_dot4: 1           # gắn thẳng tầng thực thi, ghi về cùng chu kỳ
     custom_req: 2            # dùng lại bộ nhân -> đi qua S_MD như lệnh mul
+    custom_pmax4: 1          # so sánh/chọn thuần tổ hợp -> ghi về ngay trong S_EXEC
   # FAST_ADDR=0: ghi thanh ghi địa chỉ -> mọi lệnh +1 chu kỳ, mỗi truy cập dữ liệu +1 nữa
   fast_addr_0:
     reset_cycles: 1
@@ -43,3 +44,4 @@ profiles:
     div: 35
     custom_dot4: 2
     custom_req: 3
+    custom_pmax4: 2

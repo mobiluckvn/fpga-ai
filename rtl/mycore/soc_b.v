@@ -26,7 +26,8 @@ module soc_b #(
     // Khung: 'S' <state> <'T' nếu trap, '.' nếu không> <8 hex PC> '\n'
     parameter integer BEACON    = 0,
     parameter         WITH_DOT4 = 0,
-    parameter         WITH_REQ  = 0
+    parameter         WITH_REQ  = 0,
+    parameter         WITH_PMAX4 = 0
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -53,7 +54,8 @@ module soc_b #(
         .WITH_MULDIV(1),
         .FAST_ADDR(FAST_ADDR),
         .WITH_DOT4(WITH_DOT4),
-        .WITH_REQ(WITH_REQ)
+        .WITH_REQ(WITH_REQ),
+        .WITH_PMAX4(WITH_PMAX4)
     ) u_core (
         .clk(clk), .resetn(resetn),
         .mem_addr(mem_addr), .mem_wdata(mem_wdata), .mem_wstrb(mem_wstrb),

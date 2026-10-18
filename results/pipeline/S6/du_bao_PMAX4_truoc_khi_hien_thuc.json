@@ -1,0 +1,35 @@
+{
+  "candidate": "PMAX4 (lấy max gói 4 làn int8, 4 kênh một lượt)",
+  "level": "L2",
+  "method": "B_pattern_lower_bound",
+  "base_config": "B-V3",
+  "base_cycles": 365992,
+  "predicted_cycles": 316695,
+  "predicted_speedup": 1.1557,
+  "encoding": {
+    "opcode": "0x0B (custom-0)",
+    "funct3": "010",
+    "funct7": "0000000"
+  },
+  "semantics": "rd[i] = max(int8 rs1[i], int8 rs2[i]) cho i = 0..3",
+  "latency_cycles": 1,
+  "formula": "ΔC = Σ_lớp (chu kỳ đo được − n_nhóm · chu kỳ nhóm sau)",
+  "terms": [
+    {
+      "layer": "pool1",
+      "cycles_measured": 42472,
+      "groups": 338,
+      "cycles_per_group_before": 125.66,
+      "cycles_per_group_after": 13
+    },
+    {
+      "layer": "pool2",
+      "cycles_measured": 12519,
+      "groups": 100,
+      "cycles_per_group_before": 125.19,
+      "cycles_per_group_after": 13
+    }
+  ],
+  "confidence": "CHẶN DƯỚI của lợi ích: giả định vòng pooling viết lại gọn tới mức chỉ còn 4 nạp + 3 PMAX4 + 1 lưu cho mỗi 4 kênh. Nếu trình biên dịch sinh thêm lệnh địa chỉ/vòng lặp thì lợi ích thấp hơn.",
+  "ceiling_from_amdahl": 1.1635
+}

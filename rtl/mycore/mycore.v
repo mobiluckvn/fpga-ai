@@ -39,7 +39,10 @@ module mycore #(
     //   được trên kit, trả giá 1 chu kỳ thêm cho MỖI truy cập bộ nhớ (kể cả nạp lệnh).
     parameter        FAST_ADDR   = 1,
     parameter        WITH_DOT4   = 0,
-    parameter        WITH_REQ    = 0
+    parameter        WITH_REQ    = 0,
+    // WITH_PMAX4=1: thêm lệnh PMAX4 (ứng viên sinh ra ở bước S5 của pipeline CDP).
+    // Mặc định 0 -> lõi giữ nguyên hành vi cũ từng bit, mọi số đo trước vẫn tái lập được.
+    parameter        WITH_PMAX4  = 0
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -166,6 +169,28 @@ module mycore #(
 
     wire is_dot4 = (WITH_DOT4 != 0) && (opc == OP_CUSTOM)
                 && (f3 == 3'b000) && (f7 == 7'b0000000);
+
+    // ---------------- lệnh tùy biến PMAX4 (ứng viên bước S5) ----------------
+    // Lấy max CÓ DẤU theo 4 làn 8 bit, gắn thẳng tầng thực thi -> **1 chu kỳ**, như DOT4.
+    //   custom-0 (0001011), funct3 = 010, funct7 = 0000000
+    //   rd[i] = max( (int8)rs1[i], (int8)rs2[i] )  cho i = 0..3
+    // Dùng cho max-pooling: activation là channels-last nên 4 kênh liền địa chỉ gói
+    // đúng vào một từ 32 bit. Ngữ nghĩa tham chiếu: pipeline/cdp/iss/ext/pmax4.py
+    // (một nguồn sự thật duy nhất; RTL phải khớp nó trên vector ngẫu nhiên).
+    // Chỉ là so sánh + chọn, không dùng khối nhân, nên không đụng đường tới DSP.
+    wire signed [7:0] pm_a0 = rv1[7:0],   pm_b0 = rv2[7:0];
+    wire signed [7:0] pm_a1 = rv1[15:8],  pm_b1 = rv2[15:8];
+    wire signed [7:0] pm_a2 = rv1[23:16], pm_b2 = rv2[23:16];
+    wire signed [7:0] pm_a3 = rv1[31:24], pm_b3 = rv2[31:24];
+    wire [31:0] pmax4_val = {
+        (pm_a3 > pm_b3) ? rv1[31:24] : rv2[31:24],
+        (pm_a2 > pm_b2) ? rv1[23:16] : rv2[23:16],
+        (pm_a1 > pm_b1) ? rv1[15:8]  : rv2[15:8],
+        (pm_a0 > pm_b0) ? rv1[7:0]   : rv2[7:0]
+    };
+
+    wire is_pmax4 = (WITH_PMAX4 != 0) && (opc == OP_CUSTOM)
+                 && (f3 == 3'b010) && (f7 == 7'b0000000);
 
     // ---------------- lệnh tùy biến REQ (cổng B5) ----------------
     // Thay cả hàm requant() kiểu gemmlowp bằng MỘT lệnh:
@@ -407,7 +432,7 @@ module mycore #(
                                    (f7 == 7'b0000001 && (WITH_MULDIV != 0)));
             OP_MISC:   illegal = 1'b0;                       // fence, fence.i = nop
             OP_SYSTEM: illegal = is_csr ? !csr_ok : 1'b0;
-            OP_CUSTOM: illegal = !(is_dot4 || is_req);
+            OP_CUSTOM: illegal = !(is_dot4 || is_req || is_pmax4);
             default:   illegal = 1'b1;
         endcase
     end
@@ -436,7 +461,10 @@ module mycore #(
             OP_OPIMM:       begin wb_en = 1'b1; wb_val = alu_r; end
             OP_OP:          begin wb_en = 1'b1; wb_val = alu_r; end
             OP_SYSTEM:      begin wb_en = is_csr; wb_val = csr_val; end
-            OP_CUSTOM:      begin wb_en = is_dot4; wb_val = dot4_val; end
+            OP_CUSTOM:      begin
+                                wb_en  = is_dot4 || is_pmax4;
+                                wb_val = is_pmax4 ? pmax4_val : dot4_val;
+                            end
                             /* REQ đi qua S_MD, không ghi về ở đây */
             default:        begin wb_en = 1'b0; end
         endcase

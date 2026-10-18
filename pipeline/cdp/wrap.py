@@ -40,6 +40,8 @@ SRC_GLOBS = {
     "experiment/m1s": ("Makefile", "*.c", "*.cpp", "*.h"),
     # hạ tầng vòng B1 (bước S4): có cả thư mục con rounds/ chứa ứng viên từng vòng
     "experiment/m1s_b1": ("Makefile", "*.c", "rounds/*.c"),
+    # hạ tầng S6: thử ứng viên phần cứng trên đỉnh B-V3
+    "experiment/m1s_s6": ("Makefile", "*.c", "cand/*.c"),
     "rtl/mycore": ("Makefile", "*.v", "*.cpp"),
 }
 

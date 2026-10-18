@@ -2,6 +2,83 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — S6 phần 2: hiện thực PMAX4 — dự báo sai 0,37 %, đúng từng bit, 5/5 cổng kiểm ĐẠT
+
+Người dùng giao toàn quyền quyết. Tôi chọn hiện thực **PMAX4** trước (lệnh mới thêm được bằng
+tham số mặc định tắt, rủi ro thấp) thay vì bộ nhớ hai cổng (lợi ích lớn hơn nhưng sửa đường bộ
+nhớ, rủi ro Fmax/BSRAM cao hơn). Không tự quyết được: cắm kit.
+
+PMAX4 là ứng viên **do S5 sinh ra ở chế độ mù** (4/6 lần chạy AI đề xuất), nhắm đúng chỗ mà S3
+chỉ ra là chưa ai chạm: `pool1`+`pool2` = 15,0 % chu kỳ B-V3, 34 % trong đó là lệnh so sánh/chọn.
+`custom-0, funct3=010, funct7=0`, `rd[i] = max((int8)rs1[i], (int8)rs2[i])`, **1 chu kỳ**.
+
+### Dự báo đóng băng TRƯỚC khi hiện thực, rồi đo
+| | chu kỳ/ảnh | tăng tốc |
+|---|---:|---:|
+| B-V3 gốc | 365.992 | 1,000× |
+| **dự báo** (ghi sổ cái trước khi viết dòng mã nào) | **316.695** | **1,1557×** |
+| **đo thật** (ISS, RTL xác nhận) | **317.878** | **1,1514×** |
+| | | **sai số +0,37 %** |
+
+`pool1` 42.472 → **4.978** (8,5×) · `pool2` 12.519 → **1.921** (6,5×) · ba lớp còn lại không đổi
+một chu kỳ nào. Số lệnh PMAX4 = **1.314/ảnh** = đúng (169·2 + 25·4)·3 theo hình học.
+
+### PQ1: độ chính xác của dự báo KHÔNG phải hằng số
+| ứng viên | dự báo | đo | sai số |
+|---|---:|---:|---:|
+| DOT4 | 1,524× | 2,313× | −34,1 % |
+| REQ | 1,180× | 1,333× | −11,5 % |
+| **PMAX4** | **1,1557×** | **1,1514×** | **+0,37 %** |
+
+Dự báo mức B chính xác khi lệnh mới **thay đúng một chỗ** trong một vòng đơn giản (pooling), và
+lệch nhiều khi việc biến đổi mã còn kéo theo thay đổi khác (DOT4/REQ cắt thêm địa chỉ/vòng lặp).
+Đây là phát hiện có ích hơn một con số sai số trung bình.
+
+### Năm cổng kiểm chứng (SPEC 4.3) — ĐẠT HẾT
+- **Vector ngẫu nhiên**: RTL và plugin ISS cho **cùng CRC `649A9D5E` trên 1.000.000 vector**
+  (đúng 1.000.000 lệnh PMAX4 đã chạy; dãy có ép biên −128/127 mỗi 64 vector).
+- **riscv-tests** với `WITH_PMAX4=1`: **48/48** RV32IM (`fence_i` ĐẠT, `ma_data` không — như lõi gốc).
+- **Đúng từng bit M1-S**: CRC32 cả 5 tensor × 10 ảnh khớp golden.
+- **ISS = Verilator tuyệt đối**: 317.878 = 317.878, từng lớp từng ảnh.
+- **Không hồi quy**: A-V0, B-V1, B-V3 với `WITH_PMAX4=0` bằng tuyệt đối số cũ.
+
+### Chi phí phần cứng — và một LỖI CỦA TÔI đã tự bắt được
+Phép so duy nhất có nghĩa: **cùng file RTL, cùng firmware, khác đúng một tham số**.
+| | PMAX4=0 | PMAX4=1 | chi phí |
+|---|---:|---:|---:|
+| LUT4 | 4.211 | 4.359 | **+148** |
+| ALU | 968 | 1.008 | **+40** |
+| DFF / BSRAM / MULT18X18 | 580 / 32 / 4 | 580 / 32 / 4 | **0 / 0 / 0** |
+| Fmax | 65,89 MHz | 55,26 MHz | **−10,63 MHz (−16 %)**, vẫn 2,05× mức cần |
+
+**Lỗi tôi đã mắc**: ban đầu tôi so LUT4 của bản có PMAX4 (4.359) với `bv1dcr` cũ (5.073) và ra
+kết luận **vô lý rằng thêm lệnh làm GIẢM 714 LUT4**. Nguyên nhân: hai số đó đến từ **hai phiên
+bản `mycore.v` khác nhau**. Tổng hợp lại `WITH_PMAX4=0` trên cùng file RTL cho 4.211 → chi phí
+thật là +148.
+
+**Bằng chứng MỚI, mạnh hơn, cho cạm bẫy số 5**: `bv1dcr` cũ và `bs6off` có **cùng tham số** và
+`mycore.v` **tương đương logic** (các dây `pmax4_val` bị cắt bỏ khi tham số = 0), nhưng lệch
+**862 LUT4 (−17 %)** và **10 MHz Fmax**. Hệ quả phải ghi vào luận văn: mọi con số "chi phí LUT
+của một lệnh" chỉ đáng tin nếu đến từ một cặp A/B khác nhau **đúng một tham số** trên **cùng một
+file nguồn**.
+
+### Hạ tầng mới
+- `rtl/mycore/mycore.v`: tham số `WITH_PMAX4`, **mặc định 0** (đã chứng minh không hồi quy).
+  `soc_b.v`, `top_b.v`, `Makefile` truyền tham số; Makefile thêm `bs6pmax4` / `bs6ref` / `bs6off`.
+- `pipeline/cdp/iss/ext/pmax4.py` — mô hình tham chiếu (khớp mô hình C 200.000/200.000 vector).
+- `experiment/m1s_s6/` (thư mục MỚI): hạ tầng firmware trên đỉnh B-V3, kernel thay được; cổng
+  kiểm bắt buộc **ĐẠT** (`kernels_v3.c` cho đúng 365.992 chu kỳ bằng tuyệt đối như B-V3);
+  `cand/pmax4.c` (kernel pooling dùng PMAX4) và `pmax4_vectors.c` (firmware kiểm vector).
+- `cdp/b1/prepare_s6.py`: giải chỉ thị tiền xử lý với bốn macro tính năng **BẬT**.
+
+### Vấn đề, đã thử
+`pmax4_vectors.c` lúc đầu trap ở `start.S` (`sw` lệch địa chỉ) vì chương trình không có biến
+`.bss` nào nên ranh giới `.bss` lẻ; thêm một biến `aligned(4)` là xong.
+
+### Chưa làm — và không tự quyết được
+**Đo trên kit.** Chưa thấy `/dev/cu.usbserial*`. Bitstream `bs6pmax4/top.fs` đã dựng xong, sẵn
+sàng nạp SRAM. Khi đo sẽ gộp luôn phép kiểm đường đo `cdp kit` hoãn từ S1.
+
 ## 2026-10-18 — S6 phần 1: `cdp estimate` — dự báo GHI TRƯỚC, và PQ1 đã có câu trả lời cho tầng L1/L2
 
 Theo yêu cầu người dùng: làm phần dự báo trước (chưa cần kit), lưu đủ để viết báo cáo.

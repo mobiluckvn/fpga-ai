@@ -8,6 +8,7 @@
 # Cần: source ../../env/setup_env.sh
 
 M1S        := ../../experiment/m1s
+S6         := ../../experiment/m1s_s6
 RESULTS    := ../../results/branch_b
 CORE       := soc_b.v mycore.v ../uart/uart_tx.v ../uart/uart_rx.v
 
@@ -29,6 +30,9 @@ FAST_ADDR  ?= 1
 BEACON     ?= 0
 WITH_DOT4  ?= 0
 WITH_REQ   ?= 0
+# Lệnh PMAX4 — ứng viên do bước S5 của pipeline CDP sinh ra. Mặc định 0: lõi giữ
+# nguyên hành vi cũ từng bit, nên mọi số đo trước vẫn tái lập được.
+WITH_PMAX4 ?= 0
 # CSV_APPEND: ghi đè cờ --append (scripts/branch_b_measure.sh dùng để biến thể đầu
 # tiên ghi mới và các biến thể sau nối thêm, bất kể thứ tự khai báo trong file này)
 CSV_APPEND_SET := $(if $(filter CSV_APPEND,$(.VARIABLES)),1,)
@@ -100,17 +104,19 @@ all: build-bv0 build-bv1
 # ---------------- mô phỏng dùng chung ----------------
 # Mô hình Verilator phải dùng CÙNG FAST_ADDR với bitstream, nếu không thì phép so
 # "kit = Verilator" vô nghĩa. Vì vậy tên nhị phân mang theo giá trị FAST_ADDR.
-Vsoc_b$(FAST_ADDR)$(WITH_DOT4)$(WITH_REQ): $(CORE) sim_main_b.cpp
+VTAG := $(FAST_ADDR)$(WITH_DOT4)$(WITH_REQ)$(if $(filter-out 0,$(WITH_PMAX4)),p,)
+Vsoc_b$(VTAG): $(CORE) sim_main_b.cpp
 	verilator --cc --exe --build -j 0 -O2 -Wno-fatal -CFLAGS "$(TN20K_CXX_INC)" \
 	    -GFAST_ADDR=$(FAST_ADDR) -GWITH_DOT4=$(WITH_DOT4) -GWITH_REQ=$(WITH_REQ) \
-	    --top-module soc_b -Mdir obj_dir$(FAST_ADDR)$(WITH_DOT4)$(WITH_REQ) \
-	    -o ../Vsoc_b$(FAST_ADDR)$(WITH_DOT4)$(WITH_REQ) $(CORE) sim_main_b.cpp \
-	    2>&1 | tee verilator$(FAST_ADDR)$(WITH_DOT4)$(WITH_REQ).log
+	    -GWITH_PMAX4=$(WITH_PMAX4) \
+	    --top-module soc_b -Mdir obj_dir$(VTAG) \
+	    -o ../Vsoc_b$(VTAG) $(CORE) sim_main_b.cpp \
+	    2>&1 | tee verilator$(VTAG).log
 
-rvtests: Vsoc_b$(FAST_ADDR)$(WITH_DOT4)$(WITH_REQ)
-	sh ../../scripts/riscv_tests.sh rvt$(FAST_ADDR)$(WITH_DOT4)$(WITH_REQ) \
-	    ./Vsoc_b$(FAST_ADDR)$(WITH_DOT4)$(WITH_REQ) 2>&1 \
-	    | tee $(RESULTS)/B1/riscv_tests_fa$(FAST_ADDR)_dot4$(WITH_DOT4)_req$(WITH_REQ).txt
+rvtests: Vsoc_b$(VTAG)
+	sh ../../scripts/riscv_tests.sh rvt$(VTAG) \
+	    ./Vsoc_b$(VTAG) 2>&1 \
+	    | tee $(RESULTS)/B1/riscv_tests_fa$(FAST_ADDR)_dot4$(WITH_DOT4)_req$(WITH_REQ)_pmax$(WITH_PMAX4).txt
 
 # ---------------- B-V0 / B-V1 ----------------
 # $(1) = tên biến thể nhánh B, $(2) = thư mục firmware nhánh A, $(3) = nhãn kit báo
@@ -121,15 +127,15 @@ $(1)/firmware.hex: $(M1S)/$(2)/firmware.hex
 	@mkdir -p $(1)
 	cp $$< $$@
 
-sim-$(1): Vsoc_b$$(FAST_ADDR)$$(WITH_DOT4)$$(WITH_REQ) $(1)/firmware.hex
-	cd $(1) && ../Vsoc_b$$(FAST_ADDR)$$(WITH_DOT4)$$(WITH_REQ) --stop-on "M1S,done" \
+sim-$(1): Vsoc_b$$(VTAG) $(1)/firmware.hex
+	cd $(1) && ../Vsoc_b$$(VTAG) --stop-on "M1S,done" \
 	    --max-cycles 400000000 2>&1 | tee sim.log
 	@grep -q "M1S,sum,10,10,10,10" $(1)/sim.log || (echo "SIM KHONG DAT"; exit 1)
 
 $(1)/top-synth.json: top_b.v $(CORE) $(1)/firmware.hex
 	cd $(1) && yosys -l yosys.log -p "read_verilog -DMYCORE_MUL_DSP ../top_b.v ../soc_b.v ../mycore.v \
 	    ../../uart/uart_tx.v ../../uart/uart_rx.v; \
-	    chparam -set DIV_UART $(DIV_UART) -set FAST_ADDR $(FAST_ADDR) -set BEACON $(BEACON) -set WITH_DOT4 $(WITH_DOT4) -set WITH_REQ $(WITH_REQ) top; \
+	    chparam -set DIV_UART $(DIV_UART) -set FAST_ADDR $(FAST_ADDR) -set BEACON $(BEACON) -set WITH_DOT4 $(WITH_DOT4) -set WITH_REQ $(WITH_REQ) -set WITH_PMAX4 $(WITH_PMAX4) top; \
 	    synth_gowin -top top -family $(YOSYS_FAM) -nodsp -json top-synth.json -setundef"
 
 $(1)/pnr.json: $(1)/top-synth.json $(CST)
@@ -166,6 +172,59 @@ $(eval $(call BVAR,bv1d,v1d,A-V1+DOT4,--append))
 $(eval $(call BVAR,bv1dc,v1dc,A-V1+DOT4+C1,--append))
 # Cổng B5: thêm lệnh REQ
 $(eval $(call BVAR,bv1dcr,v1dcr,A-V1+DOT4+C1+REQ,--append))
+
+# ---------------- bước S6: ứng viên phần cứng mới (PMAX4) ----------------
+# $(1) = thư mục biến thể · $(2) = đường dẫn firmware.hex · $(3) = nhãn kit báo
+# Hai biến thể:
+#   bs6pmax4 — firmware CÓ dùng PMAX4 (cấu hình mới thật)
+#   bs6ref   — firmware y nguyên B-V3, chỉ bật WITH_PMAX4 trong lõi. Dùng để CÔ LẬP
+#              chi phí LUT của chính lệnh: so với bv1dcr thì RTL chỉ khác một tham số
+#              và firmware giống hệt, nên hiệu LUT mới có nghĩa (cạm bẫy số 5).
+define S6VAR
+.PHONY: sim-$(1) build-$(1) load-$(1) check-$(1)
+
+$(1)/firmware.hex: $(2)
+	@mkdir -p $(1)
+	cp $$< $$@
+
+sim-$(1): Vsoc_b$$(VTAG) $(1)/firmware.hex
+	cd $(1) && ../Vsoc_b$$(VTAG) --stop-on "M1S,done" \
+	    --max-cycles 400000000 2>&1 | tee sim.log
+	@grep -q "M1S,sum,10,10,10,10" $(1)/sim.log || (echo "SIM KHONG DAT"; exit 1)
+
+$(1)/top-synth.json: top_b.v $(CORE) $(1)/firmware.hex
+	cd $(1) && yosys -l yosys.log -p "read_verilog -DMYCORE_MUL_DSP ../top_b.v ../soc_b.v ../mycore.v \
+	    ../../uart/uart_tx.v ../../uart/uart_rx.v; \
+	    chparam -set DIV_UART $(DIV_UART) -set FAST_ADDR $(FAST_ADDR) -set BEACON $(BEACON) -set WITH_DOT4 $(WITH_DOT4) -set WITH_REQ $(WITH_REQ) -set WITH_PMAX4 $(WITH_PMAX4) top; \
+	    synth_gowin -top top -family $(YOSYS_FAM) -nodsp -json top-synth.json -setundef"
+
+$(1)/pnr.json: $(1)/top-synth.json $(CST)
+	nextpnr-himbaechel -l $(1)/nextpnr.log --json $$< --write $$@ \
+	    --device "$(DEVICE)" --vopt family=$(FAMILY) --vopt cst=$(CST) \
+	    --freq $(FREQ) --report $(1)/report.json
+
+$(1)/top.fs: $(1)/pnr.json
+	gowin_pack -d $(FAMILY) -o $$@ $$<
+
+build-$(1): $(1)/top.fs
+
+load-$(1): $(1)/top.fs
+	openFPGALoader -b $(BOARD) $$< 2>&1 | tee -a $(1)/load.log
+
+check-$(1):
+	python3 ../../scripts/m1s_check.py --variant $(3) --sim-log $(1)/sim.log \
+	    --csv $(RESULTS)/m1s_s6.csv $$(if $$(CSV_APPEND_SET),$$(CSV_APPEND),$(4)) \
+	    --port $(UART_PORT) --drain 2 --repeat 2 --csv-label $(1) \
+	    --log $(1)/check.log 2>&1 | tee $(1)/check_stdout.log
+endef
+
+$(eval $(call S6VAR,bs6pmax4,$(S6)/cpmax4/firmware.hex,A-V1+DOT4+C1+REQ,))
+$(eval $(call S6VAR,bs6ref,$(M1S)/v1dcr/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+# bs6off — y như bs6ref nhưng WITH_PMAX4=0. Cặp (bs6off, bs6ref) là phép so DUY NHẤT
+# có nghĩa để đo chi phí LUT của lệnh: CÙNG file RTL, CÙNG firmware, khác đúng một
+# tham số. So với số LUT của bv1dcr đo trước khi thêm PMAX4 vào mycore.v là SAI —
+# đó là so hai phiên bản RTL khác nhau (cạm bẫy số 5 của KET_QUA_TONG_HOP.md).
+$(eval $(call S6VAR,bs6off,$(M1S)/v1dcr/firmware.hex,A-V1+DOT4+C1+REQ,--append))
 
 archive:
 	@mkdir -p $(RESULTS)

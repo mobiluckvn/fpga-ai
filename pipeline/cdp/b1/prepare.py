@@ -34,13 +34,14 @@ SRC = paths.M1S / "main.c"
 _COND = re.compile(r"^#\s*(ifdef|ifndef|if|elif|else|endif)\b(.*)$")
 
 
-def _eval(expr: str) -> bool | None:
+def _eval(expr: str, defined: frozenset = frozenset()) -> bool | None:
     """Trả True/False nếu biểu thức CHỈ dùng các macro tính năng, None nếu không."""
     e = expr.strip()
     names = set(re.findall(r"[A-Za-z_][A-Za-z_0-9]*", e)) - {"defined"}
     if not names or not names.issubset(set(FEATURES)):
         return None
-    py = re.sub(r"defined\s*\(\s*([A-Za-z_0-9]+)\s*\)", r"False", e)
+    py = re.sub(r"defined\s*\(\s*([A-Za-z_0-9]+)\s*\)",
+                lambda m: "True" if m.group(1) in defined else "False", e)
     py = py.replace("&&", " and ").replace("||", " or ").replace("!", " not ")
     try:
         return bool(eval(py, {"__builtins__": {}}, {}))      # noqa: S307
@@ -48,8 +49,8 @@ def _eval(expr: str) -> bool | None:
         return None
 
 
-def resolve(lines: list[str]) -> list[str]:
-    """Giải chỉ thị của sáu macro tính năng ở trạng thái KHÔNG định nghĩa.
+def resolve(lines: list[str], defined: frozenset = frozenset()) -> list[str]:
+    """Giải chỉ thị của sáu macro tính năng, với `defined` là tập macro ĐANG bật.
 
     Khối nào dùng macro khác (GIT_HASH, SRC_HASH, RUN_IMGS) thì giữ nguyên văn.
     """
@@ -69,11 +70,13 @@ def resolve(lines: list[str]) -> list[str]:
         kind, rest = m.group(1), m.group(2)
         if kind in ("ifdef", "ifndef", "if"):
             if kind == "ifdef":
-                v = False if rest.strip() in FEATURES else None
+                nm = rest.strip()
+                v = (nm in defined) if nm in FEATURES else None
             elif kind == "ifndef":
-                v = True if rest.strip() in FEATURES else None
+                nm = rest.strip()
+                v = (nm not in defined) if nm in FEATURES else None
             else:
-                v = _eval(rest)
+                v = _eval(rest, defined)
             if v is None:
                 stack.append((False, True, True))
                 if emitting():
@@ -83,7 +86,7 @@ def resolve(lines: list[str]) -> list[str]:
         elif kind == "elif":
             ours, _take, done = stack[-1]
             if ours:
-                v = _eval(rest)
+                v = _eval(rest, defined)
                 v = False if v is None else v
                 stack[-1] = (True, (not done) and v, done or v)
             else:
