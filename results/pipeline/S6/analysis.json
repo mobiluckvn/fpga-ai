@@ -1,0 +1,461 @@
+{
+  "B-V3+PMAX4": {
+    "target": "B-V3+PMAX4",
+    "core": "mycore",
+    "total_cycles": 317878,
+    "ms_27mhz": 11.8,
+    "cycles_per_mac_total": 1.655,
+    "mem_bytes_per_cycle_available": 2.0,
+    "lambda_load": 2,
+    "share_by_sem_total": {
+      "mac": 33.18,
+      "load_data": 39.31,
+      "store_data": 7.4,
+      "addr": 8.72,
+      "loop_ctrl": 6.24,
+      "requant": 4.62,
+      "other": 0.54
+    },
+    "cycles_by_sem_total": {
+      "mac": 105458.0,
+      "load_data": 124954.0,
+      "store_data": 23520.0,
+      "addr": 27704.0,
+      "loop_ctrl": 19840.0,
+      "requant": 14688.0,
+      "other": 1714.0
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 1054580,
+      "load_data": 1249540,
+      "store_data": 235200,
+      "addr": 277040,
+      "loop_ctrl": 198400.0,
+      "requant": 146880,
+      "other": 17140.0
+    },
+    "cycles_sum10": 3178780,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.5,
+      "load_data": 1.65,
+      "store_data": 1.08,
+      "addr": 1.1,
+      "loop_ctrl": 1.07,
+      "requant": 1.05,
+      "other": 1.01
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 138213,
+        "instret": 104228,
+        "mac": 48672,
+        "cycles_per_mac": 2.84,
+        "mac_per_cycle": 0.3522,
+        "bytes_per_image": 77420.0,
+        "byte_per_mac": 1.591,
+        "cycles_sum10": 1382130,
+        "cycles_by_sem_sum10": {
+          "mac": 324480,
+          "load_data": 389540,
+          "store_data": 182000,
+          "addr": 196190,
+          "loop_ctrl": 168320.0,
+          "requant": 108160,
+          "other": 13440.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 1.2573,
+        "dist_to_roof_x": 3.57,
+        "bound": "compute/issue",
+        "crit_path": 125,
+        "ipc_ideal": 8338.24,
+        "ipc_real": 0.754,
+        "cycles_by_sem": {
+          "mac": 324480,
+          "load_data": 389540,
+          "store_data": 182000,
+          "addr": 196190,
+          "loop_ctrl": 168320.0,
+          "requant": 108160,
+          "other": 13440.0
+        },
+        "share_by_sem": {
+          "mac": 23.48,
+          "load_data": 28.18,
+          "store_data": 13.17,
+          "addr": 14.19,
+          "loop_ctrl": 12.18,
+          "requant": 7.83,
+          "other": 0.97
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.31,
+          "load_data": 1.39,
+          "store_data": 1.15,
+          "addr": 1.17,
+          "loop_ctrl": 1.14,
+          "requant": 1.08,
+          "other": 1.01
+        },
+        "loops": [
+          {
+            "backedge": "0x9ec->0x128",
+            "trips": 10,
+            "body_instr_static": 89,
+            "body_instr_dynamic": 857120,
+            "cycles_in_body": 1128090
+          },
+          {
+            "backedge": "0x244->0x1a4",
+            "trips": 70,
+            "body_instr_static": 41,
+            "body_instr_dynamic": 856640,
+            "cycles_in_body": 1127360
+          },
+          {
+            "backedge": "0x234->0x1c4",
+            "trips": 240,
+            "body_instr_static": 29,
+            "body_instr_dynamic": 855680,
+            "cycles_in_body": 1126080
+          }
+        ],
+        "dlp": {
+          "n_strided": 284906,
+          "share_stride_1_pct": 22.5,
+          "share_stride_4_pct": 48.5,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool1": {
+        "cycles": 4978,
+        "instret": 3288,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6760.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 49780,
+        "cycles_by_sem_sum10": {
+          "mac": 10140,
+          "load_data": 27040,
+          "store_data": 6760,
+          "addr": 3640,
+          "loop_ctrl": 1980.0,
+          "requant": 0,
+          "other": 220
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 202,
+        "ipc_ideal": 162.772,
+        "ipc_real": 0.661,
+        "cycles_by_sem": {
+          "mac": 10140,
+          "load_data": 27040,
+          "store_data": 6760,
+          "addr": 3640,
+          "loop_ctrl": 1980.0,
+          "requant": 0,
+          "other": 220
+        },
+        "share_by_sem": {
+          "mac": 20.37,
+          "load_data": 54.32,
+          "store_data": 13.58,
+          "addr": 7.31,
+          "loop_ctrl": 3.98,
+          "requant": 0.0,
+          "other": 0.44
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.26,
+          "load_data": 2.19,
+          "store_data": 1.16,
+          "addr": 1.08,
+          "loop_ctrl": 1.04,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xa04->0x280",
+            "trips": 10,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 32870,
+            "cycles_in_body": 49770
+          },
+          {
+            "backedge": "0x2fc->0x2a0",
+            "trips": 120,
+            "body_instr_static": 24,
+            "body_instr_dynamic": 32760,
+            "cycles_in_body": 49660
+          },
+          {
+            "backedge": "0x2f0->0x2a8",
+            "trips": 1560,
+            "body_instr_static": 19,
+            "body_instr_dynamic": 32110,
+            "cycles_in_body": 49010
+          }
+        ],
+        "dlp": {
+          "n_strided": 16890,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": null
+        }
+      },
+      "conv2": {
+        "cycles": 165152,
+        "instret": 121766,
+        "mac": 139392,
+        "cycles_per_mac": 1.185,
+        "mac_per_cycle": 0.844,
+        "bytes_per_image": 159992.0,
+        "byte_per_mac": 1.148,
+        "cycles_sum10": 1651520,
+        "cycles_by_sem_sum10": {
+          "mac": 696960,
+          "load_data": 784760,
+          "store_data": 44240,
+          "addr": 63040,
+          "loop_ctrl": 21040.0,
+          "requant": 38720,
+          "other": 2760
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 1.7425,
+        "dist_to_roof_x": 2.06,
+        "bound": "compute/issue",
+        "crit_path": 61,
+        "ipc_ideal": 19961.639,
+        "ipc_real": 0.737,
+        "cycles_by_sem": {
+          "mac": 696960,
+          "load_data": 784760,
+          "store_data": 44240,
+          "addr": 63040,
+          "loop_ctrl": 21040.0,
+          "requant": 38720,
+          "other": 2760
+        },
+        "share_by_sem": {
+          "mac": 42.2,
+          "load_data": 47.52,
+          "store_data": 2.68,
+          "addr": 3.82,
+          "loop_ctrl": 1.27,
+          "requant": 2.34,
+          "other": 0.17
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.73,
+          "load_data": 1.91,
+          "store_data": 1.03,
+          "addr": 1.04,
+          "loop_ctrl": 1.01,
+          "requant": 1.02,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xa1c->0x304",
+            "trips": 10,
+            "body_instr_static": 140,
+            "body_instr_dynamic": 1217650,
+            "cycles_in_body": 1651510
+          },
+          {
+            "backedge": "0x4f0->0x360",
+            "trips": 100,
+            "body_instr_static": 101,
+            "body_instr_dynamic": 1217260,
+            "cycles_in_body": 1650880
+          },
+          {
+            "backedge": "0x4d4->0x370",
+            "trips": 1100,
+            "body_instr_static": 90,
+            "body_instr_dynamic": 1216050,
+            "cycles_in_body": 1649230
+          }
+        ],
+        "dlp": {
+          "n_strided": 387180,
+          "share_stride_1_pct": 5.0,
+          "share_stride_4_pct": 4.7,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 1921,
+        "instret": 1421,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2000.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 19210,
+        "cycles_by_sem_sum10": {
+          "mac": 3000,
+          "load_data": 8000,
+          "store_data": 2000,
+          "addr": 3750,
+          "loop_ctrl": 1930.0,
+          "requant": 0,
+          "other": 530
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 21,
+        "ipc_ideal": 676.667,
+        "ipc_real": 0.74,
+        "cycles_by_sem": {
+          "mac": 3000,
+          "load_data": 8000,
+          "store_data": 2000,
+          "addr": 3750,
+          "loop_ctrl": 1930.0,
+          "requant": 0,
+          "other": 530
+        },
+        "share_by_sem": {
+          "mac": 15.62,
+          "load_data": 41.64,
+          "store_data": 10.41,
+          "addr": 19.52,
+          "loop_ctrl": 10.05,
+          "requant": 0.0,
+          "other": 2.76
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.19,
+          "load_data": 1.71,
+          "store_data": 1.12,
+          "addr": 1.24,
+          "loop_ctrl": 1.11,
+          "requant": 1.0,
+          "other": 1.03
+        },
+        "loops": [
+          {
+            "backedge": "0xa34->0x52c",
+            "trips": 10,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 14200,
+            "cycles_in_body": 19200
+          },
+          {
+            "backedge": "0x5ac->0x548",
+            "trips": 40,
+            "body_instr_static": 26,
+            "body_instr_dynamic": 14100,
+            "cycles_in_body": 19100
+          },
+          {
+            "backedge": "0x59c->0x554",
+            "trips": 200,
+            "body_instr_static": 19,
+            "body_instr_dynamic": 13750,
+            "cycles_in_body": 18750
+          }
+        ],
+        "dlp": {
+          "n_strided": 4995,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 79.9,
+          "lanes_possible_8bit": null
+        }
+      },
+      "dense": {
+        "cycles": 7614,
+        "instret": 5594,
+        "mac": 4000,
+        "cycles_per_mac": 1.903,
+        "mac_per_cycle": 0.5253,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 76140,
+        "cycles_by_sem_sum10": {
+          "mac": 20000,
+          "load_data": 40200,
+          "store_data": 200,
+          "addr": 10420,
+          "loop_ctrl": 5130.0,
+          "requant": 0,
+          "other": 190
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.9901,
+        "dist_to_roof_x": 1.88,
+        "bound": "compute/issue",
+        "crit_path": 68,
+        "ipc_ideal": 822.647,
+        "ipc_real": 0.735,
+        "cycles_by_sem": {
+          "mac": 20000,
+          "load_data": 40200,
+          "store_data": 200,
+          "addr": 10420,
+          "loop_ctrl": 5130.0,
+          "requant": 0,
+          "other": 190
+        },
+        "share_by_sem": {
+          "mac": 26.27,
+          "load_data": 52.8,
+          "store_data": 0.26,
+          "addr": 13.69,
+          "loop_ctrl": 6.74,
+          "requant": 0.0,
+          "other": 0.25
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.36,
+          "load_data": 2.12,
+          "store_data": 1.0,
+          "addr": 1.16,
+          "loop_ctrl": 1.07,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xa4c->0x5b4",
+            "trips": 10,
+            "body_instr_static": 32,
+            "body_instr_dynamic": 55930,
+            "cycles_in_body": 76130
+          },
+          {
+            "backedge": "0x624->0x5dc",
+            "trips": 90,
+            "body_instr_static": 19,
+            "body_instr_dynamic": 55800,
+            "cycles_in_body": 76000
+          },
+          {
+            "backedge": "0x610->0x5e8",
+            "trips": 4900,
+            "body_instr_static": 11,
+            "body_instr_dynamic": 55000,
+            "cycles_in_body": 75000
+          }
+        ],
+        "dlp": {
+          "n_strided": 20194,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.9,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  }
+}

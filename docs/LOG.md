@@ -2,6 +2,118 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — S7: dò khả thi bộ nhớ hai cổng, và đóng băng dự báo mức A đầu tiên (phép kiểm K2)
+
+Kit chết nên chuyển sang việc không cần kit: ứng viên **bộ nhớ hai cổng**, dự báo **mức A**
+(chính xác, không phải ước lượng). Đây sẽ là **K2** — lần đầu một dự báo mức A được đối chiếu đo thật.
+
+### Hạ tầng phải sửa trước
+
+- `cdp profile/analyze` không chạy được cấu hình PMAX4: `run_one()` truyền `with_dot4`/`with_req`
+  nhưng **thiếu `with_pmax4`** → ISS trap "lệnh custom-0 không được bật". Đã sửa.
+- **Bảng profile chia sai phạm vi**: `cycles_by_sem` tính trên profile đã gộp 10 ảnh
+  (`merge_profs`) nhưng dòng in chia cho `cycles_median` của **1 ảnh** → tỷ lệ gấp 10 lần, tổng ra
+  **1000 %**. Lần trước tôi sửa phép kiểm đồng nhất mà bỏ sót đúng chỗ in bảng. Đã sửa, giờ tổng
+  đúng 100 %.
+- `estimate._load()` chỉ đọc `results/pipeline/S3/`. Cho tìm **S6 trước, rồi S3**, và `cdp analyze`
+  của cấu hình mới lưu vào `results/pipeline/S6/` — **không chạm tệp S3 cũ** (quy tắc 2).
+
+### Cấu hình mới qua ISS: khớp kit tuyệt đối, và bộ nhớ đã thành tường chắn
+
+`./cdp analyze --target "B-V3+PMAX4"` → **317.878 chu kỳ, khớp tuyệt đối số đo kit**, đẳng thức
+phân loại KHỚP (10 ảnh = 3.178.780). Tức K0 đạt cho cấu hình mới.
+
+Tỷ trọng chu kỳ: `mac` 33,2 % · **`load` 39,3 %** · `store` 7,4 % · `addr` 8,7 % ·
+`loop_ctrl` 6,2 % · `requant` 4,6 % · `other` 0,5 %.
+
+**Truy cập bộ nhớ = 46,7 %, lớn hơn cả `mac`.** Đúng điều lý thuyết roofline dự đoán: SIMD hoá
+phần tính rồi thì bộ nhớ thành tường chắn.
+
+### Dự báo mức A, đóng băng trước khi viết RTL
+
+Tự kiểm phương pháp trước: `est_lambda("B-V3", {load:1, store:1})` tái lập **đúng 285.167 chu kỳ /
+1,2834×** — con số đã đóng băng trước đó. Phương pháp không đổi.
+
+| cơ sở | λ load/store 2→1 | chu kỳ | tăng tốc |
+|---|---|---:|---:|
+| B-V3 | mức A | 285.167 | 1,2834× |
+| **B-V3+PMAX4** | mức A | **243.641** | **1,3047×** |
+
+243.641 chu kỳ = **9,02 ms = 36,89× so A-V0**. Ghi ở
+`results/pipeline/S6/du_bao_BONHO2CONG_truoc_khi_hien_thuc.json`.
+
+Vì sao là mức A chứ không phải B: **không viết lại mã, không thêm lệnh** → `n_c` giữ nguyên, chỉ λ
+đổi, nên `ΔC = Σ n_c·Δλ_c` là **đẳng thức**. Khác PMAX4 (mức B) vốn phải giả định mã viết lại gọn
+tới đâu — và đã lệch 0,37 % đúng vì giả định đó.
+
+### Ba phép dò khả thi, trước khi viết RTL
+
+**1. Yosys CÓ suy ra BSRAM hai cổng — nhưng 64 KB không vừa chip.**
+
+| bộ nhớ | khối Yosys suy ra | vừa 46 khối? |
+|---|---|---|
+| 64 KB, một cổng (hiện tại) | 32 × `SP` | có |
+| 64 KB, hai cổng | **64 × `DPB`** | **KHÔNG** |
+| 32 KB, hai cổng | **32 × `DPB`** | **có — đúng bằng số đang dùng** |
+
+Chế độ hai cổng thật mất **một nửa mật độ** mỗi khối. Đường khả thi: **thu RAM 64 KB → 32 KB và
+dùng hai cổng**, số khối BSRAM **không tăng**. Rủi ro lớn nhất đã nêu trong file dự báo (Yosys rơi
+về RAM bằng LUT → không vừa FPGA) **đã bị loại bỏ**.
+
+**2. 32 KB có đủ không? Đo ngăn xếp hai cách độc lập.** `__heap_start = 0x7b64` = 31.588 byte.
+
+| cách đo | độ sâu |
+|---|---:|
+| quét bộ nhớ, byte khác 0 thấp nhất trên `__heap_start` | 256 byte (chặn dưới) |
+| theo dõi trực tiếp `min(x2)` trong ISS (`track_sp=True`, mới thêm) | **256 byte** |
+
+Khớp tuyệt đối. Ở 32 KB: dư `32.768 − 31.588 = 1.180` byte, cần 256 → **VỪA, biên 4,6×**
+(còn trống 924 byte — hẹp, firmware lớn thêm phải kiểm lại).
+
+**3. Rủi ro nặng hơn BSRAM: xung đột load-use.** BSRAM có đầu ra qua thanh ghi. Với hai cổng, ở
+`S_EXEC` đặt được đồng thời địa chỉ dữ liệu và địa chỉ lệnh kế → chu kỳ sau có cả hai. Nhưng dữ
+liệu nạp phải ghi về thanh ghi **trong chính chu kỳ** lệnh kế đang thực thi. Lệnh kế dùng ngay
+thanh ghi đó thì cần **đường chuyển tiếp**, không có thì phải **chèn một chu kỳ dừng** — tức
+λ_load **vẫn 2** cho đúng những cặp phổ biến nhất (nạp rồi nhân-cộng ngay).
+
+Đã **đếm** bằng `track_ldu=True` mới thêm, **chỉ trong 10 cửa sổ đo**:
+
+| | load | store | load-use ngay | tỷ lệ |
+|---|---:|---:|---:|---:|
+| B-V3+PMAX4 | 624.770 | 117.600 | 114.160 | **18,3 %** |
+| B-V3 | 677.420 | 130.830 | 113.160 | 16,7 % |
+
+| trường hợp | chu kỳ/ảnh | tăng tốc |
+|---|---:|---:|
+| **có** chuyển tiếp (mọi load λ=1) | **243.641** | **1,3047×** |
+| **không** chuyển tiếp (dừng ở load-use) | 255.057 | 1,2463× |
+
+Khoảng rộng 11.416 chu kỳ = **4,7 %, hẹp** → **ứng viên đáng làm trong cả hai trường hợp**, không
+cần chờ giải quyết chuyện chuyển tiếp mới quyết định. Nhưng RTL cuối cùng phải ghi rõ thuộc trường
+hợp nào, vì đó là điều kiện của dự báo mức A. Cả hai đã đóng băng thành tệp riêng.
+
+**Đối chứng chéo**: số "có chuyển tiếp" tính độc lập từ đếm theo cửa sổ ra **đúng 243.641**, khớp
+tuyệt đối `est_lambda()`. Hai đường tính khác nhau, cùng kết quả.
+
+### Lại gặp bẫy trộn phạm vi
+
+Lần đầu tôi đếm load-use trên **toàn lần chạy** ISS (`iss.cycle` = 9.041.066 chu kỳ, gồm cả phần in
+UART) thay vì trong 10 cửa sổ đo (3.178.780). Tỷ lệ và dự báo sai hết. Phép kiểm cứu được: tổng cửa
+sổ của B-V3+PMAX4 phải **bằng đúng** 10 × 317.878 — và chỉ bằng khi đếm theo cửa sổ.
+
+Chi tiết liên quan: với **B-V3**, tổng 10 cửa sổ (3.659.267) **không** bằng 10 × trung vị
+(3.659.920) vì 10 ảnh lệch nhau chút ít; với **B-V3+PMAX4** thì bằng đúng vì cả 10 ảnh đều 317.878.
+
+### Kiểm hồi quy
+
+Đã chạm vòng chạy nóng của ISS nên kiểm lại: B-V3 365.992/365.992 **bằng tuyệt đối** từng lớp từng
+ảnh · B-V1+DOT4+C1 487.865/487.865 bằng tuyệt đối · A-V3 1.842.219/1.842.219 sai số 0,0 %.
+Không hồi quy.
+
+Việc nhỏ còn nợ: `cdp iss --target` chỉ nhận **một** cấu hình (lấy cái cuối) trong khi
+`cdp profile --target` lặp được. Chưa sửa.
+
+
 ## 2026-10-18 — S6: lượt đo PMAX4 sạch thất bại lần 2, và lỗi mất dữ liệu do chính bản sửa của tôi
 
 Mục tiêu: một run duy nhất đạt 2/2 lần đọc **và** chốt `SRC_HASH` để đưa dòng 15 vào bảng chính.

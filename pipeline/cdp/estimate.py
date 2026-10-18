@@ -40,10 +40,27 @@ def _lam(t: targets.Target) -> dict:
     return doc["profiles"][f"fast_addr_{int(t.rtl_params.get('FAST_ADDR', 1))}"]
 
 
+# Cấu hình của S3 nằm ở results/pipeline/S3; cấu hình MỚI do S6 sinh ra nằm ở
+# results/pipeline/S6. Tìm S6 trước, rồi S3 — KHÔNG sửa tệp S3 cũ (quy tắc 2).
+_BASE_DIRS = ("S6", "S3")
+
+
 def _load(name: str) -> tuple[dict, dict]:
-    an = json.loads((paths.RESULTS_PIPE / "S3" / "analysis.json").read_text())[name]
-    pr = json.loads((paths.RESULTS_PIPE / "S3" / "profile.json").read_text())[name]
-    return an, pr
+    tried = []
+    for d in _BASE_DIRS:
+        fa = paths.RESULTS_PIPE / d / "analysis.json"
+        fp = paths.RESULTS_PIPE / d / "profile.json"
+        tried.append(str(fa))
+        if not (fa.exists() and fp.exists()):
+            continue
+        an = json.loads(fa.read_text())
+        pr = json.loads(fp.read_text())
+        if name in an and name in pr:
+            return an[name], pr[name]
+    raise KeyError(
+        f"chưa có analysis.json/profile.json cho cấu hình {name!r} — "
+        f"chạy `./cdp analyze --target {name!r}` rồi sao vào results/pipeline/S6/. "
+        f"Đã tìm: {', '.join(tried)}")
 
 
 def nc_per_image(pr: dict, layers=None) -> dict:

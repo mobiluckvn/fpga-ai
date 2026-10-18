@@ -1,0 +1,75 @@
+{
+  "candidate": "Bộ nhớ hai cổng kiểu Harvard (load/store 2 → 1 chu kỳ)",
+  "level": "L3",
+  "method": "A_lambda_exact",
+  "frozen_at": "2026-10-18T19:32:37+07:00",
+  "git_commit": "3276883541acc295f1c499f5064a03b4c507cf52",
+  "phep_kiem": "K2 — dự báo mức A đầu tiên được đối chiếu với số đo",
+  "nguyen_nhan_lambda_2": "mycore dùng MỘT cổng bộ nhớ chung cho nạp lệnh và truy cập dữ liệu. Ở trạng thái S_EXEC với FAST_ADDR=1, lệnh load/store chiếm cổng cho dữ liệu nên không nạp được lệnh kế trong cùng chu kỳ → phải thêm một chu kỳ (rtl/mycore/mycore.v, S_EXEC/pc_ret). Tách thành cổng lệnh và cổng dữ liệu riêng thì hai việc xảy ra cùng chu kỳ → λ = 1.",
+  "thay_doi_lambda": {
+    "load": {
+      "cu": 2,
+      "moi": 1
+    },
+    "store": {
+      "cu": 2,
+      "moi": 1
+    }
+  },
+  "du_bao": {
+    "B-V3": {
+      "co_so": 365992,
+      "du_bao": 285167,
+      "tang_toc": 1.2834,
+      "terms": [
+        {
+          "class": "load",
+          "n_c": 67742.0,
+          "lambda_old": 2,
+          "lambda_new": 1,
+          "delta_cycles": 67742.0
+        },
+        {
+          "class": "store",
+          "n_c": 13083.0,
+          "lambda_old": 2,
+          "lambda_new": 1,
+          "delta_cycles": 13083.0
+        }
+      ]
+    },
+    "B-V3+PMAX4": {
+      "co_so": 317878,
+      "du_bao": 243641,
+      "tang_toc": 1.3047,
+      "terms": [
+        {
+          "class": "load",
+          "n_c": 62477.0,
+          "lambda_old": 2,
+          "lambda_new": 1,
+          "delta_cycles": 62477.0
+        },
+        {
+          "class": "store",
+          "n_c": 11760.0,
+          "lambda_old": 2,
+          "lambda_new": 1,
+          "delta_cycles": 11760.0
+        }
+      ],
+      "ms_27mhz": 9.02,
+      "so_A_V0": 36.89
+    }
+  },
+  "tu_kiem_phuong_phap": "est_lambda('B-V3') tái lập ĐÚNG 285.167 chu kỳ / 1,2834× — con số đã đóng băng ở results/pipeline/S6/estimates_priority.json trước đó. Phương pháp không đổi.",
+  "vi_sao_la_muc_A": "Không viết lại mã phần mềm, không thêm lệnh mới: n_c giữ NGUYÊN, chỉ λ đổi. Vì vậy ΔC = Σ n_c·Δλ_c là ĐẲNG THỨC, không phải chặn. Khác hẳn PMAX4 (mức B) vốn phải giả định mã viết lại gọn tới đâu — và đã lệch 0,37 % đúng vì giả định đó.",
+  "dieu_kien_co_the_lam_SAI_du_bao": [
+    "Mức A chính xác CHỈ KHI RTL thật đạt được λ_load = λ_store = 1. Nếu đường dữ liệu mới phải thêm tầng thanh ghi để giữ Fmax ≥ 27 MHz thì λ không về 1 và dự báo sai.",
+    "BSRAM của GW2AR hiện dùng 32/46 khối (69,6 %). Nếu Yosys không suy ra được bộ nhớ hai cổng (DPB) mà quay về RAM bằng LUT thì thiết kế KHÔNG vừa FPGA (64 KB không thể nằm trong 20.736 LUT4). Đây là rủi ro lớn nhất và phải thử trước bằng một phép dò rẻ.",
+    "Nếu số khối BSRAM tăng quá 46 thì ứng viên bị loại bởi cdp synth, không bởi mô hình.",
+    "Tranh chấp cổng còn lại: nếu cổng lệnh và cổng dữ liệu cùng ghi/đọc một địa chỉ thì phải định nghĩa hành vi. Firmware này không tự sửa mã (không có mã tự sinh) nên không có tranh chấp đọc-ghi thật, nhưng RTL vẫn phải xử lý đúng."
+  ],
+  "n_c_nguon": "ISS, results/pipeline/S6/profile.json, cấu hình B-V3+PMAX4",
+  "lambda_nguon": "pipeline/cdp/iss/timing/mycore.yaml, hồ sơ fast_addr_1, đọc từ RTL"
+}

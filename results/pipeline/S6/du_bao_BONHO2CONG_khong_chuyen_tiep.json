@@ -1,0 +1,45 @@
+{
+  "candidate": "Bộ nhớ hai cổng — biến thể KHÔNG có đường chuyển tiếp (chèn 1 chu kỳ dừng khi load-use)",
+  "level": "L3",
+  "method": "A_lambda_exact_with_hazard_stall",
+  "frozen_at": "2026-10-18T19:40:06+07:00",
+  "git_commit": "3276883541acc295f1c499f5064a03b4c507cf52",
+  "quan_he_voi_du_bao_chinh": "Đây là chặn DƯỚI của lợi ích bộ nhớ hai cổng. Dự báo chính (du_bao_BONHO2CONG_truoc_khi_hien_thuc.json, 243.641 chu kỳ / 1,3047×) giả định RTL CÓ đường chuyển tiếp nên MỌI load về λ=1. Nếu không có chuyển tiếp thì đúng những cặp load-use phải chèn một chu kỳ dừng, tức λ=2 cho riêng chúng. Lợi ích thật nằm GIỮA hai số.",
+  "do_dem_tu_ISS": {
+    "pham_vi": "CHỈ trong 10 cửa sổ đo (tổng 3.178.780 chu kỳ = đúng 10 × 317.878 của kit)",
+    "cong_cu": "Iss(..., track_ldu=True); đếm theo từng cửa sổ, không đếm toàn chương trình",
+    "B-V3+PMAX4": {
+      "n_load": 624770,
+      "n_store": 117600,
+      "n_load_use_ngay": 114160,
+      "ty_le_load_use": "18,3 % số load"
+    },
+    "B-V3": {
+      "n_load": 677420,
+      "n_store": 130830,
+      "n_load_use_ngay": 113160,
+      "ty_le_load_use": "16,7 % số load"
+    }
+  },
+  "du_bao": {
+    "B-V3+PMAX4": {
+      "co_so": 317878,
+      "du_bao": 255057,
+      "tang_toc": 1.2463,
+      "ms_27mhz": 9.45,
+      "so_A_V0": 35.24
+    },
+    "B-V3": {
+      "co_so": 365992,
+      "du_bao": 296417,
+      "tang_toc": 1.2345
+    }
+  },
+  "khoang_du_bao_B_V3_PMAX4": {
+    "chan_tren_loi_ich": "243.641 chu kỳ · 1,3047× (có chuyển tiếp)",
+    "chan_duoi_loi_ich": "255.057 chu kỳ · 1,2463× (không chuyển tiếp)",
+    "do_rong": "11.416 chu kỳ = 4,7 % — hẹp, nên ứng viên đáng làm ở CẢ HAI trường hợp"
+  },
+  "doi_chung_cheo": "Con số 'có chuyển tiếp' tính độc lập từ đếm theo cửa sổ ra ĐÚNG 243.641 — khớp tuyệt đối est_lambda() đã đóng băng trước đó. Hai đường tính khác nhau, cùng kết quả.",
+  "luu_y_pham_vi": "Với B-V3, tổng 10 cửa sổ (3.659.267) KHÔNG bằng 10 × trung vị (3.659.920) vì 10 ảnh lệch nhau chút ít; với B-V3+PMAX4 thì bằng đúng vì cả 10 ảnh đều 317.878. Đây là lý do mọi phép tính tỷ trọng phải chia cho TỔNG của đúng 10 ảnh đó, không chia cho trung vị."
+}

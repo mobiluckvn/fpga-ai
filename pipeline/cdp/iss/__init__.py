@@ -60,6 +60,7 @@ def run_one(w: Path, t: targets.Target, run, pc_hist: bool = False,
     iss = Iss(fw, prof,
               with_dot4=bool(t.rtl_params.get("WITH_DOT4", 0)),
               with_req=bool(t.rtl_params.get("WITH_REQ", 0)),
+              with_pmax4=bool(t.rtl_params.get("WITH_PMAX4", 0)),
               pc_hist=pc_hist, profile=profile,
               memdep=memdep).run(max_instr=max_instr)
     run.say(f"    ISS: {fmt_int(iss.instret)} lệnh · {iss.seconds:.1f} s "

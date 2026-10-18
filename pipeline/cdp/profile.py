@@ -222,16 +222,21 @@ def main(args, run) -> int:
         run.say("    | lớp | chu kỳ | mac | load | store | addr | loop_ctrl | requant | other |")
         run.say("    |---|---:|---:|---:|---:|---:|---:|---:|---:|")
         agg = dict.fromkeys(SEM, 0)
+        # `cycles_by_sem` tính trên profile ĐÃ GỘP 10 ảnh (merge_profs), nên mẫu số
+        # phải là `cycles_sum` của đúng 10 ảnh đó — KHÔNG phải trung vị 1 ảnh. Chia
+        # sai phạm vi cho tỷ lệ gấp 10 lần (đã xảy ra: tổng cộng ra 1000 %).
+        tot_sum = sum(pr["layers"][l]["cycles_sum"] for l in targets.LAYERS)
         for lay in targets.LAYERS:
             d = pr["layers"][lay]
             c = d["tier3"].get("cycles_by_sem", {})
             for k in SEM:
                 agg[k] += c.get(k, 0)
             run.say(f"    | {lay} | {fmt_int(d['cycles_median'])} | "
-                    + " | ".join(f"{100*c.get(k,0)/max(d['cycles_median'],1):.1f} %"
+                    + " | ".join(f"{100*c.get(k,0)/max(d['cycles_sum'],1):.1f} %"
                                  for k in SEM) + " |")
         run.say(f"    | **tổng** | **{fmt_int(tot)}** | "
-                + " | ".join(f"**{100*agg[k]/max(tot,1):.1f} %**" for k in SEM) + " |")
+                + " | ".join(f"**{100*agg[k]/max(tot_sum,1):.1f} %**" for k in SEM) + " |")
+        pr["cycles_sum_all_layers"] = tot_sum
         pr["totals_by_sem"] = agg
 
     run.path("profile.json").write_text(json.dumps(out, indent=2, ensure_ascii=False))

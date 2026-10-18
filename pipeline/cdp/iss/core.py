@@ -61,7 +61,8 @@ def load_hex(path: Path) -> bytearray:
 
 class Window:
     """Một cửa sổ đo giữa hai lần đọc rdcycle — khớp đúng cách firmware tự đo."""
-    __slots__ = ("idx", "cyc0", "cyc1", "ins0", "ins1", "classes", "pc_count", "prof")
+    __slots__ = ("idx", "cyc0", "cyc1", "ins0", "ins1", "classes", "pc_count", "prof",
+                 "n_ldu")
 
     def __init__(self, idx, cyc0, ins0, pc_hist):
         self.idx, self.cyc0, self.ins0 = idx, cyc0, ins0
@@ -69,6 +70,8 @@ class Window:
         self.classes = [0] * len(CLASSES)
         self.prof = None
         self.pc_count = {} if pc_hist else None
+        # số cặp load-use trong CỬA SỔ này (chỉ đếm khi track_ldu=True)
+        self.n_ldu = 0
 
     @property
     def cycles(self):
@@ -153,7 +156,8 @@ class Prof:
 
 class Iss:
     def __init__(self, hexfile, timing: dict, with_dot4=False, with_req=False,
-                 pc_hist=False, profile=False, memdep=False, with_pmax4=False):
+                 pc_hist=False, profile=False, memdep=False, with_pmax4=False,
+                 track_sp=False, track_ldu=False):
         self.mem = load_hex(hexfile)
         self.regs = [0] * 32
         self.pc = 0
@@ -163,12 +167,24 @@ class Iss:
         self.with_dot4 = with_dot4
         self.with_req = with_req
         self.with_pmax4 = with_pmax4
+        # track_sp: ghi lại giá trị NHỎ NHẤT của x2 (sp) để biết độ sâu ngăn xếp thật.
+        # Cần cho quyết định thu RAM 64 KB -> 32 KB (bộ nhớ hai cổng chỉ vừa ở 32 KB).
+        self.track_sp = track_sp
+        self.min_sp = None
+        # track_ldu: đếm cặp "load rồi lệnh NGAY SAU dùng thanh ghi vừa nạp".
+        # Quyết định xem bộ nhớ hai cổng có thật đạt λ_load = 1 không: trong lõi 2 tầng,
+        # đúng những cặp này cần đường chuyển tiếp, nếu không thì phải chèn 1 chu kỳ dừng.
+        self.track_ldu = track_ldu
+        self.n_load = 0
+        self.n_load_use_next = 0
         self.pc_hist = pc_hist
         self.profile = profile
         self.memdep = memdep
         self.mem_writer = [0] * RAM_WORDS if memdep else None
         self.classes = [0] * len(CLASSES)
         self.pc_count = {} if pc_hist else None
+        # số cặp load-use trong CỬA SỔ này (chỉ đếm khi track_ldu=True)
+        self.n_ldu = 0
         self.uart = bytearray()
         self.hw_cnt = 0
         self.hw_run = False
@@ -223,6 +239,12 @@ class Iss:
         prof = None
         do_md = self.memdep
         mw = self.mem_writer
+        tsp = self.track_sp
+        min_sp = 1 << 32
+        tldu = self.track_ldu
+        prev_ld_rd = 0          # rd của lệnh load ngay trước, 0 nếu lệnh trước không phải load
+        n_ld = 0
+        n_ldu = 0
         try:
             while instret < max_instr:
                 instr = (mem[pc] | (mem[pc + 1] << 8) | (mem[pc + 2] << 16)
@@ -237,6 +259,27 @@ class Iss:
                     cur = self._cur
                     if cur is not None and cur.pc_count is not None:
                         cur.pc_count[pc] = cur.pc_count.get(pc, 0) + 1
+
+                if tldu:
+                    if prev_ld_rd:
+                        # Đọc rs1 trừ lui/jal/auipc; đọc rs2 chỉ với dạng R/nhánh/store/custom
+                        # (với dạng khác, bit [24:20] là immediate — cùng cái bẫy đã sửa ở
+                        # phần chiều cao phụ thuộc).
+                        use = (prev_ld_rd == rs1
+                               and op != 0x37 and op != 0x6F and op != 0x17)
+                        if not use and (op == 0x33 or op == 0x63
+                                        or op == 0x23 or op == 0x0B):
+                            use = (prev_ld_rd == rs2)
+                        if use:
+                            n_ldu += 1
+                            _c = self._cur
+                            if _c is not None:
+                                _c.n_ldu += 1
+                    if op == 0x03:
+                        n_ld += 1
+                        prev_ld_rd = rd
+                    else:
+                        prev_ld_rd = 0
 
                 k = None          # lớp lệnh
                 npc = pc + 4
@@ -570,6 +613,8 @@ class Iss:
                             tn[rd] = t
                 if rd and val is not None:
                     regs[rd] = val
+                    if tsp and rd == 2 and val < min_sp:
+                        min_sp = val
                 cls[k] += 1
                 cycle += lat[k]
                 instret += 1
@@ -592,6 +637,10 @@ class Iss:
         finally:
             self.pc, self.cycle, self.instret = pc, cycle, instret
             self.seconds = time.time() - t0
+            if tsp:
+                self.min_sp = None if min_sp == (1 << 32) else min_sp
+            if tldu:
+                self.n_load, self.n_load_use_next = n_ld, n_ldu
         self._parse_uart()
         return self
 
