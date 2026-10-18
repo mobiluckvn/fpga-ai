@@ -97,37 +97,72 @@ def parse_block(lines):
     return None
 
 
-def read_kit(port, args, say):
+def open_port(port, args, say):
+    """Mở cổng và xả dữ liệu tồn. Trả về cổng đang mở, hoặc None nếu không mở được."""
     try:
         ser = serial.Serial(port, args.baud, timeout=0.2)
     except Exception as exc:  # noqa: BLE001
         say(f"    không mở được: {type(exc).__name__}: {exc}")
-        return None, []
-    try:
-        time.sleep(0.1)
-        ser.reset_input_buffer()
-        t_drain = time.time()
-        dropped = 0
-        while time.time() - t_drain < args.drain:
-            dropped += len(ser.read(512))
-        if dropped:
-            say(f"    (xả {dropped} byte tồn)")
-        buf = b""
+        return None
+    time.sleep(0.1)
+    ser.reset_input_buffer()
+    t_drain = time.time()
+    dropped = 0
+    while time.time() - t_drain < args.drain:
+        dropped += len(ser.read(512))
+    if dropped:
+        say(f"    (xả {dropped} byte tồn)")
+    return ser
+
+
+class BlockReader:
+    """Đọc lần lượt các khối báo cáo từ MỘT cổng đang mở.
+
+    Phải GIỮ LẠI phần byte dư sau mỗi khối: khối kế tiếp thường đã nằm sẵn trong
+    chunk vừa đọc, nên nếu vứt đi thì lần đọc sau mất dữ liệu. (Bản đầu của hàm này
+    vứt đi thật, và phép chạy khô hai khối liên tiếp đã bắt được: lần đọc 2 trả None.)
+
+    `parse_block()` tự đồng bộ — chỉ bắt đầu ở dòng `hello`, chỉ trả về ở `done` —
+    nên khối dở dang ở đầu luồng bị bỏ qua an toàn.
+    """
+
+    def __init__(self, ser, args):
+        self.ser = ser
+        self.args = args
+        self.buf = b""
+
+    def read(self):
         lines = []
         t0 = time.time()
-        while time.time() - t0 < args.timeout:
-            chunk = ser.read(512)
+        while True:
+            while b"\r\n" in self.buf:
+                ln, _, self.buf = self.buf.partition(b"\r\n")
+                txt = ln.decode("ascii", "replace").strip()
+                if not txt:
+                    continue
+                lines.append(txt)
+                blk = parse_block(lines)
+                if blk:
+                    return blk, lines
+            if time.time() - t0 >= self.args.timeout:
+                return None, lines
+            chunk = self.ser.read(512)
             if chunk:
-                buf += chunk
-                while b"\r\n" in buf:
-                    ln, _, buf = buf.partition(b"\r\n")
-                    txt = ln.decode("ascii", "replace").strip()
-                    if txt:
-                        lines.append(txt)
-            blk = parse_block(lines)
-            if blk:
-                return blk, lines
-        return None, lines
+                self.buf += chunk
+
+
+def read_block(ser, args):
+    """Đọc một khối từ cổng đang mở, không giữ trạng thái. Dùng cho đường mặc định."""
+    return BlockReader(ser, args).read()
+
+
+def read_kit(port, args, say):
+    """Mở cổng, đọc một khối, đóng cổng. Hành vi mặc định, không đổi."""
+    ser = open_port(port, args, say)
+    if ser is None:
+        return None, []
+    try:
+        return read_block(ser, args)
     finally:
         ser.close()
 
@@ -169,6 +204,11 @@ def main() -> int:
     ap.add_argument("--timeout", type=float, default=40.0)
     ap.add_argument("--drain", type=float, default=0.0)
     ap.add_argument("--repeat", type=int, default=1)
+    ap.add_argument("--keep-open", action="store_true",
+                    help="giữ cổng serial MỞ xuyên suốt các lần đọc, thay vì đóng rồi "
+                         "mở lại giữa chừng. Mặc định TẮT để không đổi cách đo của mọi "
+                         "số đã ghi nhận. Dùng khi lần đọc sau mất sạch dữ liệu vì kênh "
+                         "FT2232 kẹt ở nhịp mở lại (xem results/pipeline/S6/kit/README.md).")
     ap.add_argument("--log", default=None)
     args = ap.parse_args()
 
@@ -198,17 +238,36 @@ def main() -> int:
         passes = 0
         kit = None
         used_port = None
+        held = None          # cổng đang giữ mở, chỉ khi --keep-open
+        if args.keep_open:
+            say("    (giữ cổng mở xuyên suốt các lần đọc)")
         for attempt in range(1, args.repeat + 1):
             if args.repeat > 1:
                 say(f"== Lần đọc {attempt}/{args.repeat} ==")
             k = None
-            for p in ports:
-                k, raw = read_kit(p, args, say)
-                if k:
-                    used_port = p
-                    ports = [p]
-                    break
-                say(f"    {p}: chưa đủ dữ liệu ({len(raw)} dòng thô)")
+            if held is not None:
+                k, raw = held.read()
+                if not k:
+                    say(f"    {used_port}: chưa đủ dữ liệu ({len(raw)} dòng thô)")
+            else:
+                for p in ports:
+                    if args.keep_open:
+                        ser = open_port(p, args, say)
+                        if ser is None:
+                            continue
+                        rd = BlockReader(ser, args)
+                        k, raw = rd.read()
+                        if k:
+                            held = rd
+                        else:
+                            ser.close()
+                    else:
+                        k, raw = read_kit(p, args, say)
+                    if k:
+                        used_port = p
+                        ports = [p]
+                        break
+                    say(f"    {p}: chưa đủ dữ liệu ({len(raw)} dòng thô)")
             if not k:
                 continue
             kit = k
@@ -245,6 +304,9 @@ def main() -> int:
                 passes += 1
             if attempt < args.repeat:
                 time.sleep(0.3)
+
+        if held is not None:
+            held.ser.close()
 
         if not kit:
             say("M1S_FAIL: không đọc được số đo từ kit")

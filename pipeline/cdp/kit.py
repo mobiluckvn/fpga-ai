@@ -196,6 +196,12 @@ def main(args, run) -> int:
         mvars["UART_PORT"] = (res.get("control_before", {}) or {}).get("port") or ports[-1]
         if t.branch == "B":
             mvars["CSV_APPEND"] = "--append"
+        if getattr(args, "keep_open", False):
+            # Giữ cổng mở xuyên hai lần đọc. Không nới tiêu chí: vẫn hai khối báo cáo
+            # độc lập, chỉ bỏ nhịp đóng/mở cổng ở giữa — nhịp đang bị nghi làm kẹt
+            # kênh FT2232 (xem results/pipeline/S6/kit/README.md).
+            mvars["CHECK_EXTRA"] = "--keep-open"
+            run.say("    giữ cổng serial mở xuyên suốt hai lần đọc (--keep-open)")
         cc = wrap.make(w, t.make_dir, t.t_check, mvars=mvars, run=run,
                        log_name=f"make-{t.t_check}.log", timeout=1800)
         res["check"] = {"rc": cc.rc, "passed": "M1S_PASS" in cc.out}

@@ -181,6 +181,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--fresh", action="store_true")
     p.add_argument("--port", action="append", default=None, help="cổng UART của kit")
     p.add_argument("--repeat", type=int, default=2, help="số lần đọc độc lập")
+    p.add_argument("--keep-open", action="store_true",
+                   help="giữ cổng serial mở xuyên suốt hai lần đọc "
+                        "(CHECK_EXTRA=--keep-open). Mặc định tắt.")
     p.add_argument("--no-control", action="store_true",
                    help="bỏ đối chứng đường đo (KHÔNG khuyến nghị)")
     p.add_argument("--lock-timeout", type=float, default=None)

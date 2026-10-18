@@ -23,6 +23,10 @@ BOARD      := tangnano20k
 FREQ       := 27
 CST        := ../../hw/tangnano20k.cst
 UART_PORT  ?= /dev/cu.usbserial-20250303171
+# CHECK_EXTRA: cờ truyền thêm cho scripts/m1s_check.py. Để trống theo mặc định, nên
+# mọi số đã ghi nhận giữ nguyên cách đo. Dùng CHECK_EXTRA=--keep-open khi lần đọc thứ
+# hai mất sạch dữ liệu (xem results/pipeline/S6/kit/README.md).
+CHECK_EXTRA ?=
 SRC_HASH   := $(shell cat $(M1S)/main.c ../../fw/weights.h | shasum -a 256 | cut -c1-12)
 # Chia xung nhịp — xem ghi chú đầu top_b.v (đường vào BSRAM không được nextpnr ràng buộc)
 CLKDIV     ?= 1
@@ -161,7 +165,7 @@ load-$(1): $(1)/top.fs
 check-$(1):
 	python3 ../../scripts/m1s_check.py --variant $(3) --sim-log $(1)/sim.log \
 	    --csv $(RESULTS)/m1s_b.csv $$(if $$(CSV_APPEND_SET),$$(CSV_APPEND),$(4)) \
-	    --port $(UART_PORT) --drain 2 --repeat 2 \
+	    --port $(UART_PORT) --drain 2 --repeat 2 $(CHECK_EXTRA) \
 	    --src-hash $(SRC_HASH) --csv-label $(1) \
 	    --log $(1)/check.log 2>&1 | tee $(1)/check_stdout.log
 endef
@@ -221,7 +225,7 @@ load-$(1): $(1)/top.fs
 check-$(1):
 	python3 ../../scripts/m1s_check.py --variant $(3) --sim-log $(1)/sim.log \
 	    --csv $(RESULTS)/m1s_s6.csv $$(if $$(CSV_APPEND_SET),$$(CSV_APPEND),$(4)) \
-	    --port $(UART_PORT) --drain 2 --repeat 2 --csv-label $(1) \
+	    --port $(UART_PORT) --drain 2 --repeat 2 --csv-label $(1) $(CHECK_EXTRA) \
 	    --src-hash $(S6_SRC_HASH) \
 	    --log $(1)/check.log 2>&1 | tee $(1)/check_stdout.log
 endef
