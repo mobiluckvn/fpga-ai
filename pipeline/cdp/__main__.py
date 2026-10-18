@@ -13,7 +13,8 @@ import sys
 import time
 
 from . import (analyze, build, estimate, kit, kitlock, ledger, paths, profile,
-               propose, report, selftest, sim, spec, synth, targets, verify)
+               propose, report, selftest, sim, spec, static_analysis, synth,
+               targets, verify)
 from .iss import main as iss_main
 from .runctx import Run
 from .util import fmt_int
@@ -22,7 +23,7 @@ from .util import fmt_int
 STEP_OF = {
     "spec": "S0", "db": "S0", "targets": "S0", "lock": "S0", "selftest": "S0",
     "build": "S1", "sim": "S1", "kit": "S1", "synth": "S1",
-    "iss": "S2", "profile": "S3", "analyze": "S3",
+    "iss": "S2", "profile": "S3", "analyze": "S3", "static": "S3",
     "propose": "S5", "estimate": "S6", "verify": "S6", "report": "S8",
 }
 TOOLS_OF = {
@@ -104,6 +105,7 @@ HANDLERS = {
     "selftest": selftest.main,
     "build": build.main, "sim": sim.main, "kit": kit.main, "synth": synth.main,
     "iss": iss_main, "profile": profile.main, "analyze": analyze.main,
+    "static": static_analysis.main,
     "propose": propose.main, "estimate": estimate.main, "verify": verify.main,
     "report": report.main,
 }
@@ -166,6 +168,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--spec", default=None)
     p.add_argument("--target", action="append", default=None)
     p.add_argument("--all", action="store_true")
+    p.add_argument("--work", default="s1")
+
+    p = sub.add_parser("static", help="áp lực thanh ghi, phụ thuộc vòng lặp, không gian mã lệnh")
+    p.add_argument("--spec", default=None)
+    p.add_argument("--target", action="append", default=None)
+    p.add_argument("--loops", type=int, default=3, help="số vòng nóng nhất mỗi lớp")
     p.add_argument("--work", default="s1")
 
     p = sub.add_parser("analyze", help="ILP, DLP, byte/MAC, roofline, Amdahl")

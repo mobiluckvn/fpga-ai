@@ -101,7 +101,7 @@ class Prof:
     """
     __slots__ = ("pc", "edge", "as_addr", "to_branch", "ld_bytes", "st_bytes",
                  "crit", "stride", "mulh", "n", "tainted", "to_mulh", "macchain",
-                 "taken")
+                 "taken", "memdep")
 
     def __init__(self):
         self.pc = {}
@@ -118,6 +118,9 @@ class Prof:
         self.to_mulh = {}      # pc -> số lần kết quả bị một mulh dùng làm toán hạng
         self.macchain = {}     # pc -> số lần toán hạng đến TỪ một mul/DOT4 (cộng dồn)
         self.taken = {}        # pc -> số lần lệnh nhánh này NHẢY (để tách lambda)
+        self.memdep = {}       # (pc_store, pc_load) -> số lần load đọc đúng từ mà
+                               # store đó vừa ghi (phụ thuộc QUA BỘ NHỚ — quyết định
+                               # một vòng lặp có vector hoá được hợp lệ hay không)
 
     def as_dict(self, top=40):
         hot = sorted(self.pc.items(), key=lambda kv: -kv[1])[:top]
@@ -132,6 +135,9 @@ class Prof:
                 "tainted": {f"{k:#x}": v for k, v in self.tainted.items()},
                 "macchain": {f"{k:#x}": v for k, v in self.macchain.items()},
                 "taken": {f"{k:#x}": v for k, v in self.taken.items()},
+                "memdep": {f"{a:#x}->{b:#x}": c for (a, b), c in
+                           sorted(self.memdep.items(), key=lambda kv: -kv[1])[:30]},
+                "n_memdep": sum(self.memdep.values()),
                 "to_mulh": {f"{k:#x}": v for k, v in self.to_mulh.items()},
                 "as_addr": {f"{k:#x}": v for k, v in
                             sorted(self.as_addr.items(), key=lambda kv: -kv[1])[:40]},
@@ -145,7 +151,7 @@ class Prof:
 
 class Iss:
     def __init__(self, hexfile, timing: dict, with_dot4=False, with_req=False,
-                 pc_hist=False, profile=False):
+                 pc_hist=False, profile=False, memdep=False):
         self.mem = load_hex(hexfile)
         self.regs = [0] * 32
         self.pc = 0
@@ -156,6 +162,8 @@ class Iss:
         self.with_req = with_req
         self.pc_hist = pc_hist
         self.profile = profile
+        self.memdep = memdep
+        self.mem_writer = [0] * RAM_WORDS if memdep else None
         self.classes = [0] * len(CLASSES)
         self.pc_count = {} if pc_hist else None
         self.uart = bytearray()
@@ -210,6 +218,8 @@ class Iss:
         tn = [0] * 32          # "vết": giá trị này nằm trong chuỗi phụ thuộc sau một mulh
         last_addr = {}
         prof = None
+        do_md = self.memdep
+        mw = self.mem_writer
         try:
             while instret < max_instr:
                 instr = (mem[pc] | (mem[pc + 1] << 8) | (mem[pc + 2] << 16)
@@ -458,6 +468,15 @@ class Iss:
                     if k == C_LD or k == C_ST:
                         w = lw[rs1]
                         prof.as_addr[w] = prof.as_addr.get(w, 0) + 1
+                        if do_md and addr < RAM_BYTES:
+                            wi = addr >> 2
+                            if k == C_ST:
+                                mw[wi] = pc
+                            else:
+                                sp = mw[wi]
+                                if sp:
+                                    key = (sp, pc)
+                                    prof.memdep[key] = prof.memdep.get(key, 0) + 1
                         nb = 1 if (f3 & 3) == 0 else (2 if (f3 & 3) == 1 else 4)
                         if addr < 0x10000000:
                             if k == C_LD:

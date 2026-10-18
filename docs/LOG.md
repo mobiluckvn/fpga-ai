@@ -2,6 +2,44 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — S3 bổ sung: phân tích TĨNH (`cdp static`) — áp lực thanh ghi, phụ thuộc vòng lặp, không gian mã lệnh
+
+Theo yêu cầu của người dùng, thêm lớp phân tích tĩnh vào S3. Phân tích động cho biết chu kỳ đi
+vào đâu; ba thứ dưới đây quyết định một lệnh mới có **khả thi** hay không, và chỉ đọc được từ mã.
+
+### Công cụ
+- `cdp/isa.py`: giải mã trường lệnh theo **dạng** lệnh (R/I/S/B/U/J). Cần thiết vì bit [24:20] là
+  `rs2` ở dạng R/S/B nhưng là phần immediate ở dạng I, và bit [11:7] là `rd` ở dạng R/I/U/J nhưng
+  là immediate ở dạng S/B — nhầm chỗ này đã gây một lỗi thật ở S3.
+- `cdp/static_analysis.py` (`cdp static`): với mỗi vòng nóng — thanh ghi dùng/còn trống, đỉnh khoảng
+  sống, thanh ghi mang theo vòng, chuỗi hồi quy (λ-weighted), phụ thuộc **qua bộ nhớ nội vòng**,
+  tỷ lệ lệnh nạp liên tục 1 byte, và không gian mã lệnh còn trống.
+- ISS thêm `memdep=True`: ghi pc của lệnh store ghi sau cùng vào mỗi từ bộ nhớ; khi load đọc từ đó
+  thì ghi lại cặp (store, load). **Lọc bắt buộc**: chỉ tính cặp mà **cả hai** pc nằm trong cùng thân
+  vòng — số thô vô nghĩa, vì `conv2` có 119.472 cặp nhưng phần lớn là phụ thuộc **giữa các lớp**
+  (`conv2` đọc `p1[]` do `pool1` ghi), không chặn vector hoá.
+
+### Ba kết quả, và chúng ràng buộc S5 như thế nào
+| | kết quả đo | ràng buộc cho ứng viên |
+|---|---|---|
+| Áp lực thanh ghi | vòng nóng nhất của `conv2` (68,9 % chu kỳ B-V1) dùng **28/31 thanh ghi, còn 3** | mọi ứng viên L1/L2 phải dùng **đúng 2 nguồn + 1 đích**, không thêm trạng thái kiến trúc |
+| Phụ thuộc vòng lặp | **0** phụ thuộc qua bộ nhớ nội vòng ở **mọi** vòng nóng; chuỗi hồi quy 1–12 ck so với 32–535 ck/vòng | vector hoá **hợp lệ**; hồi quy không phải rào chắn |
+| DLP theo lớp | `pool1` 90 % và `pool2` 95 % lệnh nạp **liên tục 1 byte**, mỗi vòng còn **21** thanh ghi trống; `conv2` **0 %** (toàn nạp từ 4 byte) | pooling: gói 4 làn 8 bit được ngay; `conv2`: muốn SIMD rộng hơn **buộc** phải đổi bố cục dữ liệu |
+| Không gian mã lệnh | `custom-0` còn 6 mã `funct3` (mỗi mã 128 `funct7`) + ba opcode `0x2b/0x5b/0x7b` trống hoàn toàn | không có ràng buộc về chỗ đặt lệnh mới |
+
+Điểm đáng ghi: **áp lực thanh ghi giải thích đúng cạm bẫy số 6** của `KET_QUA_TONG_HOP.md`.
+`REQ_BENCH` đo 9,56 chu kỳ mỗi requantize trong một vòng vi mô **không có áp lực thanh ghi**, còn
+trong `conv2` thực tế tiết kiệm 16,6 — và giờ đã có số: vòng đó chỉ còn 3 thanh ghi trống.
+
+Và một quan sát nữa: bố cục 4 pha (C1) **đổi `conv1` từ 86,5 % lệnh nạp liên tục 1 byte xuống 0 %**
+(biến nạp byte thành nạp từ 4 byte) và giảm thanh ghi dùng từ 20 xuống 15. Đó chính là cơ chế của
+hệ số 1,29× — nhìn thấy được ở mức tĩnh, không chỉ ở mức tỷ trọng chu kỳ.
+
+### Giới hạn của phép đo này, ghi trước
+Áp lực thanh ghi tính bằng khoảng sống trong thân vòng (lần dùng đầu → lần dùng cuối theo thứ tự
+địa chỉ) nên là **chặn trên**: một thanh ghi có thể chết giữa hai lần dùng mà cách tính không thấy.
+Thân vòng lấy theo cạnh nhảy ngược **đã thực sự chạy**, nên nhánh trong thân làm phép tính gần đúng.
+
 ## 2026-10-18 — PIPELINE CDP bước S3 ĐẠT: profile 3 tầng + phân tích, giải thích bằng số mọi hệ số đã đo
 
 Phân tích firmware ở mức lệnh động cho **cả 14 cấu hình**. Kết quả quan trọng nhất không phải các

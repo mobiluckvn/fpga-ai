@@ -1,0 +1,126 @@
+[cây bóng] pipeline/work/s1 (dùng lại)
+
+## B-V1 (mycore)
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 14.816.080 lệnh · 41.2 s (360k lệnh/s)
+
+    ### conv1
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0xc60..0xd1c` | conv1 | 52.000 | 70.72 | 20 | **11** | 6 | x13,x22 | 1 | 70.72× | 0 | 86.5 % |
+    | `0xc54..0xd2c` | conv1 | 2.000 | 1848.08 | 22 | **9** | 9 | x17,x21 | 3 | 616.03× | 0 | 85.9 % |
+    | `0xc1c..0xd3c` | conv1 | 70 | 52834.29 | 28 | **3** | 21 | x11,x22,x23 | 2 | 26417.14× | 0 | 85.8 % |
+
+    ### pool1
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x90..0xfc` | pool1 | 11.830 | 34.61 | 10 | **21** | 7 | x12,x13 | 1 | 34.61× | 0 | 90.0 % |
+    | `0x88..0x114` | pool1 | 1.560 | 271.11 | 14 | **17** | 10 | x6,x16,x17,x28,x29 | 3 | 90.37× | 0 | 90.0 % |
+    | `0x74..0x124` | pool1 | 120 | 3534.15 | 20 | **11** | 15 | x5,x7,x30 | 3 | 1178.05× | 0 | 90.0 % |
+
+    ### conv2
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x69c..0xb40` | conv2 | 18.150 | 535.47 | 28 | **3** | 11 | x10,x11,x15 | 1 | 535.47× | 0 | 0.0 % |
+    | `0x480..0xb58` | conv2 | 1.100 | 9137.7 | 28 | **3** | 27 | x13,x24 | 3 | 3045.9× | 0 | 0.0 % |
+    | `0x46c..0xb78` | conv2 | 100 | 100535.6 | 28 | **3** | 27 | x14,x15,x25 | 3 | 33511.87× | 0 | 0.0 % |
+
+    ### pool2
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x198..0x204` | pool2 | 3.750 | 32.66 | 10 | **21** | 7 | x12,x13 | 1 | 32.66× | 0 | 95.0 % |
+    | `0x190..0x218` | pool2 | 200 | 621.2 | 13 | **18** | 11 | x6,x16,x17,x28 | 1 | 621.2× | 0 | 95.0 % |
+    | `0x180..0x22c` | pool2 | 40 | 3117.22 | 19 | **12** | 13 | x5,x7,x29,x31 | 3 | 1039.08× | 0 | 95.0 % |
+
+    ### dense
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x2a4..0x32c` | dense | 4.900 | 60.2 | 19 | **12** | 17 | x6,x13,x14 | 12 | 5.02× | 0 | 0.0 % |
+    | `0x298..0x340` | dense | 90 | 3288.89 | 24 | **7** | 20 | x29,x30,x31 | 1 | 3288.89× | 0 | 0.0 % |
+    | `0x248..0x1108` | dense | 10 | 29651.0 | 26 | **5** | 24 | x1,x2,x8,x9,x18,x19,x20,x21,x22,x23,x24 | 3 | 9883.67× | 0 | 0.0 % |
+
+## B-V3 (mycore + DOT4 + REQ)
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 8.486.261 lệnh · 19.6 s (432k lệnh/s)
+
+    ### conv1
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x1e4..0x21c` | conv1 | 45.760 | 23.64 | 11 | **20** | 4 | x13,x14 | 1 | 23.64× | 0 | 0.0 % |
+    | `0x74..0x84` | conv1_prep | 30.240 | 7.26 | 4 | **27** | 3 | x14,x15 | 1 | 7.26× | 0 | 98.2 % |
+    | `0x1dc..0x228` | conv1 | 8.000 | 140.4 | 14 | **17** | 7 | x12,x29 | 1 | 140.4× | 0 | 0.0 % |
+
+    ### pool1
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x2e0..0x34c` | pool1 | 11.830 | 34.61 | 10 | **21** | 7 | x12,x13 | 1 | 34.61× | 0 | 90.0 % |
+    | `0x2d8..0x364` | pool1 | 1.560 | 271.11 | 14 | **17** | 10 | x6,x16,x17,x28,x29 | 3 | 90.37× | 0 | 90.0 % |
+    | `0x2c4..0x374` | pool1 | 120 | 3534.15 | 20 | **11** | 15 | x5,x7,x30 | 3 | 1178.05× | 0 | 90.0 % |
+
+    ### conv2
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x460..0x550` | conv2 | 18.150 | 87.47 | 26 | **5** | 6 | x11,x12,x15 | 1 | 87.47× | 0 | 5.0 % |
+    | `0x400..0x564` | conv2 | 1.100 | 1499.3 | 28 | **3** | 26 | x10,x27 | 3 | 499.77× | 0 | 5.0 % |
+    | `0x3f0..0x580` | conv2 | 100 | 16508.8 | 28 | **3** | 27 | x13,x14,x15 | 4 | 4127.2× | 0 | 5.0 % |
+
+    ### pool2
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x610..0x67c` | pool2 | 3.750 | 32.66 | 10 | **21** | 7 | x12,x13 | 1 | 32.66× | 0 | 95.0 % |
+    | `0x608..0x690` | pool2 | 200 | 621.2 | 13 | **18** | 11 | x6,x16,x17,x28 | 1 | 621.2× | 0 | 95.0 % |
+    | `0x5f8..0x6a4` | pool2 | 40 | 3117.22 | 19 | **12** | 13 | x5,x7,x29,x31 | 3 | 1039.08× | 0 | 95.0 % |
+
+    ### dense
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x6f4..0x71c` | dense | 4.900 | 15.31 | 7 | **24** | 5 | x11,x13,x14 | 6 | 2.55× | 0 | 0.0 % |
+    | `0x6e8..0x730` | dense | 90 | 844.44 | 12 | **19** | 8 | x6,x17,x28 | 1 | 844.44× | 0 | 0.0 % |
+    | `0x6c0..0xb58` | dense | 10 | 7613.0 | 13 | **18** | 11 | x1 | 2 | 3806.5× | 0 | 0.0 % |
+
+## B-V1+DOT4+C1 (mycore + DOT4)
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 10.071.398 lệnh · 24.7 s (408k lệnh/s)
+
+    ### conv1
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x604..0x67c` | conv1 | 45.760 | 42.55 | 15 | **16** | 7 | x8,x17 | 1 | 42.55× | 0 | 0.0 % |
+    | `0x74..0x84` | conv1_prep | 30.240 | 7.26 | 4 | **27** | 3 | x14,x15 | 1 | 7.26× | 0 | 98.2 % |
+    | `0x5fc..0x68c` | conv1 | 8.000 | 250.64 | 18 | **13** | 9 | x20,x21 | 1 | 250.64× | 0 | 0.0 % |
+
+    ### pool1
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x188..0x1f4` | pool1 | 11.830 | 34.61 | 10 | **21** | 7 | x12,x13 | 1 | 34.61× | 0 | 90.0 % |
+    | `0x180..0x20c` | pool1 | 1.560 | 271.11 | 14 | **17** | 10 | x6,x16,x17,x28,x29 | 3 | 90.37× | 0 | 90.0 % |
+    | `0x16c..0x21c` | pool1 | 120 | 3534.15 | 20 | **11** | 15 | x5,x7,x30 | 3 | 1178.05× | 0 | 90.0 % |
+
+    ### conv2
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x7cc..0x900` | conv2 | 18.150 | 105.6 | 27 | **4** | 6 | x11,x12,x15 | 1 | 105.6× | 0 | 5.0 % |
+    | `0x764..0x918` | conv2 | 1.100 | 1802.9 | 28 | **3** | 26 | x24,x25 | 3 | 600.97× | 0 | 5.0 % |
+    | `0x750..0x938` | conv2 | 100 | 19852.8 | 28 | **3** | 26 | x14,x15 | 3 | 6617.6× | 0 | 5.0 % |
+
+    ### pool2
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x290..0x2fc` | pool2 | 3.750 | 32.66 | 10 | **21** | 7 | x12,x13 | 1 | 32.66× | 0 | 95.0 % |
+    | `0x288..0x310` | pool2 | 200 | 621.2 | 13 | **18** | 11 | x6,x16,x17,x28 | 1 | 621.2× | 0 | 95.0 % |
+    | `0x278..0x324` | pool2 | 40 | 3117.22 | 19 | **12** | 13 | x5,x7,x29,x31 | 3 | 1039.08× | 0 | 95.0 % |
+
+    ### dense
+    | thân vòng | hàm | số vòng | ck/vòng | thanh ghi dùng | còn trống | đỉnh sống | mang theo vòng | chuỗi hồi quy | dư địa | phụ thuộc bộ nhớ nội vòng | load liên tục |
+    |---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|
+    | `0x378..0x3a0` | dense | 4.900 | 15.31 | 7 | **24** | 5 | x11,x13,x14 | 6 | 2.55× | 0 | 0.0 % |
+    | `0x36c..0x3b4` | dense | 90 | 844.44 | 12 | **19** | 8 | x6,x17,x28 | 1 | 844.44× | 0 | 0.0 % |
+    | `0x340..0xd14` | dense | 10 | 7614.0 | 13 | **18** | 11 | x1 | 2 | 3807.0× | 0 | 0.0 % |
+
+## Không gian mã lệnh
+    custom-0 (0x0b) đã dùng funct3: 000 (DOT4), 001 (REQ)
+    custom-0 còn trống funct3     : 010, 011, 100, 101, 110, 111
+    opcode custom còn trống hoàn toàn: 0x2b (custom-1), 0x5b (custom-2), 0x7b (custom-3)
+
+=> ĐẠT · 3 cấu hình · static.json
+[run 20261018-153724-static] ok · 86.6 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-153724-static

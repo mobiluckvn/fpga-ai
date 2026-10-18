@@ -186,3 +186,76 @@ và **chưa có bất kỳ tối ưu phần cứng nào** nhắm vào chúng (DO
 `other` ở đây là lệnh so sánh/chọn giá trị lớn nhất — max-pooling không có phép nhân nào, nên
 DOT4 không giúp được gì. Chặn Amdahl: xoá sạch hai lớp này cho tối đa **1.177×**.
 Đây là ứng viên mà S5 nên tự tìm ra (lệnh lấy max 4 làn, hoặc gộp pooling vào conv).
+
+## 7. Phân tích TĨNH: áp lực thanh ghi · phụ thuộc vòng lặp · không gian mã lệnh
+
+`./cdp static --target …` → `static.json`, `static.log`. Ba thứ này phân tích động **không**
+trả lời được, nhưng chúng quyết định một lệnh mới có khả thi hay không.
+
+Phương pháp và giới hạn: áp lực thanh ghi tính bằng **khoảng sống trong thân vòng** (từ lần dùng
+đầu tới lần dùng cuối theo thứ tự địa chỉ lệnh) — đây là **chặn trên** của áp lực thật. Thân vòng
+lấy theo **cạnh nhảy ngược đã thực sự chạy**. Phụ thuộc qua bộ nhớ chỉ tính cặp (store, load) mà
+**cả hai** nằm trong cùng thân vòng; nếu không thì đó là phụ thuộc giữa các lớp, không chặn
+vector hoá. Chuỗi hồi quy = chuỗi phụ thuộc dài nhất qua các thanh ghi mang theo vòng.
+
+### B-V1 — vòng nóng nhất của từng lớp
+
+| lớp | thân vòng | số vòng | ck/vòng | thanh ghi dùng | **còn trống** | mang theo vòng | chuỗi hồi quy | phụ thuộc bộ nhớ nội vòng | load liên tục 1 byte | gói 4 làn? |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|---|
+| conv1 | `0xc60..0xd1c` | 52.000 | 70.72 | 20 | **11** | x13,x22 | 1 | 0 | 86.5 % | **có** |
+| pool1 | `0x90..0xfc` | 11.830 | 34.61 | 10 | **21** | x12,x13 | 1 | 0 | 90.0 % | **có** |
+| conv2 | `0x69c..0xb40` | 18.150 | 535.47 | 28 | **3** | x10,x11,x15 | 1 | 0 | 0.0 % | không |
+| pool2 | `0x198..0x204` | 3.750 | 32.66 | 10 | **21** | x12,x13 | 1 | 0 | 95.0 % | **có** |
+| dense | `0x2a4..0x32c` | 4.900 | 60.2 | 19 | **12** | x6,x13,x14 | 12 | 0 | 0.0 % | không |
+
+### B-V3 — vòng nóng nhất của từng lớp
+
+| lớp | thân vòng | số vòng | ck/vòng | thanh ghi dùng | **còn trống** | mang theo vòng | chuỗi hồi quy | phụ thuộc bộ nhớ nội vòng | load liên tục 1 byte | gói 4 làn? |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|---|
+| conv1 | `0x1e4..0x21c` | 45.760 | 23.64 | 11 | **20** | x13,x14 | 1 | 0 | 0.0 % | không |
+| pool1 | `0x2e0..0x34c` | 11.830 | 34.61 | 10 | **21** | x12,x13 | 1 | 0 | 90.0 % | **có** |
+| conv2 | `0x460..0x550` | 18.150 | 87.47 | 26 | **5** | x11,x12,x15 | 1 | 0 | 5.0 % | không |
+| pool2 | `0x610..0x67c` | 3.750 | 32.66 | 10 | **21** | x12,x13 | 1 | 0 | 95.0 % | **có** |
+| dense | `0x6f4..0x71c` | 4.900 | 15.31 | 7 | **24** | x11,x13,x14 | 6 | 0 | 0.0 % | không |
+
+### B-V1+DOT4+C1 — vòng nóng nhất của từng lớp
+
+| lớp | thân vòng | số vòng | ck/vòng | thanh ghi dùng | **còn trống** | mang theo vòng | chuỗi hồi quy | phụ thuộc bộ nhớ nội vòng | load liên tục 1 byte | gói 4 làn? |
+|---|---|---:|---:|---:|---:|---|---:|---:|---:|---|
+| conv1 | `0x604..0x67c` | 45.760 | 42.55 | 15 | **16** | x8,x17 | 1 | 0 | 0.0 % | không |
+| pool1 | `0x188..0x1f4` | 11.830 | 34.61 | 10 | **21** | x12,x13 | 1 | 0 | 90.0 % | **có** |
+| conv2 | `0x7cc..0x900` | 18.150 | 105.6 | 27 | **4** | x11,x12,x15 | 1 | 0 | 5.0 % | không |
+| pool2 | `0x290..0x2fc` | 3.750 | 32.66 | 10 | **21** | x12,x13 | 1 | 0 | 95.0 % | **có** |
+| dense | `0x378..0x3a0` | 4.900 | 15.31 | 7 | **24** | x11,x13,x14 | 6 | 0 | 0.0 % | không |
+
+### Ba kết luận cho S5
+
+1. **Áp lực thanh ghi là ràng buộc thật, và nó chặt nhất đúng ở chỗ đắt nhất.** Vòng nóng nhất
+   của `conv2` (B-V1, thân `0x69c..0xb40`) dùng **28/31 thanh ghi, chỉ còn 3 trống**. Một lệnh mới cần
+   thêm thanh ghi kiến trúc sẽ gây tràn **ngay trong vòng chiếm phần lớn chu kỳ**. Đây chính là
+   lời giải thích cho cạm bẫy số 6 của `KET_QUA_TONG_HOP.md`: `REQ_BENCH` đo 9,56 chu kỳ mỗi
+   requantize trong một vòng vi mô **không có áp lực thanh ghi**, còn thực tế tiết kiệm 16,6.
+   ⟹ **Ràng buộc cho mọi ứng viên L1/L2: dùng đúng 2 nguồn + 1 đích, không thêm trạng thái.**
+
+2. **Vector hoá hợp lệ ở đâu — đã có bằng chứng, không phải phỏng đoán.**
+
+   | cấu hình | lớp | load liên tục 1 byte | thanh ghi còn trống |
+   |---|---|---:|---:|
+   | B-V1 | conv1 | 86.5 % | 11 |
+   | B-V1 | pool1 | 90.0 % | 21 |
+   | B-V1 | pool2 | 95.0 % | 21 |
+   | B-V3 | pool1 | 90.0 % | 21 |
+   | B-V3 | pool2 | 95.0 % | 21 |
+   | B-V1+DOT4+C1 | pool1 | 90.0 % | 21 |
+   | B-V1+DOT4+C1 | pool2 | 95.0 % | 21 |
+
+   **Không một vòng nóng nào có phụ thuộc qua bộ nhớ nội vòng** (0 ở tất cả), và chuỗi hồi quy
+   chỉ 1–12 chu kỳ so với 32–535 chu kỳ/vòng thực tế ⟹ phụ thuộc mang theo vòng lặp **không**
+   phải rào chắn. Ngược lại, `conv2` có **0 %** lệnh nạp liên tục 1 byte (toàn nạp từ 4 byte),
+   nên muốn SIMD rộng hơn cho `conv2` thì **buộc** phải đổi bố cục dữ liệu — đúng việc mà bố cục
+   4 pha đã làm cho `conv1`.
+
+3. **Không gian mã lệnh còn rất rộng.** `custom-0` (0x0b) đã dùng `funct3` 000 (DOT4) và 001
+   (REQ); còn trống `funct3`: 010, 011, 100, 101, 110, 111 (mỗi mã lại có 128 giá trị
+   `funct7`), cộng ba opcode trống hoàn toàn: 0x2b, 0x5b, 0x7b.
+   ⟹ Không có ràng buộc nào về chỗ đặt lệnh mới; ràng buộc nằm ở thanh ghi và băng thông.
