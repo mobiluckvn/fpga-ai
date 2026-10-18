@@ -973,15 +973,15 @@ VL_ATTR_COLD void Vsoc_b___024root___ctor_var_reset(Vsoc_b___024root* vlSelf) {
     for (int __Vi0 = 0; __Vi0 < 32; ++__Vi0) {
         vlSelf->soc_b__DOT__u_core__DOT__regs[__Vi0] = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 6705421414210051326ull);
     }
+    vlSelf->soc_b__DOT__u_core__DOT__ld_f3 = VL_SCOPED_RAND_RESET_I(3, __VscopeHash, 1571178252723834892ull);
+    vlSelf->soc_b__DOT__u_core__DOT__ld_off = VL_SCOPED_RAND_RESET_I(2, __VscopeHash, 1600409768328046418ull);
+    vlSelf->soc_b__DOT__u_core__DOT__ld_rd = VL_SCOPED_RAND_RESET_I(5, __VscopeHash, 8700139843244359542ull);
+    vlSelf->soc_b__DOT__u_core__DOT__ld_is = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 1456404853865279703ull);
     vlSelf->soc_b__DOT__u_core__DOT__rv1 = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 2024891927278844808ull);
     vlSelf->soc_b__DOT__u_core__DOT__rv2 = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 9523726580779545171ull);
     vlSelf->soc_b__DOT__u_core__DOT__dot = VL_SCOPED_RAND_RESET_I(18, __VscopeHash, 1139762056744696216ull);
     vlSelf->soc_b__DOT__u_core__DOT__is_req = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 14678112659143959902ull);
     vlSelf->soc_b__DOT__u_core__DOT__d_addr = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 2384419088745713398ull);
-    vlSelf->soc_b__DOT__u_core__DOT__ld_f3 = VL_SCOPED_RAND_RESET_I(3, __VscopeHash, 1571178252723834892ull);
-    vlSelf->soc_b__DOT__u_core__DOT__ld_off = VL_SCOPED_RAND_RESET_I(2, __VscopeHash, 1600409768328046418ull);
-    vlSelf->soc_b__DOT__u_core__DOT__ld_rd = VL_SCOPED_RAND_RESET_I(5, __VscopeHash, 8700139843244359542ull);
-    vlSelf->soc_b__DOT__u_core__DOT__ld_is = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 1456404853865279703ull);
     vlSelf->soc_b__DOT__u_core__DOT__cnt_cycle = VL_SCOPED_RAND_RESET_Q(64, __VscopeHash, 5818200650992215046ull);
     vlSelf->soc_b__DOT__u_core__DOT__cnt_instret = VL_SCOPED_RAND_RESET_Q(64, __VscopeHash, 1405384240313425069ull);
     vlSelf->soc_b__DOT__u_core__DOT__md_a = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 5872513638157717571ull);

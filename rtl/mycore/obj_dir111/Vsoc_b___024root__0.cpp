@@ -288,184 +288,152 @@ void Vsoc_b___024root___nba_sequent__TOP__0(Vsoc_b___024root* vlSelf) {
                                                & ((::IData)(vlSelfRef.soc_b__DOT__u_tx__DOT__c) 
                                                   - (::IData)(1U)));
     }
-    if ((((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_valid) 
-          & (0U == (vlSelfRef.soc_b__DOT__u_core__DOT__mem_addr 
-                    >> 0x0000001cU))) & (0U != (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_wstrb)))) {
-        if ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_wstrb))) {
-            __Vdly_Val__soc_b__DOT__ram_47 = (0x000000ffU 
-                                              & vlSelfRef.soc_b__DOT__u_core__DOT__mem_wdata);
-            __Vdly_Dim0__soc_b__DOT__ram_48 = (0x00003fffU 
-                                               & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_addr 
-                                                  >> 2U));
-            __Vdly_Set__soc_b__DOT__ram_49 = 1U;
-        }
-        if ((2U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_wstrb))) {
-            __Vdly_Val__soc_b__DOT__ram_50 = (0x000000ffU 
-                                              & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_wdata 
-                                                 >> 8U));
-            __Vdly_Dim0__soc_b__DOT__ram_51 = (0x00003fffU 
-                                               & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_addr 
-                                                  >> 2U));
-            __Vdly_Set__soc_b__DOT__ram_52 = 1U;
-        }
-        if ((4U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_wstrb))) {
-            __Vdly_Val__soc_b__DOT__ram_53 = (0x000000ffU 
-                                              & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_wdata 
-                                                 >> 0x10U));
-            __Vdly_Dim0__soc_b__DOT__ram_54 = (0x00003fffU 
-                                               & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_addr 
-                                                  >> 2U));
-            __Vdly_Set__soc_b__DOT__ram_55 = 1U;
-        }
-        if ((8U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_wstrb))) {
-            __Vdly_Val__soc_b__DOT__ram_56 = (vlSelfRef.soc_b__DOT__u_core__DOT__mem_wdata 
-                                              >> 0x18U);
-            __Vdly_Dim0__soc_b__DOT__ram_57 = (0x00003fffU 
-                                               & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_addr 
-                                                  >> 2U));
-            __Vdly_Set__soc_b__DOT__ram_58 = 1U;
-        }
-    }
-    if (vlSelfRef.soc_b__DOT__hw_run) {
-        __Vdly__soc_b__DOT__hw_cnt_5 = ((::IData)(1U) 
-                                        + vlSelfRef.soc_b__DOT__hw_cnt);
-    }
-    if (((::IData)(vlSelfRef.__VprimaryPorts.resetn) 
-         & ((1U == (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__state))
-             ? (::IData)(vlSelfRef.__Vdfg_Regularize_1038)
-             : ((2U == (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__state))
-                 ? (::IData)(vlSelfRef.__Vdfg_Regularize_1037)
-                 : (::IData)(vlSelfRef.__Vdfg_Regularize_1039))))) {
-        if ((1U == (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__state))) {
-            __Vdly_Val__soc_b__DOT__u_core__DOT__regs_59 
-                = (((0x00000040U & vlSelfRef.soc_b__DOT__mem_rdata)
-                     ? (((0x00000010U & vlSelfRef.soc_b__DOT__mem_rdata)
-                          ? (((0x0c00U == (vlSelfRef.soc_b__DOT__mem_rdata 
-                                           >> 0x00000014U))
-                               ? (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__cnt_cycle)
-                               : ((0x0c80U == (vlSelfRef.soc_b__DOT__mem_rdata 
-                                               >> 0x00000014U))
-                                   ? (::IData)((vlSelfRef.soc_b__DOT__u_core__DOT__cnt_cycle 
-                                                >> 0x00000020U))
-                                   : ((0x0c02U == (vlSelfRef.soc_b__DOT__mem_rdata 
-                                                   >> 0x00000014U))
-                                       ? (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__cnt_instret)
-                                       : ((::IData)(
-                                                    (vlSelfRef.soc_b__DOT__u_core__DOT__cnt_instret 
-                                                     >> 0x00000020U)) 
-                                          & (- (::IData)(
-                                                         (0x0c82U 
-                                                          == 
-                                                          (vlSelfRef.soc_b__DOT__mem_rdata 
-                                                           >> 0x00000014U)))))))) 
-                             & (- (::IData)(((~ (vlSelfRef.soc_b__DOT__mem_rdata 
-                                                 >> 2U)) 
-                                             & (::IData)(vlSelfRef.__Vdfg_Regularize_1042)))))
-                          : (((::IData)(4U) + vlSelfRef.soc_b__DOT__u_core__DOT__pc) 
-                             & (- (::IData)((7U == 
-                                             (7U & vlSelfRef.soc_b__DOT__mem_rdata)))))) 
-                        & (- (::IData)((1U & (vlSelfRef.soc_b__DOT__mem_rdata 
-                                              >> 5U)))))
-                     : ((0x00000020U & vlSelfRef.soc_b__DOT__mem_rdata)
-                         ? ((- (::IData)((1U & (~ (vlSelfRef.soc_b__DOT__mem_rdata 
-                                                   >> 3U))))) 
-                            & (((4U & vlSelfRef.soc_b__DOT__mem_rdata)
-                                 ? (0xfffff000U & (vlSelfRef.soc_b__DOT__mem_rdata 
-                                                   & (- (::IData)(
-                                                                  (3U 
-                                                                   == 
-                                                                   (3U 
-                                                                    & vlSelfRef.soc_b__DOT__mem_rdata))))))
-                                 : vlSelfRef.__Vdfg_Regularize_1050) 
-                               & (- (::IData)((1U & 
-                                               (vlSelfRef.soc_b__DOT__mem_rdata 
-                                                >> 4U))))))
-                         : ((0x00000010U & vlSelfRef.soc_b__DOT__mem_rdata)
-                             ? (((4U & vlSelfRef.soc_b__DOT__mem_rdata)
-                                  ? ((vlSelfRef.soc_b__DOT__u_core__DOT__pc 
-                                      + (0xfffff000U 
-                                         & vlSelfRef.soc_b__DOT__mem_rdata)) 
-                                     & (- (::IData)(
-                                                    (3U 
-                                                     == 
-                                                     (3U 
-                                                      & vlSelfRef.soc_b__DOT__mem_rdata)))))
-                                  : vlSelfRef.__Vdfg_Regularize_1050) 
-                                & (- (::IData)((1U 
-                                                & (~ 
-                                                   (vlSelfRef.soc_b__DOT__mem_rdata 
-                                                    >> 3U))))))
-                             : ((((- (::IData)((1U 
-                                                & (vlSelfRef.soc_b__DOT__u_core__DOT__dot 
-                                                   >> 0x00000011U)))) 
-                                  << 0x00000012U) | vlSelfRef.soc_b__DOT__u_core__DOT__dot) 
-                                & (- (::IData)((::IData)(
-                                                         (0x0000000bU 
-                                                          == 
-                                                          (0x0000000fU 
-                                                           & vlSelfRef.soc_b__DOT__mem_rdata))))))))) 
-                   & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1038))));
-            __Vdly_Dim0__soc_b__DOT__u_core__DOT__regs_60 
-                = (0x0000001fU & ((vlSelfRef.soc_b__DOT__mem_rdata 
-                                   >> 7U) & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1038)))));
-        } else if ((2U == (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__state))) {
-            __Vdly_Val__soc_b__DOT__u_core__DOT__regs_59 
-                = (((4U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_f3))
-                     ? ((2U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_f3))
-                         ? vlSelfRef.soc_b__DOT__mem_rdata
-                         : ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_f3))
-                             ? (::IData)(vlSelfRef.__Vdfg_Regularize_1035)
-                             : (::IData)(vlSelfRef.__Vdfg_Regularize_1034)))
-                     : ((2U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_f3))
-                         ? vlSelfRef.soc_b__DOT__mem_rdata
-                         : ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_f3))
-                             ? (((- (::IData)((1U & 
-                                               ((::IData)(vlSelfRef.__Vdfg_Regularize_1035) 
-                                                >> 0x0000000fU)))) 
-                                 << 0x00000010U) | (::IData)(vlSelfRef.__Vdfg_Regularize_1035))
-                             : (((- (::IData)((1U & 
-                                               ((::IData)(vlSelfRef.__Vdfg_Regularize_1034) 
-                                                >> 7U)))) 
-                                 << 8U) | (::IData)(vlSelfRef.__Vdfg_Regularize_1034))))) 
-                   & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1037))));
-            __Vdly_Dim0__soc_b__DOT__u_core__DOT__regs_60 
-                = (0x0000001fU & ((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_rd) 
-                                  & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1037)))));
-        } else {
-            __Vdly_Val__soc_b__DOT__u_core__DOT__regs_59 
-                = (((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_is_req)
-                     ? ((0x0000007fU < vlSelfRef.soc_b__DOT__u_core__DOT__req_q)
-                         ? 0x0000007fU : vlSelfRef.soc_b__DOT__u_core__DOT__req_q)
-                     : ((4U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
-                         ? ((2U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
-                             ? ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
-                                 ? vlSelfRef.soc_b__DOT__u_core__DOT__rmd
-                                 : ((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__r_neg)
-                                     ? ((::IData)(1U) 
-                                        + (~ vlSelfRef.soc_b__DOT__u_core__DOT__rmd))
-                                     : vlSelfRef.soc_b__DOT__u_core__DOT__rmd))
-                             : ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
-                                 ? vlSelfRef.soc_b__DOT__u_core__DOT__quo
-                                 : ((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__q_neg)
-                                     ? ((::IData)(1U) 
-                                        + (~ vlSelfRef.soc_b__DOT__u_core__DOT__quo))
-                                     : vlSelfRef.soc_b__DOT__u_core__DOT__quo)))
-                         : ((2U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
-                             ? ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
-                                 ? (::IData)((vlSelfRef.soc_b__DOT__u_core__DOT__prod_u 
-                                              >> 0x00000020U))
-                                 : vlSelfRef.__Vdfg_Regularize_1043)
-                             : ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
-                                 ? vlSelfRef.__Vdfg_Regularize_1043
-                                 : (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__prod_u))))) 
-                   & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1039))));
-            __Vdly_Dim0__soc_b__DOT__u_core__DOT__regs_60 
-                = (0x0000001fU & ((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_rd) 
-                                  & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1039)))));
-        }
-        __Vdly_Set__soc_b__DOT__u_core__DOT__regs_61 = 1U;
-    }
     if (vlSelfRef.__VprimaryPorts.resetn) {
+        if (((1U == (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__state))
+              ? (::IData)(vlSelfRef.__Vdfg_Regularize_1038)
+              : ((2U == (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__state))
+                  ? (::IData)(vlSelfRef.__Vdfg_Regularize_1037)
+                  : (::IData)(vlSelfRef.__Vdfg_Regularize_1039)))) {
+            if ((1U == (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__state))) {
+                __Vdly_Val__soc_b__DOT__u_core__DOT__regs_59 
+                    = (((0x00000040U & vlSelfRef.soc_b__DOT__mem_rdata)
+                         ? (((0x00000010U & vlSelfRef.soc_b__DOT__mem_rdata)
+                              ? (((0x0c00U == (vlSelfRef.soc_b__DOT__mem_rdata 
+                                               >> 0x00000014U))
+                                   ? (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__cnt_cycle)
+                                   : ((0x0c80U == (vlSelfRef.soc_b__DOT__mem_rdata 
+                                                   >> 0x00000014U))
+                                       ? (::IData)(
+                                                   (vlSelfRef.soc_b__DOT__u_core__DOT__cnt_cycle 
+                                                    >> 0x00000020U))
+                                       : ((0x0c02U 
+                                           == (vlSelfRef.soc_b__DOT__mem_rdata 
+                                               >> 0x00000014U))
+                                           ? (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__cnt_instret)
+                                           : ((::IData)(
+                                                        (vlSelfRef.soc_b__DOT__u_core__DOT__cnt_instret 
+                                                         >> 0x00000020U)) 
+                                              & (- (::IData)(
+                                                             (0x0c82U 
+                                                              == 
+                                                              (vlSelfRef.soc_b__DOT__mem_rdata 
+                                                               >> 0x00000014U)))))))) 
+                                 & (- (::IData)(((~ 
+                                                  (vlSelfRef.soc_b__DOT__mem_rdata 
+                                                   >> 2U)) 
+                                                 & (::IData)(vlSelfRef.__Vdfg_Regularize_1042)))))
+                              : (((::IData)(4U) + vlSelfRef.soc_b__DOT__u_core__DOT__pc) 
+                                 & (- (::IData)((7U 
+                                                 == 
+                                                 (7U 
+                                                  & vlSelfRef.soc_b__DOT__mem_rdata)))))) 
+                            & (- (::IData)((1U & (vlSelfRef.soc_b__DOT__mem_rdata 
+                                                  >> 5U)))))
+                         : ((0x00000020U & vlSelfRef.soc_b__DOT__mem_rdata)
+                             ? ((- (::IData)((1U & 
+                                              (~ (vlSelfRef.soc_b__DOT__mem_rdata 
+                                                  >> 3U))))) 
+                                & (((4U & vlSelfRef.soc_b__DOT__mem_rdata)
+                                     ? (0xfffff000U 
+                                        & (vlSelfRef.soc_b__DOT__mem_rdata 
+                                           & (- (::IData)(
+                                                          (3U 
+                                                           == 
+                                                           (3U 
+                                                            & vlSelfRef.soc_b__DOT__mem_rdata))))))
+                                     : vlSelfRef.__Vdfg_Regularize_1050) 
+                                   & (- (::IData)((1U 
+                                                   & (vlSelfRef.soc_b__DOT__mem_rdata 
+                                                      >> 4U))))))
+                             : ((0x00000010U & vlSelfRef.soc_b__DOT__mem_rdata)
+                                 ? (((4U & vlSelfRef.soc_b__DOT__mem_rdata)
+                                      ? ((vlSelfRef.soc_b__DOT__u_core__DOT__pc 
+                                          + (0xfffff000U 
+                                             & vlSelfRef.soc_b__DOT__mem_rdata)) 
+                                         & (- (::IData)(
+                                                        (3U 
+                                                         == 
+                                                         (3U 
+                                                          & vlSelfRef.soc_b__DOT__mem_rdata)))))
+                                      : vlSelfRef.__Vdfg_Regularize_1050) 
+                                    & (- (::IData)(
+                                                   (1U 
+                                                    & (~ 
+                                                       (vlSelfRef.soc_b__DOT__mem_rdata 
+                                                        >> 3U))))))
+                                 : ((((- (::IData)(
+                                                   (1U 
+                                                    & (vlSelfRef.soc_b__DOT__u_core__DOT__dot 
+                                                       >> 0x00000011U)))) 
+                                      << 0x00000012U) 
+                                     | vlSelfRef.soc_b__DOT__u_core__DOT__dot) 
+                                    & (- (::IData)((::IData)(
+                                                             (0x0000000bU 
+                                                              == 
+                                                              (0x0000000fU 
+                                                               & vlSelfRef.soc_b__DOT__mem_rdata))))))))) 
+                       & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1038))));
+                __Vdly_Dim0__soc_b__DOT__u_core__DOT__regs_60 
+                    = (0x0000001fU & ((vlSelfRef.soc_b__DOT__mem_rdata 
+                                       >> 7U) & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1038)))));
+            } else if ((2U == (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__state))) {
+                __Vdly_Val__soc_b__DOT__u_core__DOT__regs_59 
+                    = (((4U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_f3))
+                         ? ((2U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_f3))
+                             ? vlSelfRef.soc_b__DOT__mem_rdata
+                             : ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_f3))
+                                 ? (::IData)(vlSelfRef.__Vdfg_Regularize_1035)
+                                 : (::IData)(vlSelfRef.__Vdfg_Regularize_1034)))
+                         : ((2U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_f3))
+                             ? vlSelfRef.soc_b__DOT__mem_rdata
+                             : ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_f3))
+                                 ? (((- (::IData)((1U 
+                                                   & ((::IData)(vlSelfRef.__Vdfg_Regularize_1035) 
+                                                      >> 0x0000000fU)))) 
+                                     << 0x00000010U) 
+                                    | (::IData)(vlSelfRef.__Vdfg_Regularize_1035))
+                                 : (((- (::IData)((1U 
+                                                   & ((::IData)(vlSelfRef.__Vdfg_Regularize_1034) 
+                                                      >> 7U)))) 
+                                     << 8U) | (::IData)(vlSelfRef.__Vdfg_Regularize_1034))))) 
+                       & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1037))));
+                __Vdly_Dim0__soc_b__DOT__u_core__DOT__regs_60 
+                    = (0x0000001fU & ((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__ld_rd) 
+                                      & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1037)))));
+            } else {
+                __Vdly_Val__soc_b__DOT__u_core__DOT__regs_59 
+                    = (((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_is_req)
+                         ? ((0x0000007fU < vlSelfRef.soc_b__DOT__u_core__DOT__req_q)
+                             ? 0x0000007fU : vlSelfRef.soc_b__DOT__u_core__DOT__req_q)
+                         : ((4U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
+                             ? ((2U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
+                                 ? ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
+                                     ? vlSelfRef.soc_b__DOT__u_core__DOT__rmd
+                                     : ((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__r_neg)
+                                         ? ((::IData)(1U) 
+                                            + (~ vlSelfRef.soc_b__DOT__u_core__DOT__rmd))
+                                         : vlSelfRef.soc_b__DOT__u_core__DOT__rmd))
+                                 : ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
+                                     ? vlSelfRef.soc_b__DOT__u_core__DOT__quo
+                                     : ((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__q_neg)
+                                         ? ((::IData)(1U) 
+                                            + (~ vlSelfRef.soc_b__DOT__u_core__DOT__quo))
+                                         : vlSelfRef.soc_b__DOT__u_core__DOT__quo)))
+                             : ((2U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
+                                 ? ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
+                                     ? (::IData)((vlSelfRef.soc_b__DOT__u_core__DOT__prod_u 
+                                                  >> 0x00000020U))
+                                     : vlSelfRef.__Vdfg_Regularize_1043)
+                                 : ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_f3))
+                                     ? vlSelfRef.__Vdfg_Regularize_1043
+                                     : (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__prod_u))))) 
+                       & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1039))));
+                __Vdly_Dim0__soc_b__DOT__u_core__DOT__regs_60 
+                    = (0x0000001fU & ((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__md_rd) 
+                                      & (- (::IData)((::IData)(vlSelfRef.__Vdfg_Regularize_1039)))));
+            }
+            __Vdly_Set__soc_b__DOT__u_core__DOT__regs_61 = 1U;
+        }
         if ((1U & (~ (::IData)(vlSelfRef.__VprimaryPorts.dbg_trap)))) {
             __Vdly__soc_b__DOT__u_core__DOT__cnt_cycle_23 
                 = (1ULL + vlSelfRef.soc_b__DOT__u_core__DOT__cnt_cycle);
@@ -676,6 +644,48 @@ void Vsoc_b___024root___nba_sequent__TOP__0(Vsoc_b___024root* vlSelf) {
         vlSelfRef.soc_b__DOT__u_core__DOT__ld_is = 0U;
         vlSelfRef.soc_b__DOT__u_core__DOT__md_is_req = 0U;
         vlSelfRef.soc_b__DOT__u_core__DOT__pc = 0U;
+    }
+    if ((((::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_valid) 
+          & (0U == (vlSelfRef.soc_b__DOT__u_core__DOT__mem_addr 
+                    >> 0x0000001cU))) & (0U != (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_wstrb)))) {
+        if ((1U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_wstrb))) {
+            __Vdly_Val__soc_b__DOT__ram_47 = (0x000000ffU 
+                                              & vlSelfRef.soc_b__DOT__u_core__DOT__mem_wdata);
+            __Vdly_Dim0__soc_b__DOT__ram_48 = (0x00003fffU 
+                                               & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_addr 
+                                                  >> 2U));
+            __Vdly_Set__soc_b__DOT__ram_49 = 1U;
+        }
+        if ((2U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_wstrb))) {
+            __Vdly_Val__soc_b__DOT__ram_50 = (0x000000ffU 
+                                              & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_wdata 
+                                                 >> 8U));
+            __Vdly_Dim0__soc_b__DOT__ram_51 = (0x00003fffU 
+                                               & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_addr 
+                                                  >> 2U));
+            __Vdly_Set__soc_b__DOT__ram_52 = 1U;
+        }
+        if ((4U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_wstrb))) {
+            __Vdly_Val__soc_b__DOT__ram_53 = (0x000000ffU 
+                                              & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_wdata 
+                                                 >> 0x10U));
+            __Vdly_Dim0__soc_b__DOT__ram_54 = (0x00003fffU 
+                                               & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_addr 
+                                                  >> 2U));
+            __Vdly_Set__soc_b__DOT__ram_55 = 1U;
+        }
+        if ((8U & (::IData)(vlSelfRef.soc_b__DOT__u_core__DOT__mem_wstrb))) {
+            __Vdly_Val__soc_b__DOT__ram_56 = (vlSelfRef.soc_b__DOT__u_core__DOT__mem_wdata 
+                                              >> 0x18U);
+            __Vdly_Dim0__soc_b__DOT__ram_57 = (0x00003fffU 
+                                               & (vlSelfRef.soc_b__DOT__u_core__DOT__mem_addr 
+                                                  >> 2U));
+            __Vdly_Set__soc_b__DOT__ram_58 = 1U;
+        }
+    }
+    if (vlSelfRef.soc_b__DOT__hw_run) {
+        __Vdly__soc_b__DOT__hw_cnt_5 = ((::IData)(1U) 
+                                        + vlSelfRef.soc_b__DOT__hw_cnt);
     }
     vlSelfRef.__VprimaryPorts.dbg_tx_valid = 0U;
     vlSelfRef.soc_b__DOT__ram_q = vlSelfRef.soc_b__DOT__ram

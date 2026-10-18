@@ -49,11 +49,11 @@ class alignas(VL_CACHE_LINE_BYTES) Vsoc_b___024root final {
         ::CData/*3:0*/ soc_b__DOT__u_core__DOT__mem_wstrb;
         ::CData/*0:0*/ soc_b__DOT__u_core__DOT__mem_valid;
         ::CData/*2:0*/ soc_b__DOT__u_core__DOT__state;
-        ::CData/*0:0*/ soc_b__DOT__u_core__DOT__is_req;
         ::CData/*2:0*/ soc_b__DOT__u_core__DOT__ld_f3;
         ::CData/*1:0*/ soc_b__DOT__u_core__DOT__ld_off;
         ::CData/*4:0*/ soc_b__DOT__u_core__DOT__ld_rd;
         ::CData/*0:0*/ soc_b__DOT__u_core__DOT__ld_is;
+        ::CData/*0:0*/ soc_b__DOT__u_core__DOT__is_req;
         ::CData/*2:0*/ soc_b__DOT__u_core__DOT__md_f3;
         ::CData/*4:0*/ soc_b__DOT__u_core__DOT__md_rd;
         ::CData/*5:0*/ soc_b__DOT__u_core__DOT__md_cnt;

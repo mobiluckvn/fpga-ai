@@ -1,20 +1,20 @@
-%Warning-WIDTHEXPAND: mycore.v:164:34: Operator ADD expects 18 bits on the LHS, but LHS's VARREF 'dp0' generates 16 bits.
+%Warning-WIDTHEXPAND: mycore.v:220:34: Operator ADD expects 18 bits on the LHS, but LHS's VARREF 'dp0' generates 16 bits.
                                      : ... note: In instance 'soc_b.u_core'
-  164 |     wire signed [17:0] dot = dp0 + dp1 + dp2 + dp3;
+  220 |     wire signed [17:0] dot = dp0 + dp1 + dp2 + dp3;
       |                                  ^
                       ... For warning description see https://verilator.org/warn/WIDTHEXPAND?v=5.053
                       ... Use "/* verilator lint_off WIDTHEXPAND */" and lint_on around source to disable this message.
-%Warning-WIDTHEXPAND: mycore.v:164:34: Operator ADD expects 18 bits on the RHS, but RHS's VARREF 'dp1' generates 16 bits.
+%Warning-WIDTHEXPAND: mycore.v:220:34: Operator ADD expects 18 bits on the RHS, but RHS's VARREF 'dp1' generates 16 bits.
                                      : ... note: In instance 'soc_b.u_core'
-  164 |     wire signed [17:0] dot = dp0 + dp1 + dp2 + dp3;
+  220 |     wire signed [17:0] dot = dp0 + dp1 + dp2 + dp3;
       |                                  ^
-%Warning-WIDTHEXPAND: mycore.v:164:40: Operator ADD expects 18 bits on the RHS, but RHS's VARREF 'dp2' generates 16 bits.
+%Warning-WIDTHEXPAND: mycore.v:220:40: Operator ADD expects 18 bits on the RHS, but RHS's VARREF 'dp2' generates 16 bits.
                                      : ... note: In instance 'soc_b.u_core'
-  164 |     wire signed [17:0] dot = dp0 + dp1 + dp2 + dp3;
+  220 |     wire signed [17:0] dot = dp0 + dp1 + dp2 + dp3;
       |                                        ^
-%Warning-WIDTHEXPAND: mycore.v:164:46: Operator ADD expects 18 bits on the RHS, but RHS's VARREF 'dp3' generates 16 bits.
+%Warning-WIDTHEXPAND: mycore.v:220:46: Operator ADD expects 18 bits on the RHS, but RHS's VARREF 'dp3' generates 16 bits.
                                      : ... note: In instance 'soc_b.u_core'
-  164 |     wire signed [17:0] dot = dp0 + dp1 + dp2 + dp3;
+  220 |     wire signed [17:0] dot = dp0 + dp1 + dp2 + dp3;
       |                                              ^
 g++  -I.  -MMD -I/Users/v/tools/oss-cad-suite/share/verilator/include -I/Users/v/tools/oss-cad-suite/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -DVM_VPI=0 -faligned-new -fbracket-depth=4096 -fcf-protection=none -Xclang -fno-pch-timestamp -Qunused-arguments  -Wno-c++11-narrowing -Wno-constant-logical-operand -Wno-int-in-bool-context -Wno-non-pod-varargs -Wno-parentheses-equality -Wno-shadow -Wno-sign-compare  -Wno-tautological-compare -Wno-uninitialized -Wno-unnecessary-virtual-specifier -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-vla-cxx-extension  -DVM_PREFIX_INCLUDE="<Vsoc_b.h>"   -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1   -Os  -c -o sim_main_b.o ../sim_main_b.cpp
 g++ -Os  -I.  -MMD -I/Users/v/tools/oss-cad-suite/share/verilator/include -I/Users/v/tools/oss-cad-suite/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -DVM_VPI=0 -faligned-new -fbracket-depth=4096 -fcf-protection=none -Xclang -fno-pch-timestamp -Qunused-arguments  -Wno-c++11-narrowing -Wno-constant-logical-operand -Wno-int-in-bool-context -Wno-non-pod-varargs -Wno-parentheses-equality -Wno-shadow -Wno-sign-compare  -Wno-tautological-compare -Wno-uninitialized -Wno-unnecessary-virtual-specifier -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-vla-cxx-extension  -DVM_PREFIX_INCLUDE="<Vsoc_b.h>"   -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1   -c -o verilated.o /Users/v/tools/oss-cad-suite/share/verilator/include/verilated.cpp
@@ -22,7 +22,6 @@ g++ -Os  -I.  -MMD -I/Users/v/tools/oss-cad-suite/share/verilator/include -I/Use
 python3 /Users/v/tools/oss-cad-suite/share/verilator/bin/verilator_includer -DVL_INCLUDE_OPT=include Vsoc_b.cpp Vsoc_b___024root__0.cpp Vsoc_b___024root__Slow.cpp Vsoc_b___024root__0__Slow.cpp Vsoc_b__Syms__Slow.cpp > Vsoc_b__ALL.cpp
 g++ -Os  -I.  -MMD -I/Users/v/tools/oss-cad-suite/share/verilator/include -I/Users/v/tools/oss-cad-suite/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -DVM_VPI=0 -faligned-new -fbracket-depth=4096 -fcf-protection=none -Xclang -fno-pch-timestamp -Qunused-arguments  -Wno-c++11-narrowing -Wno-constant-logical-operand -Wno-int-in-bool-context -Wno-non-pod-varargs -Wno-parentheses-equality -Wno-shadow -Wno-sign-compare  -Wno-tautological-compare -Wno-uninitialized -Wno-unnecessary-virtual-specifier -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-vla-cxx-extension  -DVM_PREFIX_INCLUDE="<Vsoc_b.h>"   -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1   -c -o Vsoc_b__ALL.o Vsoc_b__ALL.cpp
 g++  -Wl,-U,__Z15vl_time_stamp64v,-U,__Z13sc_time_stampv,-U,_vlog_startup_routines   sim_main_b.o verilated.o verilated_threads.o Vsoc_b__ALL.a    -pthread -lpthread   -o ../Vsoc_b111
-rm Vsoc_b__ALL.verilator_deplist.tmp
 - V e r i l a t i o n   R e p o r t: Verilator 5.053 devel rev v5.052-448-g1272f7355 (mod)
-- Verilator: Built from 0.157 MB sources in 6 modules, into 0.189 MB in 5 C++ files needing 0.000 MB
-- Verilator: Walltime 14.164 s (elab=0.052, cvt=0.139, bld=13.893); cpu 0.218 s on 16 threads; allocated 14.113 MB
+- Verilator: Built from 0.169 MB sources in 6 modules, into 0.190 MB in 5 C++ files needing 0.000 MB
+- Verilator: Walltime 7.403 s (elab=0.027, cvt=0.073, bld=7.274); cpu 0.114 s on 16 threads; allocated 12.844 MB
