@@ -54,31 +54,100 @@ của M1-S không phụ thuộc dữ liệu.
 | B-V1 (mycore) | 1.459.993 | 911.920 | **548.073, hằng số cả 10 ảnh** | 0,375 |
 | B-V3 (mycore+DOT4+REQ) | 365.992 | 277.839 | **88.153, hằng số cả 10 ảnh** | 0,241 |
 
+Ở bảng này $N$ là `instret` **do firmware tự báo**, tức bao luôn 16 lệnh nằm giữa các cửa sổ đo; dùng để
+kiểm tính "hằng số" thì không sao, nhưng **không** dùng được để giải hệ ở mục 1.3 (xem cảnh báo ở đó).
+
 Dự đoán "hằng số" **đúng tuyệt đối cả ba cấu hình**. Và con số 0,849 của A-V0 là chính câu chuyện vi
 kiến trúc: **84,9 % chu kỳ của PicoRV32 không hoàn thành lệnh nào**.
 
 ### 1.3 Mô hình nghịch: suy ra thành phần lệnh mà KHÔNG cần mô phỏng
 
 Hai cấu hình chỉ khác nhau ở `FAST_ADDR` chạy **cùng một file `firmware.hex`** (đã kiểm: `rdinstret`
-khớp tuyệt đối, mục 1.2). Hai phương trình, hai ẩn:
+khớp tuyệt đối). Với $N$ là số lệnh **trong năm cửa sổ đo**, hai phương trình, hai ẩn:
 
 $$C_{\text{FA=1}} = N + n_{\text{mem}} + n_{\text{mul}}, \qquad
   C_{\text{FA=0}} = 2N + 2\,n_{\text{mem}} + n_{\text{mul}}$$
 
-| firmware | $N$ **[đo]** | $C_{\text{FA=1}}$ **[đo]** | $C_{\text{FA=0}}$ **[đo]** | $n_{\text{mem}}$ **[suy ra]** | $n_{\text{mul}}$ **[suy ra]** |
+Giải **từng ảnh** (không lấy trung vị của hai đại lượng khác nhau — xem cảnh báo dưới):
+
+| firmware | $N$ (ảnh 0) | $C_{\text{FA=1}}$ | $C_{\text{FA=0}}$ | $n_{\text{mem}}$ **[suy ra]** | $n_{\text{mul}}$ **[suy ra]** |
 |---|---:|---:|---:|---:|---:|
-| v0 (C thẳng) | 1.358.200 | 1.978.697 | 3.750.617 | **413.720** | **206.777** |
-| v1 (đã tối ưu) | 911.920 | 1.459.993 | 2.713.235 | **341.322** | **206.751** |
+| v0 (C thẳng) | 1.358.057 | 1.978.570 | 3.750.362 | **413.735** | **206.778** |
+| v1 (đã tối ưu) | 911.777 | 1.459.866 | 2.712.980 | **341.337** | **206.752** |
 
-**Phép kiểm chéo của lý thuyết.** Số phép nhân mỗi ảnh suy ra từ cấu trúc mô hình **[cấu trúc]**:
-192.064 MAC + 2 phép nhân cho mỗi lần requantize × (26·26·8 + 11·11·16 + 10) = 192.064 + 2·7.354 =
-**206.772**. So với **206.777** và **206.751** suy ra từ phép đo: lệch **5 và 21 lệnh trên 206 nghìn
-(0,01 %)**.
+**Phép kiểm K1.** ISS (bước S2) đếm trực tiếp $n_{\text{mem}}$ và $n_{\text{mul}}$ và cho **đúng các con số
+này trên cả 20 ảnh (2 firmware × 10 ảnh), khớp tuyệt đối**. Mô hình nghịch — chỉ từ bốn con số đo và
+bảng $\lambda$ đọc từ RTL — thay được cả một bộ mô phỏng.
 
-Mô hình được tham số hoá **chỉ từ RTL**, nhưng đảo được hai phép đo thành thành phần lệnh động khớp với
-cấu trúc toán học của mạng tới 0,01 % — **trước khi ISS tồn tại**. Đây là bằng chứng mạnh nhất cho tính
-đúng của dạng phương trình ở mục 1. ISS ở S2 phải tái tạo đúng các con số này; nếu lệch, ISS sai, không
-phải mô hình sai.
+**Phép kiểm chéo bằng cấu trúc mô hình** (không dùng phép đo nào):
+
+$$n_{\text{mul}} = \underbrace{192.064}_{\text{MAC}} + 2\underbrace{(5.408 + 1.936)}_{\text{số lần requantize}} = \mathbf{206.752}$$
+
+— **khớp chính xác** số của v1. Hai chi tiết mà chính phép đếm của ISS đã sửa lại suy đoán ban đầu:
+
+- `dense` có **đúng 4.000** phép nhân = đúng 4.000 MAC và **không** requantize: 10 logit giữ nguyên
+  int32, argmax lấy trực tiếp (xem `main.c`). Lúc đầu tôi cộng thừa $2\times10$ cho `dense`.
+- v0 nhiều hơn v1 **đúng 26** phép nhân, tất cả nằm trong `conv1` = **một phép nhân tính chỉ số cho mỗi
+  hàng đầu ra** (26 hàng). Đây là một trong những thứ mà tối ưu phần mềm A-V1 xoá đi bằng con trỏ chạy —
+  **đòn bẩy (i) của mục 2, đo được bằng số**.
+
+> **Cảnh báo phương pháp đã gặp thật.** Bản đầu của mục này giải hệ bằng $N$ mà *firmware tự báo*
+> (`rdinstret`), và lệch 16 lệnh. Nguyên nhân: `instret` của firmware bao luôn **16 lệnh nằm GIỮA** các
+> cửa sổ (8 lần `rdcycle` đóng/mở cửa sổ + các phép trừ `t1-t0`), còn $C$ thì chỉ cộng chu kỳ **trong**
+> cửa sổ. Trộn hai phạm vi khác nhau cho sai số 0,0012 % — nhỏ, nhưng là **sai hệ thống**. Thêm nữa, lấy
+> trung vị 10 ảnh **riêng cho từng đại lượng** rồi mới giải hệ cũng sinh lệch ±1, vì `pool1` có luồng điều
+> khiển phụ thuộc dữ liệu nên trung vị của $C$ và của $N$ có thể đến từ hai ảnh khác nhau. Quy tắc rút
+> ra: **giải hệ trên từng ảnh, trong cùng một phạm vi đo.**
+
+### 1.4 Bảng $\lambda$ của PicoRV32 — **hiệu chuẩn**, không đọc được từ RTL
+
+PicoRV32 chạy trên bus 2 chu kỳ của `feasibility/F5_soc/soc.v`, nên số chu kỳ mỗi lệnh không đọc trực
+tiếp ra được từ mã. Hiệu chuẩn bằng bình phương tối thiểu trên **số đã đo**: với mỗi (cấu hình, ảnh, lớp
+mạng), $\sum_c n_c\lambda_c = C_{\text{Verilator}}$ — **6 cấu hình × 10 ảnh × 5 lớp = 300 phương trình**,
+$n_c$ do ISS đếm chính xác. Lệnh: `./cdp iss --calibrate picorv32`.
+
+| lớp lệnh | $\lambda$ **[hiệu chuẩn]** | số lệnh trong hệ | giải thích tự nhất quán |
+|---|---:|---:|---|
+| alu | **5** | 17.043.172 | 3 chu kỳ lệnh + **2 chu kỳ bus nạp lệnh** |
+| shift | **5** | 3.332.220 | **= alu** ⟹ đúng với `BARREL_SHIFTER=1` |
+| branch không nhảy | **5** | 690.802 | như alu |
+| branch nhảy | **9** | 2.503.998 | + 4: nạp lệnh bị hủy rồi nạp lại đích |
+| jal | **5** | 60 | 3 + 2 |
+| jalr | **8** | 640 | 6 + 2 |
+| load | **9** | 11.465.680 | 5 + 2 (nạp lệnh) + 2 (truy cập dữ liệu) |
+| store | **9** | 708.120 | như load |
+| mul | **6** | 5.549.640 | 4 + 2 ⟹ đúng với `ENABLE_FAST_MUL=1` |
+| csr (`rdcycle`) | **5** | 300 | 3 + 2 |
+| DOT4 (qua PCPI) | **6** | 1.758.400 | alu + 1 chu kỳ bắt tay PCPI |
+| REQ (qua PCPI) | **6** | 73.440 | như DOT4 |
+| div | — | 0 | không xuất hiện (firmware không chia) |
+
+**Phần dư của phép khớp: đúng 0 trên cả 300 phương trình**, với $\lambda$ **nguyên**. Nghĩa là PicoRV32 +
+bus 2 chu kỳ **cũng** là một máy có $\lambda$ cố định theo lớp lệnh: mô hình ở mục 1 đúng cho cả hai lõi,
+chỉ khác là với PicoRV32 ta phải *đo ra* $\lambda$ thay vì *đọc ra*.
+
+Ba điểm đáng chú ý về phương pháp:
+
+1. **Phép hiệu chuẩn tự tìm lại tham số RTL mà nó không được cho biết.** $\lambda_{\text{shift}} =
+   \lambda_{\text{alu}}$ ứng với `BARREL_SHIFTER=1`, và $\lambda_{\text{mul}}=6$ ứng với
+   `ENABLE_FAST_MUL=1` — hai tham số nằm ở `feasibility/F5_soc/soc.v` dòng 85 và 88. Nếu $\lambda$ chỉ là
+   tham số khớp vô nghĩa thì không có lý do gì chúng rơi vào đúng các giá trị đó.
+2. **Mọi $\lambda$ đều có dạng "chu kỳ lệnh + 2 chu kỳ mỗi lần dùng bus".** Cột bên phải trong bảng là
+   cách đọc nhất quán duy nhất, và nó khớp với mô tả bus 2 chu kỳ trong `soc.v`. Chênh lệch giữa
+   $\lambda_{\text{load}}=9$ và $\lambda_{\text{alu}}=5$ đúng bằng 4 = hai lần giá bus — đây chính là
+   chỗ 84,9 % chu kỳ của A-V0 biến mất (mục 1.2).
+3. **Một chiều suy biến, và đã được gỡ bằng điều kiện nguyên.** Mọi cửa sổ đo chỉ có hai mẫu lệnh nhảy:
+   $(n_{\text{jal}},n_{\text{jalr}},n_{\text{csr}})=(0,2,1)$ cho bốn lớp thường, và $(3,4,1)$ cho `conv1`
+   của biến thể C1 (vì nó gọi thêm `conv1_prep`). Hai mẫu, ba ẩn ⟹ hệ chỉ cho
+
+   $$\lambda_{\text{csr}} + 2\lambda_{\text{jalr}} = 21, \qquad 3\lambda_{\text{jal}} + 2\lambda_{\text{jalr}} = 31$$
+
+   còn lại **một chiều tự do**. Vì $\lambda$ là số chu kỳ nên phải **nguyên và không âm**: điều kiện đó để
+   lại đúng ba nghiệm — $(\lambda_{\text{jal}},\lambda_{\text{jalr}},\lambda_{\text{csr}})$ = (5, 8, 5),
+   (7, 5, 11), (9, 2, 17). `cdp` chọn nghiệm **chuẩn nhỏ nhất** là (5, 8, 5), và đó cũng là nghiệm duy nhất
+   đọc được tự nhiên theo quy luật "chu kỳ lệnh + 2 chu kỳ bus" ở điểm 2. Vẫn phải ghi rõ: **đây là một
+   lựa chọn, không phải một phép đo**. Muốn chốt hẳn thì cần một phép đo vi mô có tỷ lệ
+   `jal`/`jalr`/`rdcycle` khác.
 
 ---
 
@@ -165,7 +234,9 @@ lùi** (SPEC 0.3).
    khi RTL giống hệt nhau (S1 vừa cho một ví dụ: +20 LUT4 của B-V1 đến từ khối REQ đã tắt).
 3. **Không có cache, không có dự đoán nhánh** trong thiết kế này — đó là lý do mô hình đếm lớp lệnh đủ
    chính xác để kỳ vọng khớp **tuyệt đối**. Mô hình này **không** chuyển sang lõi có cache mà không sửa.
-4. **PicoRV32 chỉ hiệu chuẩn.** $C_{\text{stall}}$ của nó phụ thuộc trạng thái bus, nên con số của nó là
-   thống kê; mọi kết luận "bằng tuyệt đối" chỉ áp cho `mycore`.
+4. **PicoRV32: $\lambda$ hiệu chuẩn, và còn một chiều suy biến đã phải chọn nghiệm.** Phần dư 0 nên
+   *dạng* mô hình đúng, nhưng $\lambda_{\text{jal}}, \lambda_{\text{jalr}}, \lambda_{\text{csr}}$ chỉ xác
+   định tới một chiều tự do (mục 1.4); `cdp` chọn nghiệm nguyên chuẩn nhỏ nhất. Dự báo cho ứng viên
+   **đổi số lời gọi hàm** trên PicoRV32 vì vậy kém tin cậy hơn phần còn lại.
 5. **Mục 1.3 giả định $n_{\text{div}}=0$** (firmware không dùng chia) và giả định cặp FA=1/FA=0 chạy đúng
    cùng một firmware — cả hai đã kiểm bằng `rdinstret` khớp tuyệt đối.

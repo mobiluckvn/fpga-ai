@@ -167,9 +167,17 @@ def build_parser() -> argparse.ArgumentParser:
         p = sub.add_parser(name, help=(mod.__doc__ or "").splitlines()[0])
         p.add_argument("--spec", default=None, help="đặc tả YAML")
         p.add_argument("rest", nargs="*")
-    p = sub.add_parser("iss", help="bộ mô phỏng tập lệnh (S2)")
-    p.add_argument("--spec", default=None)
-    p.add_argument("rest", nargs="*")
+    p = sub.add_parser("iss", help="ISS RV32IM + mô hình chu kỳ, đối chứng Verilator")
+    p.add_argument("--spec", default=None, help="đặc tả YAML")
+    p.add_argument("--target", default=None, help="tên cấu hình, vd B-V3")
+    p.add_argument("--all", action="store_true", help="chạy cả 14 cấu hình")
+    p.add_argument("--calibrate", default=None, metavar="LÕI",
+                   help="hiệu chuẩn mô hình chu kỳ (chỉ 'picorv32')")
+    p.add_argument("--pc-hist", action="store_true",
+                   help="đếm số lần thực thi theo từng địa chỉ lệnh (cho S3)")
+    p.add_argument("--check-k1", action="store_true",
+                   help="kiểm phép K1 của lý thuyết: mô hình nghịch vs số ISS đếm")
+    p.add_argument("--work", default="s1")
     return ap
 
 

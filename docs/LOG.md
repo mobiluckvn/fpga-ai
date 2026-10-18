@@ -2,6 +2,82 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — PIPELINE CDP bước S2 ĐẠT: ISS RV32IM + mô hình chu kỳ khớp TUYỆT ĐỐI cả 14 cấu hình
+
+Dựng bộ mô phỏng tập lệnh và mô hình chu kỳ — dụng cụ đo $n_c$ cho lý thuyết
+`docs/MO_HINH_CHI_PHI.md`. Tiêu chí của S2 chỉ yêu cầu PicoRV32 sai số ≤ 2 %; kết quả thực tế là
+**cả 14 cấu hình bằng tuyệt đối 0,0 %, từng lớp, từng ảnh**.
+
+### Tiêu chí ĐẠT của S2 và kết quả
+| # | Tiêu chí | Kết quả |
+|---|---|---|
+| 1 | CRC ISS = golden cho cả 14 | **ĐẠT** 14/14 (CRC32 cả 5 tensor × 10 ảnh) |
+| 2 | mycore: ISS = Verilator **tuyệt đối** từng lớp | **ĐẠT** 8/8 cấu hình |
+| 3 | PicoRV32: sai số từng lớp ≤ 2 % | **ĐẠT, vượt xa** — 6/6 **bằng tuyệt đối 0,0 %** |
+| 4 | Thời gian ISS ≤ 30 s mỗi ảnh | **ĐẠT** — 1,4–3,0 s/ảnh (~640k lệnh/s, Python thuần) |
+
+### Đã dựng
+- `cdp/iss/core.py`: RV32IM đầy đủ, CSR `cycle`/`instret`, MMIO đúng bản đồ `soc_b.v`. Nạp **đúng
+  file `firmware.hex`** mà RTL nạp, nên không có khâu dịch lại nào làm lệch được.
+- 14 lớp lệnh: `alu, shift, branch_taken, branch_nt, jal, jalr, load, store, mul, div, csr, misc,
+  custom_dot4, custom_req`. Tách `shift` khỏi `alu` và tách `jal`/`jalr` là **bắt buộc** (xem dưới).
+- `cdp/iss/ext/{dot4,req}.py`: ngữ nghĩa lấy đúng từ `mycore.v`. REQ đã kiểm **20.000/20.000 vector
+  ngẫu nhiên** khớp mô hình C trong `main.c` (`sat_rdhmul` + `rdiv_pot` + clamp).
+- `cdp/iss/timing/mycore.yaml`: λ **đọc từ RTL**, không hiệu chuẩn — alu/shift/branch/jal/jalr/csr = 1,
+  load/store = 2, mul/REQ = 2, div = 34, DOT4 = 1 (FAST_ADDR=1); FAST_ADDR=0 thì mọi lệnh +1 và mỗi
+  truy cập dữ liệu +1 nữa.
+- `cdp/iss/calibrate.py`: hiệu chuẩn PicoRV32 bằng bình phương tối thiểu trên **300 phương trình**
+  (6 cấu hình × 10 ảnh × 5 lớp), $n_c$ do ISS đếm, $C$ do Verilator đo.
+- Cửa sổ đo: ISS nhận ra các lần đọc `rdcycle` và ghép thành cửa sổ **đúng như firmware tự đo**, nên
+  đầu ra UART của ISS có y nguyên các dòng `M1S,*` và so sánh là so hai khối cùng định dạng.
+
+### λ hiệu chuẩn của PicoRV32: phần dư ĐÚNG 0, và λ đều NGUYÊN
+alu 5 · shift 5 · branch không nhảy 5 · branch nhảy 9 · jal 5 · jalr 8 · load 9 · store 9 · mul 6 ·
+csr 5 · DOT4 6 · REQ 6 (div không xuất hiện).
+
+Mọi λ đọc được nhất quán theo một quy luật duy nhất: **số chu kỳ lệnh + 2 chu kỳ cho mỗi lần dùng bus**
+(bus của `F5_soc/soc.v` tốn 2 chu kỳ mỗi truy cập). Chênh λ_load − λ_alu = 4 = đúng hai lần giá bus —
+đây chính là chỗ **84,9 % chu kỳ của A-V0** biến mất.
+
+**Phép hiệu chuẩn tự tìm lại hai tham số RTL mà nó không được cho biết**: λ_shift = λ_alu ứng với
+`BARREL_SHIFTER=1`, và λ_mul = 6 ứng với `ENABLE_FAST_MUL=1` (`feasibility/F5_soc/soc.v` dòng 85, 88).
+
+### Ba cái bẫy đã gặp và cách gỡ (đáng ghi vào luận văn)
+1. **Gộp `jal` với `jalr` làm λ ra phân số 6,2 — vô nghĩa vật lý.** Mọi cửa sổ đo có 2 lệnh nhảy, trừ
+   `conv1` của biến thể C1 có **7** (vì gọi thêm `conv1_prep`), nên λ gộp ra trung bình phân số. Tách
+   hai lớp thì hệ thành: λ_csr + 2λ_jalr = 21 và 3λ_jal + 2λ_jalr = 31.
+2. **Vẫn còn một chiều suy biến** (hai mẫu cửa sổ, ba ẩn). Gỡ bằng điều kiện λ phải **nguyên, không
+   âm**: còn đúng ba nghiệm, chọn nghiệm chuẩn nhỏ nhất (5, 8, 5) — cũng là nghiệm duy nhất đọc được
+   theo quy luật "+2 chu kỳ bus". Đã ghi rõ trong tài liệu: **đây là một lựa chọn, không phải một phép
+   đo.**
+3. **Làm tròn λ bằng `int()` cắt 8,6 → 8 làm mỗi cửa sổ thiếu 1 chu kỳ** → sai số 0,0026 %. Nhỏ nhưng là
+   sai hệ thống; đã sửa bằng tìm nghiệm nguyên đúng.
+
+### Phép kiểm K1 của lý thuyết: ĐẠT 20/20 ảnh
+`./cdp iss --check-k1`. Chỉ từ **bốn con số đo** + λ đọc từ RTL, giải hệ hai ẩn ra thành phần lệnh động:
+| firmware | n_mem suy ra | n_mem ISS đếm | n_mul suy ra | n_mul ISS đếm |
+|---|---:|---:|---:|---:|
+| v0 | 413.735 | **413.735** | 206.778 | **206.778** |
+| v1 | 341.337 | **341.337** | 206.752 | **206.752** |
+
+Kiểm chéo bằng cấu trúc mô hình, không dùng phép đo nào: 192.064 MAC + 2 × 7.344 lần requantize =
+**206.752** = đúng `n_mul` của v1.
+
+**Hai chỗ chính phép đếm của ISS đã SỬA LẠI suy đoán ban đầu của tôi** (ghi lại vì đúng tinh thần
+"công cụ tất định phán quyết"):
+- `dense` có **đúng 4.000** phép nhân = 4.000 MAC, **không** requantize: 10 logit giữ nguyên int32 và
+  argmax lấy trực tiếp. Bản lý thuyết đầu cộng thừa 2×10.
+- v0 nhiều hơn v1 **đúng 26** phép nhân, toàn bộ trong `conv1` = **một phép nhân tính chỉ số cho mỗi
+  hàng đầu ra** (26 hàng). Đó là một phần cụ thể của 1,45× mà tối ưu phần mềm A-V1 đã xoá.
+- Bản đầu của mô hình nghịch còn lệch 16 lệnh vì trộn hai phạm vi: `instret` firmware tự báo bao luôn
+  16 lệnh **giữa** các cửa sổ, còn $C$ chỉ cộng chu kỳ **trong** cửa sổ. Quy tắc rút ra: giải hệ **trên
+  từng ảnh, trong cùng một phạm vi**. Lấy trung vị riêng từng đại lượng rồi mới giải cũng sinh lệch ±1
+  vì `pool1` có luồng điều khiển phụ thuộc dữ liệu.
+
+### Việc tiếp theo
+S3: profile 3 tầng + phân tích ILP/DLP/byte-MAC/roofline. Đầu vào đã có: `n_c_theo_lop.csv`
+(14 cấu hình × 5 lớp mạng × 14 lớp lệnh) và lược sử thực thi theo địa chỉ lệnh (`--pc-hist`).
+
 ## 2026-10-18 — PIPELINE CDP bước S1: tái lập qua `cdp` ĐẠT trên Verilator và tổng hợp · bỏ đo kit
 
 Bọc hai Makefile và script có sẵn bằng `cdp`, rồi tái tạo ba cấu hình đã công bố (A-V0, B-V1, B-V3).

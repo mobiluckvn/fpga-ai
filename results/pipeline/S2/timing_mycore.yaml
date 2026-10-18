@@ -1,0 +1,45 @@
+# Mô hình chu kỳ của lõi mycore — ĐỌC TỪ RTL, không hiệu chuẩn.
+# Nguồn duy nhất: rtl/mycore/mycore.v (máy trạng thái S_FETCH/S_EXEC/S_MEM/S_MD/S_MEMW).
+# Lý thuyết: docs/MO_HINH_CHI_PHI.md mục 1.1.
+core: mycore
+derived_from: rtl/mycore/mycore.v
+deterministic: true          # kỳ vọng khớp Verilator TUYỆT ĐỐI
+note: >
+  mycore không đoán nhánh và không có hazard: địa chỉ lệnh kế tính xong trong cùng
+  chu kỳ S_EXEC, nên nhánh nhảy hay không nhảy đều hết đúng 1 chu kỳ. Chỉ load/store
+  (chiếm cổng bộ nhớ) và nhân/chia (qua S_MD) tốn thêm chu kỳ.
+profiles:
+  # FAST_ADDR=1: địa chỉ bộ nhớ là tổ hợp -> 1 chu kỳ/lệnh
+  fast_addr_1:
+    reset_cycles: 1          # S_FETCH đầu tiên sau reset
+    alu: 1                   # lui, auipc, op-imm, op (không nhân/chia, không dịch)
+    shift: 1                 # sll/srl/sra — mycore dịch trong 1 chu kỳ
+    branch_taken: 1          # KHÔNG có hình phạt rẽ nhánh
+    branch_nt: 1
+    jal: 1
+    jalr: 1
+    csr: 1
+    misc: 1                  # fence, fence.i = nop
+    load: 2                  # S_EXEC + S_MEM
+    store: 2                 # S_EXEC + S_MEM
+    mul: 2                   # S_EXEC + S_MD (md_cnt = 0)
+    div: 34                  # S_EXEC + 33 x S_MD (32 bước dịch-trừ + 1 chu kỳ ghi về)
+    custom_dot4: 1           # gắn thẳng tầng thực thi, ghi về cùng chu kỳ
+    custom_req: 2            # dùng lại bộ nhân -> đi qua S_MD như lệnh mul
+  # FAST_ADDR=0: ghi thanh ghi địa chỉ -> mọi lệnh +1 chu kỳ, mỗi truy cập dữ liệu +1 nữa
+  fast_addr_0:
+    reset_cycles: 1
+    alu: 2
+    shift: 2
+    branch_taken: 2
+    branch_nt: 2
+    jal: 2
+    jalr: 2
+    csr: 2
+    misc: 2
+    load: 4                  # S_EXEC + S_MEMW + S_MEM + S_FETCH
+    store: 4
+    mul: 3                   # S_EXEC + S_MD + S_FETCH
+    div: 35
+    custom_dot4: 2
+    custom_req: 3

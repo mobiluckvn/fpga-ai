@@ -1,0 +1,64 @@
+core: picorv32
+derived_from: hiệu chuẩn bình phương tối thiểu trên số đo Verilator
+deterministic: false
+note: 'PicoRV32 + bus 2 chu kỳ của feasibility/F5_soc/soc.v. lambda là giá trị HIỆU
+  DỤNG, không phải số chu kỳ cố định của một lệnh: bus và PCPI làm số chu kỳ phụ thuộc
+  trạng thái. Xem docs/MO_HINH_CHI_PHI.md mục 6.4.'
+calibration:
+  fitted_at: 2026-10-18T14:13:37+0700
+  configs:
+  - A-V0
+  - A-V1
+  - A-V2
+  - A-V1+DOT4
+  - A-V1+DOT4+C1
+  - A-V3
+  equations: 300
+  unknowns_fitted:
+  - alu
+  - shift
+  - branch_taken
+  - branch_nt
+  - jal
+  - jalr
+  - load
+  - store
+  - mul
+  - csr
+  - custom_dot4
+  - custom_req
+  unidentifiable_set_to_zero:
+  - div
+  - misc
+  fit_err_max_pct: 0.0
+  fit_err_mean_pct: 0.0
+  fit_err_median_pct: 0.0
+  reference_logs:
+  - experiment/m1s/v0/sim.log
+  - experiment/m1s/v1/sim.log
+  - experiment/m1s/v2/sim.log
+  - experiment/m1s/v1d/sim.log
+  - experiment/m1s/v1dc/sim.log
+  - experiment/m1s/v1dcr/sim.log
+degeneracy: 'Mọi cửa sổ đo chỉ có hai mẫu (jal=0, jalr=2, csr=1) và (jal=3, jalr=4,
+  csr=1), nên ba ẩn lambda[csr], lambda[jal], lambda[jalr] chỉ bị ràng buộc bởi hai
+  phương trình: lambda[csr] + 2*lambda[jalr] = 21 và 3*lambda[jal] + 2*lambda[jalr]
+  = 31. Còn một chiều tự do; nghiệm ghi ở đây là nghiệm NGUYÊN, không âm, phần dư
+  0, chuẩn nhỏ nhất. Xem docs/MO_HINH_CHI_PHI.md mục 1.4.'
+profiles:
+  default:
+    reset_cycles: 0
+    alu: 5
+    shift: 5
+    branch_taken: 9
+    branch_nt: 5
+    jal: 5
+    jalr: 8
+    load: 9
+    store: 9
+    mul: 6
+    div: 0
+    csr: 5
+    misc: 0
+    custom_dot4: 6
+    custom_req: 6

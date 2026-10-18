@@ -1,0 +1,69 @@
+[cây bóng] pipeline/work/s1 (dùng lại)
+# hiệu chuẩn mô hình chu kỳ PicoRV32 trên 6 cấu hình: A-V0, A-V1, A-V2, A-V1+DOT4, A-V1+DOT4+C1, A-V3
+    A-V0: đếm n_c bằng ISS…
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v0   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v0 → rc=0 · 0.1 s · log logs/make-fw-v0.log
+    firmware v0: .text 18,684 + .data 0 + .bss 9,136 = 27,820/65.536 byte (42.4 %)
+    sha256(firmware.hex) = 89383bb291c0edac…
+      10 ảnh × 5 lớp · 19,278,880 lệnh · 29.5 s
+    A-V1: đếm n_c bằng ISS…
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1 → rc=0 · 0.1 s · log logs/make-fw-v1.log
+    firmware v1: .text 20,364 + .data 0 + .bss 9,136 = 29,500/65.536 byte (45.0 %)
+    sha256(firmware.hex) = 88c5a4f059e851a8…
+      10 ảnh × 5 lớp · 14,815,680 lệnh · 22.4 s
+    A-V2: đếm n_c bằng ISS…
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v2   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v2 → rc=0 · 0.1 s · log logs/make-fw-v2.log
+    firmware v2: .text 18,580 + .data 0 + .bss 9,136 = 27,716/65.536 byte (42.3 %)
+    sha256(firmware.hex) = db5119bab5318b03…
+      10 ảnh × 5 lớp · 14,827,330 lệnh · 23.6 s
+    A-V1+DOT4: đếm n_c bằng ISS…
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1d   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1d → rc=0 · 0.1 s · log logs/make-fw-v1d.log
+    firmware v1d: .text 18,884 + .data 0 + .bss 9,136 = 28,020/65.536 byte (42.8 %)
+    sha256(firmware.hex) = 352eab9180818207…
+      10 ảnh × 5 lớp · 10,304,250 lệnh · 16.6 s
+    A-V1+DOT4+C1: đếm n_c bằng ISS…
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1dc   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1dc → rc=0 · 0.1 s · log logs/make-fw-v1dc.log
+    firmware v1dc: .text 19,776 + .data 0 + .bss 12,820 = 32,596/65.536 byte (49.7 %)
+    sha256(firmware.hex) = 2e851973bf55b8dc…
+      10 ảnh × 5 lớp · 10,071,398 lệnh · 16.8 s
+    A-V3: đếm n_c bằng ISS…
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1dcr   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1dcr → rc=0 · 0.1 s · log logs/make-fw-v1dcr.log
+    firmware v1dcr: .text 19,040 + .data 0 + .bss 12,816 = 31,856/65.536 byte (48.6 %)
+    sha256(firmware.hex) = 7310380cf8df6c9e…
+      10 ảnh × 5 lớp · 8,486,261 lệnh · 14.4 s
+    hệ: 300 phương trình × 14 ẩn
+    không gian null 1 chiều -> lambda[csr] không xác định riêng; quét nghiệm nguyên
+    nghiệm NGUYÊN, phần dư 0, chuẩn nhỏ nhất: alu=5, shift=5, branch_taken=9, branch_nt=5, jal=5, jalr=8, load=9, store=9, mul=6, csr=5, custom_dot4=6, custom_req=6
+
+    | lớp lệnh | lambda hiệu chuẩn | tổng số lệnh (300 dòng) |
+    |---|---:|---:|
+    | alu | 5.000 | 17,043,172 |
+    | shift | 5.000 | 3,332,220 |
+    | branch_taken | 9.000 | 2,503,998 |
+    | branch_nt | 5.000 | 690,802 |
+    | jal | 5.000 | 60 |
+    | jalr | 8.000 | 640 |
+    | load | 9.000 | 11,465,680 |
+    | store | 9.000 | 708,120 |
+    | mul | 6.000 | 5,549,640 |
+    | div | — (không xuất hiện) | 0 |
+    | csr | 5.000 | 300 |
+    | misc | — (không xuất hiện) | 0 |
+    | custom_dot4 | 6.000 | 1,758,400 |
+    | custom_req | 6.000 | 73,440 |
+
+    sai số của chính phép khớp: lớn nhất 0.000 % · trung bình 0.000 % · trung vị 0.000 %
+      tệ nhất: A-V3 ảnh 9 dense: mô hình 39,052 so với đo 39,052 (0.00 %)
+      tệ nhất: A-V3 ảnh 9 pool2: mô hình 65,939 so với đo 65,939 (0.00 %)
+      tệ nhất: A-V3 ảnh 9 conv2: mô hình 819,160 so với đo 819,160 (0.00 %)
+      tệ nhất: A-V3 ảnh 9 pool1: mô hình 225,649 so với đo 225,649 (0.00 %)
+      tệ nhất: A-V3 ảnh 9 conv1: mô hình 692,464 so với đo 692,464 (0.00 %)
+
+    đã ghi pipeline/cdp/iss/timing/picorv32.yaml
+=> ĐẠT (tiêu chí S2: sai số từng lớp ≤ 2 %)
+[run 20261018-141131-iss] ok · 125.1 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-141131-iss

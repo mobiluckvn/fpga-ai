@@ -1,0 +1,21 @@
+[cây bóng] pipeline/work/s1 (dùng lại)
+# Phép kiểm K1 — mô hình nghịch so với số ISS đếm được
+  C(FA=1) = N + n_mem + n_mul ·  C(FA=0) = 2N + 2 n_mem + n_mul
+
+  firmware v0 (B-V0 / B-V0r)
+     ảnh         N    C(FA=1)    C(FA=0)  n_mem suy ra  n_mem ISS  n_mul suy ra  n_mul ISS  
+       0 1,358,057  1,978,570  3,750,362       413,735    413,735       206,778    206,778  KHỚP
+       1 1,358,209  1,978,722  3,750,666       413,735    413,735       206,778    206,778  KHỚP
+    … 8 ảnh còn lại: tất cả KHỚP
+
+  firmware v1 (B-V1 / B-V1r)
+     ảnh         N    C(FA=1)    C(FA=0)  n_mem suy ra  n_mem ISS  n_mul suy ra  n_mul ISS  
+       0   911,777  1,459,866  2,712,980       341,337    341,337       206,752    206,752  KHỚP
+       1   911,929  1,460,018  2,713,284       341,337    341,337       206,752    206,752  KHỚP
+    … 8 ảnh còn lại: tất cả KHỚP
+
+=> ĐẠT: 20/20 ảnh khớp tuyệt đối
+
+   kiểm chéo bằng cấu trúc: 192.064 MAC + 2×7.344 lần requantize = 206.752
+   n_mul của v1 (ISS)      : 206.752 (KHỚP CHÍNH XÁC)
+[run 20261018-142555-iss] ok · 105.9 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-142555-iss

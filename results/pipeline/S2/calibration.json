@@ -1,0 +1,2422 @@
+{
+  "lambda": {
+    "alu": 5.0,
+    "shift": 5.0,
+    "branch_taken": 9.0,
+    "branch_nt": 5.0,
+    "jal": 5.0,
+    "jalr": 8.0,
+    "load": 9.0,
+    "store": 9.0,
+    "mul": 6.0,
+    "div": 0.0,
+    "csr": 5.0,
+    "misc": 0.0,
+    "custom_dot4": 6.0,
+    "custom_req": 6.0
+  },
+  "err_max_pct": 0.0,
+  "err_mean_pct": 0.0,
+  "rows": [
+    {
+      "target": "A-V0",
+      "img": 0,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 0,
+      "layer": "pool1",
+      "measured": 225510.0,
+      "model": 225510.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 0,
+      "layer": "conv2",
+      "measured": 5011844.0,
+      "model": 5011844.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 0,
+      "layer": "pool2",
+      "measured": 65906.0,
+      "model": 65906.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 0,
+      "layer": "dense",
+      "measured": 192552.0,
+      "model": 192552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 1,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 1,
+      "layer": "pool1",
+      "measured": 225644.0,
+      "model": 225644.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 1,
+      "layer": "conv2",
+      "measured": 5011844.0,
+      "model": 5011844.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 1,
+      "layer": "pool2",
+      "measured": 65924.0,
+      "model": 65924.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 1,
+      "layer": "dense",
+      "measured": 192552.0,
+      "model": 192552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 2,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 2,
+      "layer": "pool1",
+      "measured": 225415.0,
+      "model": 225415.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 2,
+      "layer": "conv2",
+      "measured": 5011844.0,
+      "model": 5011844.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 2,
+      "layer": "pool2",
+      "measured": 65813.0,
+      "model": 65813.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 2,
+      "layer": "dense",
+      "measured": 192552.0,
+      "model": 192552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 3,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 3,
+      "layer": "pool1",
+      "measured": 225693.0,
+      "model": 225693.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 3,
+      "layer": "conv2",
+      "measured": 5011844.0,
+      "model": 5011844.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 3,
+      "layer": "pool2",
+      "measured": 65937.0,
+      "model": 65937.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 3,
+      "layer": "dense",
+      "measured": 192552.0,
+      "model": 192552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 4,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 4,
+      "layer": "pool1",
+      "measured": 225580.0,
+      "model": 225580.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 4,
+      "layer": "conv2",
+      "measured": 5011844.0,
+      "model": 5011844.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 4,
+      "layer": "pool2",
+      "measured": 65941.0,
+      "model": 65941.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 4,
+      "layer": "dense",
+      "measured": 192552.0,
+      "model": 192552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 5,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 5,
+      "layer": "pool1",
+      "measured": 225441.0,
+      "model": 225441.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 5,
+      "layer": "conv2",
+      "measured": 5011844.0,
+      "model": 5011844.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 5,
+      "layer": "pool2",
+      "measured": 65815.0,
+      "model": 65815.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 5,
+      "layer": "dense",
+      "measured": 192552.0,
+      "model": 192552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 6,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 6,
+      "layer": "pool1",
+      "measured": 225621.0,
+      "model": 225621.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 6,
+      "layer": "conv2",
+      "measured": 5011844.0,
+      "model": 5011844.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 6,
+      "layer": "pool2",
+      "measured": 65945.0,
+      "model": 65945.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 6,
+      "layer": "dense",
+      "measured": 192552.0,
+      "model": 192552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 7,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 7,
+      "layer": "pool1",
+      "measured": 225534.0,
+      "model": 225534.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 7,
+      "layer": "conv2",
+      "measured": 5011844.0,
+      "model": 5011844.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 7,
+      "layer": "pool2",
+      "measured": 65891.0,
+      "model": 65891.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 7,
+      "layer": "dense",
+      "measured": 192552.0,
+      "model": 192552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 8,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 8,
+      "layer": "pool1",
+      "measured": 225661.0,
+      "model": 225661.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 8,
+      "layer": "conv2",
+      "measured": 5011844.0,
+      "model": 5011844.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 8,
+      "layer": "pool2",
+      "measured": 65918.0,
+      "model": 65918.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 8,
+      "layer": "dense",
+      "measured": 192552.0,
+      "model": 192552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 9,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 9,
+      "layer": "pool1",
+      "measured": 225649.0,
+      "model": 225649.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 9,
+      "layer": "conv2",
+      "measured": 5011844.0,
+      "model": 5011844.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 9,
+      "layer": "pool2",
+      "measured": 65939.0,
+      "model": 65939.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V0",
+      "img": 9,
+      "layer": "dense",
+      "measured": 192552.0,
+      "model": 192552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 0,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 0,
+      "layer": "pool1",
+      "measured": 225510.0,
+      "model": 225510.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 0,
+      "layer": "conv2",
+      "measured": 4199609.0,
+      "model": 4199609.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 0,
+      "layer": "pool2",
+      "measured": 65906.0,
+      "model": 65906.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 0,
+      "layer": "dense",
+      "measured": 126224.0,
+      "model": 126224.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 1,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 1,
+      "layer": "pool1",
+      "measured": 225644.0,
+      "model": 225644.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 1,
+      "layer": "conv2",
+      "measured": 4199609.0,
+      "model": 4199609.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 1,
+      "layer": "pool2",
+      "measured": 65924.0,
+      "model": 65924.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 1,
+      "layer": "dense",
+      "measured": 126224.0,
+      "model": 126224.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 2,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 2,
+      "layer": "pool1",
+      "measured": 225415.0,
+      "model": 225415.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 2,
+      "layer": "conv2",
+      "measured": 4199609.0,
+      "model": 4199609.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 2,
+      "layer": "pool2",
+      "measured": 65813.0,
+      "model": 65813.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 2,
+      "layer": "dense",
+      "measured": 126224.0,
+      "model": 126224.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 3,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 3,
+      "layer": "pool1",
+      "measured": 225693.0,
+      "model": 225693.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 3,
+      "layer": "conv2",
+      "measured": 4199609.0,
+      "model": 4199609.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 3,
+      "layer": "pool2",
+      "measured": 65937.0,
+      "model": 65937.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 3,
+      "layer": "dense",
+      "measured": 126224.0,
+      "model": 126224.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 4,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 4,
+      "layer": "pool1",
+      "measured": 225580.0,
+      "model": 225580.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 4,
+      "layer": "conv2",
+      "measured": 4199609.0,
+      "model": 4199609.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 4,
+      "layer": "pool2",
+      "measured": 65941.0,
+      "model": 65941.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 4,
+      "layer": "dense",
+      "measured": 126224.0,
+      "model": 126224.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 5,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 5,
+      "layer": "pool1",
+      "measured": 225441.0,
+      "model": 225441.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 5,
+      "layer": "conv2",
+      "measured": 4199609.0,
+      "model": 4199609.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 5,
+      "layer": "pool2",
+      "measured": 65815.0,
+      "model": 65815.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 5,
+      "layer": "dense",
+      "measured": 126224.0,
+      "model": 126224.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 6,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 6,
+      "layer": "pool1",
+      "measured": 225621.0,
+      "model": 225621.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 6,
+      "layer": "conv2",
+      "measured": 4199609.0,
+      "model": 4199609.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 6,
+      "layer": "pool2",
+      "measured": 65945.0,
+      "model": 65945.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 6,
+      "layer": "dense",
+      "measured": 126224.0,
+      "model": 126224.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 7,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 7,
+      "layer": "pool1",
+      "measured": 225534.0,
+      "model": 225534.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 7,
+      "layer": "conv2",
+      "measured": 4199609.0,
+      "model": 4199609.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 7,
+      "layer": "pool2",
+      "measured": 65891.0,
+      "model": 65891.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 7,
+      "layer": "dense",
+      "measured": 126224.0,
+      "model": 126224.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 8,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 8,
+      "layer": "pool1",
+      "measured": 225661.0,
+      "model": 225661.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 8,
+      "layer": "conv2",
+      "measured": 4199609.0,
+      "model": 4199609.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 8,
+      "layer": "pool2",
+      "measured": 65918.0,
+      "model": 65918.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 8,
+      "layer": "dense",
+      "measured": 126224.0,
+      "model": 126224.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 9,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 9,
+      "layer": "pool1",
+      "measured": 225649.0,
+      "model": 225649.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 9,
+      "layer": "conv2",
+      "measured": 4199609.0,
+      "model": 4199609.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 9,
+      "layer": "pool2",
+      "measured": 65939.0,
+      "model": 65939.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1",
+      "img": 9,
+      "layer": "dense",
+      "measured": 126224.0,
+      "model": 126224.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 0,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 0,
+      "layer": "pool1",
+      "measured": 225510.0,
+      "model": 225510.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 0,
+      "layer": "conv2",
+      "measured": 1926185.0,
+      "model": 1926185.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 0,
+      "layer": "pool2",
+      "measured": 65906.0,
+      "model": 65906.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 0,
+      "layer": "dense",
+      "measured": 48552.0,
+      "model": 48552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 1,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 1,
+      "layer": "pool1",
+      "measured": 225644.0,
+      "model": 225644.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 1,
+      "layer": "conv2",
+      "measured": 1926185.0,
+      "model": 1926185.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 1,
+      "layer": "pool2",
+      "measured": 65924.0,
+      "model": 65924.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 1,
+      "layer": "dense",
+      "measured": 48552.0,
+      "model": 48552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 2,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 2,
+      "layer": "pool1",
+      "measured": 225415.0,
+      "model": 225415.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 2,
+      "layer": "conv2",
+      "measured": 1926185.0,
+      "model": 1926185.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 2,
+      "layer": "pool2",
+      "measured": 65813.0,
+      "model": 65813.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 2,
+      "layer": "dense",
+      "measured": 48552.0,
+      "model": 48552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 3,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 3,
+      "layer": "pool1",
+      "measured": 225693.0,
+      "model": 225693.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 3,
+      "layer": "conv2",
+      "measured": 1926185.0,
+      "model": 1926185.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 3,
+      "layer": "pool2",
+      "measured": 65937.0,
+      "model": 65937.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 3,
+      "layer": "dense",
+      "measured": 48552.0,
+      "model": 48552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 4,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 4,
+      "layer": "pool1",
+      "measured": 225580.0,
+      "model": 225580.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 4,
+      "layer": "conv2",
+      "measured": 1926185.0,
+      "model": 1926185.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 4,
+      "layer": "pool2",
+      "measured": 65941.0,
+      "model": 65941.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 4,
+      "layer": "dense",
+      "measured": 48552.0,
+      "model": 48552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 5,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 5,
+      "layer": "pool1",
+      "measured": 225441.0,
+      "model": 225441.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 5,
+      "layer": "conv2",
+      "measured": 1926185.0,
+      "model": 1926185.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 5,
+      "layer": "pool2",
+      "measured": 65815.0,
+      "model": 65815.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 5,
+      "layer": "dense",
+      "measured": 48552.0,
+      "model": 48552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 6,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 6,
+      "layer": "pool1",
+      "measured": 225621.0,
+      "model": 225621.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 6,
+      "layer": "conv2",
+      "measured": 1926185.0,
+      "model": 1926185.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 6,
+      "layer": "pool2",
+      "measured": 65945.0,
+      "model": 65945.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 6,
+      "layer": "dense",
+      "measured": 48552.0,
+      "model": 48552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 7,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 7,
+      "layer": "pool1",
+      "measured": 225534.0,
+      "model": 225534.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 7,
+      "layer": "conv2",
+      "measured": 1926185.0,
+      "model": 1926185.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 7,
+      "layer": "pool2",
+      "measured": 65891.0,
+      "model": 65891.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 7,
+      "layer": "dense",
+      "measured": 48552.0,
+      "model": 48552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 8,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 8,
+      "layer": "pool1",
+      "measured": 225661.0,
+      "model": 225661.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 8,
+      "layer": "conv2",
+      "measured": 1926185.0,
+      "model": 1926185.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 8,
+      "layer": "pool2",
+      "measured": 65918.0,
+      "model": 65918.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 8,
+      "layer": "dense",
+      "measured": 48552.0,
+      "model": 48552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 9,
+      "layer": "conv1",
+      "measured": 3491721.0,
+      "model": 3491721.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 9,
+      "layer": "pool1",
+      "measured": 225649.0,
+      "model": 225649.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 9,
+      "layer": "conv2",
+      "measured": 1926185.0,
+      "model": 1926185.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 9,
+      "layer": "pool2",
+      "measured": 65939.0,
+      "model": 65939.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V2",
+      "img": 9,
+      "layer": "dense",
+      "measured": 48552.0,
+      "model": 48552.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 0,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 0,
+      "layer": "pool1",
+      "measured": 225510.0,
+      "model": 225510.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 0,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 0,
+      "layer": "pool2",
+      "measured": 65906.0,
+      "model": 65906.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 0,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 1,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 1,
+      "layer": "pool1",
+      "measured": 225644.0,
+      "model": 225644.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 1,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 1,
+      "layer": "pool2",
+      "measured": 65924.0,
+      "model": 65924.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 1,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 2,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 2,
+      "layer": "pool1",
+      "measured": 225415.0,
+      "model": 225415.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 2,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 2,
+      "layer": "pool2",
+      "measured": 65813.0,
+      "model": 65813.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 2,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 3,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 3,
+      "layer": "pool1",
+      "measured": 225693.0,
+      "model": 225693.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 3,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 3,
+      "layer": "pool2",
+      "measured": 65937.0,
+      "model": 65937.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 3,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 4,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 4,
+      "layer": "pool1",
+      "measured": 225580.0,
+      "model": 225580.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 4,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 4,
+      "layer": "pool2",
+      "measured": 65941.0,
+      "model": 65941.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 4,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 5,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 5,
+      "layer": "pool1",
+      "measured": 225441.0,
+      "model": 225441.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 5,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 5,
+      "layer": "pool2",
+      "measured": 65815.0,
+      "model": 65815.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 5,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 6,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 6,
+      "layer": "pool1",
+      "measured": 225621.0,
+      "model": 225621.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 6,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 6,
+      "layer": "pool2",
+      "measured": 65945.0,
+      "model": 65945.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 6,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 7,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 7,
+      "layer": "pool1",
+      "measured": 225534.0,
+      "model": 225534.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 7,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 7,
+      "layer": "pool2",
+      "measured": 65891.0,
+      "model": 65891.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 7,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 8,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 8,
+      "layer": "pool1",
+      "measured": 225661.0,
+      "model": 225661.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 8,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 8,
+      "layer": "pool2",
+      "measured": 65918.0,
+      "model": 65918.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 8,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 9,
+      "layer": "conv1",
+      "measured": 1600258.0,
+      "model": 1600258.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 9,
+      "layer": "pool1",
+      "measured": 225649.0,
+      "model": 225649.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 9,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 9,
+      "layer": "pool2",
+      "measured": 65939.0,
+      "model": 65939.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4",
+      "img": 9,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 0,
+      "layer": "conv1",
+      "measured": 1133668.0,
+      "model": 1133668.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 0,
+      "layer": "pool1",
+      "measured": 225510.0,
+      "model": 225510.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 0,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 0,
+      "layer": "pool2",
+      "measured": 65906.0,
+      "model": 65906.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 0,
+      "layer": "dense",
+      "measured": 39057.0,
+      "model": 39057.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 1,
+      "layer": "conv1",
+      "measured": 1133668.0,
+      "model": 1133668.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 1,
+      "layer": "pool1",
+      "measured": 225644.0,
+      "model": 225644.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 1,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 1,
+      "layer": "pool2",
+      "measured": 65924.0,
+      "model": 65924.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 1,
+      "layer": "dense",
+      "measured": 39057.0,
+      "model": 39057.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 2,
+      "layer": "conv1",
+      "measured": 1133668.0,
+      "model": 1133668.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 2,
+      "layer": "pool1",
+      "measured": 225415.0,
+      "model": 225415.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 2,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 2,
+      "layer": "pool2",
+      "measured": 65813.0,
+      "model": 65813.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 2,
+      "layer": "dense",
+      "measured": 39057.0,
+      "model": 39057.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 3,
+      "layer": "conv1",
+      "measured": 1133668.0,
+      "model": 1133668.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 3,
+      "layer": "pool1",
+      "measured": 225693.0,
+      "model": 225693.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 3,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 3,
+      "layer": "pool2",
+      "measured": 65937.0,
+      "model": 65937.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 3,
+      "layer": "dense",
+      "measured": 39057.0,
+      "model": 39057.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 4,
+      "layer": "conv1",
+      "measured": 1133668.0,
+      "model": 1133668.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 4,
+      "layer": "pool1",
+      "measured": 225580.0,
+      "model": 225580.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 4,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 4,
+      "layer": "pool2",
+      "measured": 65941.0,
+      "model": 65941.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 4,
+      "layer": "dense",
+      "measured": 39057.0,
+      "model": 39057.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 5,
+      "layer": "conv1",
+      "measured": 1133668.0,
+      "model": 1133668.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 5,
+      "layer": "pool1",
+      "measured": 225441.0,
+      "model": 225441.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 5,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 5,
+      "layer": "pool2",
+      "measured": 65815.0,
+      "model": 65815.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 5,
+      "layer": "dense",
+      "measured": 39057.0,
+      "model": 39057.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 6,
+      "layer": "conv1",
+      "measured": 1133668.0,
+      "model": 1133668.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 6,
+      "layer": "pool1",
+      "measured": 225621.0,
+      "model": 225621.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 6,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 6,
+      "layer": "pool2",
+      "measured": 65945.0,
+      "model": 65945.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 6,
+      "layer": "dense",
+      "measured": 39057.0,
+      "model": 39057.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 7,
+      "layer": "conv1",
+      "measured": 1133668.0,
+      "model": 1133668.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 7,
+      "layer": "pool1",
+      "measured": 225534.0,
+      "model": 225534.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 7,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 7,
+      "layer": "pool2",
+      "measured": 65891.0,
+      "model": 65891.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 7,
+      "layer": "dense",
+      "measured": 39057.0,
+      "model": 39057.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 8,
+      "layer": "conv1",
+      "measured": 1133668.0,
+      "model": 1133668.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 8,
+      "layer": "pool1",
+      "measured": 225661.0,
+      "model": 225661.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 8,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 8,
+      "layer": "pool2",
+      "measured": 65918.0,
+      "model": 65918.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 8,
+      "layer": "dense",
+      "measured": 39057.0,
+      "model": 39057.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 9,
+      "layer": "conv1",
+      "measured": 1133668.0,
+      "model": 1133668.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 9,
+      "layer": "pool1",
+      "measured": 225649.0,
+      "model": 225649.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 9,
+      "layer": "conv2",
+      "measured": 986226.0,
+      "model": 986226.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 9,
+      "layer": "pool2",
+      "measured": 65939.0,
+      "model": 65939.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V1+DOT4+C1",
+      "img": 9,
+      "layer": "dense",
+      "measured": 39057.0,
+      "model": 39057.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 0,
+      "layer": "conv1",
+      "measured": 692464.0,
+      "model": 692464.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 0,
+      "layer": "pool1",
+      "measured": 225510.0,
+      "model": 225510.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 0,
+      "layer": "conv2",
+      "measured": 819160.0,
+      "model": 819160.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 0,
+      "layer": "pool2",
+      "measured": 65906.0,
+      "model": 65906.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 0,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 1,
+      "layer": "conv1",
+      "measured": 692464.0,
+      "model": 692464.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 1,
+      "layer": "pool1",
+      "measured": 225644.0,
+      "model": 225644.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 1,
+      "layer": "conv2",
+      "measured": 819160.0,
+      "model": 819160.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 1,
+      "layer": "pool2",
+      "measured": 65924.0,
+      "model": 65924.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 1,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 2,
+      "layer": "conv1",
+      "measured": 692464.0,
+      "model": 692464.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 2,
+      "layer": "pool1",
+      "measured": 225415.0,
+      "model": 225415.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 2,
+      "layer": "conv2",
+      "measured": 819160.0,
+      "model": 819160.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 2,
+      "layer": "pool2",
+      "measured": 65813.0,
+      "model": 65813.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 2,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 3,
+      "layer": "conv1",
+      "measured": 692464.0,
+      "model": 692464.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 3,
+      "layer": "pool1",
+      "measured": 225693.0,
+      "model": 225693.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 3,
+      "layer": "conv2",
+      "measured": 819160.0,
+      "model": 819160.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 3,
+      "layer": "pool2",
+      "measured": 65937.0,
+      "model": 65937.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 3,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 4,
+      "layer": "conv1",
+      "measured": 692464.0,
+      "model": 692464.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 4,
+      "layer": "pool1",
+      "measured": 225580.0,
+      "model": 225580.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 4,
+      "layer": "conv2",
+      "measured": 819160.0,
+      "model": 819160.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 4,
+      "layer": "pool2",
+      "measured": 65941.0,
+      "model": 65941.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 4,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 5,
+      "layer": "conv1",
+      "measured": 692464.0,
+      "model": 692464.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 5,
+      "layer": "pool1",
+      "measured": 225441.0,
+      "model": 225441.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 5,
+      "layer": "conv2",
+      "measured": 819160.0,
+      "model": 819160.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 5,
+      "layer": "pool2",
+      "measured": 65815.0,
+      "model": 65815.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 5,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 6,
+      "layer": "conv1",
+      "measured": 692464.0,
+      "model": 692464.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 6,
+      "layer": "pool1",
+      "measured": 225621.0,
+      "model": 225621.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 6,
+      "layer": "conv2",
+      "measured": 819160.0,
+      "model": 819160.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 6,
+      "layer": "pool2",
+      "measured": 65945.0,
+      "model": 65945.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 6,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 7,
+      "layer": "conv1",
+      "measured": 692464.0,
+      "model": 692464.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 7,
+      "layer": "pool1",
+      "measured": 225534.0,
+      "model": 225534.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 7,
+      "layer": "conv2",
+      "measured": 819160.0,
+      "model": 819160.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 7,
+      "layer": "pool2",
+      "measured": 65891.0,
+      "model": 65891.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 7,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 8,
+      "layer": "conv1",
+      "measured": 692464.0,
+      "model": 692464.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 8,
+      "layer": "pool1",
+      "measured": 225661.0,
+      "model": 225661.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 8,
+      "layer": "conv2",
+      "measured": 819160.0,
+      "model": 819160.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 8,
+      "layer": "pool2",
+      "measured": 65918.0,
+      "model": 65918.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 8,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 9,
+      "layer": "conv1",
+      "measured": 692464.0,
+      "model": 692464.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 9,
+      "layer": "pool1",
+      "measured": 225649.0,
+      "model": 225649.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 9,
+      "layer": "conv2",
+      "measured": 819160.0,
+      "model": 819160.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 9,
+      "layer": "pool2",
+      "measured": 65939.0,
+      "model": 65939.0,
+      "err_pct": 0.0
+    },
+    {
+      "target": "A-V3",
+      "img": 9,
+      "layer": "dense",
+      "measured": 39052.0,
+      "model": 39052.0,
+      "err_pct": 0.0
+    }
+  ]
+}

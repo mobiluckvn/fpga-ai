@@ -1,0 +1,231 @@
+[cây bóng] pipeline/work/s1 (dùng lại)
+
+## A-V0 (PicoRV32) · firmware v0
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v0   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v0 → rc=0 · 0.1 s · log logs/make-fw-v0.log
+    firmware v0: .text 18,684 + .data 0 + .bss 9,136 = 27,820/65.536 byte (42.4 %)
+    sha256(firmware.hex) = 89383bb291c0edac…
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 19.279.680 lệnh · 29.4 s (655k lệnh/s)
+
+    biến thể firmware tự báo : A-V0 (mong đợi A-V0)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 8.987.660 / 8.987.660  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: sai số ≤ 2 %)
+
+## A-V1 (PicoRV32) · firmware v1
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1 → rc=0 · 0.1 s · log logs/make-fw-v1.log
+    firmware v1: .text 20,364 + .data 0 + .bss 9,136 = 29,500/65.536 byte (45.0 %)
+    sha256(firmware.hex) = 88c5a4f059e851a8…
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 14.816.680 lệnh · 22.5 s (659k lệnh/s)
+
+    biến thể firmware tự báo : A-V1 (mong đợi A-V1)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 6.217.634 / 6.217.634  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: sai số ≤ 2 %)
+
+## A-V2 (PicoRV32 + DOT4) · firmware v2
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v2   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v2 → rc=0 · 0.1 s · log logs/make-fw-v2.log
+    firmware v2: .text 18,580 + .data 0 + .bss 9,136 = 27,716/65.536 byte (42.3 %)
+    sha256(firmware.hex) = db5119bab5318b03…
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 14.828.330 lệnh · 23.5 s (631k lệnh/s)
+
+    biến thể firmware tự báo : A-V2 (mong đợi A-V2)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 5.758.001 / 5.758.001  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: sai số ≤ 2 %)
+
+## A-V1+DOT4 (PicoRV32 + DOT4) · firmware v1d
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1d   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1d → rc=0 · 0.1 s · log logs/make-fw-v1d.log
+    firmware v1d: .text 18,884 + .data 0 + .bss 9,136 = 28,020/65.536 byte (42.8 %)
+    sha256(firmware.hex) = 352eab9180818207…
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 10.305.050 lệnh · 16.8 s (615k lệnh/s)
+
+    biến thể firmware tự báo : A-V1+DOT4 (mong đợi A-V1+DOT4)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 2.917.079 / 2.917.079  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: sai số ≤ 2 %)
+
+## A-V1+DOT4+C1 (PicoRV32 + DOT4) · firmware v1dc
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1dc   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1dc → rc=0 · 0.1 s · log logs/make-fw-v1dc.log
+    firmware v1dc: .text 19,776 + .data 0 + .bss 12,820 = 32,596/65.536 byte (49.7 %)
+    sha256(firmware.hex) = 2e851973bf55b8dc…
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 10.072.218 lệnh · 16.9 s (596k lệnh/s)
+
+    biến thể firmware tự báo : A-V1+DOT4+C1 (mong đợi A-V1+DOT4+C1)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 2.450.494 / 2.450.494  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: sai số ≤ 2 %)
+
+## A-V3 (PicoRV32 + DOT4 + REQ) · firmware v1dcr
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1dcr   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1dcr → rc=0 · 0.1 s · log logs/make-fw-v1dcr.log
+    firmware v1dcr: .text 19,040 + .data 0 + .bss 12,816 = 31,856/65.536 byte (48.6 %)
+    sha256(firmware.hex) = 7310380cf8df6c9e…
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 8.486.861 lệnh · 14.4 s (590k lệnh/s)
+
+    biến thể firmware tự báo : A-V1+DOT4+C1+REQ (mong đợi A-V1+DOT4+C1+REQ)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 1.842.219 / 1.842.219  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: sai số ≤ 2 %)
+
+## B-V0r (mycore (địa chỉ ghi thanh ghi)) · firmware v0
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v0   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v0 → rc=0 · 0.1 s · log logs/make-fw-v0.log
+    firmware v0: .text 18,684 + .data 0 + .bss 9,136 = 27,820/65.536 byte (42.4 %)
+    sha256(firmware.hex) = 89383bb291c0edac…
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_0 · tất định (đọc từ RTL)
+    ISS: 19.279.280 lệnh · 29.5 s (653k lệnh/s)
+
+    biến thể firmware tự báo : A-V0 (mong đợi A-V0)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 3.750.617 / 3.750.617  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: bằng tuyệt đối)
+
+## B-V1r (mycore (địa chỉ ghi thanh ghi)) · firmware v1
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1 → rc=0 · 0.1 s · log logs/make-fw-v1.log
+    firmware v1: .text 20,364 + .data 0 + .bss 9,136 = 29,500/65.536 byte (45.0 %)
+    sha256(firmware.hex) = 88c5a4f059e851a8…
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_0 · tất định (đọc từ RTL)
+    ISS: 14.816.080 lệnh · 22.6 s (656k lệnh/s)
+
+    biến thể firmware tự báo : A-V1 (mong đợi A-V1)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 2.713.235 / 2.713.235  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: bằng tuyệt đối)
+
+## B-V0 (mycore) · firmware v0
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v0   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v0 → rc=0 · 0.1 s · log logs/make-fw-v0.log
+    firmware v0: .text 18,684 + .data 0 + .bss 9,136 = 27,820/65.536 byte (42.4 %)
+    sha256(firmware.hex) = 89383bb291c0edac…
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 19.279.080 lệnh · 29.6 s (650k lệnh/s)
+
+    biến thể firmware tự báo : A-V0 (mong đợi A-V0)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 1.978.697 / 1.978.697  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: bằng tuyệt đối)
+
+## B-V1 (mycore) · firmware v1
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1 → rc=0 · 0.1 s · log logs/make-fw-v1.log
+    firmware v1: .text 20,364 + .data 0 + .bss 9,136 = 29,500/65.536 byte (45.0 %)
+    sha256(firmware.hex) = 88c5a4f059e851a8…
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 14.816.080 lệnh · 22.6 s (656k lệnh/s)
+
+    biến thể firmware tự báo : A-V1 (mong đợi A-V1)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 1.459.993 / 1.459.993  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: bằng tuyệt đối)
+
+## B-V2 (mycore + DOT4) · firmware v2
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v2   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v2 → rc=0 · 0.1 s · log logs/make-fw-v2.log
+    firmware v2: .text 18,580 + .data 0 + .bss 9,136 = 27,716/65.536 byte (42.3 %)
+    sha256(firmware.hex) = db5119bab5318b03…
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 14.827.530 lệnh · 23.6 s (628k lệnh/s)
+
+    biến thể firmware tự báo : A-V2 (mong đợi A-V2)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 1.169.050 / 1.169.050  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: bằng tuyệt đối)
+
+## B-V1+DOT4 (mycore + DOT4) · firmware v1d
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1d   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1d → rc=0 · 0.1 s · log logs/make-fw-v1d.log
+    firmware v1d: .text 18,884 + .data 0 + .bss 9,136 = 28,020/65.536 byte (42.8 %)
+    sha256(firmware.hex) = 352eab9180818207…
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 10.304.250 lệnh · 16.9 s (611k lệnh/s)
+
+    biến thể firmware tự báo : A-V1+DOT4 (mong đợi A-V1+DOT4)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 631.130 / 631.130  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: bằng tuyệt đối)
+
+## B-V1+DOT4+C1 (mycore + DOT4) · firmware v1dc
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1dc   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1dc → rc=0 · 0.1 s · log logs/make-fw-v1dc.log
+    firmware v1dc: .text 19,776 + .data 0 + .bss 12,820 = 32,596/65.536 byte (49.7 %)
+    sha256(firmware.hex) = 2e851973bf55b8dc…
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 10.071.398 lệnh · 16.9 s (595k lệnh/s)
+
+    biến thể firmware tự báo : A-V1+DOT4+C1 (mong đợi A-V1+DOT4+C1)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 487.865 / 487.865  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: bằng tuyệt đối)
+
+## B-V3 (mycore + DOT4 + REQ) · firmware v1dcr
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1dcr   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1dcr → rc=0 · 0.1 s · log logs/make-fw-v1dcr.log
+    firmware v1dcr: .text 19,040 + .data 0 + .bss 12,816 = 31,856/65.536 byte (48.6 %)
+    sha256(firmware.hex) = 7310380cf8df6c9e…
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 8.486.261 lệnh · 14.5 s (587k lệnh/s)
+
+    biến thể firmware tự báo : A-V1+DOT4+C1+REQ (mong đợi A-V1+DOT4+C1+REQ)
+    SRC_HASH                 : c3966b0011df
+    trung vị ISS / Verilator : 365.992 / 365.992  (sai số 0.0 %)
+    từng lớp × từng ảnh      : BẰNG TUYỆT ĐỐI với Verilator
+    CRC 5 tensor × 10 ảnh    : khớp golden
+    => ĐẠT (tiêu chí: bằng tuyệt đối)
+
+| cấu hình | lõi | ISS | Verilator | sai số lớn nhất | ĐẠT |
+|---|---|---:|---:|---:|---|
+| A-V0 | picorv32 | 8.987.660 | 8.987.660 | 0.0 % | ĐẠT |
+| A-V1 | picorv32 | 6.217.634 | 6.217.634 | 0.0 % | ĐẠT |
+| A-V2 | picorv32 | 5.758.001 | 5.758.001 | 0.0 % | ĐẠT |
+| A-V1+DOT4 | picorv32 | 2.917.079 | 2.917.079 | 0.0 % | ĐẠT |
+| A-V1+DOT4+C1 | picorv32 | 2.450.494 | 2.450.494 | 0.0 % | ĐẠT |
+| A-V3 | picorv32 | 1.842.219 | 1.842.219 | 0.0 % | ĐẠT |
+| B-V0r | mycore | 3.750.617 | 3.750.617 | 0.0 % | ĐẠT |
+| B-V1r | mycore | 2.713.235 | 2.713.235 | 0.0 % | ĐẠT |
+| B-V0 | mycore | 1.978.697 | 1.978.697 | 0.0 % | ĐẠT |
+| B-V1 | mycore | 1.459.993 | 1.459.993 | 0.0 % | ĐẠT |
+| B-V2 | mycore | 1.169.050 | 1.169.050 | 0.0 % | ĐẠT |
+| B-V1+DOT4 | mycore | 631.130 | 631.130 | 0.0 % | ĐẠT |
+| B-V1+DOT4+C1 | mycore | 487.865 | 487.865 | 0.0 % | ĐẠT |
+| B-V3 | mycore | 365.992 | 365.992 | 0.0 % | ĐẠT |
+
+=> ĐẠT
+[run 20261018-141337-iss] ok · 303.0 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-141337-iss
