@@ -18,7 +18,7 @@ chứng mạnh nhất cho phương pháp. Sau đó mới cho pipeline đi tiếp
 | S5 | B2: sinh ứng viên (AI và theo luật), chế độ mù, trên firmware A-V1 + lõi mycore gốc (cấu hình B-V1) | PQ3, PQ4 |
 | S6 | Phễu: dự báo → hiện thực top-K → đo kit; vòng mở lần 1 (PMAX4 trên B-V3) | PQ1, PQ5 |
 | S7 | Vòng mở lần 2: bộ nhớ hai cổng (B-V4) — ứng viên **mức A** đầu tiên, **ĐẠT** | PQ1, PQ5 |
-| S8 | Mô hình giữ lại | PQ6 |
+| S8 | Mô hình giữ lại — **ĐẠT trên Verilator** | PQ6 |
 | S9 | Báo cáo tổng hợp, biểu đồ cho bài báo | — |
 
 > **Ghi chú đánh số (sửa 2026-10-18).** Kế hoạch gốc gộp cả vòng mở vào S6 và đặt "mô hình giữ lại" ở S7.
@@ -149,12 +149,40 @@ Bố cục 4 pha (C1) KHÔNG tính vào B1 vì nó chỉ có ý nghĩa khi đã 
 - Ràng buộc kéo theo cho S8: RAM còn 32 KB và M1-S đã chiếm 96,4 % (1.180 byte ngăn xếp), nên
   **mô hình giữ lại lớn hơn có thể không vừa trên B-V4** — phải tính trước khi chọn mô hình.
 
-## S8 — Mô hình giữ lại
+## S8 — Mô hình giữ lại — ĐẠT trên Verilator (2026-10-18), xem `results/pipeline/S8/`
 1. Thêm ít nhất một mô hình KHÔNG dùng khi chọn ứng viên (đề xuất: M1-L gấp đôi kênh; nếu kịp, Dense
    autoencoder hoặc KWS DS-CNN rút gọn vừa 64 KB). Golden Python + firmware C thẳng.
 2. Chạy B1 (ngắn) rồi áp các ứng viên phần cứng đã chọn ở S6/S7, không chọn lại.
 
 **ĐẠT khi**: bảng tăng tốc mô hình × cấu hình, đúng bit.
+
+### Kết quả
+**M1-L** = gấp đôi kênh (16/32): 12.810 tham số, **662.912 MAC = 3,45× M1-S**, int8 98,79 %.
+Chạy qua ĐÚNG script huấn luyện, ĐÚNG script lượng tử hoá, ĐÚNG golden, ĐÚNG main.c, ĐÚNG bộ kernel
+của M1-S — không một nhánh mã riêng, nên nó "giữ lại" theo nghĩa chặt.
+
+| bước | M1-S | M1-L (giữ lại) | chênh |
+|---|---:|---:|---:|
+| DOT4 + bố cục 4 pha + REQ | 6,687× | 6,320× | −5,5 % |
+| thêm PMAX4 | 1,151× | 1,082× | −6,0 % |
+| **tổng** | **7,699×** | **6,841×** | **−11,1 %** |
+
+**Các ứng viên tổng quát hoá được**, mất ~11 % hệ số. Lý do đọc thẳng từ phân rã lớp: gấp đôi kênh
+làm conv2 nặng gấp 4 nhưng pooling chỉ gấp 2, nên phần việc PMAX4 chạm tới co từ 15 % xuống 9 %.
+**Giá trị của một ứng viên phụ thuộc TỶ LỆ PHÉP TOÁN, không phụ thuộc kích thước mô hình.**
+
+Hai kết quả phụ:
+- **PMAX4 làm thời gian chạy hết phụ thuộc dữ liệu**: max-pool bằng C có nhánh nên 10 ảnh cho 10 số
+  chu kỳ khác nhau (biên độ tới 0,11 %); với PMAX4 cả 10 ảnh **giống hệt tuyệt đối**. Không nằm trong
+  tiêu chí chọn ở S5/S6 — chỉ lộ ra ở đây.
+- **B-V4 không có trong bảng**: RAM 32 KB của nó không chứa nổi mô hình nào lớn hơn M1-S (M1-L cần
+  48.608 byte). Đây là **giá thứ ba** của bộ nhớ hai cổng, sau chu kỳ và diện tích — và là giá mà cả
+  mô hình λ lẫn số LUT đều không thấy. Chỉ có mô hình thứ hai mới làm nó lộ ra.
+
+Ba phép kiểm giống-hệt-từng-bit cho việc tổng quát hoá (weights.h sinh lại giống từng byte; firmware
+M1-S giống từng bit; mã máy của kernel tổng quát giống từng bit) — chi tiết trong README của S8.
+
+**Còn thiếu**: chưa đo M1-L trên kit; chưa có dòng PicoRV32 cho M1-L.
 
 ## S9 — Báo cáo
 `docs/KET_QUA_PIPELINE.md` + `report/pipeline/`: trả lời PQ1–PQ6 bằng số, biểu đồ (dự báo-vs-đo, Pareto

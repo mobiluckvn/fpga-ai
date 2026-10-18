@@ -1,0 +1,15 @@
+# Huấn luyện M1-L  (conv1 1->16, conv2 16->32)
+tham số    : 12810
+train/test : 60000 / 10000
+epochs=8 batch=128 lr=0.001 seed=1234
+epoch 1/8  loss 0.3631  test acc 96.98%  (8s)
+epoch 2/8  loss 0.0964  test acc 97.85%  (16s)
+epoch 3/8  loss 0.0712  test acc 98.35%  (24s)
+epoch 4/8  loss 0.0587  test acc 98.52%  (31s)
+epoch 5/8  loss 0.0505  test acc 98.56%  (39s)
+epoch 6/8  loss 0.0453  test acc 98.67%  (46s)
+epoch 7/8  loss 0.0403  test acc 98.72%  (54s)
+epoch 8/8  loss 0.0363  test acc 98.81%  (62s)
+
+Độ chính xác float (10.000 ảnh test): 98.81%
+Đã lưu model/m1l_float.npz

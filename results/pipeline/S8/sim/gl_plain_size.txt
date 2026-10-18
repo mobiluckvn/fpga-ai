@@ -1,0 +1,9 @@
+gl_plain/firmware.elf  :
+section              size    addr
+.text               25792       0
+.bss                18232   25792
+.riscv.attributes      42       0
+.comment               51       0
+Total               44117
+
+

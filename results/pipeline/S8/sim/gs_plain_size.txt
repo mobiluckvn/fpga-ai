@@ -1,0 +1,9 @@
+gs_plain/firmware.elf  :
+section              size    addr
+.text               18540       0
+.bss                 9136   18540
+.riscv.attributes      42       0
+.comment               51       0
+Total               27769
+
+

@@ -1,0 +1,18 @@
+requantize: lớp1 M0=1280762336 shift=8  ·  lớp2 M0=1510749026 shift=9
+đang chạy golden int8 trên 10000 ảnh test...
+  2000/10000  acc tạm 98.50%
+  4000/10000  acc tạm 98.22%
+  6000/10000  acc tạm 98.37%
+  8000/10000  acc tạm 98.67%
+  10000/10000  acc tạm 98.79%
+
+Độ chính xác int8 (10000 ảnh): 98.79%
+Độ chính xác float            : 98.81%
+Chênh                     : +0.02 điểm %  (tiêu chí kế hoạch: không quá 1 điểm %) -> ĐẠT
+
+10 ảnh thử nhúng vào firmware:
+
+Đã lưu model/m1l_int8.npz
+Đã lưu fw/weights_m1l.h
+
+[exited with code 0]

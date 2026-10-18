@@ -1,0 +1,9 @@
+gl_dcrp/firmware.elf  :
+section              size    addr
+.text               26600       0
+.bss                22008   26600
+.riscv.attributes      42       0
+.comment               51       0
+Total               48701
+
+
