@@ -1,0 +1,166 @@
+{
+  "round": 1,
+  "origin": "rules",
+  "mode": "open",
+  "base_config": "B-V1",
+  "candidates": [
+    {
+      "id": "rules.L1_postinc_load",
+      "level": "L1",
+      "template": "L1.postinc_load",
+      "title": "Nạp có tự tăng địa chỉ (post-increment)",
+      "target": "pool1",
+      "evidence": [
+        "luật catalog `class.addr / cycles_hot > 0.10` thoả trên analysis.json của B-V1",
+        "analysis: cycles = 1459993",
+        "analysis: cycles_hot = 1005419",
+        "analysis: instret = 592235",
+        "analysis: ipc = 0.589",
+        "analysis: layer = conv2"
+      ],
+      "spec": {
+        "firmware_changes": "(theo mẫu catalog)",
+        "hw_resources_guess": {
+          "note": "mẫu catalog không nêu"
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "trong vòng nóng, lệnh addi trên thanh ghi cơ sở ngay sau load chiếm tỷ lệ đáng kể — Đổi λ của lớp lệnh tương ứng; dự báo bằng ΔC = Σ n_c·Δλ_c (không cần RTL).",
+      "risks": [
+        "cần cổng ghi thứ hai vào tệp thanh ghi"
+      ]
+    },
+    {
+      "id": "rules.L2_packed_mac",
+      "level": "L2",
+      "template": "L2.packed_mac",
+      "title": "Nhân-cộng SIMD trên dữ liệu gói (N làn × W bit trong 32 bit)",
+      "target": "conv1, conv2, dense",
+      "evidence": [
+        "luật catalog `dlp.elem_bits<=8 and class.mac/cycles_hot>0.3` thoả trên analysis.json của B-V1",
+        "analysis: cycles = 1459993",
+        "analysis: cycles_hot = 1005419",
+        "analysis: instret = 592235",
+        "analysis: ipc = 0.589",
+        "analysis: layer = conv2"
+      ],
+      "spec": {
+        "firmware_changes": "(theo mẫu catalog)",
+        "hw_resources_guess": {
+          "note": "mẫu catalog không nêu"
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "vòng nóng nạp phần tử W<=8 bit, chuỗi mul→add cộng dồn — Đổi λ của lớp lệnh tương ứng; dự báo bằng ΔC = Σ n_c·Δλ_c (không cần RTL).",
+      "risks": [
+        "yêu cầu thẳng hàng và bố cục dữ liệu; cần đổi firmware"
+      ]
+    },
+    {
+      "id": "rules.L2_layout_for_simd",
+      "level": "L2",
+      "template": "L2.layout_for_simd",
+      "title": "Biến đổi bố cục dữ liệu để lệnh SIMD dùng được (đệm, nhân bản pha, đổi NCHW/NHWC)",
+      "target": "conv1, pool1, pool2",
+      "evidence": [
+        "luật catalog `dlp.lanes_possible>=2 and dlp.aligned==false` thoả trên analysis.json của B-V1",
+        "analysis: cycles = 1459993",
+        "analysis: cycles_hot = 1005419",
+        "analysis: instret = 592235",
+        "analysis: ipc = 0.589",
+        "analysis: layer = conv2"
+      ],
+      "spec": {
+        "firmware_changes": "(theo mẫu catalog)",
+        "hw_resources_guess": {
+          "note": "mẫu catalog không nêu"
+        }
+      },
+      "estimate_method": "iss_firmware",
+      "expected_mechanism": "vòng nóng có DLP nhưng truy cập không thẳng hàng hoặc độ dài < số làn — Đổi λ của lớp lệnh tương ứng; dự báo bằng ΔC = Σ n_c·Δλ_c (không cần RTL).",
+      "risks": [
+        "tốn bộ nhớ đệm"
+      ]
+    },
+    {
+      "id": "rules.L3_dual_port_mem",
+      "level": "L3",
+      "template": "L3.dual_port_mem",
+      "title": "Bộ nhớ hai cổng / tách lệnh-dữ liệu để load/store không chặn nạp lệnh",
+      "target": "conv1, pool1, conv2, pool2, dense",
+      "evidence": [
+        "luật catalog `(class.load_data+class.store_data)/instret > 0.25 and timing.load_cycles>1` thoả trên analysis.json của B-V1",
+        "analysis: cycles = 1459993",
+        "analysis: cycles_hot = 1005419",
+        "analysis: instret = 592235",
+        "analysis: ipc = 0.589",
+        "analysis: layer = conv2"
+      ],
+      "spec": {
+        "firmware_changes": "(theo mẫu catalog)",
+        "timing_changes": {},
+        "hw_resources_guess": {
+          "note": "mẫu catalog không nêu"
+        }
+      },
+      "estimate_method": "iss_timing",
+      "expected_mechanism": "lõi trả thêm chu kỳ cho mỗi truy cập dữ liệu; load+store chiếm tỷ lệ lớn số lệnh — Đổi λ của lớp lệnh tương ứng; dự báo bằng ΔC = Σ n_c·Δλ_c (không cần RTL).",
+      "risks": [
+        "dùng gấp đôi cổng BSRAM; kiểm ràng buộc timing"
+      ]
+    },
+    {
+      "id": "rules.L3_fast_mul",
+      "level": "L3",
+      "template": "L3.fast_mul",
+      "title": "Nhân một chu kỳ",
+      "target": "conv1, conv2, dense",
+      "evidence": [
+        "luật catalog `class.mul/instret>0.05 and timing.mul_cycles>1` thoả trên analysis.json của B-V1",
+        "analysis: cycles = 1459993",
+        "analysis: cycles_hot = 1005419",
+        "analysis: instret = 592235",
+        "analysis: ipc = 0.589",
+        "analysis: layer = conv2"
+      ],
+      "spec": {
+        "firmware_changes": "(theo mẫu catalog)",
+        "timing_changes": {},
+        "hw_resources_guess": {
+          "note": "mẫu catalog không nêu"
+        }
+      },
+      "estimate_method": "iss_timing",
+      "expected_mechanism": "mul chiếm tỷ lệ đáng kể và timing.mul_cycles>1 — Đổi λ của lớp lệnh tương ứng; dự báo bằng ΔC = Σ n_c·Δλ_c (không cần RTL).",
+      "risks": [
+        "Fmax"
+      ]
+    },
+    {
+      "id": "rules.L5_multi_issue",
+      "level": "L5",
+      "template": "L5.multi_issue",
+      "title": "Phát hai lệnh hẹp (một ALU + một load/store/custom)",
+      "target": "conv1, pool1, conv2, pool2, dense",
+      "evidence": [
+        "luật catalog `ilp.ideal_ipc>=1.5` thoả trên analysis.json của B-V1",
+        "analysis: cycles = 1459993",
+        "analysis: cycles_hot = 1005419",
+        "analysis: instret = 592235",
+        "analysis: ipc = 0.589",
+        "analysis: layer = conv2"
+      ],
+      "spec": {
+        "firmware_changes": "(theo mẫu catalog)",
+        "hw_resources_guess": {
+          "note": "mẫu catalog không nêu"
+        }
+      },
+      "estimate_method": "analytic",
+      "expected_mechanism": "ILP lý tưởng >= 1.5 trong khối nóng — Đổi λ của lớp lệnh tương ứng; dự báo bằng ΔC = Σ n_c·Δλ_c (không cần RTL).",
+      "risks": [
+        "tệp thanh ghi nhiều cổng rất tốn trên FPGA"
+      ]
+    }
+  ]
+}

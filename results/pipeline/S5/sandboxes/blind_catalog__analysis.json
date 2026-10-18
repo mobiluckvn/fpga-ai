@@ -1,0 +1,459 @@
+{
+  "target": "B-V1",
+  "core": "mycore",
+  "total_cycles": 1459993,
+  "ms_27mhz": 54.1,
+  "cycles_per_mac_total": 7.602,
+  "mem_bytes_per_cycle_available": 2.0,
+  "share_by_sem_total": {
+    "mac": 40.47,
+    "load_data": 44.5,
+    "store_data": 2.26,
+    "addr": 1.14,
+    "loop_ctrl": 1.48,
+    "requant": 8.84,
+    "other": 1.31
+  },
+  "cycles_by_sem_total": {
+    "mac": 590880.0,
+    "load_data": 649618.0,
+    "store_data": 33056.0,
+    "addr": 16571.0,
+    "loop_ctrl": 21587.0,
+    "requant": 129053.0,
+    "other": 19162.7
+  },
+  "cycles_by_sem_sum10": {
+    "mac": 5908800,
+    "load_data": 6496180,
+    "store_data": 330560,
+    "addr": 165710,
+    "loop_ctrl": 215870.0,
+    "requant": 1290530.0,
+    "other": 191627.0
+  },
+  "cycles_sum10": 14599277,
+  "sum_check_ok": true,
+  "amdahl_max_speedup_total": {
+    "mac": 1.68,
+    "load_data": 1.8,
+    "store_data": 1.02,
+    "addr": 1.01,
+    "loop_ctrl": 1.02,
+    "requant": 1.1,
+    "other": 1.01
+  },
+  "layers": {
+    "conv1": {
+      "cycles": 369909,
+      "instret": 255820,
+      "mac": 48672,
+      "cycles_per_mac": 7.6,
+      "mac_per_cycle": 0.1316,
+      "bytes_per_image": 55948.0,
+      "byte_per_mac": 1.149,
+      "cycles_sum10": 3699090,
+      "cycles_by_sem_sum10": {
+        "mac": 1568320,
+        "load_data": 979460,
+        "store_data": 112560,
+        "addr": 56350,
+        "loop_ctrl": 60580.0,
+        "requant": 921470.0,
+        "other": 350
+      },
+      "sum_check_ok": true,
+      "roof_mac_per_cycle": 1.7399,
+      "dist_to_roof_x": 13.22,
+      "bound": "compute/issue",
+      "crit_path": 847,
+      "ipc_ideal": 3020.307,
+      "ipc_real": 0.692,
+      "cycles_by_sem": {
+        "mac": 1568320,
+        "load_data": 979460,
+        "store_data": 112560,
+        "addr": 56350,
+        "loop_ctrl": 60580.0,
+        "requant": 921470.0,
+        "other": 350
+      },
+      "share_by_sem": {
+        "mac": 42.4,
+        "load_data": 26.48,
+        "store_data": 3.04,
+        "addr": 1.52,
+        "loop_ctrl": 1.64,
+        "requant": 24.91,
+        "other": 0.01
+      },
+      "amdahl_max_speedup": {
+        "mac": 1.74,
+        "load_data": 1.36,
+        "store_data": 1.03,
+        "addr": 1.02,
+        "loop_ctrl": 1.02,
+        "requant": 1.33,
+        "other": 1.0
+      },
+      "loops": [
+        {
+          "backedge": "0x10a8->0xbb4",
+          "trips": 10,
+          "body_instr_static": 115,
+          "body_instr_dynamic": 2558190,
+          "cycles_in_body": 3699080
+        },
+        {
+          "backedge": "0xd3c->0xc1c",
+          "trips": 70,
+          "body_instr_static": 72,
+          "body_instr_dynamic": 2557760,
+          "cycles_in_body": 3698400
+        },
+        {
+          "backedge": "0xd2c->0xc54",
+          "trips": 2000,
+          "body_instr_static": 54,
+          "body_instr_dynamic": 2556320,
+          "cycles_in_body": 3696160
+        }
+      ],
+      "dlp": {
+        "n_strided": 545580,
+        "share_stride_1_pct": 85.8,
+        "share_stride_4_pct": 0.0,
+        "lanes_possible_8bit": 4
+      }
+    },
+    "pool1": {
+      "cycles": 42472,
+      "instret": 35702,
+      "mac": 0,
+      "cycles_per_mac": null,
+      "mac_per_cycle": null,
+      "bytes_per_image": 6800.0,
+      "byte_per_mac": null,
+      "cycles_sum10": 424468,
+      "cycles_by_sem_sum10": {
+        "mac": 0,
+        "load_data": 108260,
+        "store_data": 27140,
+        "addr": 43950,
+        "loop_ctrl": 100260.0,
+        "requant": 0,
+        "other": 144858.0
+      },
+      "sum_check_ok": true,
+      "roof_mac_per_cycle": null,
+      "dist_to_roof_x": null,
+      "bound": null,
+      "crit_path": 95,
+      "ipc_ideal": 3755.453,
+      "ipc_real": 0.841,
+      "cycles_by_sem": {
+        "mac": 0,
+        "load_data": 108260,
+        "store_data": 27140,
+        "addr": 43950,
+        "loop_ctrl": 100260.0,
+        "requant": 0,
+        "other": 144858.0
+      },
+      "share_by_sem": {
+        "mac": 0.0,
+        "load_data": 25.5,
+        "store_data": 6.39,
+        "addr": 10.35,
+        "loop_ctrl": 23.62,
+        "requant": 0.0,
+        "other": 34.13
+      },
+      "amdahl_max_speedup": {
+        "mac": 1.0,
+        "load_data": 1.34,
+        "store_data": 1.07,
+        "addr": 1.12,
+        "loop_ctrl": 1.31,
+        "requant": 1.0,
+        "other": 1.52
+      },
+      "loops": [
+        {
+          "backedge": "0x10c0->0x30",
+          "trips": 10,
+          "body_instr_static": 71,
+          "body_instr_dynamic": 356758,
+          "cycles_in_body": 424458
+        },
+        {
+          "backedge": "0x124->0x74",
+          "trips": 120,
+          "body_instr_static": 45,
+          "body_instr_dynamic": 356498,
+          "cycles_in_body": 424098
+        },
+        {
+          "backedge": "0x114->0x88",
+          "trips": 1560,
+          "body_instr_static": 36,
+          "body_instr_dynamic": 355328,
+          "cycles_in_body": 422928
+        }
+      ],
+      "dlp": {
+        "n_strided": 67685,
+        "share_stride_1_pct": 89.9,
+        "share_stride_4_pct": 0.0,
+        "lanes_possible_8bit": 4
+      }
+    },
+    "conv2": {
+      "cycles": 1005419,
+      "instret": 592235,
+      "mac": 139392,
+      "cycles_per_mac": 7.213,
+      "mac_per_cycle": 0.1386,
+      "bytes_per_image": 629560.0,
+      "byte_per_mac": 4.516,
+      "cycles_sum10": 10054190,
+      "cycles_by_sem_sum10": {
+        "mac": 4220480,
+        "load_data": 5216000,
+        "store_data": 182400,
+        "addr": 42470,
+        "loop_ctrl": 20920.0,
+        "requant": 369060.0,
+        "other": 2860
+      },
+      "sum_check_ok": true,
+      "roof_mac_per_cycle": 0.4428,
+      "dist_to_roof_x": 3.19,
+      "bound": "compute/issue",
+      "crit_path": 130,
+      "ipc_ideal": 45556.538,
+      "ipc_real": 0.589,
+      "cycles_by_sem": {
+        "mac": 4220480,
+        "load_data": 5216000,
+        "store_data": 182400,
+        "addr": 42470,
+        "loop_ctrl": 20920.0,
+        "requant": 369060.0,
+        "other": 2860
+      },
+      "share_by_sem": {
+        "mac": 41.98,
+        "load_data": 51.88,
+        "store_data": 1.81,
+        "addr": 0.42,
+        "loop_ctrl": 0.21,
+        "requant": 3.67,
+        "other": 0.03
+      },
+      "amdahl_max_speedup": {
+        "mac": 1.72,
+        "load_data": 2.08,
+        "store_data": 1.02,
+        "addr": 1.0,
+        "loop_ctrl": 1.0,
+        "requant": 1.04,
+        "other": 1.0
+      },
+      "loops": [
+        {
+          "backedge": "0x10d8->0x414",
+          "trips": 10,
+          "body_instr_static": 489,
+          "body_instr_dynamic": 5922340,
+          "cycles_in_body": 10054180
+        },
+        {
+          "backedge": "0xb78->0x46c",
+          "trips": 100,
+          "body_instr_static": 451,
+          "body_instr_dynamic": 5921960,
+          "cycles_in_body": 10053560
+        },
+        {
+          "backedge": "0xb58->0x480",
+          "trips": 1100,
+          "body_instr_static": 438,
+          "body_instr_dynamic": 5920530,
+          "cycles_in_body": 10051470
+        }
+      ],
+      "dlp": {
+        "n_strided": 387180,
+        "share_stride_1_pct": 0.0,
+        "share_stride_4_pct": 0.0,
+        "lanes_possible_8bit": null
+      }
+    },
+    "pool2": {
+      "cycles": 12519,
+      "instret": 10511,
+      "mac": 0,
+      "cycles_per_mac": null,
+      "mac_per_cycle": null,
+      "bytes_per_image": 2032.0,
+      "byte_per_mac": null,
+      "cycles_sum10": 125009,
+      "cycles_by_sem_sum10": {
+        "mac": 0,
+        "load_data": 32080,
+        "store_data": 8080,
+        "addr": 12510,
+        "loop_ctrl": 28980.0,
+        "requant": 0,
+        "other": 43359.0
+      },
+      "sum_check_ok": true,
+      "roof_mac_per_cycle": null,
+      "dist_to_roof_x": null,
+      "bound": null,
+      "crit_path": 99,
+      "ipc_ideal": 1059.889,
+      "ipc_real": 0.84,
+      "cycles_by_sem": {
+        "mac": 0,
+        "load_data": 32080,
+        "store_data": 8080,
+        "addr": 12510,
+        "loop_ctrl": 28980.0,
+        "requant": 0,
+        "other": 43359.0
+      },
+      "share_by_sem": {
+        "mac": 0.0,
+        "load_data": 25.66,
+        "store_data": 6.46,
+        "addr": 10.01,
+        "loop_ctrl": 23.18,
+        "requant": 0.0,
+        "other": 34.68
+      },
+      "amdahl_max_speedup": {
+        "mac": 1.0,
+        "load_data": 1.35,
+        "store_data": 1.07,
+        "addr": 1.11,
+        "loop_ctrl": 1.3,
+        "requant": 1.0,
+        "other": 1.53
+      },
+      "loops": [
+        {
+          "backedge": "0x10f0->0x144",
+          "trips": 10,
+          "body_instr_static": 67,
+          "body_instr_dynamic": 104919,
+          "cycles_in_body": 124999
+        },
+        {
+          "backedge": "0x22c->0x180",
+          "trips": 40,
+          "body_instr_static": 44,
+          "body_instr_dynamic": 104689,
+          "cycles_in_body": 124689
+        },
+        {
+          "backedge": "0x218->0x190",
+          "trips": 200,
+          "body_instr_static": 35,
+          "body_instr_dynamic": 104239,
+          "cycles_in_body": 124239
+        }
+      ],
+      "dlp": {
+        "n_strided": 20067,
+        "share_stride_1_pct": 94.6,
+        "share_stride_4_pct": 0.0,
+        "lanes_possible_8bit": 4
+      }
+    },
+    "dense": {
+      "cycles": 29652,
+      "instret": 17614,
+      "mac": 4000,
+      "cycles_per_mac": 7.413,
+      "mac_per_cycle": 0.1349,
+      "bytes_per_image": 8152.0,
+      "byte_per_mac": 2.038,
+      "cycles_sum10": 296520,
+      "cycles_by_sem_sum10": {
+        "mac": 120000,
+        "load_data": 160380,
+        "store_data": 380,
+        "addr": 10430,
+        "loop_ctrl": 5130.0,
+        "requant": 0,
+        "other": 200
+      },
+      "sum_check_ok": true,
+      "roof_mac_per_cycle": 0.9814,
+      "dist_to_roof_x": 7.27,
+      "bound": "compute/issue",
+      "crit_path": 101,
+      "ipc_ideal": 1743.96,
+      "ipc_real": 0.594,
+      "cycles_by_sem": {
+        "mac": 120000,
+        "load_data": 160380,
+        "store_data": 380,
+        "addr": 10430,
+        "loop_ctrl": 5130.0,
+        "requant": 0,
+        "other": 200
+      },
+      "share_by_sem": {
+        "mac": 40.47,
+        "load_data": 54.09,
+        "store_data": 0.13,
+        "addr": 3.52,
+        "loop_ctrl": 1.73,
+        "requant": 0.0,
+        "other": 0.07
+      },
+      "amdahl_max_speedup": {
+        "mac": 1.68,
+        "load_data": 2.18,
+        "store_data": 1.0,
+        "addr": 1.04,
+        "loop_ctrl": 1.02,
+        "requant": 1.0,
+        "other": 1.0
+      },
+      "loops": [
+        {
+          "backedge": "0x1108->0x248",
+          "trips": 10,
+          "body_instr_static": 76,
+          "body_instr_dynamic": 176130,
+          "cycles_in_body": 296510
+        },
+        {
+          "backedge": "0x340->0x298",
+          "trips": 90,
+          "body_instr_static": 43,
+          "body_instr_dynamic": 175800,
+          "cycles_in_body": 296000
+        },
+        {
+          "backedge": "0x32c->0x2a4",
+          "trips": 4900,
+          "body_instr_static": 35,
+          "body_instr_dynamic": 175000,
+          "cycles_in_body": 295000
+        }
+      ],
+      "dlp": {
+        "n_strided": 80200,
+        "share_stride_1_pct": 0.0,
+        "share_stride_4_pct": 0.2,
+        "lanes_possible_8bit": null
+      }
+    }
+  },
+  "note": "Số liệu do bộ mô phỏng tập lệnh đếm trực tiếp khi chạy firmware thật, 10 ảnh. Không có số nào là ước lượng."
+}

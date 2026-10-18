@@ -1,0 +1,28 @@
+{
+  "fpga": "GW2AR-LV18QN88C8/I7 (họ GW2A-18C)",
+  "clock_mhz_fixed": 27.0,
+  "fmax_min_mhz": 27.0,
+  "fmax_current_mhz": 56.47,
+  "available_total": {
+    "LUT4": 20736,
+    "DFF": 15552,
+    "BSRAM": 46,
+    "MULT18X18": 48,
+    "ALU": 15552
+  },
+  "used_by_current_design": {
+    "LUT4": 3255,
+    "DFF": 573,
+    "BSRAM": 32,
+    "MULT18X18": 4,
+    "ALU": 798
+  },
+  "remaining": {
+    "LUT4": 17481,
+    "DFF": 14979,
+    "BSRAM": 14,
+    "MULT18X18": 44,
+    "ALU": 14754
+  },
+  "note": "Xung nhịp CỐ ĐỊNH 27 MHz: một đề xuất làm giảm Fmax xuống dưới 27 MHz bị loại, nhưng làm Fmax cao hơn 27 MHz thì KHÔNG có lợi gì. Vì vậy chỉ tối ưu SỐ CHU KỲ. BSRAM: 32/46 khối đã dùng cho 64 KB bộ nhớ chương trình + dữ liệu."
+}

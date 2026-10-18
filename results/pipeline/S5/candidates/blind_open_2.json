@@ -1,0 +1,529 @@
+{
+  "round": 1,
+  "origin": "ai",
+  "mode": "blind_open",
+  "base_config": "B-V1",
+  "candidates": [
+    {
+      "id": "C01.L3.MEM1",
+      "level": "L3",
+      "title": "Tach bo nho lenh/du lieu (Harvard) de load/store ha tu 2 chu ky xuong 1",
+      "target": "lop chu ky load_data + store_data tren toan bo mang; nang nhat la layers.conv2 (share_by_sem.load_data=51.88) va layers.dense (share_by_sem.load_data=54.09)",
+      "evidence": [
+        "analysis.json share_by_sem_total.load_data = 44.5 (lop chu ky lon nhat trong share_by_sem_total)",
+        "analysis.json cycles_by_sem_total.load_data = 649618.0",
+        "analysis.json cycles_by_sem_total.store_data = 33056.0; share_by_sem_total.store_data = 2.26",
+        "analysis.json amdahl_max_speedup_total.load_data = 1.8 (tran Amdahl cao nhat trong amdahl_max_speedup_total)",
+        "analysis.json layers.conv2.share_by_sem.load_data = 51.88 va layers.conv2.cycles_by_sem.load_data = 5216000 (sum10)",
+        "analysis.json layers.dense.share_by_sem.load_data = 54.09",
+        "analysis.json mem_bytes_per_cycle_available = 2.0",
+        "core.md: 'load 2 chu ky', 'store 2 chu ky', ly do ghi ro: 'Bo nho la BSRAM tren chip, MOT CONG: moi truy cap du lieu chiem cong nen lenh ke phai nap o chu ky sau'",
+        "budget.json fmax_current_mhz = 56.47 so voi fmax_min_mhz = 27.0 (con bien ~2.09x, va note cua budget.json: 'lam Fmax cao hon 27 MHz thi KHONG co loi gi')",
+        "budget.json used_by_current_design.BSRAM = 32 / available_total.BSRAM = 46, remaining.BSRAM = 14"
+      ],
+      "spec": {
+        "timing_changes": {
+          "load": 1,
+          "store": 2,
+          "note_load": "Xoa xung dot cau truc giua nap lenh va truy cap du lieu bang cach chia 64 KB BSRAM hien tai thanh hai mang rieng (I-mem va D-mem), moi mang co cong rieng. Khong can them khoi BSRAM, chi PHAN VUNG LAI 32 khoi dang dung, nen remaining.BSRAM=14 khong bi tieu thu.",
+          "note_store": "Bien the an toan: giu store = 2 (store chi chiem share_by_sem_total.store_data = 2.26 nen loi nho); xem C02 cho bien the store = 1.",
+          "mem_bytes_per_cycle_available_after": "Bang thong du lieu doi tu 4 byte/2 chu ky len 4 byte/1 chu ky; day la tham so roofline nen mo hinh roof_mac_per_cycle cua moi tang phai duoc tinh lai boi cong cu, khong phai boi de xuat nay."
+        },
+        "firmware_changes": "Khong doi firmware. Anh xa dia chi phai giu nguyen de ket qua dung tung bit; chi doi so do bo nho vat ly va bo trong tai (linker script tach .text va .data sang hai mang). Tap lenh khong doi.",
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM_blocks_added": 0,
+          "BSRAM_ports": "Can 2 cong doc lap (1 cho I-fetch, 1 cho D-access) thay vi 1 cong dung chung. Thuc hien bang phan vung dia chi tinh, KHONG can BSRAM true-dual-port.",
+          "LUT4": "nho: them bo giai ma dia chi + mux chon mang",
+          "DFF": "nho: them thanh ghi dia chi/du lieu cho duong D-mem",
+          "new_arch_regs": 0
+        }
+      },
+      "estimate_method": "iss_timing",
+      "expected_mechanism": "Mo hinh chi phi trong core.md la C = sum(n_c * lambda_c). Ung vien nay khong doi n_c ma doi lambda cua lop load tu 2 xuong 1. Lop chu ky bi cat la load_data (share_by_sem_total.load_data = 44.5, lop lon nhat). Chu ky thu hai cua moi load ton tai PURELY vi xung dot cau truc mot-cong giua I-fetch va D-access (core.md noi ro), nen tach I/D lam bien mat dung chu ky do ma khong doi mot phep toan nao.",
+      "risks": [
+        "Fmax: them mux va duong dia chi thu hai co the ha Fmax; con bien lon (budget.json fmax_current_mhz=56.47 vs fmax_min_mhz=27.0) nen rui ro thap.",
+        "Cong BSRAM: phai chac rang ca I-mem va D-mem deu nam gon trong 32 khoi dang dung sau khi phan vung; neu phan vung lam phan manh va can them khoi thi chi con remaining.BSRAM = 14.",
+        "Do dung: khong doi phep toan, nen bit-exact voi golden la hien nhien; rui ro con lai la loi anh xa dia chi khi tach vung (co the kiem bang so sanh dump bo nho).",
+        "Phuc tap hien thuc: trung binh. Phai sua ca linker script va bo nap chuong trinh; neu firmware co du lieu tu sua ma (self-modifying) hoac doc hang so tu .text thi phai co duong doc cheo."
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "C02.L3.MEM1W",
+      "level": "L3",
+      "title": "Harvard day du: ca load VA store ha xuong 1 chu ky",
+      "target": "lop chu ky load_data + store_data; tang co store cao nhat la layers.pool1 (share_by_sem.store_data = 6.39) va layers.pool2 (share_by_sem.store_data = 6.46)",
+      "evidence": [
+        "analysis.json share_by_sem_total.load_data = 44.5 va share_by_sem_total.store_data = 2.26 (tong 46.76)",
+        "analysis.json cycles_by_sem_total.load_data = 649618.0, cycles_by_sem_total.store_data = 33056.0",
+        "analysis.json amdahl_max_speedup_total.store_data = 1.02",
+        "analysis.json layers.pool1.share_by_sem.store_data = 6.39; layers.pool2.share_by_sem.store_data = 6.46",
+        "analysis.json layers.conv1.share_by_sem.store_data = 3.04",
+        "core.md: 'store 2 chu ky', cung nguyen nhan mot-cong nhu load"
+      ],
+      "spec": {
+        "timing_changes": {
+          "load": 1,
+          "store": 1,
+          "note": "Giong C01 nhung cho phep ca duong ghi hoan tat trong 1 chu ky. Can duong ghi D-mem co thanh ghi dia chi/du lieu rieng; neu BSRAM yeu cau write-through dong bo thi phai them 1 tang pipeline ghi va logic store-to-load forwarding cho truong hop doc ngay sau ghi cung dia chi."
+        },
+        "firmware_changes": "Khong doi firmware.",
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM_blocks_added": 0,
+          "BSRAM_ports": "2 cong doc lap; duong D-mem phai ho tro doc va ghi 1 chu ky",
+          "LUT4": "nho-trung: them so sanh dia chi cho store-to-load forwarding",
+          "DFF": "nho: thanh ghi dem store",
+          "new_arch_regs": 0
+        }
+      },
+      "estimate_method": "iss_timing",
+      "expected_mechanism": "Cung co che nhu C01 (cat chu ky xung dot cong), mo rong sang lop store_data. Loi them so voi C01 bi gioi han boi amdahl_max_speedup_total.store_data = 1.02, nen day la ung vien 'dat them it, duoc them it' dung de do xem co dang tra gia do phuc tap forwarding hay khong.",
+      "risks": [
+        "Do dung: neu lam store 1 chu ky ma khong co store-to-load forwarding dung thi mot load ngay sau store cung dia chi co the doc du lieu cu -> SAI tung bit. Day la rui ro do dung nghiem trong nhat trong ca danh sach.",
+        "Fmax: duong ghi 1 chu ky cong logic forwarding dai hon duong ghi 2 chu ky.",
+        "Loi can biên nho: share_by_sem_total.store_data chi 2.26, nen neu C01 da duoc chon thi C02 co the khong dang do phuc tap.",
+        "Phuc tap hien thuc: trung-cao."
+      ],
+      "depends_on": ["C01.L3.MEM1"]
+    },
+    {
+      "id": "C03.L3.MUL1",
+      "level": "L3",
+      "title": "Ong hoa bo nhan: mul ha tu 2 chu ky xuong 1",
+      "target": "lop chu ky mac tren toan bo mang; cac tang co mac: layers.conv1 (share_by_sem.mac = 42.4), layers.conv2 (41.98), layers.dense (40.47)",
+      "evidence": [
+        "analysis.json share_by_sem_total.mac = 40.47 (lop chu ky lon thu hai)",
+        "analysis.json cycles_by_sem_total.mac = 590880.0",
+        "analysis.json amdahl_max_speedup_total.mac = 1.68",
+        "analysis.json cycles_per_mac_total = 7.602",
+        "Dan xuat tu cac truong duoc cap: cycles_by_sem_total.mac = 590880.0 chia cho tong so MAC mot anh (layers.conv1.mac = 48672 + layers.conv2.mac = 139392 + layers.dense.mac = 4000 = 192064) = 3.08 chu ky moi MAC. core.md cho mul = 2 va alu = 1, nen 3.08 khop voi chuoi mul(2) + add(1) = 3 chu ky moi MAC.",
+        "core.md: 'Nhan 32x32 dung khoi nhan cung cua FPGA, hien ton 2 chu ky'",
+        "budget.json fmax_current_mhz = 56.47 vs fmax_min_mhz = 27.0; note: 'Xung nhip CO DINH 27 MHz ... lam Fmax cao hon 27 MHz thi KHONG co loi gi. Vi vay chi toi uu SO CHU KY.'",
+        "budget.json remaining.MULT18X18 = 44 (used_by_current_design.MULT18X18 = 4)"
+      ],
+      "spec": {
+        "timing_changes": {
+          "mul": 1,
+          "note": "Bo khoi dang ky dau ra (output register) cua MULT18X18 va de ket qua nhan 32x32 (ghep tu 4 khoi 18x18 + cay cong) hoan tat to hop trong mot chu ky. Doi lai chu ky dai hon — chinh xac la kieu danh doi ma note cua budget.json cho phep, vi bien Fmax hien tai la 56.47/27.0 = 2.09x."
+        },
+        "firmware_changes": "Khong doi firmware, khong doi tap lenh. MUL/MULH/MULHSU/MULHU giu nguyen ngu nghia RV32M.",
+        "hw_resources_guess": {
+          "MULT18X18": "giu 4 khoi nhu hien tai (used_by_current_design.MULT18X18 = 4); khong them",
+          "BSRAM_ports": 0,
+          "LUT4": "nho: cay cong ghep 4 san pham rieng 18x18 chuyen tu co dang ky sang to hop",
+          "DFF": "GIAM (bo thanh ghi pipeline dau ra cua bo nhan)",
+          "new_arch_regs": 0
+        }
+      },
+      "estimate_method": "iss_timing",
+      "expected_mechanism": "Doi lambda_mul tu 2 xuong 1 trong C = sum(n_c * lambda_c). Lop chu ky bi cat la mac: moi buoc MAC hien ton mul(2) + add(1); bo tang dang ky cua bo nhan xoa dung chu ky thu hai cua mul. Day la ung vien re nhat ve tai nguyen trong ca danh sach (that ra GIAM DFF) va khong dung mot bit encoding nao.",
+      "risks": [
+        "Fmax: rui ro CHINH. Nhan 32x32 to hop la duong to hop dai nhat kha di. Neu Fmax tut duoi 27.0 MHz thi ung vien bi loai theo budget.json. Bien hien co (56.47 MHz) cho phep duong dai gap ~2.09x duong hien tai; can tong hop thuc de xac nhan.",
+        "Cong tep thanh ghi: khong doi (2 doc 1 ghi nhu core.md).",
+        "Cong BSRAM: khong doi.",
+        "Do dung: khong doi phep toan, bit-exact hien nhien.",
+        "Phuc tap hien thuc: THAP — chi la thay doi cau hinh pipeline cua khoi nhan."
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "C04.L1.FMAC",
+      "level": "L1",
+      "title": "Lenh FMAC custom-0: acc += rs1*rs2 trong 1 chu ky, 4 thanh ghi tich luy noi",
+      "target": "lop chu ky mac; vong trong cung bi nham: static.json layers.conv2.loops[0] (body 0x69c..0xb40, cycles_in_body = 9718720) va static.json layers.conv1.loops[0] (body 0xc60..0xd1c, cycles_in_body = 3677440)",
+      "evidence": [
+        "analysis.json share_by_sem_total.mac = 40.47; cycles_by_sem_total.mac = 590880.0",
+        "Dan xuat: cycles_by_sem_total.mac 590880.0 / (layers.conv1.mac 48672 + layers.conv2.mac 139392 + layers.dense.mac 4000 = 192064) = 3.08 chu ky moi MAC, khop mul(2)+add(1) theo core.md",
+        "analysis.json amdahl_max_speedup_total.mac = 1.68",
+        "analysis.json layers.conv2.ipc_real = 0.589 va layers.conv1.ipc_real = 0.692 (loi phat 1 lenh/chu ky cua core.md nghia la IPC toi da = 1, nen phan hut la do lenh nhieu chu ky)",
+        "analysis.json layers.conv2.instret = 592235 so voi layers.conv2.cycles = 1005419 (ty le 1.70 chu ky/lenh)",
+        "static.json layers.conv2.loops[0].recurrence_cycles = 1 va slack_vs_recurrence_x = 535.47, n_memdep_in_loop = 0 (chuoi tich luy khong phai duong gioi han)",
+        "static.json encoding_space.free_custom_opcodes: '0x0b': 'custom-0' — hoan toan trong; encoding_space.note: 'Loi hien tai khong hien thuc lenh tuy bien nao'",
+        "static.json layers.conv2.loops[1].n_regs_free = 3 va peak_live = 27 (ap luc thanh ghi cao -> tich luy trong thanh ghi noi cua khoi, khong ton thanh ghi kien truc)"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x0b",
+          "funct3": "0x0",
+          "funct7": "0x00..0x03 (bit[1:0] = chi so bo tich luy k thuoc 0..3; bit[6:2] = 0)"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # custom-0, funct3=0x0, funct7[1:0]=k : FMAC  acc[k] += rs1 * rs2 ; rd = acc[k]\n    # Plugin ISS truyen funct7[1:0] vao state['imm_acc'].\n    k = state.get('imm_acc', 0) & 3\n    a = rs1 & 0xFFFFFFFF\n    b = rs2 & 0xFFFFFFFF\n    p = (a * b) & 0xFFFFFFFF          # 32 bit thap: giong nhau cho co dau va khong dau\n    acc = state.setdefault('macc', [0, 0, 0, 0])\n    acc[k] = (acc[k] + p) & 0xFFFFFFFF\n    state['macc'] = acc\n    return acc[k], state\n",
+        "latency_cycles": 1,
+        "firmware_changes": "Trong vong trong cung cua conv1/conv2/dense, thay cap lenh 'mul rt, ra, rb ; add racc, racc, rt' bang mot 'fmac.k ra, rb' (rd = x0 neu khong can gia tri tra ve ngay). Bien tich luy chuyen tu thanh ghi kien truc sang acc[k], giai phong 1 thanh ghi moi chuoi tich luy — quan trong vi static.json layers.conv2.loops[1].n_regs_free = 3. Khoi tao acc[k] = 0 va doc ket qua ra bang lenh ACCRD (cung opcode 0x0b, funct3=0x2, funct7[1:0]=k) tai dau/cuoi moi chuoi tich luy, nen chi phi khoi tao/doc la O(so output), khong phai O(so MAC).",
+        "hw_resources_guess": {
+          "MULT18X18": "dung lai 4 khoi dang co (used_by_current_design.MULT18X18 = 4), khong them",
+          "BSRAM_ports": 0,
+          "LUT4": "trung: 1 bo cong 32 bit + mux chon 1 trong 4 bo tich luy + giai ma opcode 0x0b",
+          "DFF": "128 (4 bo tich luy 32 bit)",
+          "new_arch_regs": "4 thanh ghi tich luy noi (khong nam trong x1..x31, nen khong dung them cong tep thanh ghi cho duong ghi tich luy)"
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "Cat lop chu ky mac bang cach GIAM n_c, khong phai lambda_c: gop mul(2 chu ky) + add(1 chu ky) thanh mot lenh 1 chu ky. Vi tich luy nam trong thanh ghi noi cua khoi, duong hoi tiep acc -> cong -> acc khong di qua tep thanh ghi va khong can cong ghi thu hai. Phu them: giam instret nen cung giam nhe ap luc I-fetch.",
+      "risks": [
+        "Fmax: duong to hop nhan-32x32 + cong-32 trong MOT chu ky dai hon ca C03 (chi nhan). Day la ung vien co rui ro Fmax cao nhat o L1; neu khong dat 27.0 MHz thi nen de latency_cycles = 2 (van thang vi thay 3 chu ky bang 2).",
+        "Cong tep thanh ghi: doc 2 (rs1, rs2) va ghi 1 (rd) — vua dung 2-doc-1-ghi cua core.md, khong vi pham.",
+        "Do dung (tran): acc[k] la 32 bit va duoc cat bang & 0xFFFFFFFF, giong het hanh vi add 32 bit cua RV32I, nen bit-exact voi chuoi mul+add goc. Tich 32 bit thap cung giong MUL cua RV32M. Khong co lam tron nao duoc them.",
+        "Do dung (trang thai an): acc[k] la trang thai kien truc moi -> phai luu/phuc hoi khi co ngat hoac goi ham long nhau. Firmware CNN nay la vong lap phang nen rui ro thap, nhung can kiem tra 4 bo tich luy co du cho cac vong long trong conv2 (static.json layers.conv2.loops co 3 muc).",
+        "Phuc tap hien thuc: trung binh (them duong giai ma + khoi tich luy)."
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "C05.L1.LMAC",
+      "level": "L1",
+      "title": "Lenh LMAC custom-0: nap 1 byte tu bo nho, nhan voi trong so trong thanh ghi, tich luy — tat ca trong 1 lenh",
+      "target": "dong thoi hai lop chu ky lon nhat load_data va mac; nham vao layers.conv2 (share_by_sem.load_data = 51.88, share_by_sem.mac = 41.98, tong 93.86) va layers.dense (54.09 + 40.47 = 94.56)",
+      "evidence": [
+        "analysis.json share_by_sem_total.load_data = 44.5 va share_by_sem_total.mac = 40.47 (hai lop cong lai 84.97 tong chu ky)",
+        "analysis.json cycles_by_sem_total.load_data = 649618.0 va cycles_by_sem_total.mac = 590880.0",
+        "Dan xuat: cycles_by_sem_total.load_data 649618.0 / 2 chu ky moi load (core.md 'load 2 chu ky') = 324809 load moi anh, chia cho 192064 MAC moi anh (layers.conv1.mac 48672 + layers.conv2.mac 139392 + layers.dense.mac 4000) = 1.69 load moi MAC",
+        "analysis.json layers.conv2.byte_per_mac = 4.516 va layers.conv2.roof_mac_per_cycle = 0.4428 so voi layers.conv2.mac_per_cycle = 0.1386, layers.conv2.dist_to_roof_x = 3.19",
+        "analysis.json layers.conv2.bound = 'compute/issue' (chua phai bound bang thong, nen con cho cat chu ky phat lenh)",
+        "static.json layers.conv2.loops[1].n_memdep_in_loop = 0 va memdep_in_loop = {} (khong co phu thuoc bo nho trong vong, nen gop load vao lenh tinh toan an toan)",
+        "static.json encoding_space.free_custom_opcodes: '0x0b': 'custom-0', encoding_space.funct3_per_opcode = 8"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x0b",
+          "funct3": "0x3",
+          "funct7": "0x00..0x03 (bit[1:0] = chi so bo tich luy k; bit[2] = 1 nghia la toan hang bo nho co dau (lb) thay vi khong dau (lbu))"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # custom-0, funct3=0x3 : LMAC   acc[k] += mem8(rs1) * rs2 ; rd = acc[k]\n    # rs1 = dia chi byte cua phan tu kich hoat int8\n    # rs2 = trong so int8 da mo rong dau, dang san trong thanh ghi\n    f7 = state.get('imm_acc', 0)\n    k = f7 & 3\n    signed_mem = (f7 >> 2) & 1\n    addr = rs1 & 0xFFFFFFFF\n    v = state['mem'][addr] & 0xFF                 # mot truy cap bo nho duy nhat\n    if signed_mem and (v & 0x80):\n        v = (v - 256) & 0xFFFFFFFF\n    p = (v * (rs2 & 0xFFFFFFFF)) & 0xFFFFFFFF\n    acc = state.setdefault('macc', [0, 0, 0, 0])\n    acc[k] = (acc[k] + p) & 0xFFFFFFFF\n    state['macc'] = acc\n    return acc[k], state\n",
+        "latency_cycles": 2,
+        "firmware_changes": "Trong vong trong cung cua conv2 (static.json layers.conv2.loops[0], body 0x69c..0xb40, static_instr = 297) va dense (static.json layers.dense.loops[0], body 0x2a4..0x32c, static_instr = 35): giu TRONG SO trong thanh ghi (bat buoc — chi mot toan hang duoc lay tu bo nho) va thay chuoi 'lbu rt, 0(rp) ; mul rt, rt, rw ; add racc, racc, rt' bang mot 'lmac.k rp, rw'. Vong conv2 trong cung co static.json layers.conv2.loops[0].n_regs_free = 3 nen phai nap lai trong so theo khoi; dung ke hoach giu trong so trong thanh ghi theo tung cua so kernel va duyet kich hoat ben trong.",
+        "hw_resources_guess": {
+          "MULT18X18": "dung lai 4 khoi dang co; thuc chat chi can mot nhan 8x32 nen co the dung 1 khoi hoac LUT",
+          "BSRAM_ports": "1 (dung dung mot truy cap du lieu moi lenh — KHONG them ap luc cong so voi mot load thuong)",
+          "LUT4": "trung: mo rong dau byte + nhan + cong + mux tich luy",
+          "DFF": "dung chung 4 bo tich luy voi C04 (128 DFF, khong them)",
+          "new_arch_regs": "dung chung acc[0..3] voi C04"
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "Giam n_c cua CA HAI lop lon nhat cung luc. Chuoi hien tai lbu(2) + mul(2) + add(1) = 5 chu ky bi thay bang mot lenh 2 chu ky; 2 chu ky la san bang vi mot truy cap du lieu van chiem cong BSRAM dung mot lan (core.md). Khac C04, ung vien nay cat ca load_data chu khong chi mac — nen la ung vien 'hai lop mot phat' va dang do truoc tien theo yeu cau 4 cua nhiem vu. Luu y: lenh chi doc MOT toan hang tu bo nho, nen khong can bo nho da cong va khong lam tang mem_bytes_per_cycle_available.",
+      "risks": [
+        "Fmax: mo rong dau + nhan + cong trong duong lenh 2 chu ky; co the chia tang (chu ky 1 = truy cap bo nho, chu ky 2 = nhan+cong) nen rui ro Fmax THAP HON C04.",
+        "Cong tep thanh ghi: doc 2 (dia chi, trong so) ghi 1 — dung 2-doc-1-ghi cua core.md.",
+        "Cong BSRAM: khong tang; nhung neu ket hop voi C01 (Harvard) thi lenh nay co the ha xuong 1 chu ky — do dieu do RIENG, dung gia dinh san.",
+        "Do dung (tran / lam tron): tich 8x32 cat 32 bit thap va cong cat 32 bit, giong hanh vi mul+add 32 bit cua RV32IM -> bit-exact. Phai chon dung bien co dau/khong dau (bit funct7[2]) khop voi lbu hay lb ma firmware goc dung, neu sai thi SAI tung bit.",
+        "Do dung (ap luc thanh ghi): bat trong so phai nam trong thanh ghi, nhung static.json layers.conv2.loops[0].n_regs_free = 3 va loops[1].peak_live = 27 — neu phai spill trong so thi lai sinh load moi, tu triet tieu loi. Day la rui ro hien thuc lon nhat cua ung vien nay; co the giam bang C12 (bang thanh ghi mo rong).",
+        "Phuc tap hien thuc: trung-cao (lenh vua truy cap bo nho vua tinh toan, phai dat dung tang pipeline)."
+      ],
+      "depends_on": ["C04.L1.FMAC"]
+    },
+    {
+      "id": "C06.L2.SDOT4",
+      "level": "L2",
+      "title": "Lenh SDOT4 custom-0: tich vo huong 4 lan int8 tren toan hang 32 bit da goi, 1 chu ky",
+      "target": "layers.conv1 (dlp.lanes_possible_8bit = 4, dlp.share_stride_1_pct = 85.8) va cac vong pool1/pool2; vong trong cung static.json layers.conv1.loops[0] (body 0xc60..0xd1c, stride1_share_pct = 86.5, lanes_possible_8bit = 4)",
+      "evidence": [
+        "analysis.json layers.conv1.dlp.lanes_possible_8bit = 4 va layers.conv1.dlp.share_stride_1_pct = 85.8, dlp.n_strided = 545580",
+        "analysis.json layers.conv1.share_by_sem.mac = 42.4 va layers.conv1.share_by_sem.load_data = 26.48",
+        "analysis.json layers.conv1.byte_per_mac = 1.149 (thap nhat trong cac tang co MAC) va layers.conv1.roof_mac_per_cycle = 1.7399, layers.conv1.mac_per_cycle = 0.1316, layers.conv1.dist_to_roof_x = 13.22 (xa roof nhat trong moi tang)",
+        "analysis.json layers.conv1.bound = 'compute/issue'",
+        "analysis.json layers.pool1.dlp.lanes_possible_8bit = 4, share_stride_1_pct = 89.9; layers.pool2.dlp.lanes_possible_8bit = 4, share_stride_1_pct = 94.6",
+        "analysis.json mem_bytes_per_cycle_available = 2.0 (mot lw 4 byte lay ve 4 phan tu int8 lien tiep, dung dung mot truy cap cong)",
+        "static.json layers.conv1.loops[0].stride1_share_pct = 86.5 va lanes_possible_8bit = 4, n_memdep_in_loop = 0",
+        "static.json layers.conv1.loops[0].recurrence_cycles = 1, slack_vs_recurrence_x = 70.72",
+        "static.json encoding_space.free_custom_opcodes: '0x0b': 'custom-0'"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x0b",
+          "funct3": "0x1",
+          "funct7": "0x00..0x03 (bit[1:0] = chi so bo tich luy k; bit[2] = 0: ca hai toan hang int8 co dau; bit[2] = 1: rs1 khong dau, rs2 co dau)"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # custom-0, funct3=0x1 : SDOT4  acc[k] += sum_{i=0..3} lane_i(rs1) * lane_i(rs2)\n    f7 = state.get('imm_acc', 0)\n    k = f7 & 3\n    rs1_unsigned = (f7 >> 2) & 1\n    s = 0\n    for i in range(4):\n        a = (rs1 >> (8 * i)) & 0xFF\n        b = (rs2 >> (8 * i)) & 0xFF\n        if (not rs1_unsigned) and (a & 0x80):\n            a -= 256\n        if b & 0x80:\n            b -= 256\n        s += a * b\n    acc = state.setdefault('macc', [0, 0, 0, 0])\n    acc[k] = (acc[k] + s) & 0xFFFFFFFF\n    state['macc'] = acc\n    return acc[k], state\n",
+        "latency_cycles": 1,
+        "firmware_changes": "Trong vong trong cung cua conv1 (static.json layers.conv1.loops[0], body 0xc60..0xd1c): thay 4 vong lap byte bang 1 vong lap tu. Hai 'lw' (kich hoat 4 byte lien tiep + trong so 4 byte lien tiep) roi 1 'sdot4' thay cho 4 x (lbu + lbu + mul + add). Yeu cau tien quyet: con tro kich hoat va trong so phai thang hang 4 byte — bo dem kernel va mang dac trung sang bien gioi 4 byte trong bo nho. Phan du (14.2% truy cap khong phai stride-1 theo layers.conv1.dlp.share_stride_1_pct = 85.8) giu nguyen duong vo huong cu, nen khong can duong vector hoan chinh.",
+        "hw_resources_guess": {
+          "MULT18X18": "0 them neu dung nhan 8x8 bang LUT (4 cai); hoac 2 khoi MULT18X18 neu goi doi (remaining.MULT18X18 = 44 nen du du)",
+          "BSRAM_ports": "0 them (lw 4 byte = dung mot truy cap cong, giong lw hien tai)",
+          "LUT4": "trung-cao: 4 nhan 8x8 + cay cong 3 tang + mo rong dau theo lan + mux tich luy",
+          "DFF": "dung chung 4 bo tich luy voi C04",
+          "new_arch_regs": "dung chung acc[0..3] voi C04"
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "Cat DONG THOI load_data va mac bang cach giam n_c manh nhat trong danh sach: mot 'lw' (2 chu ky) lay 4 phan tu int8 thay cho 4 'lbu' (8 chu ky), va mot 'sdot4' (1 chu ky) thay cho 4 x mul+add (12 chu ky). conv1 la tang dang nham vi dist_to_roof_x = 13.22 — xa roof nhat, nghia la con nhieu cho truoc khi dung tran bang thong; va byte_per_mac = 1.149 thap nen tai su dung du lieu da tot, loi den tu phat lenh chu khong tu bang thong.",
+      "risks": [
+        "Fmax: 4 nhan 8x8 song song + cay cong + cong tich luy trong 1 chu ky. Neu khong dat 27.0 MHz, de latency_cycles = 2 (van loi lon).",
+        "Cong tep thanh ghi: doc 2 ghi 1 — hop le voi 2-doc-1-ghi cua core.md.",
+        "Cong BSRAM: khong tang.",
+        "Do dung (tran): tong 4 tich int8 nam trong +-65024, cong vao acc 32 bit roi cat 32 bit. Ket qua TRUNG GIAN khac thu tu cong cua firmware goc, nhung vi cong 32 bit la ket hop va mo-2^32, tong cuoi cung giong tung bit. CAN kiem tra: neu firmware goc co bat ky bao hoa (saturate) hay cat bit o giua chuoi tich luy thi KHONG con bit-exact.",
+        "Do dung (co dau theo lan): phai khop dung lbu/lb cua tung toan hang trong firmware goc qua bit funct7[2]; sai la sai tung bit.",
+        "Do dung (thang hang): neu bo dem khong thang hang 4 byte, lw se doc lech — phai dam bao bang linker/cap phat.",
+        "Pham vi ap dung: layers.conv2.dlp.share_stride_1_pct = 0.0 va layers.conv2.dlp.lanes_possible_8bit = null, nghia la ung vien nay KHONG ap dung duoc cho conv2 — tang chiem phan lon chu ky (layers.conv2.cycles_sum10 = 10054190 / cycles_sum10 = 14599277). Xem C07 de mo duong cho conv2.",
+        "Phuc tap hien thuc: cao (phai sua bo nho dem va vong lap firmware, cong duong du cho phan khong stride-1)."
+      ],
+      "depends_on": ["C04.L1.FMAC"]
+    },
+    {
+      "id": "C07.L2.CONV2LAYOUT",
+      "level": "L2",
+      "title": "Doi bo tri du lieu conv2 sang kenh-trong-cung (stride-1) de mo duong cho SIMD va giam byte/MAC",
+      "target": "layers.conv2 — tang chiem phan lon chu ky (cycles_sum10 = 10054190 tren tong cycles_sum10 = 14599277); vong static.json layers.conv2.loops[1] (body 0x480..0xb58, cycles_in_body = 10051470)",
+      "evidence": [
+        "analysis.json layers.conv2.cycles_sum10 = 10054190 so voi analysis.json cycles_sum10 = 14599277 (tang lon nhat)",
+        "analysis.json layers.conv2.dlp.share_stride_1_pct = 0.0 va layers.conv2.dlp.lanes_possible_8bit = null, trong khi layers.conv2.dlp.n_strided = 387180 (co truy cap co buoc nhung KHONG phai buoc 1)",
+        "analysis.json layers.conv1.dlp.share_stride_1_pct = 85.8 (doi chung: cung mang, tang khac lai stride-1 toi 85.8%) -> khac biet la o BO TRI, khong phai o thuat toan",
+        "analysis.json layers.conv2.byte_per_mac = 4.516 so voi layers.conv1.byte_per_mac = 1.149 (conv2 doc gap ~3.9 lan so byte moi MAC)",
+        "analysis.json layers.conv2.roof_mac_per_cycle = 0.4428 (= mem_bytes_per_cycle_available 2.0 / byte_per_mac 4.516) — tran roofline cua conv2 bi byte_per_mac quyet dinh",
+        "analysis.json layers.conv2.dist_to_roof_x = 3.19 (gan roof nhat trong cac tang co MAC) va bound = 'compute/issue'",
+        "analysis.json layers.conv2.share_by_sem.load_data = 51.88 (cao hon share_by_sem.mac = 41.98)",
+        "analysis.json layers.conv2.bytes_per_image = 629560.0 so voi layers.conv1.bytes_per_image = 55948.0",
+        "static.json layers.conv2.loops[*].stride1_share_pct = 0.0 va lanes_possible_8bit = null o ca ba muc vong"
+      ],
+      "spec": {
+        "firmware_changes": "Chi doi FIRMWARE, khong doi phan cung. (a) Doi bo tri tensor trung gian cua conv2 sang kenh-trong-cung (NHWC) de vong trong cung duyet kenh dau vao lien tiep trong bo nho -> share_stride_1_pct chuyen tu 0.0 len gan 100 va lanes_possible_8bit chuyen tu null sang 4. (b) Sap xep lai mang trong so conv2 theo cung thu tu (kenh-trong-cung, goi 4 kenh mot tu 32 bit) ngay tu luc sinh du lieu, nen khong co chi phi runtime. (c) Doi vong lap thanh tile theo kenh dau ra x cua so hang de moi phan tu kich hoat doc mot lan duoc dung cho nhieu kenh dau ra -> ha byte_per_mac tu 4.516 xuong gan muc cua conv1 (1.149). Phep toan tung MAC va thu tu tich luy TRONG mot kenh dau ra giu nguyen de bit-exact.",
+        "timing_changes": {},
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM_blocks_added": 0,
+          "BSRAM_ports": 0,
+          "LUT4": 0,
+          "DFF": 0,
+          "new_arch_regs": 0,
+          "note": "Ung vien ton 0 tai nguyen FPGA. Neu dung, no la DIEU KIEN de C06 (SDOT4) va C09 (mang MAC) ap dung duoc cho conv2 — tang chiem phan lon chu ky."
+        }
+      },
+      "estimate_method": "iss_firmware",
+      "expected_mechanism": "Hai co che. (1) Giam lop load_data truc tiep: layers.conv2.byte_per_mac = 4.516 nghia la conv2 doc lai cung mot byte nhieu lan; tile theo kenh dau ra dung mot byte da nap cho nhieu MAC -> giam n_c cua lop load (share_by_sem.load_data = 51.88, lop lon nhat cua conv2). (2) Mo duong: sau khi share_stride_1_pct != 0 va lanes_possible_8bit = 4, conv2 moi dung duoc lenh goi 4 lan (C06) va mang MAC (C09). Day la ung vien 'khong ton cong, mo cua' — can do RIENG truoc khi do cac to hop, vi no la gia dinh an cua C06/C09 khi ap cho conv2.",
+      "risks": [
+        "Do dung (thu tu tich luy): phai giu nguyen thu tu cong trong moi kenh dau ra. Doi thu tu duyet vong co the doi thu tu tich luy; neu tich luy la 32 bit mo-2^32 thuan thi khong anh huong, nhung neu co bao hoa trung gian thi SAI tung bit. Phai kiem bang so sanh voi golden.",
+        "Do dung (bo tri): anh xa dia chi moi phai dung voi ca bo nap trong so; loi off-by-one trong NHWC la kieu loi kho thay.",
+        "Bo nho: tile theo kenh dau ra can bo dem tich luy lon hon trong RAM du lieu; budget.json ghi used_by_current_design.BSRAM = 32 cho 64 KB chuong trinh + du lieu va remaining.BSRAM = 14 — neu bo dem phinh ra qua 64 KB thi phai cap them khoi.",
+        "Co the lam TANG mot so lop khac: tile long hon lam tang loop_ctrl va addr (hien share_by_sem_total.loop_ctrl = 1.48, addr = 1.14 — con rat thap nen con cho).",
+        "Kich co ma: static.json layers.conv2.loops[1].static_instr = 438 va n_regs_free = 3; viet lai vong voi tile se can nhieu thanh ghi hon -> rui ro spill. Xem C12.",
+        "Phuc tap hien thuc: CAO — day la ung vien nhieu cong viec firmware nhat trong danh sach, du ton 0 LUT."
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "C08.L1.REQUANT",
+      "level": "L1",
+      "title": "Lenh REQUANT custom-0: (acc * M + round) >> S roi bao hoa ve int8, trong 1 lenh",
+      "target": "lop chu ky requant; tap trung o layers.conv1 (share_by_sem.requant = 24.91, cycles_by_sem.requant = 921470 sum10) va layers.conv2 (cycles_by_sem.requant = 369060 sum10)",
+      "evidence": [
+        "analysis.json share_by_sem_total.requant = 8.84 va cycles_by_sem_total.requant = 129053.0 (lop lon thu ba sau load_data 44.5 va mac 40.47)",
+        "analysis.json amdahl_max_speedup_total.requant = 1.1",
+        "analysis.json layers.conv1.share_by_sem.requant = 24.91 — lop lon THU HAI cua conv1, chi sau mac = 42.4 va tren load_data = 26.48",
+        "analysis.json layers.conv1.amdahl_max_speedup.requant = 1.33",
+        "analysis.json layers.conv1.cycles_by_sem.requant = 921470.0 (sum10) so voi layers.conv2.cycles_by_sem.requant = 369060.0 — conv1 ton requant NHIEU HON conv2 du layers.conv1.mac = 48672 nho hon nhieu so voi layers.conv2.mac = 139392",
+        "analysis.json layers.pool1.cycles_by_sem.requant = 0 va layers.dense.cycles_by_sem.requant = 0 (requant chi o hai tang conv)",
+        "core.md: 'div 34 chu ky (dich-tru 32 buoc)' trong khi 'alu 1', 'shift 1', 'mul 2' — mot phep chia trong chuoi requant dat gap 34 lan mot lenh ALU",
+        "static.json encoding_space.funct3_per_opcode = 8 va free_custom_opcodes gom '0x0b' custom-0"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x0b",
+          "funct3": "0x4 (REQUANT), 0x5 (RQCFG: nap he so M vao thanh ghi noi)",
+          "funct7": "0x00 cho ca hai; funct7[0] cua REQUANT chon bao hoa int8 co dau (0) hay uint8 khong dau (1)"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # custom-0, funct3=0x5 : RQCFG   state['rq_m'] = rs1   (he so nhan M, int32)\n    # custom-0, funct3=0x4 : REQUANT rd = sat8( (sext32(rs1) * M + (1 << (S-1))) >> S )\n    #                        rs1 = tong tich luy, rs2[5:0] = S (so bit dich, 1..31)\n    f3 = state.get('imm_funct3', 0x4)\n    if f3 == 0x5:\n        state['rq_m'] = rs1 & 0xFFFFFFFF\n        return rs1 & 0xFFFFFFFF, state\n    unsigned_out = state.get('imm_acc', 0) & 1\n    a = rs1 & 0xFFFFFFFF\n    if a & 0x80000000:\n        a -= 0x100000000                      # sext32 -> so nguyen Python\n    m = state.get('rq_m', 1) & 0xFFFFFFFF\n    if m & 0x80000000:\n        m -= 0x100000000\n    s = rs2 & 0x3F\n    if s == 0:\n        y = a * m\n    else:\n        y = (a * m + (1 << (s - 1))) >> s     # dich phai lam tron nua-len, chia san am\n    lo, hi = (0, 255) if unsigned_out else (-128, 127)\n    if y < lo:\n        y = lo\n    elif y > hi:\n        y = hi\n    return y & 0xFFFFFFFF, state\n",
+        "latency_cycles": 2,
+        "firmware_changes": "Nap M mot lan moi kenh dau ra bang RQCFG (O(so kenh), khong phai O(so output)), roi thay toan bo chuoi requant moi phan tu dau ra — hien gom nhan he so, cong hang lam tron, dich phai, hai lenh so sanh/chon de bao hoa, va (neu co) mot phep CHIA — bang mot lenh REQUANT. BAT BUOC: phai doc ma requant goc de khop chinh xac quy tac lam tron (nua-len / nua-ve-khong / nua-chan) va dau cua phep dich; chi doi encoding khi da khop.",
+        "hw_resources_guess": {
+          "MULT18X18": "2 (nhan 32x32 lay 64 bit de khong mat bit truoc khi dich); remaining.MULT18X18 = 44 nen du",
+          "BSRAM_ports": 0,
+          "LUT4": "trung: bo dich phai 64->32 bit co lam tron + hai bo so sanh bao hoa",
+          "DFF": "32 (thanh ghi he so M) + thanh ghi pipeline",
+          "new_arch_regs": "1 thanh ghi noi M (khong chiem x1..x31)"
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "Cat lop chu ky requant bang cach giam n_c: gop ca chuoi nhan + lam tron + dich + bao hoa thanh mot lenh 2 chu ky. Uu tien cao dac biet o conv1: analysis.json layers.conv1.share_by_sem.requant = 24.91 la lop lon thu hai cua tang do. Dang chu y, layers.conv1.cycles_by_sem.requant = 921470 LON HON layers.conv2.cycles_by_sem.requant = 369060 mac du layers.conv1.mac = 48672 chi bang khoang 1/3 layers.conv2.mac = 139392 — nghia la chi phi requant moi phan tu dau ra o conv1 cao bat thuong. Gia thuyet can cong cu kiem (KHONG phai so lieu trich tu analysis.json): chuoi requant conv1 chua mot phep CHIA, ma core.md cho div = 34 chu ky so voi alu = 1. Neu dung, lenh nay (hoac C10 ha lambda_div) cat phan lon 921470 chu ky do. Neu sai, loi chi la gop vai lenh ALU va se nho hon — chinh vi vay can do rieng ca C08 va C10.",
+      "risks": [
+        "Do dung (LAM TRON) — rui ro lon nhat: quy tac lam tron va huong dich phai cua so am phai khop TUNG BIT voi firmware goc. Dich phai so am trong Python la lam tron ve -vo cuc; neu firmware goc dung dich logic hoac lam tron ve khong thi ket qua khac. Phai doi chieu voi golden truoc khi chot.",
+        "Do dung (tran): dung tich 64 bit trung gian truoc khi dich, neu cat 32 bit som se mat bit cao va sai.",
+        "Do dung (bao hoa): phai khop dung mien int8 co dau hay uint8 khong dau theo tung tang (bit funct7[0]).",
+        "Fmax: nhan 32x32 -> 64 bit cong bo dich 64 bit trong 2 chu ky; nen dat nhan o chu ky 1 va dich/bao hoa o chu ky 2.",
+        "Cong tep thanh ghi: doc 2 ghi 1 — hop le.",
+        "Loi co the nho hon ky vong: amdahl_max_speedup_total.requant = 1.1 chan tran o muc toan mang; loi tap trung o conv1.",
+        "Phuc tap hien thuc: trung binh."
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "C09.L4.MACARRAY",
+      "level": "L4",
+      "title": "Khoi tang toc MAC 4x4 (custom-1): 4 nhom trong so nap truoc, 16 MAC int8 moi chu ky",
+      "target": "lop chu ky mac + load_data o layers.conv2 (cycles_sum10 = 10054190, share_by_sem.mac = 41.98, share_by_sem.load_data = 51.88) va layers.conv1 (cycles_sum10 = 3699090)",
+      "evidence": [
+        "analysis.json share_by_sem_total.mac = 40.47 + share_by_sem_total.load_data = 44.5 (84.97 tong chu ky nam o hai lop nay)",
+        "analysis.json cycles_per_mac_total = 7.602 so voi mac_per_cycle cua tung tang: layers.conv1.mac_per_cycle = 0.1316, layers.conv2.mac_per_cycle = 0.1386, layers.dense.mac_per_cycle = 0.1349",
+        "analysis.json layers.conv1.roof_mac_per_cycle = 1.7399 va layers.conv1.dist_to_roof_x = 13.22 (con 13.22x truoc khi conv1 cham tran bang thong)",
+        "analysis.json layers.dense.roof_mac_per_cycle = 0.9814, layers.dense.dist_to_roof_x = 7.27",
+        "analysis.json layers.conv2.roof_mac_per_cycle = 0.4428, layers.conv2.dist_to_roof_x = 3.19",
+        "analysis.json layers.conv1.ipc_ideal = 3020.307 so voi layers.conv1.ipc_real = 0.692; layers.conv2.ipc_ideal = 45556.538 so voi layers.conv2.ipc_real = 0.589 (DLP/ILP san co rat lon)",
+        "static.json layers.conv2.loops[0].slack_vs_recurrence_x = 535.47 va recurrence_cycles = 1, n_memdep_in_loop = 0",
+        "budget.json remaining.MULT18X18 = 44 (available_total.MULT18X18 = 48, used_by_current_design.MULT18X18 = 4)",
+        "budget.json remaining.LUT4 = 17481 va remaining.DFF = 14979",
+        "static.json encoding_space.free_custom_opcodes: '0x2b': 'custom-1' — hoan toan trong"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x2b",
+          "funct3": "0x0 (MACQ: phat 1 tu kich hoat vao ca 4 nhom), 0x1 (WLOAD: nap 4 trong so int8 vao nhom g), 0x2 (ACCRD: doc va xoa bo tich luy nhom g)",
+          "funct7": "bit[1:0] = chi so nhom g thuoc 0..3 cho WLOAD/ACCRD; 0x00 cho MACQ"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # custom-1 : khoi MAC 4 nhom x 4 lan int8\n    #   funct3=0x1 WLOAD  w[g] = rs1 (4 trong so int8 goi trong 1 tu)\n    #   funct3=0x0 MACQ   voi moi g: accq[g] += dot4(rs1, w[g])   (rs1 = 4 kich hoat int8)\n    #   funct3=0x2 ACCRD  rd = accq[g] ; accq[g] = 0\n    f3 = state.get('imm_funct3', 0x0)\n    g = state.get('imm_acc', 0) & 3\n    w = state.setdefault('macq_w', [0, 0, 0, 0])\n    accq = state.setdefault('macq_acc', [0, 0, 0, 0])\n    if f3 == 0x1:\n        w[g] = rs1 & 0xFFFFFFFF\n        state['macq_w'] = w\n        return 0, state\n    if f3 == 0x2:\n        v = accq[g]\n        accq[g] = 0\n        state['macq_acc'] = accq\n        return v, state\n    # MACQ\n    acts = []\n    for i in range(4):\n        a = (rs1 >> (8 * i)) & 0xFF\n        acts.append(a - 256 if a & 0x80 else a)\n    for gg in range(4):\n        s = 0\n        for i in range(4):\n            b = (w[gg] >> (8 * i)) & 0xFF\n            if b & 0x80:\n                b -= 256\n            s += acts[i] * b\n        accq[gg] = (accq[gg] + s) & 0xFFFFFFFF\n    state['macq_acc'] = accq\n    return accq[0], state\n",
+        "latency_cycles": 1,
+        "firmware_changes": "Doi vong lap conv thanh tile 4 kenh dau ra x 4 kenh dau vao: nap truoc 4 nhom trong so bang 4 lenh WLOAD (chi phi O(so tile trong so), bien ngoai vong trong cung), roi vong trong cung chi con 'lw' kich hoat + 'macq' — mot lenh MACQ lam 16 MAC. Doc ket qua bang 4 ACCRD moi tile. Doi voi conv2 can C07 truoc (layers.conv2.dlp.share_stride_1_pct = 0.0 va lanes_possible_8bit = null nen hien chua goi duoc 4 int8 vao mot tu).",
+        "hw_resources_guess": {
+          "MULT18X18": "16 nhan 8x8 — co the gop 2 nhan 8x8 vao 1 MULT18X18 bang ky thuat goi, nen khoang 8..16 khoi; remaining.MULT18X18 = 44 nen VUA DU va con du bien",
+          "BSRAM_ports": "0 them (chi 1 'lw' kich hoat moi lenh MACQ, dung mot truy cap cong nhu lw thuong)",
+          "LUT4": "cao: 4 cay cong dot4 + 4 bo cong tich luy 32 bit + giai ma. Uoc khoang vai nghin LUT4; remaining.LUT4 = 17481 nen con cho.",
+          "DFF": "4 x 32 (trong so) + 4 x 32 (tich luy) = 256, cong thanh ghi pipeline; remaining.DFF = 14979 nen khong dang ke",
+          "new_arch_regs": "4 thanh ghi trong so + 4 thanh ghi tich luy, noi trong khoi (khong chiem x1..x31, khong them cong tep thanh ghi)"
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "Cat ca hai lop lon nhat bang cach ha manh n_c. Co che then chot la TAI SU DUNG: mot 'lw' kich hoat 4 byte duoc dung cho 16 MAC (4 kenh dau ra x 4 kenh dau vao), nen so load tren moi MAC giam gap boi — dung huong ma analysis.json layers.conv2.byte_per_mac = 4.516 chi ra la diem yeu. Dong thoi lop mac giam vi 16 MAC hoan tat trong 1 chu ky thay vi chuoi mul+add. Gioi han cuoi la tran roofline: analysis.json layers.conv2.roof_mac_per_cycle = 0.4428 va layers.conv1.roof_mac_per_cycle = 1.7399 — nen hieu qua thuc phu thuoc viec C07 co ha duoc byte_per_mac hay khong; cong cu phai mo hinh cho ca hai truong hop.",
+      "risks": [
+        "Fmax: RUI RO CAO NHAT trong danh sach. 16 nhan 8x8 + cay cong + 4 bo cong 32 bit trong 1 chu ky. Giam thieu bang cach dat latency_cycles = 2 hoac chia mang thanh 2x4. Phai tong hop that de kiem so voi fmax_min_mhz = 27.0.",
+        "Cong BSRAM: khong tang so cong, nhung neu muon nuoi 16 MAC moi chu ky thi duong kich hoat thanh co that that su — mem_bytes_per_cycle_available = 2.0 la tran cung; de xuat nay chi thang vi TAI SU DUNG trong so/kich hoat, khong vi them bang thong.",
+        "Cong tep thanh ghi: MACQ doc 1 ghi 0 (hoac ghi accq[0]); ACCRD ghi 1. Khong vi pham 2-doc-1-ghi.",
+        "Do dung (tran): tong 16 tich int8 moi chu ky cong vao accq 32 bit, cat 32 bit. Thu tu cong khac firmware goc; chi bit-exact neu tich luy la mo-2^32 thuan, khong co bao hoa trung gian. PHAI kiem.",
+        "Phu thuoc du lieu: voi conv2, ung vien nay VO HIEU neu khong lam C07 truoc (share_stride_1_pct = 0.0, lanes_possible_8bit = null).",
+        "Phuc tap hien thuc: CAO (ca RTL lan viet lai firmware theo tile)."
+      ],
+      "depends_on": ["C07.L2.CONV2LAYOUT"]
+    },
+    {
+      "id": "C10.L3.DIVFAST",
+      "level": "L3",
+      "title": "Chia co so cao: div ha tu 34 chu ky xuong 9 (4 bit moi buoc)",
+      "target": "lop chu ky requant, dac biet layers.conv1 (share_by_sem.requant = 24.91, cycles_by_sem.requant = 921470 sum10)",
+      "evidence": [
+        "analysis.json layers.conv1.share_by_sem.requant = 24.91 va layers.conv1.cycles_by_sem.requant = 921470.0 (sum10)",
+        "analysis.json layers.conv1.amdahl_max_speedup.requant = 1.33 (tran Amdahl lon thu hai cua conv1 sau mac = 1.74)",
+        "analysis.json layers.conv1.cycles_by_sem.requant = 921470.0 so voi layers.conv2.cycles_by_sem.requant = 369060.0, trong khi layers.conv1.mac = 48672 va layers.conv2.mac = 139392 (chi phi requant moi dau ra cua conv1 cao bat thuong)",
+        "analysis.json share_by_sem_total.requant = 8.84, cycles_by_sem_total.requant = 129053.0",
+        "core.md: 'div 34 chu ky (dich-tru 32 buoc)' — dat gap 34 lan 'alu 1' va gap 17 lan 'mul 2'",
+        "budget.json fmax_current_mhz = 56.47 vs fmax_min_mhz = 27.0 (bien ~2.09x cho phep lam moi buoc chia nang hon)",
+        "budget.json remaining.LUT4 = 17481, remaining.ALU = 14754"
+      ],
+      "spec": {
+        "timing_changes": {
+          "div": 9,
+          "note": "Doi bo chia dich-tru 1 bit/chu ky (32 buoc + 2 chu ky phu = 34) sang co so 16 (4 bit moi chu ky, 8 buoc + 1 chu ky phu = 9). Khong doi ngu nghia DIV/DIVU/REM/REMU cua RV32M, ke ca cac truong hop dac biet (chia 0 tra -1 / khong doi, tran INT_MIN/-1).",
+          "variant_radix4": "Bien the an toan hon cho Fmax: co so 4 (2 bit/chu ky) -> div = 17."
+        },
+        "firmware_changes": "Khong doi firmware, khong doi tap lenh.",
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM_ports": 0,
+          "LUT4": "trung-cao: 4 tang tru/chon co dieu kien moi chu ky thay cho 1 tang; uoc vai tram den ~1-2 nghin LUT4 (remaining.LUT4 = 17481)",
+          "DFF": "nho (thanh ghi thuong/so du giu nguyen do rong)",
+          "new_arch_regs": 0
+        }
+      },
+      "estimate_method": "iss_timing",
+      "expected_mechanism": "Doi lambda_div trong C = sum(n_c * lambda_c) tu 34 xuong 9. Lop chu ky bi cat la requant. CAN CU co che: layers.conv1.cycles_by_sem.requant = 921470 lon hon layers.conv2.cycles_by_sem.requant = 369060 du conv1 co it MAC hon han — day la dau hieu requant cua conv1 chua mot phep rat dat, va trong bang core.md chi co div (34) dat den the. Day la ung vien RE va KHONG RUI RO DO DUNG dung de PHAN BIET gia thuyet: neu do cho thay C10 cat nhieu chu ky, thi requant that su dung div va C08 nen uu tien cao; neu khong, requant chi la chuoi ALU/shift va C08 chi duoc loi nho. Hai ung vien nay nen do cung mot vong.",
+      "risks": [
+        "Fmax: 4 tang tru-chon lien tiep trong mot chu ky la duong to hop dai. Neu khong dat 27.0 MHz thi lui ve bien the co so 4 (div = 17).",
+        "Do dung: PHAI giu dung cac truong hop goc cua RV32M — chia cho 0 (DIV tra -1, DIVU tra 2^32-1, REM tra so bi chia) va tran (DIV(INT_MIN, -1) = INT_MIN). Day la noi bo chia co so cao hay sai.",
+        "Loi co the bang KHONG: neu firmware khong dung div trong requant thi ung vien nay gan nhu khong doi gi. Do la THONG TIN co gia tri (loai bo gia thuyet), nhung phai chap nhan kha nang do.",
+        "Cong tep thanh ghi / cong BSRAM: khong doi.",
+        "Phuc tap hien thuc: trung binh (thay the mot khoi doc lap)."
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "C11.L5.DUALISSUE",
+      "level": "L5",
+      "title": "Phat hai lenh tinh (2-way static dual-issue): mot khe bo nho/nhan + mot khe ALU/nhanh",
+      "target": "toan bo cac vong trong cung; bang chung ILP manh nhat o static.json layers.conv2.loops[0] (slack_vs_recurrence_x = 535.47) va static.json layers.conv1.loops[2] (slack_vs_recurrence_x = 26417.14)",
+      "evidence": [
+        "core.md: 'Phat MOT lenh moi chu ky' — nen IPC bi chan tran o 1.0",
+        "analysis.json layers.conv2.ipc_real = 0.589, layers.conv1.ipc_real = 0.692, layers.dense.ipc_real = 0.594, layers.pool1.ipc_real = 0.841, layers.pool2.ipc_real = 0.84",
+        "analysis.json layers.conv2.ipc_ideal = 45556.538 va layers.conv1.ipc_ideal = 3020.307 (ILP tiem nang lon hon tran phat lenh nhieu bac)",
+        "analysis.json layers.conv1.crit_path = 847 so voi layers.conv1.cycles = 369909; layers.conv2.crit_path = 130 so voi layers.conv2.cycles = 1005419",
+        "static.json layers.conv2.loops[0].recurrence_cycles = 1, cycles_per_trip = 535.47, slack_vs_recurrence_x = 535.47",
+        "static.json layers.conv1.loops[2].recurrence_cycles = 2, slack_vs_recurrence_x = 26417.14",
+        "static.json layers.conv2.loops[1].n_memdep_in_loop = 0 va memdep_in_loop = {} (khong co phu thuoc bo nho can tuan tu hoa)",
+        "budget.json remaining.LUT4 = 17481, remaining.DFF = 14979, remaining.ALU = 14754 (du tai nguyen cho duong du lieu thu hai)",
+        "budget.json note: 'chi toi uu SO CHU KY' va fmax_current_mhz = 56.47 vs fmax_min_mhz = 27.0"
+      ],
+      "spec": {
+        "timing_changes": {
+          "issue_width": 2,
+          "slot_A": "load, store, mul, div, va moi lenh tuy bien custom-0/custom-1 (khe duy nhat co duong bo nho va bo nhan)",
+          "slot_B": "alu, shift, branch_taken, branch_nt, jal, jalr, csr, misc",
+          "pairing_rules": "Ghep TINH, trong-thu-tu, chi khi: (1) lenh thu nhat thuoc lop khe A va lenh thu hai thuoc lop khe B (hoac nguoc lai theo thu tu chuong trinh); (2) khong co phu thuoc doc-sau-ghi giua hai lenh; (3) tong so cong doc tep thanh ghi <= so cong co; (4) khong ghep qua bien gioi khoi co ban. Khong ghep duoc thi phat don — bang chi phi hien tai, nen day la thay doi THUAN LOI (khong bao gio cham hon).",
+          "lambda_unchanged": "Moi lambda_c trong core.md giu nguyen; chi so lenh moi chu ky doi. Mo hinh C = sum(n_c * lambda_c) phai duoc thay bang mo hinh co ghep doi, nen cong cu can do bang iss_timing chu khong bang phuong trinh cu."
+        },
+        "firmware_changes": "Khong BAT BUOC doi firmware (ghep doi trong-thu-tu nen ma cu van chay). Nhung sap xep lai lenh trong vong trong cung (xen ke lenh bo nho va lenh ALU) se tang ty le ghep thanh cong nhieu. Dang do CA HAI bien the: khong doi firmware, va co sap xep lai.",
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM_ports": "0 them — day la LY DO chon phan khe nhu tren: chi khe A co duong bo nho, nen khong bao gio can cong BSRAM thu hai (core.md: BSRAM MOT CONG).",
+          "LUT4": "cao: duong du lieu ALU thu hai + logic kiem tra phu thuoc/ghep doi + mo rong giai ma",
+          "DFF": "trung: them tang thanh ghi cho lenh thu hai",
+          "regfile_ports": "CAN 4 cong doc va 2 cong ghi thay vi 2-doc-1-ghi cua core.md. Day la thay doi dat nhat. Bien the giam chi phi: han che khe B chi nhan lenh co MOT toan hang thanh ghi (immediate/shift-immediate/branch so voi x0), khi do chi can 3 cong doc 2 cong ghi.",
+          "new_arch_regs": 0
+        }
+      },
+      "estimate_method": "iss_timing",
+      "expected_mechanism": "Khong cat rieng mot lop chu ky nao ma cat chu ky PHAT LENH tren moi lop cung luc: khi mot load dang chiem khe A hai chu ky, mot lenh addr/loop_ctrl/alu co the chay song song o khe B 'mien phi'. Cac lop duoc huong nhieu nhat la addr (share_by_sem_total.addr = 1.14), loop_ctrl (1.48), other (1.31) va phan ALU trong requant (8.84) — vi chung bi an duoi cac load/mul dai. Can cu ILP: static.json cho slack_vs_recurrence_x tu 32.66 den 33511.87 tren moi vong, voi n_memdep_in_loop = 0 — tuc do dai vong lap hoan toan khong bi chuoi phu thuoc chan, chi bi tran phat lenh 1/chu ky chan.",
+      "risks": [
+        "Cong tep thanh ghi: RUI RO LON NHAT. core.md ghi ro 'hai cong doc mot cong ghi'. Len 4-doc-2-ghi thuong phai nhan doi tep thanh ghi (2 ban sao cho doc) va giai quyet xung dot ghi — vua ton LUT/DFF vua ha Fmax. Bien the 3-doc-2-ghi (khe B chi nhan lenh mot toan hang) giam rui ro nay nhieu.",
+        "Fmax: logic kiem tra phu thuoc giua hai lenh nam trong duong giai ma; cong them duong chuyen tiep (forwarding) hai chieu. Bien 56.47/27.0 giup nhung day la ung vien de cham tran Fmax nhat sau C09.",
+        "Cong BSRAM: da thiet ke de KHONG can them cong (chi khe A truy cap bo nho). Nhung nap HAI lenh moi chu ky lai doi bang thong I-fetch gap doi — neu I-mem con dung chung cong voi D-mem thi dual-issue se bi nghen ngay; vi vay NEN lam cung C01 (Harvard).",
+        "Do dung: khong doi phep toan nen bit-exact, voi dieu kien logic phu thuoc va forwarding dung. Loi ghep doi la loi RTL kho tim nhat trong danh sach.",
+        "Phuc tap hien thuc: CAO NHAT trong danh sach ve mat RTL (doi ca tang phat lenh, giai ma, forwarding, va mo hinh chi phi)."
+      ],
+      "depends_on": ["C01.L3.MEM1"]
+    },
+    {
+      "id": "C12.L5.XREGBANK",
+      "level": "L5",
+      "title": "Bang thanh ghi mo rong 32 o (custom-1) de xoa spill va giu trong so trong lõi",
+      "target": "cac vong co ap luc thanh ghi cao: static.json layers.conv2.loops[0..2] (n_regs_free = 3, peak_live = 27) va static.json layers.dense.loops[0] (peak_live = 17, recurrence_cycles = 12)",
+      "evidence": [
+        "static.json layers.conv2.loops[0].n_regs_used = 28 va n_regs_free = 3, peak_live = 11",
+        "static.json layers.conv2.loops[1].n_regs_used = 28, n_regs_free = 3, peak_live = 27 (gan het 31 thanh ghi dung duoc)",
+        "static.json layers.conv2.loops[2].n_regs_used = 28, n_regs_free = 3, peak_live = 27",
+        "static.json layers.dense.loops[2].n_regs_free = 5, peak_live = 24, loop_carried_regs co 11 thanh ghi (1, 2, 8, 9, 18, 19, 20, 21, 22, 23, 24)",
+        "static.json layers.dense.loops[0].recurrence_cycles = 12 va slack_vs_recurrence_x = 5.02 (do slack THAP NHAT trong moi vong — vong nay gan bi chuoi phu thuoc chan)",
+        "analysis.json share_by_sem_total.load_data = 44.5 va analysis.json layers.conv2.share_by_sem.load_data = 51.88 (mot phan cac load nay la doc lai du lieu da nam trong lõi)",
+        "analysis.json layers.conv2.byte_per_mac = 4.516 so voi layers.conv1.byte_per_mac = 1.149 (conv2 doc lai nhieu)",
+        "core.md: 'Tep thanh ghi: 31 thanh ghi dung duoc (x1-x31), hai cong doc mot cong ghi'",
+        "budget.json remaining.DFF = 14979 va remaining.LUT4 = 17481 (1024 DFF cho 32 thanh ghi 32 bit la khong dang ke)",
+        "static.json encoding_space.free_custom_opcodes: '0x2b': 'custom-1', funct7_per_funct3 = 128"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x2b",
+          "funct3": "0x3 (XMV: chuyen giua x1-x31 va bang mo rong)",
+          "funct7": "bit[4:0] = chi so o trong bang mo rong (0..31); bit[5] = huong (0: x -> bang, 1: bang -> x); bit[6] = 0"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # custom-1, funct3=0x3 : XMV\n    #   huong 0 (x -> bang):  xr[i] = rs1 ; rd = x0 (khong ghi)\n    #   huong 1 (bang -> x):  rd = xr[i]\n    f7 = state.get('imm_acc', 0)\n    i = f7 & 0x1F\n    to_x = (f7 >> 5) & 1\n    xr = state.setdefault('xr', [0] * 32)\n    if to_x:\n        return xr[i] & 0xFFFFFFFF, state\n    xr[i] = rs1 & 0xFFFFFFFF\n    state['xr'] = xr\n    return 0, state\n",
+        "latency_cycles": 1,
+        "firmware_changes": "Hai cach dung. (a) Xoa spill: cac gia tri song dai trong vong conv2 (static.json layers.conv2.loops[1].peak_live = 27 tren 31 thanh ghi, n_regs_free = 3) duoc giu trong bang mo rong thay vi tran ra stack; moi cap store+load spill (2 + 2 = 4 chu ky, chiem cong BSRAM) doi thanh cap XMV (1 + 1 = 2 chu ky, KHONG chiem cong BSRAM). (b) Giu trong so: nap truoc mot khoi trong so conv2 vao bang mo rong mot lan roi tai su dung qua nhieu cua so, giam truc tiep lop load_data ma layers.conv2.byte_per_mac = 4.516 chi ra la cho doc lai. Can mo rong vong theo kenh dau ra.",
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM_ports": "0 — DIEM MANH: bang nam trong DFF/LUT nen moi truy cap nay KHONG chiem cong BSRAM mot-cong (core.md), khac voi spill ra stack.",
+          "LUT4": "trung: mux 32-1 cho duong doc + giai ma ghi",
+          "DFF": "1024 (32 o x 32 bit); remaining.DFF = 14979 nen chi dung ~6.8%",
+          "regfile_ports": "Khong doi 2-doc-1-ghi cua tep thanh ghi chinh. XMV doc 1 (rs1) hoac ghi 1 (rd), khong bao gio ca hai.",
+          "new_arch_regs": 32
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "Cat lop load_data va store_data theo hai duong. (1) Thay spill: moi cap spill store+load hien ton 4 chu ky va hai lan chiem cong BSRAM, doi thanh 2 chu ky va khong chiem cong. (2) Tang tai su dung trong lõi: giu trong so/kich hoat trong bang mo rong de khong phai nap lai tu BSRAM. Can cu ap luc thanh ghi rat ro: ba vong conv2 deu co n_regs_free = 3 va hai vong co peak_live = 27 tren 31 thanh ghi dung duoc. Ung vien nay cung la BO TRO cho C05 (LMAC can trong so nam trong thanh ghi) va C07 (viet lai theo tile can nhieu thanh ghi hon) — chinh cho do la ly do de nghi do no ngay vong 1.",
+      "risks": [
+        "Loi co the nho khi dung mot minh: bang mo rong chi giup NEU firmware hien that su spill hoac neu firmware duoc viet lai de tai su dung. Khong co truong nao trong analysis.json dem truc tiep so chu ky spill — n_regs_free = 3 va peak_live = 27 chi la dau hieu ap luc, khong phai bang chung spill. Can cong cu do.",
+        "Do dung (trang thai an): 32 thanh ghi kien truc moi phai luu/phuc hoi khi ngat hoac doi ngu canh. Firmware CNN phang nen rui ro thap.",
+        "Cong tep thanh ghi: khong doi (XMV dung 1 cong doc hoac 1 cong ghi).",
+        "Fmax: mux doc 32-1 rong 32 bit them vao duong doc; vua phai, bien 56.47/27.0 du.",
+        "Phuc tap hien thuc: THAP ve RTL (mot mang thanh ghi + mux), nhung TRUNG-CAO ve firmware (phai phan bo thu cong vi trinh bien dich khong biet bang nay).",
+        "Khong giup vong dense trong cung: static.json layers.dense.loops[0].recurrence_cycles = 12 va slack_vs_recurrence_x = 5.02 cho thay vong do bi chuoi PHU THUOC chan, khong bi thanh ghi chan."
+      ],
+      "depends_on": []
+    }
+  ]
+}

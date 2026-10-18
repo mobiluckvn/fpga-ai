@@ -1,0 +1,1553 @@
+[
+  {
+    "file": "pipeline/runs/20261018-172015-propose/sandbox/candidates.json",
+    "origin": "ai",
+    "mode": "blind_open",
+    "base_config": "B-V1",
+    "n_candidates": 12,
+    "levels": {
+      "L3": 2,
+      "L1": 3,
+      "L2": 4,
+      "L4": 2,
+      "L5": 1
+    },
+    "n_levels": 5,
+    "rediscovered": [
+      "DOT4",
+      "FASTMEM",
+      "LAYOUT",
+      "REQ"
+    ],
+    "detail": {
+      "FASTMEM": [
+        {
+          "id": "L3-LS1",
+          "evidence": [
+            {
+              "pattern": "Harvard",
+              "quote": " \"Tách cổng nạp lệnh khỏi cổng dữ liệu (Harvard / cổng thứ hai của BSRAM): lambda_load "
+            },
+            {
+              "pattern": "một chu kỳ",
+              "quote": "e_data (2.26%): mỗi lệnh load/store bớt một chu kỳ stall do xung đột cổng BSRAM với tầng n"
+            }
+          ]
+        },
+        {
+          "id": "L5-DUALBANK",
+          "evidence": [
+            {
+              "pattern": "hai cổng",
+              "quote": "dữ liệu bộ nhớ + giải mã vùng địa chỉ + hai cổng ghi\", \"DFF\": \"trung bình: thanh ghi đệm"
+            },
+            {
+              "pattern": "1 chu kỳ",
+              "quote": "liệu đỉnh từ 4 byte/2 chu kỳ lên 8 byte/1 chu kỳ. Dùng cặp lệnh nạp song song LDAW/LDWW "
+            }
+          ]
+        }
+      ],
+      "DOT4": [
+        {
+          "id": "L2-QMAC4",
+          "evidence": [
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "{\"id\": \"L2-QMAC4\", \"title\": \"Lệnh SIMD QMAC4: tích vô hướng 4 làn int8 cộng và"
+            },
+            {
+              "pattern": "nhân",
+              "quote": " về thay vì bỏ 3 byte; (b) mac - 4 phép nhân-cộng gộp vào một lệnh 2 chu kỳ. Sau tối"
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": "kỳ) bằng 1 lw (2 chu kỳ) cho mỗi dòng 4 byte liên tiếp, tức khai thác đủ 4 byte mà c"
+            }
+          ]
+        },
+        {
+          "id": "L4-DOTSTREAM",
+          "evidence": [
+            {
+              "pattern": "\\blàn\\b",
+              "quote": " 4.516; mac (40.47%) vì nhân-cộng làm 4 làn/chu kỳ trong khối; addr (1.14%) và loop"
+            },
+            {
+              "pattern": "nhân",
+              "quote": "ủa conv2 đang là 4.516; mac (40.47%) vì nhân-cộng làm 4 làn/chu kỳ trong khối; addr "
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": "_data (44.5%) vì mỗi tap chỉ còn đúng 2 byte truy cập thay vì nạp lại nhiều lần - by"
+            }
+          ]
+        },
+        {
+          "id": "L2-BLOCK",
+          "evidence": [
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": ".4428 bằng phần mềm thuần; mọi ứng viên SIMD/khối tăng tốc cuối cùng sẽ đụng trần nà"
+            },
+            {
+              "pattern": "\\bMAC\\b",
+              "quote": "i byte nạp từ BSRAM được dùng cho nhiều MAC thay vì một. Đây là ứng viên duy nhất t"
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": " sử dụng toán hạng trong firmware để hạ byte_per_mac của conv2, nâng trần roofline\","
+            }
+          ]
+        }
+      ],
+      "LAYOUT": [
+        {
+          "id": "L2-QMAC4",
+          "evidence": [
+            {
+              "pattern": "bố cục",
+              "quote": "e_8bit = 4) và layers.conv2 sau khi đổi bố cục (L2-REPACK)\", \"expected_mechanism\": \"Cắ"
+            },
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "{\"id\": \"L2-QMAC4\", \"title\": \"Lệnh SIMD QMAC4: tích vô hướng 4 làn int8 cộng và"
+            }
+          ]
+        },
+        {
+          "id": "L2-REPACK",
+          "evidence": [
+            {
+              "pattern": "bố cục",
+              "quote": "{\"id\": \"L2-REPACK\", \"title\": \"Đổi bố cục dữ liệu conv2 sang kênh-liền-kề (int8 v"
+            },
+            {
+              "pattern": "\\bgói\\b",
+              "quote": " bố cục lúc chạy thì chèn một bước đóng gói (im2col nhẹ) trước conv2; chi phí thêm "
+            }
+          ]
+        },
+        {
+          "id": "L5-DUALBANK",
+          "evidence": [
+            {
+              "pattern": "\\bđệm\\b",
+              "quote": "ổng ghi\", \"DFF\": \"trung bình: thanh ghi đệm hai đường đọc\"}}}"
+            },
+            {
+              "pattern": "32[- ]bit",
+              "quote": " chức lại bộ nhớ thành hai bank dữ liệu 32 bit độc lập (activation / weight) cộng cổng"
+            }
+          ]
+        }
+      ],
+      "REQ": [
+        {
+          "id": "L1-RQCLAMP",
+          "evidence": [
+            {
+              "pattern": "requant",
+              "quote": "QCLAMP: gộp chuỗi làm-tròn-dịch-kẹp của requant int8 thành một lệnh 1 chu kỳ\", \"target\""
+            },
+            {
+              "pattern": "một lệnh",
+              "quote": "àm-tròn-dịch-kẹp của requant int8 thành một lệnh 1 chu kỳ\", \"target\": \"lớp chu kỳ requan"
+            }
+          ]
+        }
+      ]
+    },
+    "per_candidate": [
+      {
+        "id": "L3-LS1",
+        "level": "L3",
+        "title": "Tách cổng nạp lệnh khỏi cổng dữ liệu (Harvard / cổng thứ hai của BSRAM): lambda_load 2->1, lambda_store 2->1",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "L1-MACC",
+        "level": "L1",
+        "title": "Lệnh tùy biến MACC: gộp mul + add vào một lệnh, tích lũy trong thanh ghi acc riêng",
+        "answers": []
+      },
+      {
+        "id": "L2-QMAC4",
+        "level": "L2",
+        "title": "Lệnh SIMD QMAC4: tích vô hướng 4 làn int8 cộng vào acc, nạp toán hạng bằng lw 32 bit",
+        "answers": [
+          "DOT4",
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "L2-REPACK",
+        "level": "L2",
+        "title": "Đổi bố cục dữ liệu conv2 sang kênh-liền-kề (int8 vector liên tục) để tạo ra bước 1 và DLP",
+        "answers": [
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "L1-RQCLAMP",
+        "level": "L1",
+        "title": "Lệnh tùy biến RQCLAMP: gộp chuỗi làm-tròn-dịch-kẹp của requant int8 thành một lệnh 1 chu kỳ",
+        "answers": [
+          "REQ"
+        ]
+      },
+      {
+        "id": "L3-MUL1",
+        "level": "L3",
+        "title": "Hạ lambda_mul từ 2 xuống 1 chu kỳ, dùng biên Fmax đang dư",
+        "answers": []
+      },
+      {
+        "id": "L4-DOTSTREAM",
+        "level": "L4",
+        "title": "Khối tăng tốc DOTSTREAM: một lệnh chạy n tap MAC int8, tự sinh địa chỉ, chạy ở đúng trần băng thông",
+        "answers": [
+          "DOT4"
+        ]
+      },
+      {
+        "id": "L4-AGENLD",
+        "level": "L4",
+        "title": "Bộ sinh địa chỉ phần cứng + lệnh LDSW nạp từ con trỏ nội bộ và tự tăng theo stride",
+        "answers": []
+      },
+      {
+        "id": "L2-PMAX4",
+        "level": "L2",
+        "title": "Lệnh SIMD PMAX4: lấy max có dấu theo 4 làn int8 cho tầng pooling",
+        "answers": []
+      },
+      {
+        "id": "L1-BEXT",
+        "level": "L1",
+        "title": "Lệnh BEXT: rút một byte theo chỉ số và mở rộng dấu trong 1 chu kỳ, để nạp 32 bit thay cho 4 lệnh lb",
+        "answers": []
+      },
+      {
+        "id": "L2-BLOCK",
+        "level": "L2",
+        "title": "Chia khối / tái sử dụng toán hạng trong firmware để hạ byte_per_mac của conv2, nâng trần roofline",
+        "answers": [
+          "DOT4"
+        ]
+      },
+      {
+        "id": "L5-DUALBANK",
+        "level": "L5",
+        "title": "Tổ chức lại bộ nhớ thành hai bank dữ liệu 32 bit độc lập (activation / weight) cộng cổng nạp lệnh riêng",
+        "answers": [
+          "FASTMEM",
+          "LAYOUT"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "pipeline/runs/20261018-172016-propose/sandbox/candidates.json",
+    "origin": "ai",
+    "mode": "blind_open",
+    "base_config": "B-V1",
+    "n_candidates": 12,
+    "levels": {
+      "L3": 4,
+      "L1": 3,
+      "L2": 2,
+      "L4": 1,
+      "L5": 2
+    },
+    "n_levels": 5,
+    "rediscovered": [
+      "DOT4",
+      "FASTMEM",
+      "LAYOUT"
+    ],
+    "detail": {
+      "FASTMEM": [
+        {
+          "id": "C01.L3.MEM1",
+          "evidence": [
+            {
+              "pattern": "dual[- ]?port",
+              "quote": "vung dia chi tinh, KHONG can BSRAM true-dual-port.\", \"LUT4\": \"nho: them bo giai ma dia ch"
+            },
+            {
+              "pattern": "lambda",
+              "quote": " chi phi trong core.md la C = sum(n_c * lambda_c). Ung vien nay khong doi n_c ma doi l"
+            }
+          ]
+        },
+        {
+          "id": "C02.L3.MEM1W",
+          "evidence": [
+            {
+              "pattern": "Harvard",
+              "quote": "{\"id\": \"C02.L3.MEM1W\", \"title\": \"Harvard day du: ca load VA store ha xuong 1 chu"
+            },
+            {
+              "pattern": "timing_changes",
+              "quote": "mplate\": null, \"level\": \"L3\", \"spec\": {\"timing_changes\": {\"load\": 1, \"store\": 1, \"note\": \"Gion"
+            }
+          ]
+        }
+      ],
+      "DOT4": [
+        {
+          "id": "C06.L2.SDOT4",
+          "evidence": [
+            {
+              "pattern": "\\blane",
+              "quote": "1 chu ky\", \"target\": \"layers.conv1 (dlp.lanes_possible_8bit = 4, dlp.share_stride_1_"
+            },
+            {
+              "pattern": "\\bMAC\\b",
+              "quote": "mechanism\": \"Cat DONG THOI load_data va mac bang cach giam n_c manh nhat trong danh"
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": " cho truoc khi dung tran bang thong; va byte_per_mac = 1.149 thap nen tai su dung du"
+            }
+          ]
+        },
+        {
+          "id": "C07.L2.CONV2LAYOUT",
+          "evidence": [
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "h-trong-cung (stride-1) de mo duong cho SIMD va giam byte/MAC\", \"target\": \"layers.co"
+            },
+            {
+              "pattern": "\\bMAC\\b",
+              "quote": "de-1) de mo duong cho SIMD va giam byte/MAC\", \"target\": \"layers.conv2 — tang chiem "
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": "(stride-1) de mo duong cho SIMD va giam byte/MAC\", \"target\": \"layers.conv2 — tang ch"
+            }
+          ]
+        },
+        {
+          "id": "C09.L4.MACARRAY",
+          "evidence": [
+            {
+              "pattern": "\\blane",
+              "quote": "s.conv2.dlp.share_stride_1_pct = 0.0 va lanes_possible_8bit = null nen hien chua goi"
+            },
+            {
+              "pattern": "\\bMAC\\b",
+              "quote": "9.L4.MACARRAY\", \"title\": \"Khoi tang toc MAC 4x4 (custom-1): 4 nhom trong so nap tru"
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": "ot la TAI SU DUNG: mot 'lw' kich hoat 4 byte duoc dung cho 16 MAC (4 kenh dau ra x 4"
+            }
+          ]
+        }
+      ],
+      "LAYOUT": [
+        {
+          "id": "C07.L2.CONV2LAYOUT",
+          "evidence": [
+            {
+              "pattern": "layout",
+              "quote": "{\"id\": \"C07.L2.CONV2LAYOUT\", \"title\": \"Doi bo tri du lieu conv2 sa"
+            },
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "h-trong-cung (stride-1) de mo duong cho SIMD va giam byte/MAC\", \"target\": \"layers.co"
+            }
+          ]
+        }
+      ]
+    },
+    "per_candidate": [
+      {
+        "id": "C01.L3.MEM1",
+        "level": "L3",
+        "title": "Tach bo nho lenh/du lieu (Harvard) de load/store ha tu 2 chu ky xuong 1",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "C02.L3.MEM1W",
+        "level": "L3",
+        "title": "Harvard day du: ca load VA store ha xuong 1 chu ky",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "C03.L3.MUL1",
+        "level": "L3",
+        "title": "Ong hoa bo nhan: mul ha tu 2 chu ky xuong 1",
+        "answers": []
+      },
+      {
+        "id": "C04.L1.FMAC",
+        "level": "L1",
+        "title": "Lenh FMAC custom-0: acc += rs1*rs2 trong 1 chu ky, 4 thanh ghi tich luy noi",
+        "answers": []
+      },
+      {
+        "id": "C05.L1.LMAC",
+        "level": "L1",
+        "title": "Lenh LMAC custom-0: nap 1 byte tu bo nho, nhan voi trong so trong thanh ghi, tich luy — tat ca trong 1 lenh",
+        "answers": []
+      },
+      {
+        "id": "C06.L2.SDOT4",
+        "level": "L2",
+        "title": "Lenh SDOT4 custom-0: tich vo huong 4 lan int8 tren toan hang 32 bit da goi, 1 chu ky",
+        "answers": [
+          "DOT4"
+        ]
+      },
+      {
+        "id": "C07.L2.CONV2LAYOUT",
+        "level": "L2",
+        "title": "Doi bo tri du lieu conv2 sang kenh-trong-cung (stride-1) de mo duong cho SIMD va giam byte/MAC",
+        "answers": [
+          "DOT4",
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "C08.L1.REQUANT",
+        "level": "L1",
+        "title": "Lenh REQUANT custom-0: (acc * M + round) >> S roi bao hoa ve int8, trong 1 lenh",
+        "answers": []
+      },
+      {
+        "id": "C09.L4.MACARRAY",
+        "level": "L4",
+        "title": "Khoi tang toc MAC 4x4 (custom-1): 4 nhom trong so nap truoc, 16 MAC int8 moi chu ky",
+        "answers": [
+          "DOT4"
+        ]
+      },
+      {
+        "id": "C10.L3.DIVFAST",
+        "level": "L3",
+        "title": "Chia co so cao: div ha tu 34 chu ky xuong 9 (4 bit moi buoc)",
+        "answers": []
+      },
+      {
+        "id": "C11.L5.DUALISSUE",
+        "level": "L5",
+        "title": "Phat hai lenh tinh (2-way static dual-issue): mot khe bo nho/nhan + mot khe ALU/nhanh",
+        "answers": []
+      },
+      {
+        "id": "C12.L5.XREGBANK",
+        "level": "L5",
+        "title": "Bang thanh ghi mo rong 32 o (custom-1) de xoa spill va giu trong so trong lõi",
+        "answers": []
+      }
+    ]
+  },
+  {
+    "file": "pipeline/runs/20261018-172018-propose/sandbox/candidates.json",
+    "origin": "ai",
+    "mode": "blind_open",
+    "base_config": "B-V1",
+    "n_candidates": 12,
+    "levels": {
+      "L1": 3,
+      "L2": 3,
+      "L3": 2,
+      "L4": 2,
+      "L5": 2
+    },
+    "n_levels": 5,
+    "rediscovered": [
+      "DOT4",
+      "FASTMEM"
+    ],
+    "detail": {
+      "DOT4": [
+        {
+          "id": "L2-SDOT4",
+          "evidence": [
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "{\"id\": \"L2-SDOT4\", \"title\": \"SIMD 4 lan int8: tich vo huong 4 phan tu con"
+            },
+            {
+              "pattern": "\\bMAC\\b",
+              "quote": "oad giam 4 lan tren phan stride-1; (2) 'mac' - 4 cap nhan-cong trong 1 chu ky phat "
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": "ai chu ky lon nhat: (1) 'load_data' - 4 byte doc bang 1 lenh lw (2 chu ky) thay vi 4"
+            }
+          ]
+        }
+      ],
+      "FASTMEM": [
+        {
+          "id": "L3-HARVARD",
+          "evidence": [
+            {
+              "pattern": "Harvard",
+              "quote": "{\"id\": \"L3-HARVARD\", \"title\": \"Tach duong nap lenh khoi co"
+            },
+            {
+              "pattern": "lambda",
+              "quote": " (core.md). Khi nap lenh co cong rieng, lambda_load va lambda_store ve 1; theo mo hinh"
+            }
+          ]
+        },
+        {
+          "id": "L5-DUAL",
+          "evidence": [
+            {
+              "pattern": "Harvard",
+              "quote": "n nay phu thuoc manh vao viec co lam L3-HARVARD truoc hay khong.\", \"template\": null, \"l"
+            },
+            {
+              "pattern": "lambda",
+              "quote": "> 4\", \"regfile_write_ports\": \"1 -> 2\", \"lambda_khac\": \"giu nguyen; load/store van 2 ch"
+            }
+          ]
+        }
+      ]
+    },
+    "per_candidate": [
+      {
+        "id": "L1-MACC8",
+        "level": "L1",
+        "title": "Lenh MAC 8x8->32 gop (nhan + cong don) voi thanh ghi tich luy kien truc acc0",
+        "answers": []
+      },
+      {
+        "id": "L1-RQNT",
+        "level": "L1",
+        "title": "Lenh requantize gop: nhan 32x32, dich co lam tron, cong zero-point, kep ve int8",
+        "answers": []
+      },
+      {
+        "id": "L1-LBX",
+        "level": "L1",
+        "title": "Nap byte voi dia chi theo thanh ghi (gop add + lbu), cat chu ky tinh dia chi",
+        "answers": []
+      },
+      {
+        "id": "L2-SDOT4",
+        "level": "L2",
+        "title": "SIMD 4 lan int8: tich vo huong 4 phan tu cong don vao acc0, dung voi nap tu 32 bit",
+        "answers": [
+          "DOT4"
+        ]
+      },
+      {
+        "id": "L2-REPACK2",
+        "level": "L2",
+        "title": "Doi bo cuc du lieu conv2 (dong goi weight offline + dem dong im2col) de truy cap thanh stride-1",
+        "answers": []
+      },
+      {
+        "id": "L2-PMAX4",
+        "level": "L2",
+        "title": "Lenh max goi 4 lan int8 (PMAX4) cho tang pooling",
+        "answers": []
+      },
+      {
+        "id": "L3-HARVARD",
+        "level": "L3",
+        "title": "Tach duong nap lenh khoi cong du lieu (BSRAM song cong / bank lenh rieng): load/store ve 1 chu ky",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "L3-MUL1",
+        "level": "L3",
+        "title": "Nhan 32x32 mot chu ky (lambda_mul 2 -> 1) bang cay 4 MULT18X18 to hop",
+        "answers": []
+      },
+      {
+        "id": "L4-DOTENG",
+        "level": "L4",
+        "title": "Khoi tang toc tich vo huong int8 nhieu chu ky, tu sinh dia chi, chiem cong BSRAM lien tuc",
+        "answers": []
+      },
+      {
+        "id": "L4-GATHER",
+        "level": "L4",
+        "title": "Khoi sinh dia chi/gom theo buoc (gather) dong goi 4 byte thanh tu, cho conv2 va dense khong can doi bo cuc",
+        "answers": []
+      },
+      {
+        "id": "L5-DUAL",
+        "level": "L5",
+        "title": "Phat hai lenh moi chu ky (in-order, khe A = bo nho/nhanh, khe B = ALU/MAC), tep thanh ghi 4 doc 2 ghi",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "L5-ACCBANK",
+        "level": "L5",
+        "title": "Bank 8 thanh ghi tich luy kien truc + cong doc thu ba, mo duong cho chia o (blocking) tai su dung du lieu",
+        "answers": []
+      }
+    ]
+  },
+  {
+    "file": "pipeline/runs/20261018-172019-propose/sandbox/candidates.json",
+    "origin": "ai",
+    "mode": "blind_catalog",
+    "base_config": "B-V1",
+    "n_candidates": 12,
+    "levels": {
+      "L3": 3,
+      "L1": 3,
+      "L2": 3,
+      "L4": 2,
+      "L5": 1
+    },
+    "n_levels": 5,
+    "rediscovered": [
+      "DOT4",
+      "FASTMEM",
+      "LAYOUT",
+      "REQ"
+    ],
+    "detail": {
+      "FASTMEM": [
+        {
+          "id": "C01-ldst-1cycle",
+          "evidence": [
+            {
+              "pattern": "hai cổng",
+              "quote": "le\", \"title\": \"Tách lệnh/dữ liệu (BSRAM hai cổng) để load/store còn 1 chu kỳ\", \"target\":"
+            },
+            {
+              "pattern": "1 chu kỳ",
+              "quote": "liệu (BSRAM hai cổng) để load/store còn 1 chu kỳ\", \"target\": \"toàn mô hình; nặng nhất là"
+            }
+          ]
+        },
+        {
+          "id": "C10-lmac-streaming",
+          "evidence": [
+            {
+              "pattern": "hai cổng",
+              "quote": "e_ports\": \"cần ghi lại cả rs1 và rs2 => hai cổng ghi thêm, HOẶC giữ con trỏ trong thanh "
+            },
+            {
+              "pattern": "timing_changes",
+              "quote": "rn acc, state\\n\", \"latency_cycles\": 4, \"timing_changes\": {\"latency_single_port\": \"4 chu kỳ (ha"
+            }
+          ]
+        }
+      ],
+      "REQ": [
+        {
+          "id": "C05-requant-fused",
+          "evidence": [
+            {
+              "pattern": "requant",
+              "quote": "{\"id\": \"C05-requant-fused\", \"title\": \"Lệnh dịch-làm tròn-kẹ"
+            },
+            {
+              "pattern": "gộp",
+              "quote": ".84% toàn mô hình, 24.91% trong conv1): gộp 3-4 lệnh vô hướng mỗi điểm đầu ra thành"
+            }
+          ]
+        }
+      ],
+      "DOT4": [
+        {
+          "id": "C07-dot4-int8",
+          "evidence": [
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "\": \"C07-dot4-int8\", \"title\": \"Nhân-cộng SIMD 4 làn int8 trên 32 bit (dot4) + nạp 4 b"
+            },
+            {
+              "pattern": "nhân",
+              "quote": "{\"id\": \"C07-dot4-int8\", \"title\": \"Nhân-cộng SIMD 4 làn int8 trên 32 bit (dot4)"
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": "D 4 làn int8 trên 32 bit (dot4) + nạp 4 byte bằng một lw\", \"target\": \"layers.conv1 ("
+            }
+          ]
+        },
+        {
+          "id": "C08-layout-simd-conv2",
+          "evidence": [
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "{\"id\": \"C08-layout-simd-conv2\", \"title\": \"Đổi bố cục dữ liệu co"
+            },
+            {
+              "pattern": "nhân",
+              "quote": "huần tuý — không đổi giá trị hay thứ tự nhân, chỉ đổi thứ tự cộng dồn, vẫn kết hợp m"
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": "y nhiều lb rải rác bằng lw liền khối (4 byte / 2 chu kỳ thay vì 4 x 2 chu kỳ) và làm"
+            }
+          ]
+        },
+        {
+          "id": "C09-reuse-tiling-conv2",
+          "evidence": [
+            {
+              "pattern": "\\bgói\\b",
+              "quote": " dồn được với C01 (giảm λ_load) và C07 (gói 4 byte mỗi lần nạp).\", \"template\": null"
+            },
+            {
+              "pattern": "nhân",
+              "quote": "anh ghi qua các bước cửa sổ trượt. Phép nhân và tổng cộng dồn cho từng kênh đầu ra k"
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": " thanh ghi (chia ô 4 kênh đầu ra) để hạ byte/MAC\", \"target\": \"layers.conv2 (byte_per"
+            }
+          ]
+        },
+        {
+          "id": "C10-lmac-streaming",
+          "evidence": [
+            {
+              "pattern": "packed",
+              "quote": " kỳ khi đã tách I-mem/D-mem)\", \"latency_packed_mode\": \"cùng số truy cập, 4 byte mỗi tr"
+            },
+            {
+              "pattern": "nhân",
+              "quote": "C10-lmac-streaming\", \"title\": \"Lệnh nạp-nhân-cộng dồn có con trỏ tự tăng (lmac): một"
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": "ng; bit1 = chế độ gói 4 làn int8 (đọc 4 byte mỗi con trỏ); bit[3:2] = chọn ACC0..ACC"
+            }
+          ]
+        }
+      ],
+      "LAYOUT": [
+        {
+          "id": "C07-dot4-int8",
+          "evidence": [
+            {
+              "pattern": "\\bđệm\\b",
+              "quote": "ng 4 byte và chiều dài chia hết cho 4 — đệm phần dư và xử lý vét bằng mã vô hướng c"
+            },
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "\": \"C07-dot4-int8\", \"title\": \"Nhân-cộng SIMD 4 làn int8 trên 32 bit (dot4) + nạp 4 b"
+            }
+          ]
+        },
+        {
+          "id": "C08-layout-simd-conv2",
+          "evidence": [
+            {
+              "pattern": "bố cục",
+              "quote": " \"C08-layout-simd-conv2\", \"title\": \"Đổi bố cục dữ liệu conv2/dense sang kênh-trong-cùn"
+            },
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "{\"id\": \"C08-layout-simd-conv2\", \"title\": \"Đổi bố cục dữ liệu co"
+            }
+          ]
+        },
+        {
+          "id": "C11-mac-array-4x4",
+          "evidence": [
+            {
+              "pattern": "bố cục",
+              "quote": "số được nhân bản/hoán vị offline để hợp bố cục đệm. Phép nhân int8 và cộng dồn 32 bit "
+            },
+            {
+              "pattern": "\\blw\\b",
+              "quote": "les\": 1, \"buffer_load_cycles\": \"2 (dùng lw hiện có; 1 nếu kèm C01)\", \"result_reado"
+            }
+          ]
+        }
+      ]
+    },
+    "per_candidate": [
+      {
+        "id": "C01-ldst-1cycle",
+        "level": "L3",
+        "title": "Tách lệnh/dữ liệu (BSRAM hai cổng) để load/store còn 1 chu kỳ",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "C02-mul-1cycle",
+        "level": "L3",
+        "title": "Nhân 32x32 một chu kỳ (λ_mul 2 -> 1)",
+        "answers": []
+      },
+      {
+        "id": "C03-hwloop",
+        "level": "L3",
+        "title": "Vòng lặp phần cứng không phí tổn (zero-overhead loop)",
+        "answers": []
+      },
+      {
+        "id": "C04-mac-fused",
+        "level": "L1",
+        "title": "Lệnh nhân-cộng dồn vô hướng (mac) với thanh ghi tích luỹ kiến trúc",
+        "answers": []
+      },
+      {
+        "id": "C05-requant-fused",
+        "level": "L1",
+        "title": "Lệnh dịch-làm tròn-kẹp bão hoà int8 một chu kỳ (rqsat)",
+        "answers": [
+          "REQ"
+        ]
+      },
+      {
+        "id": "C06-lb-postinc",
+        "level": "L1",
+        "title": "Nạp byte có tự tăng địa chỉ (lbpi) và lưu byte có tự tăng (sbpi)",
+        "answers": []
+      },
+      {
+        "id": "C07-dot4-int8",
+        "level": "L2",
+        "title": "Nhân-cộng SIMD 4 làn int8 trên 32 bit (dot4) + nạp 4 byte bằng một lw",
+        "answers": [
+          "DOT4",
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "C08-layout-simd-conv2",
+        "level": "L2",
+        "title": "Đổi bố cục dữ liệu conv2/dense sang kênh-trong-cùng (NHWC + đệm 4) để mở đường cho SIMD",
+        "answers": [
+          "DOT4",
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "C09-reuse-tiling-conv2",
+        "level": "L2",
+        "title": "Tái sử dụng dữ liệu trong thanh ghi (chia ô 4 kênh đầu ra) để hạ byte/MAC",
+        "answers": [
+          "DOT4"
+        ]
+      },
+      {
+        "id": "C10-lmac-streaming",
+        "level": "L4",
+        "title": "Lệnh nạp-nhân-cộng dồn có con trỏ tự tăng (lmac): một lệnh đọc dữ liệu và MAC",
+        "answers": [
+          "DOT4",
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "C11-mac-array-4x4",
+        "level": "L4",
+        "title": "Mảng MAC 4x4 gắn sát CPU với bộ đệm trọng số/activation cục bộ",
+        "answers": [
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "C12-dual-issue",
+        "level": "L5",
+        "title": "Phát hai lệnh hẹp mỗi chu kỳ: một ALU + một load/store hoặc lệnh tuỳ biến",
+        "answers": []
+      }
+    ]
+  },
+  {
+    "file": "pipeline/runs/20261018-172020-propose/sandbox/candidates.json",
+    "origin": "ai",
+    "mode": "blind_catalog",
+    "base_config": "B-V1",
+    "n_candidates": 12,
+    "levels": {
+      "L3": 3,
+      "L2": 3,
+      "L1": 4,
+      "L4": 1,
+      "L5": 1
+    },
+    "n_levels": 5,
+    "rediscovered": [
+      "DOT4",
+      "FASTMEM",
+      "LAYOUT",
+      "REQ"
+    ],
+    "detail": {
+      "FASTMEM": [
+        {
+          "id": "R1-L3-dualport-mem",
+          "evidence": [
+            {
+              "pattern": "dual[- ]?port",
+              "quote": "{\"id\": \"R1-L3-dualport-mem\", \"title\": \"Tách cổng lệnh / cổng d"
+            },
+            {
+              "pattern": "1 chu kỳ",
+              "quote": "iệu (BSRAM 2 cổng) để load và store hết 1 chu kỳ\", \"target\": \"analysis.json: lớp chu kỳ "
+            }
+          ]
+        },
+        {
+          "id": "R1-L1-postinc-load",
+          "evidence": [
+            {
+              "pattern": "dual[- ]?port",
+              "quote": "ệc rút ngắn load. Nếu kết hợp với R1-L3-dualport-mem thì xuống 1 chu kỳ.\"}, \"firmware_ch"
+            },
+            {
+              "pattern": "1 chu kỳ",
+              "quote": "u kỳ addr: mỗi cặp load+addi bớt 1 lệnh 1 chu kỳ. Tỷ trọng toàn mạng nhỏ (addr 1.14%) nh"
+            }
+          ]
+        },
+        {
+          "id": "R1-L3-hw-loop",
+          "evidence": [
+            {
+              "pattern": "dual[- ]?port",
+              "quote": "hật của nó là sau khi các ứng viên SIMD/dual-port cắt load_data và mac — lúc đó loop_ctrl"
+            },
+            {
+              "pattern": "1 chu kỳ",
+              "quote": "ctrl: mỗi lần lặp vòng trong bỏ ~3 lệnh 1 chu kỳ (tăng đếm, so sánh, nhánh). Hiệu quả ca"
+            }
+          ]
+        },
+        {
+          "id": "R1-L5-dual-issue",
+          "evidence": [
+            {
+              "pattern": "dual[- ]?port",
+              "quote": "t thêm với cổng BSRAM nếu chưa có R1-L3-dualport-mem\"}, \"firmware_changes\": \"Không bắt b"
+            },
+            {
+              "pattern": "λ",
+              "quote": "conv2), ILP có sẵn. Mô hình C = Σ n_c · λ_c của core.md không còn đúng khi phát 2"
+            }
+          ]
+        }
+      ],
+      "DOT4": [
+        {
+          "id": "R1-L2-dot4-int8",
+          "evidence": [
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "t4-int8\", \"title\": \"DOT4.ACC: nhân-cộng SIMD 4 làn int8 gói trong 32 bit, cộng dồn v"
+            },
+            {
+              "pattern": "nhân",
+              "quote": " \"R1-L2-dot4-int8\", \"title\": \"DOT4.ACC: nhân-cộng SIMD 4 làn int8 gói trong 32 bit, "
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": ", rs2: uint32 chua 4 int8 goi (lane 0 = byte thap nhat)\\n    acc = state.get('acc0',"
+            }
+          ]
+        },
+        {
+          "id": "R1-L4-mac-array-4x4",
+          "evidence": [
+            {
+              "pattern": "\\bgói\\b",
+              "quote": ": \"0b000 = ACC.LOAD.A (đẩy 4 activation gói vào đệm hàng); 0b001 = ACC.LOAD.W (đẩy "
+            },
+            {
+              "pattern": "nhân",
+              "quote": " khối) trong remaining = 44; hoặc 16 bộ nhân 8×8 bằng LUT4 để tiết kiệm DSP\", \"DFF\":"
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": "rong đệm cục bộ — đúng chỗ layers.conv2.byte_per_mac = 4.516 cho thấy đang nạp lại d"
+            }
+          ]
+        }
+      ],
+      "LAYOUT": [
+        {
+          "id": "R1-L2-dot4-int8",
+          "evidence": [
+            {
+              "pattern": "layout",
+              "quote": "ride-1 85.8%) và dense; conv2 cần R1-L2-layout-nhwc trước.\", \"hw_resources_guess\": {\"M"
+            },
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "t4-int8\", \"title\": \"DOT4.ACC: nhân-cộng SIMD 4 làn int8 gói trong 32 bit, cộng dồn v"
+            }
+          ]
+        },
+        {
+          "id": "R1-L2-layout-nhwc",
+          "evidence": [
+            {
+              "pattern": "bố cục",
+              "quote": "id\": \"R1-L2-layout-nhwc\", \"title\": \"Đổi bố cục dữ liệu conv2 (NCHW→NHWC / im2col gói 4"
+            },
+            {
+              "pattern": "\\bgói\\b",
+              "quote": "ố cục dữ liệu conv2 (NCHW→NHWC / im2col gói 4 kênh) để DOT4 dùng được\", \"target\": \""
+            }
+          ]
+        },
+        {
+          "id": "R1-L1-mac-acc-scalar",
+          "evidence": [
+            {
+              "pattern": "bố cục",
+              "quote": "h vào thanh ghi tích luỹ (không cần đổi bố cục)\", \"target\": \"analysis.json: lớp chu kỳ"
+            },
+            {
+              "pattern": "\\bgói\\b",
+              "quote": "1 chu kỳ cho mỗi MAC, không cần dữ liệu gói nên áp được ở conv2 và dense nơi DLP = "
+            }
+          ]
+        },
+        {
+          "id": "R1-L4-mac-array-4x4",
+          "evidence": [
+            {
+              "pattern": "\\bđệm\\b",
+              "quote": " \"title\": \"Mảng MAC 4×4 gắn sát CPU với đệm cục bộ cho activation và weight\", \"targ"
+            },
+            {
+              "pattern": "\\bgói\\b",
+              "quote": ": \"0b000 = ACC.LOAD.A (đẩy 4 activation gói vào đệm hàng); 0b001 = ACC.LOAD.W (đẩy "
+            }
+          ]
+        }
+      ],
+      "REQ": [
+        {
+          "id": "R1-L1-requant-fused",
+          "evidence": [
+            {
+              "pattern": "requant",
+              "quote": "{\"id\": \"R1-L1-requant-fused\", \"title\": \"REQS: lượng tử hoá lạ"
+            },
+            {
+              "pattern": "một lệnh",
+              "quote": "used\", \"title\": \"REQS: lượng tử hoá lại một lệnh (dịch phải có làm tròn + bão hoà int8)\""
+            }
+          ]
+        },
+        {
+          "id": "R1-L1-clamp8",
+          "evidence": [
+            {
+              "pattern": "requant",
+              "quote": "\"analysis.json: phần kẹp/ReLU trong lớp requant của layers.conv1 và layers.conv2\", \"exp"
+            },
+            {
+              "pattern": "một lệnh",
+              "quote": "P8 / RELU8: kẹp bão hoà int8 (và max-0) một lệnh, không kèm dịch\", \"target\": \"analysis.j"
+            }
+          ]
+        },
+        {
+          "id": "R1-L5-dual-issue",
+          "evidence": [
+            {
+              "pattern": "requant",
+              "quote": "(44.5%) với một lệnh tính (mac 40.47% / requant 8.84%) vào cùng chu kỳ. Vì ipc_real chỉ"
+            },
+            {
+              "pattern": "một lệnh",
+              "quote": "ớp cụ thể mà cắt phần 'phát lệnh': ghép một lệnh load_data (44.5%) với một lệnh tính (ma"
+            }
+          ]
+        }
+      ]
+    },
+    "per_candidate": [
+      {
+        "id": "R1-L3-dualport-mem",
+        "level": "L3",
+        "title": "Tách cổng lệnh / cổng dữ liệu (BSRAM 2 cổng) để load và store hết 1 chu kỳ",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "R1-L2-dot4-int8",
+        "level": "L2",
+        "title": "DOT4.ACC: nhân-cộng SIMD 4 làn int8 gói trong 32 bit, cộng dồn vào thanh ghi tích luỹ",
+        "answers": [
+          "DOT4",
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "R1-L2-layout-nhwc",
+        "level": "L2",
+        "title": "Đổi bố cục dữ liệu conv2 (NCHW→NHWC / im2col gói 4 kênh) để DOT4 dùng được",
+        "answers": [
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "R1-L1-requant-fused",
+        "level": "L1",
+        "title": "REQS: lượng tử hoá lại một lệnh (dịch phải có làm tròn + bão hoà int8)",
+        "answers": [
+          "REQ"
+        ]
+      },
+      {
+        "id": "R1-L1-clamp8",
+        "level": "L1",
+        "title": "CLAMP8 / RELU8: kẹp bão hoà int8 (và max-0) một lệnh, không kèm dịch",
+        "answers": [
+          "REQ"
+        ]
+      },
+      {
+        "id": "R1-L1-postinc-load",
+        "level": "L1",
+        "title": "LBU.PI / LW.PI: nạp có tự tăng địa chỉ (ghi lại thanh ghi cơ sở)",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "R1-L2-pmax4-pool",
+        "level": "L2",
+        "title": "PMAX4: max SIMD 4 làn byte cho pooling và ReLU",
+        "answers": []
+      },
+      {
+        "id": "R1-L3-fast-mul",
+        "level": "L3",
+        "title": "Nhân 32×32 một chu kỳ (mul: λ 2 → 1)",
+        "answers": []
+      },
+      {
+        "id": "R1-L3-hw-loop",
+        "level": "L3",
+        "title": "Vòng lặp phần cứng không phí (zero-overhead loop) cho vòng trong ngắn",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "R1-L1-mac-acc-scalar",
+        "level": "L1",
+        "title": "MACA: nhân-cộng vô hướng một lệnh vào thanh ghi tích luỹ (không cần đổi bố cục)",
+        "answers": [
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "R1-L4-mac-array-4x4",
+        "level": "L4",
+        "title": "Mảng MAC 4×4 gắn sát CPU với đệm cục bộ cho activation và weight",
+        "answers": [
+          "DOT4",
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "R1-L5-dual-issue",
+        "level": "L5",
+        "title": "Phát hai lệnh hẹp: một khe ALU/custom + một khe load/store",
+        "answers": [
+          "FASTMEM",
+          "REQ"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "pipeline/runs/20261018-172022-propose/sandbox/candidates.json",
+    "origin": "ai",
+    "mode": "blind_catalog",
+    "base_config": "B-V1",
+    "n_candidates": 12,
+    "levels": {
+      "L3": 4,
+      "L1": 3,
+      "L2": 3,
+      "L4": 1,
+      "L5": 1
+    },
+    "n_levels": 5,
+    "rediscovered": [
+      "DOT4",
+      "FASTMEM",
+      "LAYOUT",
+      "REQ"
+    ],
+    "detail": {
+      "FASTMEM": [
+        {
+          "id": "R1-L3-split-id-mem",
+          "evidence": [
+            {
+              "pattern": "hai cổng",
+              "quote": ", truy cập dữ liệu đi qua cổng B (BSRAM hai cổng thật), hoặc tách hẳn thành hai vùng bộ "
+            },
+            {
+              "pattern": "1 chu kỳ",
+              "quote": "ng thứ hai của BSRAM) để load/store còn 1 chu kỳ\", \"target\": \"lớp chu kỳ load_data + sto"
+            }
+          ]
+        },
+        {
+          "id": "R1-L3-splitmem-plus-mul1",
+          "evidence": [
+            {
+              "pattern": "split.*(instruction|data)",
+              "quote": "{\"id\": \"R1-L3-splitmem-plus-mul1\", \"title\": \"Kết hợp: tách bộ nhớ lệnh/dữ liệu VÀ nhân một chu kỳ\", \"target\": \"hai lớp chu kỳ lớn nhất cùng lúc: load_data (44.5) + mac (40.47) + store_data (2.26)\", \"expected_mechanism\": \"Hai ứng viên L3 đơn lẻ đều bị trần Amdahl của lớp chu kỳ mà nó không chạm (1.8 và 1.68). Cắt đồng thời load_data/store_data và mac loại bỏ trần chéo đó. Cơ chế vẫn"
+            },
+            {
+              "pattern": "một chu kỳ",
+              "quote": "t hợp: tách bộ nhớ lệnh/dữ liệu VÀ nhân một chu kỳ\", \"target\": \"hai lớp chu kỳ lớn nhất cù"
+            }
+          ]
+        }
+      ],
+      "REQ": [
+        {
+          "id": "R1-L1-requant-fuse",
+          "evidence": [
+            {
+              "pattern": "requant",
+              "quote": "{\"id\": \"R1-L1-requant-fuse\", \"title\": \"Lệnh gộp requantize: c"
+            },
+            {
+              "pattern": "một lệnh",
+              "quote": "ỗi làm tròn + dịch + kẹp hai phía thành một lệnh giảm n_c của lớp requant; đây là lớp lớ"
+            }
+          ]
+        },
+        {
+          "id": "R1-L4-mac-array-4x4",
+          "evidence": [
+            {
+              "pattern": "requant",
+              "quote": "AC. Cuối khối dùng XACCRD + XRQS (R1-L1-requant-fuse) để lấy 4 kết quả. CẦN R1-L2-layou"
+            },
+            {
+              "pattern": "một lệnh",
+              "quote": "hất trong tất cả ứng viên: 16 MAC trong một lệnh 2 chu kỳ thay cho 16x(mul 2 + add 1) = "
+            }
+          ]
+        }
+      ],
+      "DOT4": [
+        {
+          "id": "R1-L2-dot4-int8",
+          "evidence": [
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "\"id\": \"R1-L2-dot4-int8\", \"title\": \"Lệnh SIMD tích vô hướng 4 làn int8 cộng dồn vào t"
+            },
+            {
+              "pattern": "\\bMAC\\b",
+              "quote": " acc (custom-0)\", \"target\": \"lớp chu kỳ mac + load_data đồng thời; vòng nóng conv1 "
+            },
+            {
+              "pattern": "\\b8[- ]bit",
+              "quote": "óng conv1 0xc60..0xd1c (stride-1, 4 làn 8 bit) và dense\", \"expected_mechanism\": \"Cắt "
+            }
+          ]
+        },
+        {
+          "id": "R1-L2-layout-nhwc",
+          "evidence": [
+            {
+              "pattern": "\\bgói\\b",
+              "quote": " đệm số kênh lên bội số của 4; (2) đóng gói trọng số conv2 offline theo cùng thứ tự"
+            },
+            {
+              "pattern": "nhân",
+              "quote": "possible_8bit thành 4. Tập hợp các phép nhân-cộng không đổi, chỉ đổi thứ tự lưu trữ "
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": "/dense sang kênh liền kề (NHWC) + đệm 4 byte để mở DLP\", \"target\": \"layers.conv2 (vò"
+            }
+          ]
+        },
+        {
+          "id": "R1-L4-mac-array-4x4",
+          "evidence": [
+            {
+              "pattern": "\\bgói\\b",
+              "quote": "4 rd, rs1, rs2 (rs1 = 4 activation int8 gói, rs2 = chọn nhóm 4 hàng trọng số; cộng "
+            },
+            {
+              "pattern": "nhân",
+              "quote": "_resources_guess\": {\"MULT18X18\": \"16 bộ nhân 8x8; nếu mỗi MULT18X18 gói được 2 phép "
+            },
+            {
+              "pattern": "\\bbyte",
+              "quote": " không gian — đúng điều mà layers.conv2.byte_per_mac = 4.516 (so với mem_bytes_per_c"
+            }
+          ]
+        }
+      ],
+      "LAYOUT": [
+        {
+          "id": "R1-L2-dot4-int8",
+          "evidence": [
+            {
+              "pattern": "layout",
+              "quote": "g hàng 4 byte — nếu không thì cần R1-L2-layout-nhwc trước. Thứ tự cộng dồn trong một n"
+            },
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "\"id\": \"R1-L2-dot4-int8\", \"title\": \"Lệnh SIMD tích vô hướng 4 làn int8 cộng dồn vào t"
+            }
+          ]
+        },
+        {
+          "id": "R1-L2-layout-nhwc",
+          "evidence": [
+            {
+              "pattern": "bố cục",
+              "quote": "id\": \"R1-L2-layout-nhwc\", \"title\": \"Đổi bố cục dữ liệu conv2/dense sang kênh liền kề ("
+            },
+            {
+              "pattern": "\\bgói\\b",
+              "quote": " đệm số kênh lên bội số của 4; (2) đóng gói trọng số conv2 offline theo cùng thứ tự"
+            }
+          ]
+        },
+        {
+          "id": "R1-L4-mac-array-4x4",
+          "evidence": [
+            {
+              "pattern": "layout",
+              "quote": "quant-fuse) để lấy 4 kết quả. CẦN R1-L2-layout-nhwc trước vì analysis.json layers.conv"
+            },
+            {
+              "pattern": "\\bgói\\b",
+              "quote": "4 rd, rs1, rs2 (rs1 = 4 activation int8 gói, rs2 = chọn nhóm 4 hàng trọng số; cộng "
+            }
+          ]
+        }
+      ]
+    },
+    "per_candidate": [
+      {
+        "id": "R1-L3-split-id-mem",
+        "level": "L3",
+        "title": "Tách bộ nhớ lệnh/dữ liệu (hoặc dùng cổng thứ hai của BSRAM) để load/store còn 1 chu kỳ",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "R1-L3-mul-1cycle",
+        "level": "L3",
+        "title": "Nhân 32x32 một chu kỳ (mul 2 -> 1 chu kỳ)",
+        "answers": []
+      },
+      {
+        "id": "R1-L3-splitmem-plus-mul1",
+        "level": "L3",
+        "title": "Kết hợp: tách bộ nhớ lệnh/dữ liệu VÀ nhân một chu kỳ",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "R1-L1-mac-acc",
+        "level": "L1",
+        "title": "Lệnh MAC vô hướng với thanh ghi cộng dồn trong lõi (custom-0)",
+        "answers": []
+      },
+      {
+        "id": "R1-L1-requant-fuse",
+        "level": "L1",
+        "title": "Lệnh gộp requantize: cộng bias làm tròn + dịch phải số học + kẹp bão hoà int8 (custom-0)",
+        "answers": [
+          "REQ"
+        ]
+      },
+      {
+        "id": "R1-L1-load-postinc",
+        "level": "L1",
+        "title": "Nạp từ 32 bit có tự tăng địa chỉ cơ sở (post-increment, custom-1)",
+        "answers": []
+      },
+      {
+        "id": "R1-L2-dot4-int8",
+        "level": "L2",
+        "title": "Lệnh SIMD tích vô hướng 4 làn int8 cộng dồn vào thanh ghi acc (custom-0)",
+        "answers": [
+          "DOT4",
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "R1-L2-layout-nhwc",
+        "level": "L2",
+        "title": "Đổi bố cục dữ liệu conv2/dense sang kênh liền kề (NHWC) + đệm 4 byte để mở DLP",
+        "answers": [
+          "DOT4",
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "R1-L2-packed-max",
+        "level": "L2",
+        "title": "Lệnh SIMD max 4 byte cho max-pooling và ReLU (custom-0)",
+        "answers": []
+      },
+      {
+        "id": "R1-L3-hw-loop",
+        "level": "L3",
+        "title": "Vòng lặp phần cứng không phí điều khiển (zero-overhead loop)",
+        "answers": []
+      },
+      {
+        "id": "R1-L4-mac-array-4x4",
+        "level": "L4",
+        "title": "Mảng MAC 4x4 gắn sát CPU với bộ đệm trọng số cục bộ (16 MAC int8 mỗi lệnh)",
+        "answers": [
+          "DOT4",
+          "LAYOUT",
+          "REQ"
+        ]
+      },
+      {
+        "id": "R1-L5-dual-issue",
+        "level": "L5",
+        "title": "Phát hai lệnh hẹp: một khe ALU/nhánh + một khe load/store/custom",
+        "answers": []
+      }
+    ]
+  },
+  {
+    "file": "pipeline/runs/20261018-172405-propose/candidates_rules.json",
+    "origin": "rules",
+    "mode": "open",
+    "base_config": "B-V1",
+    "n_candidates": 6,
+    "levels": {
+      "L1": 1,
+      "L2": 2,
+      "L3": 2,
+      "L5": 1
+    },
+    "n_levels": 4,
+    "rediscovered": [
+      "DOT4",
+      "FASTMEM",
+      "LAYOUT"
+    ],
+    "detail": {
+      "DOT4": [
+        {
+          "id": "rules.L2_packed_mac",
+          "evidence": [
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "les.L2_packed_mac\", \"title\": \"Nhân-cộng SIMD trên dữ liệu gói (N làn × W bit trong 3"
+            },
+            {
+              "pattern": "nhân",
+              "quote": "{\"id\": \"rules.L2_packed_mac\", \"title\": \"Nhân-cộng SIMD trên dữ liệu gói (N làn × W b"
+            },
+            {
+              "pattern": "\\b8[- ]bit",
+              "quote": "d_mechanism\": \"vòng nóng nạp phần tử W<=8 bit, chuỗi mul→add cộng dồn — Đổi λ của lớp"
+            }
+          ]
+        }
+      ],
+      "LAYOUT": [
+        {
+          "id": "rules.L2_layout_for_simd",
+          "evidence": [
+            {
+              "pattern": "bố cục",
+              "quote": "L2_layout_for_simd\", \"title\": \"Biến đổi bố cục dữ liệu để lệnh SIMD dùng được (đệm, nh"
+            },
+            {
+              "pattern": "\\bSIMD\\b",
+              "quote": "itle\": \"Biến đổi bố cục dữ liệu để lệnh SIMD dùng được (đệm, nhân bản pha, đổi NCHW/"
+            }
+          ]
+        }
+      ],
+      "FASTMEM": [
+        {
+          "id": "rules.L3_dual_port_mem",
+          "evidence": [
+            {
+              "pattern": "hai cổng",
+              "quote": "les.L3_dual_port_mem\", \"title\": \"Bộ nhớ hai cổng / tách lệnh-dữ liệu để load/store không"
+            },
+            {
+              "pattern": "λ",
+              "quote": "oad+store chiếm tỷ lệ lớn số lệnh — Đổi λ của lớp lệnh tương ứng; dự báo bằng ΔC "
+            }
+          ]
+        }
+      ]
+    },
+    "per_candidate": [
+      {
+        "id": "rules.L1_postinc_load",
+        "level": "L1",
+        "title": "Nạp có tự tăng địa chỉ (post-increment)",
+        "answers": []
+      },
+      {
+        "id": "rules.L2_packed_mac",
+        "level": "L2",
+        "title": "Nhân-cộng SIMD trên dữ liệu gói (N làn × W bit trong 32 bit)",
+        "answers": [
+          "DOT4"
+        ]
+      },
+      {
+        "id": "rules.L2_layout_for_simd",
+        "level": "L2",
+        "title": "Biến đổi bố cục dữ liệu để lệnh SIMD dùng được (đệm, nhân bản pha, đổi NCHW/NHWC)",
+        "answers": [
+          "LAYOUT"
+        ]
+      },
+      {
+        "id": "rules.L3_dual_port_mem",
+        "level": "L3",
+        "title": "Bộ nhớ hai cổng / tách lệnh-dữ liệu để load/store không chặn nạp lệnh",
+        "answers": [
+          "FASTMEM"
+        ]
+      },
+      {
+        "id": "rules.L3_fast_mul",
+        "level": "L3",
+        "title": "Nhân một chu kỳ",
+        "answers": []
+      },
+      {
+        "id": "rules.L5_multi_issue",
+        "level": "L5",
+        "title": "Phát hai lệnh hẹp (một ALU + một load/store/custom)",
+        "answers": []
+      }
+    ]
+  }
+]

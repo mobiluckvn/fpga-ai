@@ -13,7 +13,7 @@ import sys
 import time
 
 from . import (analyze, b1, blind, build, estimate, kit, kitlock, ledger, paths, profile,
-               propose, report, selftest, sim, spec, static_analysis, synth,
+               propose, report, score, selftest, sim, spec, static_analysis, synth,
                targets, verify)
 from .iss import main as iss_main
 from .runctx import Run
@@ -24,7 +24,7 @@ STEP_OF = {
     "spec": "S0", "db": "S0", "targets": "S0", "lock": "S0", "selftest": "S0",
     "build": "S1", "sim": "S1", "kit": "S1", "synth": "S1",
     "iss": "S2", "profile": "S3", "analyze": "S3", "static": "S3", "b1": "S4",
-    "blind": "S4",
+    "blind": "S4", "score": "S5",
     "propose": "S5", "estimate": "S6", "verify": "S6", "report": "S8",
 }
 TOOLS_OF = {
@@ -131,7 +131,7 @@ HANDLERS = {
     "selftest": selftest.main,
     "build": build.main, "sim": sim.main, "kit": kit.main, "synth": synth.main,
     "iss": iss_main, "profile": profile.main, "analyze": analyze.main,
-    "static": static_analysis.main, "b1": b1.main, "blind": cmd_blind,
+    "static": static_analysis.main, "b1": b1.main, "blind": cmd_blind, "score": score.main,
     "propose": propose.main, "estimate": estimate.main, "verify": verify.main,
     "report": report.main,
 }
@@ -196,6 +196,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--all", action="store_true")
     p.add_argument("--work", default="s1")
 
+    p = sub.add_parser("score", help="chấm tái khám phá trên các candidates.json")
+    p.add_argument("files", nargs="*")
+
     p = sub.add_parser("blind", help="gọi AI mù có cấu trúc (tiến trình riêng, cwd trung tính)")
     p.add_argument("--sandbox", required=False, help="thư mục chứa file được cấp")
     p.add_argument("--prompt", default=None)
@@ -221,8 +224,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--all", action="store_true")
     p.add_argument("--work", default="s1")
 
-    for name, mod in (("propose", propose),
-                      ("estimate", estimate), ("verify", verify), ("report", report)):
+    p = sub.add_parser("propose", help="sinh gói đầu vào cho AI mù, kiểm đầu ra, bộ sinh theo luật")
+    p.add_argument("--target", default="B-V1")
+    p.add_argument("--sandbox", action="store_true", help="dựng sandbox mù")
+    p.add_argument("--mode", choices=["open", "catalog"], default="open")
+    p.add_argument("--validate", default=None, help="kiểm một candidates.json")
+    p.add_argument("--rules", action="store_true", help="bộ sinh theo luật, không AI")
+    p.add_argument("--work", default="s1")
+
+    for name, mod in (("estimate", estimate), ("verify", verify), ("report", report)):
         p = sub.add_parser(name, help=(mod.__doc__ or "").splitlines()[0])
         p.add_argument("--spec", default=None, help="đặc tả YAML")
         p.add_argument("rest", nargs="*")

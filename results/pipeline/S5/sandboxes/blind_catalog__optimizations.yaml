@@ -1,0 +1,89 @@
+# Danh mục MẪU tối ưu chung (kiến thức miền, không phải đáp án của dự án này).
+# Mỗi mẫu: tầng, mô tả, tín hiệu kích hoạt đọc từ analysis.json, cách đánh giá nhanh, rủi ro.
+# Dùng cho: (a) AI ở chế độ "có catalog"; (b) bộ sinh theo luật (cdp propose --rules) dùng trường `rule`.
+version: 1
+templates:
+  - id: L1.fused_op
+    level: L1
+    name: Gộp một chuỗi lệnh vô hướng lặp lại thành một lệnh
+    signal: "chuỗi phụ thuộc dài >= 3 lệnh, lặp >= 1e4 lần/ảnh, chỉ dùng 2 thanh ghi nguồn"
+    rule: "pattern.len>=3 and pattern.count>=10000 and pattern.sources<=2"
+    estimate: iss_plugin
+    risk: "đường tổ hợp dài làm giảm Fmax"
+  - id: L1.postinc_load
+    level: L1
+    name: Nạp có tự tăng địa chỉ (post-increment)
+    signal: "trong vòng nóng, lệnh addi trên thanh ghi cơ sở ngay sau load chiếm tỷ lệ đáng kể"
+    rule: "class.addr / cycles_hot > 0.10"
+    estimate: iss_plugin
+    risk: "cần cổng ghi thứ hai vào tệp thanh ghi"
+  - id: L1.saturate_clamp
+    level: L1
+    name: Kẹp bão hoà / max-min một lệnh
+    signal: "nhiều cặp so sánh + rẽ nhánh hoặc slt/select quanh giá trị đầu ra"
+    rule: "pattern.contains(['blt','bge']) and region=='epilogue'"
+    estimate: iss_plugin
+    risk: "thấp"
+  - id: L2.packed_mac
+    level: L2
+    name: Nhân-cộng SIMD trên dữ liệu gói (N làn × W bit trong 32 bit)
+    signal: "vòng nóng nạp phần tử W<=8 bit, chuỗi mul→add cộng dồn"
+    rule: "dlp.elem_bits<=8 and class.mac/cycles_hot>0.3"
+    estimate: iss_plugin
+    risk: "yêu cầu thẳng hàng và bố cục dữ liệu; cần đổi firmware"
+  - id: L2.packed_compare
+    level: L2
+    name: So sánh/max SIMD trên dữ liệu gói
+    signal: "vòng nóng so sánh byte và chọn lớn nhất (pooling, ReLU)"
+    rule: "dlp.elem_bits<=8 and pattern.contains(['max_like'])"
+    estimate: iss_plugin
+    risk: "thấp"
+  - id: L2.layout_for_simd
+    level: L2
+    name: Biến đổi bố cục dữ liệu để lệnh SIMD dùng được (đệm, nhân bản pha, đổi NCHW/NHWC)
+    signal: "vòng nóng có DLP nhưng truy cập không thẳng hàng hoặc độ dài < số làn"
+    rule: "dlp.lanes_possible>=2 and dlp.aligned==false"
+    estimate: iss_firmware
+    risk: "tốn bộ nhớ đệm"
+  - id: L3.dual_port_mem
+    level: L3
+    name: Bộ nhớ hai cổng / tách lệnh-dữ liệu để load/store không chặn nạp lệnh
+    signal: "lõi trả thêm chu kỳ cho mỗi truy cập dữ liệu; load+store chiếm tỷ lệ lớn số lệnh"
+    rule: "(class.load_data+class.store_data)/instret > 0.25 and timing.load_cycles>1"
+    estimate: iss_timing
+    risk: "dùng gấp đôi cổng BSRAM; kiểm ràng buộc timing"
+  - id: L3.fast_mul
+    level: L3
+    name: Nhân một chu kỳ
+    signal: "mul chiếm tỷ lệ đáng kể và timing.mul_cycles>1"
+    rule: "class.mul/instret>0.05 and timing.mul_cycles>1"
+    estimate: iss_timing
+    risk: "Fmax"
+  - id: L3.hw_loop
+    level: L3
+    name: Vòng lặp phần cứng (zero-overhead loop)
+    signal: "loop_ctrl chiếm tỷ lệ lớn ở vòng trong ngắn"
+    rule: "class.loop_ctrl/cycles_hot>0.10 and loop.body_len<=16"
+    estimate: iss_timing
+    risk: "thêm trạng thái kiến trúc, phức tạp ngắt"
+  - id: L3.pipeline
+    level: L3
+    name: Pipeline hoá / chuyển tiếp để tăng tần số hoặc IPC
+    signal: "IPC thấp do đa chu kỳ, hoặc Fmax giới hạn bởi đường tổ hợp dài"
+    rule: "ipc<0.5 or fmax_margin<1.5"
+    estimate: analytic
+    risk: "phạt rẽ nhánh, hazard; công sức RTL lớn"
+  - id: L4.mac_array
+    level: L4
+    name: Mảng MAC P×Q gắn sát CPU có bộ đệm cục bộ
+    signal: "MAC chiếm phần lớn và roofline cho thấy cần tái sử dụng dữ liệu"
+    rule: "class.mac/cycles>0.4 and roofline.bound=='compute'"
+    estimate: analytic
+    risk: "chuyển dữ liệu; nhiều DSP/BSRAM"
+  - id: L5.multi_issue
+    level: L5
+    name: Phát hai lệnh hẹp (một ALU + một load/store/custom)
+    signal: "ILP lý tưởng >= 1.5 trong khối nóng"
+    rule: "ilp.ideal_ipc>=1.5"
+    estimate: analytic
+    risk: "tệp thanh ghi nhiều cổng rất tốn trên FPGA"

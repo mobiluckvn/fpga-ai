@@ -1,0 +1,190 @@
+{
+  "fired": [
+    {
+      "id": "L1.postinc_load",
+      "level": "L1",
+      "name": "Nạp có tự tăng địa chỉ (post-increment)",
+      "rule": "class.addr / cycles_hot > 0.10",
+      "fired": true,
+      "layers": [
+        "pool1"
+      ],
+      "estimate": "iss_plugin",
+      "risk": "cần cổng ghi thứ hai vào tệp thanh ghi",
+      "signal": "trong vòng nóng, lệnh addi trên thanh ghi cơ sở ngay sau load chiếm tỷ lệ đáng kể"
+    },
+    {
+      "id": "L2.packed_mac",
+      "level": "L2",
+      "name": "Nhân-cộng SIMD trên dữ liệu gói (N làn × W bit trong 32 bit)",
+      "rule": "dlp.elem_bits<=8 and class.mac/cycles_hot>0.3",
+      "fired": true,
+      "layers": [
+        "conv1",
+        "conv2",
+        "dense"
+      ],
+      "estimate": "iss_plugin",
+      "risk": "yêu cầu thẳng hàng và bố cục dữ liệu; cần đổi firmware",
+      "signal": "vòng nóng nạp phần tử W<=8 bit, chuỗi mul→add cộng dồn"
+    },
+    {
+      "id": "L2.layout_for_simd",
+      "level": "L2",
+      "name": "Biến đổi bố cục dữ liệu để lệnh SIMD dùng được (đệm, nhân bản pha, đổi NCHW/NHWC)",
+      "rule": "dlp.lanes_possible>=2 and dlp.aligned==false",
+      "fired": true,
+      "layers": [
+        "conv1",
+        "pool1",
+        "pool2"
+      ],
+      "estimate": "iss_firmware",
+      "risk": "tốn bộ nhớ đệm",
+      "signal": "vòng nóng có DLP nhưng truy cập không thẳng hàng hoặc độ dài < số làn"
+    },
+    {
+      "id": "L3.dual_port_mem",
+      "level": "L3",
+      "name": "Bộ nhớ hai cổng / tách lệnh-dữ liệu để load/store không chặn nạp lệnh",
+      "rule": "(class.load_data+class.store_data)/instret > 0.25 and timing.load_cycles>1",
+      "fired": true,
+      "layers": [
+        "conv1",
+        "pool1",
+        "conv2",
+        "pool2",
+        "dense"
+      ],
+      "estimate": "iss_timing",
+      "risk": "dùng gấp đôi cổng BSRAM; kiểm ràng buộc timing",
+      "signal": "lõi trả thêm chu kỳ cho mỗi truy cập dữ liệu; load+store chiếm tỷ lệ lớn số lệnh"
+    },
+    {
+      "id": "L3.fast_mul",
+      "level": "L3",
+      "name": "Nhân một chu kỳ",
+      "rule": "class.mul/instret>0.05 and timing.mul_cycles>1",
+      "fired": true,
+      "layers": [
+        "conv1",
+        "conv2",
+        "dense"
+      ],
+      "estimate": "iss_timing",
+      "risk": "Fmax",
+      "signal": "mul chiếm tỷ lệ đáng kể và timing.mul_cycles>1"
+    },
+    {
+      "id": "L5.multi_issue",
+      "level": "L5",
+      "name": "Phát hai lệnh hẹp (một ALU + một load/store/custom)",
+      "rule": "ilp.ideal_ipc>=1.5",
+      "fired": true,
+      "layers": [
+        "conv1",
+        "pool1",
+        "conv2",
+        "pool2",
+        "dense"
+      ],
+      "estimate": "analytic",
+      "risk": "tệp thanh ghi nhiều cổng rất tốn trên FPGA",
+      "signal": "ILP lý tưởng >= 1.5 trong khối nóng"
+    }
+  ],
+  "skipped": [
+    {
+      "id": "L1.fused_op",
+      "rule": "pattern.len>=3 and pattern.count>=10000 and pattern.sources<=2",
+      "why": "profile hiện tại KHÔNG đo đại lượng này (cần khai thác n-gram mẫu lệnh — chưa hiện thực)"
+    },
+    {
+      "id": "L1.saturate_clamp",
+      "rule": "pattern.contains(['blt','bge']) and region=='epilogue'",
+      "why": "profile hiện tại KHÔNG đo đại lượng này (cần khai thác n-gram mẫu lệnh — chưa hiện thực)"
+    },
+    {
+      "id": "L2.packed_compare",
+      "rule": "dlp.elem_bits<=8 and pattern.contains(['max_like'])",
+      "why": "luật không thoả ở lớp mạng nào"
+    },
+    {
+      "id": "L3.hw_loop",
+      "rule": "class.loop_ctrl/cycles_hot>0.10 and loop.body_len<=16",
+      "why": "luật không thoả ở lớp mạng nào"
+    },
+    {
+      "id": "L3.pipeline",
+      "rule": "ipc<0.5 or fmax_margin<1.5",
+      "why": "luật không thoả ở lớp mạng nào"
+    },
+    {
+      "id": "L4.mac_array",
+      "rule": "class.mac/cycles>0.4 and roofline.bound=='compute'",
+      "why": "luật không thoả ở lớp mạng nào"
+    }
+  ],
+  "facts": {
+    "cycles": 1459993,
+    "cycles_hot": 1005419,
+    "instret": 592235,
+    "ipc": 0.589,
+    "layer": "conv2",
+    "fmax_margin": 2.091
+  },
+  "namespace": {
+    "cls": {
+      "mac": 422048.0,
+      "load_data": 521600.0,
+      "store_data": 18240.0,
+      "addr": 4247.0,
+      "loop_ctrl": 2092.0,
+      "requant": 36906.0,
+      "other": 286.0,
+      "alu": 165364.0,
+      "shift": 9680.0,
+      "branch_taken": 3871.0,
+      "branch_nt": 133.0,
+      "jal": 0.0,
+      "jalr": 2.0,
+      "load": 260800.0,
+      "store": 9120.0,
+      "mul": 143264.0,
+      "div": 0.0,
+      "csr": 1.0,
+      "misc": 0.0,
+      "custom_dot4": 0.0,
+      "custom_req": 0.0
+    },
+    "timing": {
+      "load_cycles": 2,
+      "mul_cycles": 2,
+      "store_cycles": 2,
+      "div_cycles": 34
+    },
+    "ilp": {
+      "ideal_ipc": 45556.538
+    },
+    "roofline": {
+      "bound": "compute/issue"
+    },
+    "dlp": {
+      "elem_bits": 8,
+      "lanes_possible": 4,
+      "aligned": true
+    },
+    "pattern": {
+      "mnem": "{'branch', 'blt', 'beq', 'lb', 'mul', 'bge', 'bne'}"
+    },
+    "loop": {
+      "body_len": 451
+    },
+    "cycles": 1459993,
+    "cycles_hot": 1005419,
+    "instret": 592235,
+    "ipc": 0.589,
+    "layer": "conv2",
+    "fmax_margin": 2.091
+  }
+}

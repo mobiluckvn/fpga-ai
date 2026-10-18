@@ -28,13 +28,21 @@ class Run:
         self.quiet = quiet
         self.t0 = time.time()
         self.id = run_id(cmd, self.t0)
-        self.dir = paths.RUNS / self.id
+        # Tạo thư mục bằng mkdir KHÔNG exist_ok và bắt lỗi: hai tiến trình cdp khởi
+        # động trong cùng một giây tính ra cùng run_id, nên kiểm-rồi-tạo bị đua
+        # (đã xảy ra thật khi chạy 2 lời gọi song song ở S5).
+        base = self.id
         n = 1
-        while self.dir.exists():
-            n += 1
-            self.id = run_id(cmd, self.t0) + f"-{n}"
+        while True:
+            self.id = base if n == 1 else f"{base}-{n}"
             self.dir = paths.RUNS / self.id
-        self.dir.mkdir(parents=True)
+            try:
+                self.dir.mkdir(parents=True)
+                break
+            except FileExistsError:
+                n += 1
+                if n > 50:
+                    raise
         self.log_path = self.dir / "run.log"
         self._log = open(self.log_path, "w")
         self.git = provenance.git_info()

@@ -1,0 +1,19 @@
+# Chấm tái khám phá
+
+| file | origin | chế độ | số ứng viên | tầng | DOT4 | REQ | LAYOUT | FASTMEM |
+|---|---|---|---:|---|---|---|---|---|
+| `20261018-172015-propose` | ai | blind_open | 12 | L1,L2,L3,L4,L5 | **có** | **có** | **có** | **có** |
+| `20261018-172016-propose` | ai | blind_open | 12 | L1,L2,L3,L4,L5 | **có** | không | **có** | **có** |
+| `20261018-172018-propose` | ai | blind_open | 12 | L1,L2,L3,L4,L5 | **có** | không | không | **có** |
+| `20261018-172019-propose` | ai | blind_catalog | 12 | L1,L2,L3,L4,L5 | **có** | **có** | **có** | **có** |
+| `20261018-172020-propose` | ai | blind_catalog | 12 | L1,L2,L3,L4,L5 | **có** | **có** | **có** | **có** |
+| `20261018-172022-propose` | ai | blind_catalog | 12 | L1,L2,L3,L4,L5 | **có** | **có** | **có** | **có** |
+| `runs` | rules | open | 6 | L1,L2,L3,L5 | **có** | không | **có** | **có** |
+
+    DOT4: tái khám phá ở 7/7 lần chạy
+    REQ: tái khám phá ở 4/7 lần chạy
+    LAYOUT: tái khám phá ở 6/7 lần chạy
+    FASTMEM: tái khám phá ở 7/7 lần chạy
+
+=> ĐẠT · chi tiết kèm đoạn chữ đã khớp: pipeline/runs/20261018-175659-score/score.json
+[run 20261018-175659-score] ok · 1.2 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-175659-score

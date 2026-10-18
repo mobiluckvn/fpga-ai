@@ -2,6 +2,81 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — PIPELINE CDP bước S5 ĐẠT: AI mù tái khám phá DOT4, REQ, bố cục và bộ nhớ nhanh — và tìm thêm 34 ứng viên mới
+
+Trả lời PQ3 và PQ4. Điểm xuất phát B-V1 (1.459.993 chu kỳ). Sáu lời gọi AI mù (3 `blind_open`
+không cấp catalog + 3 `blind_catalog`) cộng một bộ sinh theo luật cố định làm đối chứng.
+
+### Bảng tái khám phá
+| | DOT4 | REQ | LAYOUT | FASTMEM |
+|---|---|---|---|---|
+| AI `blind_open` (3 lần) | **3/3** | **1/3** | **2/3** | **3/3** |
+| AI `blind_catalog` (3 lần) | **3/3** | **3/3** | **3/3** | **3/3** |
+| luật cố định (không AI) | có | **không** | có | có |
+
+Mỗi lần chạy AI cho **12 ứng viên trải đủ 5 tầng L1–L5**, cả 6 tệp **hợp lệ lược đồ**.
+Luật cố định cho 6 ứng viên, 4 tầng.
+
+### PQ3: có, tái khám phá được
+DOT4 và bộ nhớ nhanh hơn: 7/7 lần chạy. Bố cục: 6/7. REQ: 4/7. Ở `blind_catalog` thì **cả bốn
+đáp án đều tìm lại được ở cả 3 lần**. Ở `blind_open` (không catalog), một lần tự nghĩ ra REQ chỉ
+từ con số `requant 8,8 % chu kỳ`: *"gộp chuỗi làm-tròn-dịch-kẹp của requant int8 thành một lệnh
+1 chu kỳ"*.
+
+### PQ4: AI hơn luật ở đúng một chỗ, và chỗ đó có lý do rõ ràng
+- **DOT4, LAYOUT, FASTMEM: luật cố định tìm được hết** ⟹ đây là những kết luận mà **chỉ cần
+  profile là suy ra được**, không cần AI. Đó là một kết quả quan trọng và hơi phản trực giác:
+  phần lớn giá trị nằm ở **phân tích**, không ở AI.
+- **REQ là chỗ AI hơn**: luật `L1.fused_op` cần dữ liệu n-gram mẫu lệnh mà profile chưa đo nên
+  **không đánh giá được** (ghi đúng như vậy, KHÔNG coi là "luật sai" — coi vậy sẽ thổi phồng AI).
+- **Catalog giúp rõ rệt**: REQ 1/3 → 3/3, LAYOUT 2/3 → 3/3 ⟹ hai chế độ phải báo riêng.
+- **Độ ổn định của AI chưa cao** khi không có catalog. Báo nguyên số, không chọn lần tốt nhất.
+
+### Phần giá trị nhất: 34 ứng viên MỚI, ngoài bốn đáp án đã biết
+| ý tưởng | số lần chạy đề xuất |
+|---|---|
+| nhân-cộng có thanh ghi tích luỹ riêng (MACC/FMAC/LMAC) | 5/6 |
+| phát hai lệnh mỗi chu kỳ (dual-issue hẹp) | 5/6 |
+| bộ sinh địa chỉ / nạp tự tăng | 5/6 |
+| **lệnh max gói 4 làn cho pooling (PMAX4)** | **4/6** |
+| nhân 1 chu kỳ (hạ λ_mul 2 → 1) | 4/6 |
+| mở rộng tệp thanh ghi / bank tích luỹ | 1/6 |
+| chia cơ số cao | 1/6 |
+
+**PMAX4 là ứng viên đáng chú ý nhất**: S3 đã chỉ ra `pool1`+`pool2` chiếm 15,0 % chu kỳ của
+B-V3 và **chưa có tối ưu nào chạm tới** (34 % chu kỳ của chúng là lệnh so sánh/chọn nên DOT4 vô
+dụng ở đó). AI mù tìm đúng ứng viên cho chỗ đó ở 4/6 lần — **một tối ưu người chưa làm**.
+Và L3 "nhân 1 chu kỳ" trùng đúng ứng viên mà mô hình chi phí ở S3 đã dự báo được sẵn (1,020×).
+
+### Chế độ mù: cơ chế và bằng chứng
+Mù **có cấu trúc** (`cdp blind`): tiến trình `claude` riêng, thư mục làm việc ngoài cây dự án,
+prompt không nêu đường dẫn dự án. **Tự khai báo của 6/6 lần chạy**: ngữ cảnh thêm chỉ có
+`~/.claude/CLAUDE.md` (Vnstock, không liên quan); **đọc ngoài: không có; lệnh ngoài: không có**.
+
+`cdp propose` tự kiểm rò rỉ trước khi cấp, **dừng** nếu còn sót. Hai chỗ phải làm sạch:
+`static.json` ghi "custom-0 đã dùng funct3 000 (DOT4) và 001 (REQ)" → với B-V1 sự thật là toàn
+bộ không gian custom còn trống; và bảng λ bỏ hai dòng `custom_dot4`/`custom_req`. **Giữ** lớp
+`requant` vì đó là tên công việc trong phần mềm, không phải tên giải pháp phần cứng.
+Một lần chạy tự đặt tên ứng viên là `dot4` — không phải rò rỉ (chuỗi đó không có trong file nào
+được cấp), chỉ là tên tự nhiên của phép tích vô hướng 4 làn.
+
+### Hai lỗi của chính tôi đã sửa trong bước này
+1. **Bộ chấm có dương tính giả**: nó tính LAYOUT cho ứng viên SIMD chỉ vì trường `risks` *nhắc
+   tới* "cần đổi bố cục dữ liệu". Nhắc tới một thứ như rủi ro không phải là đề xuất thứ đó. Đã
+   bỏ `risks` và `evidence` khỏi vùng quét (trường `evidence` trích số từ analysis nên chứa sẵn
+   từ "requant" — trích một tỷ trọng không phải là đề xuất).
+2. **Đối chứng bị đánh giá thấp không công bằng**: bản đầu đánh giá luật chỉ trên lớp mạng nóng
+   nhất (`conv2`) nên ra 1 ứng viên; nhưng cơ hội gói 4 làn nằm ở `conv1`. Đã sửa thành đánh giá
+   **từng lớp mạng** → 6 ứng viên. Nếu không sửa thì kết luận PQ4 sẽ sai theo hướng có lợi cho AI.
+
+Ngoài ra sửa một lỗi đua trong `runctx.py`: hai tiến trình `cdp` khởi động cùng một giây tính ra
+cùng `run_id` rồi cả hai `mkdir` → một lời gọi chết. Đã đổi sang `mkdir` rồi bắt `FileExistsError`.
+
+### Việc tiếp theo
+S6: `cdp estimate` toàn bộ ứng viên (giải tích + ISS), chọn top-K, hiện thực RTL, `cdp verify`,
+rồi đo kit. Đây là lần đầu **cần kit** — và cũng là lúc gộp phép kiểm đường đo `cdp kit` đã hoãn
+từ S1.
+
 ## 2026-10-18 — CHẶN rò rỉ ngữ cảnh cho chế độ mù: `cdp blind` (bắt buộc trước S5)
 
 Vấn đề từ S4: subagent mù được sinh ra TỪ phiên điều phối, nên harness tự chèn `CLAUDE.md` của dự

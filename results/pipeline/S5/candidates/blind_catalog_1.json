@@ -1,0 +1,508 @@
+{
+  "round": 1,
+  "origin": "ai",
+  "mode": "blind_catalog",
+  "base_config": "B-V1",
+  "candidates": [
+    {
+      "id": "C01-ldst-1cycle",
+      "level": "L3",
+      "template": "L3.dual_port_mem",
+      "title": "Tách lệnh/dữ liệu (BSRAM hai cổng) để load/store còn 1 chu kỳ",
+      "target": "toàn mô hình; nặng nhất là layers.conv2 (cycles_sum10=10054190) và layers.dense",
+      "evidence": [
+        "share_by_sem_total.load_data = 44.5 (loại chu kỳ chiếm tỷ trọng LỚN NHẤT)",
+        "cycles_by_sem_total.load_data = 649618.0",
+        "cycles_by_sem_total.store_data = 33056.0; share_by_sem_total.store_data = 2.26",
+        "amdahl_max_speedup_total.load_data = 1.8 (cận trên lớn nhất trong mọi loại chu kỳ)",
+        "layers.conv2.share_by_sem.load_data = 51.88; layers.conv2.amdahl_max_speedup.load_data = 2.08",
+        "layers.dense.share_by_sem.load_data = 54.09; layers.dense.amdahl_max_speedup.load_data = 2.18",
+        "mem_bytes_per_cycle_available = 2.0 (hệ quả của 4 byte / 2 chu kỳ trên một cổng)"
+      ],
+      "spec": {
+        "timing_changes": {
+          "load_cycles": "2 -> 1",
+          "store_cycles": "2 -> 1",
+          "rationale": "core.md: load/store tốn 2 chu kỳ vì BSRAM MỘT CỔNG, mỗi truy cập dữ liệu chiếm cổng nên lệnh kế phải nạp ở chu kỳ sau. Tách thành I-mem và D-mem riêng (hoặc dùng chế độ dual-port/SDP của khối BSRAM Gowin) thì nạp lệnh và truy cập dữ liệu diễn ra song song, không còn chu kỳ chặn.",
+          "mem_bytes_per_cycle_available": "2.0 -> 4.0 (4 byte / 1 chu kỳ ở cổng dữ liệu)",
+          "other_classes_unchanged": "alu/shift/branch/jal/jalr/csr/misc = 1, mul = 2, div = 34"
+        },
+        "firmware_changes": "Không đổi mã lệnh. Chỉ cần tái phân vùng ảnh bộ nhớ thành vùng lệnh và vùng dữ liệu rời nhau (script linker), không đổi phép toán nên vẫn đúng từng bit với golden.",
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM": "0 khối MỚI nếu dùng cổng thứ hai của 32 khối đang dùng (chế độ true-dual-port/SDP); tối đa ~14 khối nếu phải nhân đôi vùng lệnh — budget.remaining.BSRAM = 14, sát hạn",
+          "LUT4": "nhỏ: thêm bus địa chỉ/dữ liệu thứ hai và bộ chọn, không thêm đường tổ hợp số học",
+          "DFF": "nhỏ: thanh ghi đệm cho cổng thứ hai",
+          "new_arch_regs": 0
+        }
+      },
+      "estimate_method": "iss_timing",
+      "expected_mechanism": "Cắt trực tiếp loại chu kỳ load_data (44.5%) và store_data (2.26%): mỗi lệnh load/store bỏ được chu kỳ chặn nạp lệnh, λ_load và λ_store đi từ 2 về 1. Theo mô hình C = Σ n_c·λ_c trong core.md, n_c không đổi, chỉ λ đổi — nên đây là thay đổi dự báo được chắc chắn nhất và nhắm vào đúng loại chu kỳ lớn nhất.",
+      "risks": [
+        "Cổng BSRAM: nếu khối BSRAM không chạy được true-dual-port ở cấu hình độ rộng hiện tại thì phải nhân đôi vùng lệnh, mà budget.remaining.BSRAM chỉ còn 14/46 khối (32 khối đang dùng cho 64 KB) — có thể không đủ cho 64 KB lệnh.",
+        "Fmax: thêm bus thứ hai và mux địa chỉ; budget.fmax_current_mhz = 56.47 so với fmax_min_mhz = 27.0 nên biên còn ~2.09x, rủi ro Fmax thấp.",
+        "Độ đúng: không đổi phép toán, không có rủi ro tràn/làm tròn.",
+        "Phức tạp hiện thực: trung bình — đổi máy trạng thái nạp/thi hành và tầng giao tiếp bộ nhớ, cộng với script linker."
+      ]
+    },
+    {
+      "id": "C02-mul-1cycle",
+      "level": "L3",
+      "template": "L3.fast_mul",
+      "title": "Nhân 32x32 một chu kỳ (λ_mul 2 -> 1)",
+      "target": "layers.conv1, layers.conv2, layers.dense — phần chu kỳ phân loại 'mac'",
+      "evidence": [
+        "share_by_sem_total.mac = 40.47 (loại chu kỳ lớn thứ hai)",
+        "cycles_by_sem_total.mac = 590880.0",
+        "amdahl_max_speedup_total.mac = 1.68",
+        "cycles_per_mac_total = 7.602",
+        "layers.conv2.share_by_sem.mac = 41.98; layers.conv2.cycles_by_sem_sum10.mac = 4220480",
+        "layers.conv1.share_by_sem.mac = 42.4; layers.conv1.amdahl_max_speedup.mac = 1.74",
+        "layers.conv1.bound = \"compute/issue\"; layers.conv2.bound = \"compute/issue\"; layers.dense.bound = \"compute/issue\""
+      ],
+      "spec": {
+        "timing_changes": {
+          "mul_cycles": "2 -> 1",
+          "rationale": "core.md: nhân 32x32 dùng khối nhân cứng FPGA, hiện tốn 2 chu kỳ. budget.remaining.MULT18X18 = 44 trên 48 — dư để dựng cây nhân 32x32 (4 khối MULT18X18 + cộng phần tích) ở dạng tổ hợp hoặc có thanh ghi pipeline sao cho kết quả có hiệu lực ngay trong chu kỳ phát lệnh.",
+          "div_cycles": "34 (không đổi)",
+          "load_store_cycles": "2 (không đổi trong ứng viên này)"
+        },
+        "firmware_changes": "Không đổi. Kết quả nhân giữ nguyên 32 bit thấp nên đúng từng bit với golden.",
+        "hw_resources_guess": {
+          "MULT18X18": "4 khối cho một cây nhân 32x32 không chia chu kỳ (hiện dùng 4/48, còn 44)",
+          "LUT4": "trung bình: cây cộng ba phần tích 32 bit",
+          "DFF": "giảm (bỏ thanh ghi trung gian giữa hai chu kỳ)",
+          "BSRAM": 0,
+          "new_arch_regs": 0
+        }
+      },
+      "estimate_method": "iss_timing",
+      "expected_mechanism": "Cắt loại chu kỳ 'mac': mỗi phép nhân trong vòng tích chập bỏ một chu kỳ, λ_mul 2 -> 1 trong C = Σ n_c·λ_c. Vì cả ba lớp có MAC đều mang nhãn bound = \"compute/issue\", giảm chu kỳ phát lệnh nhân chuyển thành giảm chu kỳ thật chứ không bị cổng bộ nhớ che.",
+      "risks": [
+        "Fmax: đường tổ hợp nhân 32x32 + cây cộng là rủi ro chính; biên hiện tại fmax_current_mhz 56.47 / fmax_min_mhz 27.0 = 2.09x, nếu cây nhân làm Fmax tụt dưới 27 MHz thì ứng viên bị loại (budget.note).",
+        "Tệp thanh ghi: không đổi (vẫn 2 đọc 1 ghi).",
+        "Độ đúng: chỉ giữ 32 bit thấp như mul hiện tại, không đổi ngữ nghĩa — nhưng phải kiểm mulh/mulhu nếu firmware dùng (giữ nguyên 2 chu kỳ cho các biến thể nhân cao để hạn chế rủi ro Fmax).",
+        "Phức tạp hiện thực: thấp-trung bình, khu trú trong khối nhân."
+      ]
+    },
+    {
+      "id": "C03-hwloop",
+      "level": "L3",
+      "template": "L3.hw_loop",
+      "title": "Vòng lặp phần cứng không phí tổn (zero-overhead loop)",
+      "target": "layers.pool1.loops[2] (backedge 0x114->0x88, trips=1560, body_instr_static=36), layers.pool2.loops[2] (backedge 0x218->0x190, trips=200, body_instr_static=35), layers.conv1.loops[2] (backedge 0xd2c->0xc54, trips=2000, body_instr_static=54)",
+      "evidence": [
+        "layers.pool1.share_by_sem.loop_ctrl = 23.62; layers.pool1.cycles_by_sem_sum10.loop_ctrl = 100260.0",
+        "layers.pool2.share_by_sem.loop_ctrl = 23.18; layers.pool2.cycles_by_sem_sum10.loop_ctrl = 28980.0",
+        "layers.pool1.amdahl_max_speedup.loop_ctrl = 1.31; layers.pool2.amdahl_max_speedup.loop_ctrl = 1.3",
+        "share_by_sem_total.loop_ctrl = 1.48; cycles_by_sem_total.loop_ctrl = 21587.0",
+        "layers.pool1.loops[2].body_instr_static = 36 (thân ngắn, khớp tín hiệu loop.body_len nhỏ)",
+        "layers.pool1.share_by_sem.addr = 10.35; layers.pool2.share_by_sem.addr = 10.01"
+      ],
+      "spec": {
+        "timing_changes": {
+          "new_arch_state": "ba thanh ghi vòng: LC (đếm lần lặp), LS (địa chỉ đầu thân), LE (địa chỉ cuối thân)",
+          "setup_instruction": "custom-0 opcode=0x0b, funct3=0x5, funct7=0x00 — 'loopset rs1=trip_count, rs2=địa_chỉ_cuối_thân'; LS = pc+4",
+          "loop_ctrl_instruction_count": "mỗi lần lặp bỏ addi đếm + so sánh + branch (3 lệnh x 1 chu kỳ) => n_c của lớp alu/branch giảm; không đổi λ của lớp nào",
+          "latency_of_backedge": "0 chu kỳ (quay đầu xảy ra trong tầng nạp lệnh khi pc == LE và LC > 1)"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # loopset: nap bo dem va bien than vong vao trang thai kien truc\n    state['LC'] = rs1 & 0xFFFFFFFF\n    state['LS'] = (state['pc'] + 4) & 0xFFFFFFFF\n    state['LE'] = rs2 & 0xFFFFFFFF\n    return 0, state\n",
+        "latency_cycles": 1,
+        "firmware_changes": "Thay mẫu 'addi i,i,1 / blt i,n,body' ở cuối thân vòng trong bằng một 'loopset' đặt trước vòng. Chỉ số vòng vẫn được giữ trong thanh ghi nếu thân cần (pool1 có n_regs_free = 21 nên đủ chỗ). Phép toán trên dữ liệu không đổi => đúng từng bit.",
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM": 0,
+          "DFF": "~96 (3 thanh ghi 32 bit) + logic so sánh pc",
+          "LUT4": "nhỏ: so sánh pc == LE và mux pc",
+          "new_arch_regs": 3
+        }
+      },
+      "estimate_method": "iss_timing",
+      "expected_mechanism": "Cắt loại chu kỳ loop_ctrl (và một phần 'addr'): bỏ lệnh tăng biến đếm, so sánh và nhánh quay đầu ở mỗi lần lặp. Lợi lớn nhất ở pool1/pool2 nơi loop_ctrl chiếm 23.62% và 23.18%; lợi toàn mô hình nhỏ vì share_by_sem_total.loop_ctrl chỉ 1.48.",
+      "risks": [
+        "Fmax: thấp — chỉ thêm một so sánh 32 bit ở tầng nạp lệnh.",
+        "Thêm trạng thái kiến trúc (LC/LS/LE) nên phải xử lý lưu/hồi khi có ngắt hoặc gọi hàm; firmware hiện tại dùng ra/sp trong thân (static conv1 loops có reg 1,2) nên cần quy ước rõ.",
+        "Chỉ hỗ trợ một mức vòng lặp (không lồng) trong phiên bản đơn giản — nên chỉ áp cho vòng trong cùng.",
+        "Lợi ích toàn cục nhỏ: amdahl_max_speedup_total.loop_ctrl = 1.02."
+      ]
+    },
+    {
+      "id": "C04-mac-fused",
+      "level": "L1",
+      "template": "L1.fused_op",
+      "title": "Lệnh nhân-cộng dồn vô hướng (mac) với thanh ghi tích luỹ kiến trúc",
+      "target": "layers.conv2.loops[0] (backedge 0xb40->0x69c, body_instr_static=297), layers.conv1.loops[2] (backedge 0xd2c->0xc54), layers.dense.loops[0] (backedge 0x32c->0x2a4)",
+      "evidence": [
+        "share_by_sem_total.mac = 40.47; cycles_by_sem_total.mac = 590880.0",
+        "cycles_per_mac_total = 7.602",
+        "layers.conv1.mac = 48672; layers.conv2.mac = 139392; layers.dense.mac = 4000 (tổng 192064 MAC/ảnh)",
+        "cycles_by_sem_total.mac / (48672+139392+4000) = 590880.0 / 192064 = 3.08 chu kỳ mỗi MAC, khớp mul(2)+add(1) của core.md",
+        "layers.conv2.cycles_per_mac = 7.213; layers.conv1.cycles_per_mac = 7.6; layers.dense.cycles_per_mac = 7.413",
+        "layers.conv2.loops[0].body_instr_static = 297 và layers.conv2.loops[0].body_instr_dynamic = 5749920 (chuỗi lặp rất nhiều lần)"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x0b (custom-0)",
+          "funct3": "0x0",
+          "funct7": "0x00 (0x01 = macz: xoá tích luỹ trước khi cộng, dùng ở đầu mỗi điểm đầu ra)"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # mac: ACC += rs1 * rs2 (32 bit thap), rd = ACC\n    # 32 bit thap cua tich giong nhau cho so co dau va khong dau => dung tung bit voi mul+add hien tai\n    acc = state.get('ACC', 0)\n    if state.get('funct7', 0) & 1:\n        acc = 0\n    acc = (acc + ((rs1 * rs2) & 0xFFFFFFFF)) & 0xFFFFFFFF\n    state['ACC'] = acc\n    return acc, state\n",
+        "latency_cycles": 2,
+        "firmware_changes": "Thay cặp 'mul t,a,b / add acc,acc,t' trong thân vòng tích chập bằng một 'mac a,b'. Thanh ghi tạm t được giải phóng (static conv2 loops[0] chỉ còn n_regs_free = 3 nên việc này giảm áp lực thanh ghi). Tổng tích luỹ vẫn là cộng modulo 2^32 nên đúng từng bit với golden.",
+        "hw_resources_guess": {
+          "MULT18X18": "dùng lại 4 khối nhân hiện có, thêm một bộ cộng 32 bit sau nhân",
+          "BSRAM": 0,
+          "DFF": "32 (thanh ghi ACC)",
+          "LUT4": "nhỏ: một bộ cộng 32 bit",
+          "new_arch_regs": 1
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "Cắt loại chu kỳ 'mac': hiện mỗi MAC tốn 3 chu kỳ (mul 2 + add 1, suy ra từ cycles_by_sem_total.mac / số MAC = 3.08); gộp thành một lệnh 2 chu kỳ bỏ hẳn chu kỳ cộng dồn. Giảm n_c của lớp alu và gộp lớp mul, không cần đổi λ_mul nên không đụng tới đường tổ hợp nhân (khác C02).",
+      "risks": [
+        "Fmax: thấp hơn C02 vì bộ cộng nằm ở chu kỳ thứ hai của nhân (đã có thanh ghi trung gian), không kéo dài đường tổ hợp dài nhất.",
+        "Tệp thanh ghi: không cần cổng thêm — ACC là thanh ghi riêng, chỉ đọc 2 ghi 1 như hiện tại.",
+        "Độ đúng: tràn — ACC là 32 bit như biến tích luỹ hiện tại của firmware, cộng modulo 2^32 giữ nguyên hành vi; nếu firmware tích luỹ ở độ rộng khác thì phải khớp lại.",
+        "ACC là trạng thái kiến trúc mới: cần quy ước lưu/hồi khi gọi hàm hoặc ngắt; chỉ có một ACC nên không chồng nhiều tích luỹ song song (xung đột với C09 cần 4 tích luỹ — xem depends_on của C09).",
+        "Phức tạp hiện thực: thấp."
+      ]
+    },
+    {
+      "id": "C05-requant-fused",
+      "level": "L1",
+      "template": "L1.saturate_clamp",
+      "title": "Lệnh dịch-làm tròn-kẹp bão hoà int8 một chu kỳ (rqsat)",
+      "target": "layers.conv1 — phần chu kỳ phân loại 'requant' (cycles_by_sem_sum10.requant = 921470.0), và layers.conv2.cycles_by_sem_sum10.requant = 369060.0",
+      "evidence": [
+        "share_by_sem_total.requant = 8.84; cycles_by_sem_total.requant = 129053.0 (loại chu kỳ lớn thứ ba)",
+        "amdahl_max_speedup_total.requant = 1.1",
+        "layers.conv1.share_by_sem.requant = 24.91 (lớn thứ ba trong conv1, sau mac 42.4 và load_data 26.48)",
+        "layers.conv1.amdahl_max_speedup.requant = 1.33",
+        "layers.conv2.share_by_sem.requant = 3.67; layers.conv2.cycles_by_sem_sum10.requant = 369060.0",
+        "layers.conv1.cycles_sum10 = 3699090 (lớp lớn thứ hai sau conv2)"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x0b (custom-0)",
+          "funct3": "0x2",
+          "funct7": "0x00 = dịch có làm tròn nửa lên rồi kẹp [-128,127]; 0x01 = dịch cắt bỏ (truncate) rồi kẹp — chọn biến thể khớp đúng firmware"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # rqsat: rd = clamp( round_shift_right( signed(rs1), rs2[4:0] ), -128, 127 ), tra ve dang mo rong dau 32 bit\n    x = rs1 - (1 << 32) if (rs1 & 0x80000000) else rs1\n    s = rs2 & 0x1F\n    if state.get('funct7', 0) & 1:\n        y = x >> s\n    else:\n        y = (x + (1 << (s - 1))) >> s if s > 0 else x\n    if y > 127:\n        y = 127\n    elif y < -128:\n        y = -128\n    return y & 0xFFFFFFFF, state\n",
+        "latency_cycles": 1,
+        "firmware_changes": "Thay chuỗi hậu kỳ mỗi điểm đầu ra ('addi acc,acc,1<<(s-1)' / 'srai acc,acc,s' / cặp so sánh-rẽ nhánh hoặc slt+select để kẹp về [-128,127]) bằng một 'rqsat acc, s'. PHẢI đối chiếu chuỗi thật trong firmware trước: nếu firmware cắt bỏ thay vì làm tròn nửa lên thì dùng funct7=0x01 để giữ đúng từng bit với golden. Phần nhân với hệ số requant giữ nguyên (vẫn là mul, hoặc gộp bằng C04).",
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM": 0,
+          "LUT4": "nhỏ: một bộ dịch phải số học đã có + bộ cộng bit làm tròn + hai bộ so sánh hằng số",
+          "DFF": 0,
+          "new_arch_regs": 0
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "Cắt loại chu kỳ 'requant' (8.84% toàn mô hình, 24.91% trong conv1): gộp 3-4 lệnh vô hướng mỗi điểm đầu ra thành 1 lệnh 1 chu kỳ. Giảm n_c của lớp alu/shift/branch. Vì conv1 có requant chiếm gần một phần tư chu kỳ của lớp, đây là ứng viên rẻ nhất cho conv1.",
+      "risks": [
+        "Độ đúng là rủi ro CHÍNH: phải khớp chính xác quy tắc làm tròn (nửa lên / về 0 / nửa chẵn) và điểm kẹp của firmware, nếu không kết quả lệch so với golden. Hai biến thể funct7 có để chọn, nhưng cần xác nhận bằng mã nguồn firmware.",
+        "Dịch với s = 0: nhánh 1 << (s-1) phải tránh — ngữ nghĩa ở trên đã xử lý s == 0 thành đồng nhất.",
+        "Fmax: thấp — dịch + cộng + kẹp là đường tổ hợp ngắn hơn đường nhân hiện có.",
+        "Tệp thanh ghi: không đổi.",
+        "Phức tạp hiện thực: thấp."
+      ]
+    },
+    {
+      "id": "C06-lb-postinc",
+      "level": "L1",
+      "template": "L1.postinc_load",
+      "title": "Nạp byte có tự tăng địa chỉ (lbpi) và lưu byte có tự tăng (sbpi)",
+      "target": "layers.pool1 (share_by_sem.addr = 10.35), layers.pool2 (share_by_sem.addr = 10.01), layers.dense (share_by_sem.addr = 3.52)",
+      "evidence": [
+        "share_by_sem_total.addr = 1.14; cycles_by_sem_total.addr = 16571.0",
+        "layers.pool1.share_by_sem.addr = 10.35; layers.pool1.cycles_by_sem_sum10.addr = 43950",
+        "layers.pool2.share_by_sem.addr = 10.01; layers.pool2.cycles_by_sem_sum10.addr = 12510",
+        "layers.dense.share_by_sem.addr = 3.52; layers.dense.cycles_by_sem_sum10.addr = 10430",
+        "layers.conv1.dlp.share_stride_1_pct = 85.8 và layers.pool1.dlp.share_stride_1_pct = 89.9 (địa chỉ tiến đều nên tự tăng dùng được)",
+        "layers.pool1.amdahl_max_speedup.addr = 1.12"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x2b (custom-1)",
+          "funct3": "0x0 (lbpi: nạp byte có dấu, cộng rs2 vào rs1)",
+          "funct7": "0x00 = cộng rs2; 0x01 = cộng 1 (bước mặc định stride-1)"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # lbpi: rd = sign_extend(DMEM[rs1]); dong thoi ghi rs1 = rs1 + step (cong writeback thu hai)\n    addr = rs1 & 0xFFFFFFFF\n    b = state['dmem'][addr] & 0xFF\n    rd = (b - 256) & 0xFFFFFFFF if (b & 0x80) else b\n    step = 1 if (state.get('funct7', 0) & 1) else (rs2 & 0xFFFFFFFF)\n    state['rs1_writeback'] = (rs1 + step) & 0xFFFFFFFF\n    return rd, state\n",
+        "latency_cycles": 2,
+        "firmware_changes": "Trong thân vòng trong, bỏ 'addi base,base,1' đứng ngay sau mỗi 'lb' và dùng 'lbpi'. Giá trị nạp và địa chỉ tiếp theo không đổi nên đúng từng bit. Áp cho vòng pool1 0x90..0xfc (static_instr=28) và pool2 0x198..0x204 (static_instr=28), nơi địa chỉ tiến đều.",
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM": 0,
+          "LUT4": "nhỏ: một bộ cộng địa chỉ dùng lại từ đường tính địa chỉ load",
+          "DFF": "nhỏ",
+          "new_arch_regs": 0,
+          "regfile_ports": "cần CỔNG GHI THỨ HAI (ghi rd và ghi lại rs1 trong cùng lệnh) — hoặc tuần tự hoá ghi rs1 vào chu kỳ thứ hai của load để giữ một cổng ghi"
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "Cắt loại chu kỳ 'addr' (tính địa chỉ): mỗi lần lặp bỏ một lệnh addi 1 chu kỳ trên thanh ghi cơ sở. Lợi rõ ở pool1/pool2 (addr ~10%) nhưng nhỏ toàn cục vì share_by_sem_total.addr chỉ 1.14 và amdahl_max_speedup_total.addr = 1.01.",
+      "risks": [
+        "Tệp thanh ghi: core.md nói hai cổng đọc MỘT cổng ghi — ghi đồng thời rd và rs1 cần cổng ghi thứ hai, tốn LUT/DFF trên FPGA; phương án an toàn là ghi rs1 ở chu kỳ thứ hai của load (load đã là 2 chu kỳ), nhưng nếu kết hợp với C01 (load 1 chu kỳ) thì mất lối thoát đó và bắt buộc phải có cổng ghi thứ hai.",
+        "Lợi ích toàn cục rất nhỏ (amdahl_max_speedup_total.addr = 1.01) — chỉ nên dùng kèm ứng viên khác.",
+        "Fmax: thấp.",
+        "Độ đúng: không đổi phép toán."
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "C07-dot4-int8",
+      "level": "L2",
+      "template": "L2.packed_mac",
+      "title": "Nhân-cộng SIMD 4 làn int8 trên 32 bit (dot4) + nạp 4 byte bằng một lw",
+      "target": "layers.conv1 (dlp.lanes_possible_8bit = 4, dlp.share_stride_1_pct = 85.8); mở rộng sang layers.conv2 và layers.dense khi kèm C08",
+      "evidence": [
+        "layers.conv1.dlp.lanes_possible_8bit = 4; layers.conv1.dlp.share_stride_1_pct = 85.8; layers.conv1.dlp.n_strided = 545580",
+        "layers.conv1.share_by_sem.mac = 42.4 và layers.conv1.share_by_sem.load_data = 26.48 (cộng lại 68.88% chu kỳ của conv1)",
+        "share_by_sem_total.mac = 40.47; share_by_sem_total.load_data = 44.5 (cộng lại 84.97% chu kỳ toàn mô hình)",
+        "layers.conv1.byte_per_mac = 1.149 (gần 1 byte mỗi MAC => dữ liệu thực sự là int8 gói được)",
+        "layers.conv1.mac_per_cycle = 0.1316 so với layers.conv1.roof_mac_per_cycle = 1.7399, layers.conv1.dist_to_roof_x = 13.22",
+        "layers.pool2.dlp.lanes_possible_8bit = 4; layers.pool1.dlp.lanes_possible_8bit = 4"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x0b (custom-0)",
+          "funct3": "0x1",
+          "funct7": "0x00 = cộng vào ACC; 0x01 = xoá ACC trước khi cộng"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # dot4: ACC += sum_{i=0..3} sext8(rs1[8i+7:8i]) * sext8(rs2[8i+7:8i]); rd = ACC\n    # Cong 32 bit la ket hop modulo 2^32 nen thu tu cong khac vo huong van cho ket qua dung tung bit.\n    acc = state.get('ACC', 0)\n    if state.get('funct7', 0) & 1:\n        acc = 0\n    for i in range(4):\n        a = (rs1 >> (8 * i)) & 0xFF\n        b = (rs2 >> (8 * i)) & 0xFF\n        a = a - 256 if (a & 0x80) else a\n        b = b - 256 if (b & 0x80) else b\n        acc = (acc + a * b) & 0xFFFFFFFF\n    state['ACC'] = acc\n    return acc, state\n",
+        "latency_cycles": 2,
+        "firmware_changes": "Vòng trong tích chập xử lý 4 phần tử mỗi lần lặp: thay 4 x (lb activation + lb weight + mul + add) bằng (lw activation + lw weight + dot4). Yêu cầu con trỏ thẳng hàng 4 byte và chiều dài chia hết cho 4 — đệm phần dư và xử lý vét bằng mã vô hướng cũ. Hệ số nhân và tích luỹ 32 bit giữ nguyên nên đúng từng bit; chỉ thứ tự cộng đổi, vẫn kết hợp modulo 2^32.",
+        "hw_resources_guess": {
+          "MULT18X18": "4 khối cho 4 nhân 8x8 (budget.remaining.MULT18X18 = 44), hoặc hiện thực bằng LUT4 vì nhân 8x8 nhỏ",
+          "BSRAM": 0,
+          "LUT4": "trung bình: 4 nhân 8x8 + cây cộng 4 số hạng + bộ cộng ACC",
+          "DFF": "32 (dùng chung ACC với C04)",
+          "new_arch_regs": "0 mới nếu dùng chung ACC của C04, ngược lại 1"
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "Cắt ĐỒNG THỜI hai loại chu kỳ lớn nhất: (a) 'load_data' — bốn lb (4 x 2 = 8 chu kỳ) thành một lw (2 chu kỳ) cho mỗi vector 4 byte; (b) 'mac' — bốn cặp mul+add (4 x 3 = 12 chu kỳ) thành một dot4 (2 chu kỳ). Cũng giảm 'loop_ctrl' và 'addr' vì số lần lặp vòng trong chia 4. Đây là ứng viên duy nhất tấn công cả load_data (44.5%) và mac (40.47%) bằng một cơ chế.",
+      "risks": [
+        "Bố cục/thẳng hàng dữ liệu: analysis cho layers.conv2.dlp.share_stride_1_pct = 0.0 và layers.conv2.dlp.lanes_possible_8bit = null — lớp NẶNG NHẤT (cycles_sum10 = 10054190 trên cycles_sum10 = 14599277) KHÔNG dùng được dot4 trừ khi đổi bố cục; vì vậy cần C08. Tương tự layers.dense.dlp.share_stride_1_pct = 0.0.",
+        "Độ đúng: tràn khi cộng 4 tích vào ACC 32 bit — vẫn modulo 2^32 như vòng vô hướng, nhưng phải kiểm firmware không dựa vào bão hoà; dấu của từng byte phải mở rộng đúng (lb hiện tại mở rộng dấu).",
+        "Fmax: 4 nhân 8x8 song song + cây cộng; ngắn hơn nhân 32x32 nên rủi ro thấp hơn C02 nhưng vẫn phải kiểm.",
+        "Tệp thanh ghi: không đổi (2 đọc 1 ghi, ACC riêng).",
+        "Phần vét (chiều dài không chia hết cho 4) làm firmware phức tạp và giảm phần lệnh được vector hoá — conv1 chỉ có 85.8% truy cập stride-1."
+      ],
+      "depends_on": ["C04-mac-fused"]
+    },
+    {
+      "id": "C08-layout-simd-conv2",
+      "level": "L2",
+      "template": "L2.layout_for_simd",
+      "title": "Đổi bố cục dữ liệu conv2/dense sang kênh-trong-cùng (NHWC + đệm 4) để mở đường cho SIMD",
+      "target": "layers.conv2 (dlp.share_stride_1_pct = 0.0, lanes_possible_8bit = null) và layers.dense (dlp.share_stride_1_pct = 0.0, dlp.share_stride_4_pct = 0.2)",
+      "evidence": [
+        "layers.conv2.dlp.share_stride_1_pct = 0.0 và layers.conv2.dlp.lanes_possible_8bit = null (có DLP nhưng truy cập KHÔNG liền kề)",
+        "layers.conv2.dlp.n_strided = 387180 (vẫn là truy cập theo bước đều, chỉ không phải bước 1)",
+        "layers.conv2.cycles_sum10 = 10054190 trên cycles_sum10 = 14599277 (lớp chiếm phần lớn nhất)",
+        "layers.conv2.share_by_sem.load_data = 51.88; layers.conv2.cycles_by_sem_sum10.load_data = 5216000",
+        "layers.conv2.amdahl_max_speedup.load_data = 2.08 (cận trên cao nhất mọi lớp/loại)",
+        "layers.dense.dlp.share_stride_1_pct = 0.0; layers.dense.dlp.share_stride_4_pct = 0.2; layers.dense.share_by_sem.load_data = 54.09",
+        "layers.conv1.dlp.share_stride_1_pct = 85.8 (đối chứng: lớp cùng loại nhưng bố cục đã liền kề)"
+      ],
+      "spec": {
+        "firmware_changes": "Chỉ đổi firmware, không đổi phần cứng: (1) lưu activation và weight của conv2 theo thứ tự kênh-trong-cùng (NHWC / HWCN cho bộ lọc) và đệm số kênh lên bội số của 4; (2) viết lại vòng trong conv2 để đi dọc trục kênh với bước 1 byte, nhờ đó mỗi lw lấy 4 kênh liền nhau; (3) với dense, chuyển ma trận trọng số sang bố cục nhóm-4 theo trục thu giảm; (4) biến đổi bố cục là hoán vị chỉ số thuần tuý — không đổi giá trị hay thứ tự nhân, chỉ đổi thứ tự cộng dồn, vẫn kết hợp modulo 2^32 nên đúng từng bit với golden; (5) đệm bằng số 0 nên không thêm đóng góp vào tổng.",
+          "timing_changes": {},
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM": "0 khối MỚI nếu đệm vừa trong 64 KB hiện có; nếu phải thêm vùng đệm thì budget.remaining.BSRAM = 14 là hạn mức",
+          "LUT4": 0,
+          "DFF": 0,
+          "new_arch_regs": 0
+        }
+      },
+      "estimate_method": "iss_firmware",
+      "expected_mechanism": "Bản thân việc đổi bố cục giảm 'load_data' và 'addr' bằng cách thay nhiều lb rải rác bằng lw liền khối (4 byte / 2 chu kỳ thay vì 4 x 2 chu kỳ) và làm biểu thức địa chỉ trong vòng trong thành cộng hằng số. Quan trọng hơn, nó là ĐIỀU KIỆN CẦN để C07 (dot4) áp được vào conv2 — lớp chiếm 68.9% chu kỳ (10054190/14599277) mà hiện có share_stride_1_pct = 0.0.",
+      "risks": [
+        "Tốn bộ nhớ đệm: đệm kênh lên bội số 4 làm phình activation/weight; budget.note cho biết 32/46 khối BSRAM đã dùng cho 64 KB, chỉ còn 14 khối.",
+        "Công sức firmware lớn và dễ sai chỉ số; cần đối chiếu từng bit với golden sau khi hoán vị.",
+        "Chi phí một lần để hoán vị trọng số có thể làm offline (nhúng sẵn vào ảnh dữ liệu) nên không tốn chu kỳ chạy; nếu phải hoán vị activation giữa các lớp thì sinh thêm chu kỳ load/store mới — phải đo, không được giả định.",
+        "Không có rủi ro Fmax hay cổng BSRAM vì không đổi phần cứng.",
+        "Nếu số kênh conv2 nhỏ hơn 4 thì phần đệm thành chi phí thuần — cần kiểm trước."
+      ],
+      "depends_on": ["C07-dot4-int8"]
+    },
+    {
+      "id": "C09-reuse-tiling-conv2",
+      "level": "L2",
+      "title": "Tái sử dụng dữ liệu trong thanh ghi (chia ô 4 kênh đầu ra) để hạ byte/MAC",
+      "target": "layers.conv2 (byte_per_mac = 4.516, roof_mac_per_cycle = 0.4428) và layers.dense (byte_per_mac = 2.038)",
+      "evidence": [
+        "layers.conv2.byte_per_mac = 4.516 so với layers.conv1.byte_per_mac = 1.149 (conv2 nạp gấp ~4 lần số byte cho mỗi MAC)",
+        "mem_bytes_per_cycle_available = 2.0",
+        "layers.conv2.roof_mac_per_cycle = 0.4428 (chính là 2.0 / 4.516 — mái bị chặn bởi byte/MAC, không bởi số nhân)",
+        "layers.conv1.roof_mac_per_cycle = 1.7399 (mái cao gấp ~3.9 lần conv2 chỉ vì byte/MAC thấp hơn)",
+        "layers.conv2.share_by_sem.load_data = 51.88; layers.conv2.cycles_by_sem_sum10.load_data = 5216000",
+        "layers.conv2.bytes_per_image = 629560.0 so với layers.conv1.bytes_per_image = 55948.0",
+        "layers.dense.byte_per_mac = 2.038; layers.dense.share_by_sem.load_data = 54.09; layers.dense.amdahl_max_speedup.load_data = 2.18"
+      ],
+      "spec": {
+        "firmware_changes": "Chỉ đổi firmware. Viết lại vòng conv2 theo kiểu chia ô đầu ra: giữ 4 bộ tích luỹ cho 4 kênh đầu ra trong thanh ghi (hoặc 4 bản ACC nếu dùng C04/C07), nạp MỖI byte activation MỘT LẦN rồi dùng cho cả 4 kênh đầu ra, và giữ hàng trọng số đang dùng trong thanh ghi qua các bước cửa sổ trượt. Phép nhân và tổng cộng dồn cho từng kênh đầu ra không đổi (chỉ đổi thứ tự lặp và thứ tự cộng, kết hợp modulo 2^32) nên đúng từng bit với golden. Tương tự cho dense: chia ô theo 4 neuron đầu ra để chia sẻ vector đầu vào.",
+        "timing_changes": {},
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM": 0,
+          "LUT4": 0,
+          "DFF": 0,
+          "new_arch_regs": "0 nếu dùng thanh ghi kiến trúc sẵn có; nhưng cần >= 4 thanh ghi tích luỹ rảnh, hoặc ACC được nhân thành 4 bản (xem rủi ro)"
+        }
+      },
+      "estimate_method": "iss_firmware",
+      "expected_mechanism": "Cắt loại chu kỳ 'load_data' (44.5% toàn mô hình, 51.88% trong conv2) ở GỐC: giảm số lần nạp chứ không giảm giá mỗi lần nạp. conv2 hiện tiêu 4.516 byte mỗi MAC trong khi conv1 chỉ 1.149 — chênh lệch này là dữ liệu bị nạp lại nhiều lần. Dùng lại một byte đã nạp cho 4 kênh đầu ra chia số lần nạp activation cho tới 4, tức giảm n_c của lớp load. Cơ chế này cộng dồn được với C01 (giảm λ_load) và C07 (gói 4 byte mỗi lần nạp).",
+      "risks": [
+        "Áp lực thanh ghi là rủi ro chính: vòng trong conv2 0x69c..0xb40 có n_regs_free = 3 và peak_live = 11; vòng 0x480..0xb58 có n_regs_free = 3 với peak_live = 27 — giữ thêm 4 tích luỹ cùng trọng số có thể gây tràn ra bộ nhớ (spill), biến chu kỳ load tiết kiệm được thành chu kỳ store/load mới. Phải đo bằng ISS, không được giả định.",
+        "Xung đột với C04/C07: cả hai dùng MỘT thanh ghi ACC duy nhất — chia ô 4 kênh đầu ra cần 4 ACC (ACC0..ACC3, chọn bằng 2 bit trong funct7). Đó là mở rộng phần cứng nhỏ nhưng phải khai báo rõ.",
+        "Không có rủi ro Fmax / cổng BSRAM (không đổi phần cứng) nếu không nhân bản ACC.",
+        "Độ đúng: thứ tự cộng đổi nhưng vẫn modulo 2^32; cần kiểm lại biên cửa sổ và phần dư khi số kênh đầu ra không chia hết cho 4.",
+        "Công sức viết lại firmware conv2 lớn: static_instr của vòng ngoài conv2 là 438-451 lệnh."
+      ],
+      "depends_on": ["C04-mac-fused"]
+    },
+    {
+      "id": "C10-lmac-streaming",
+      "level": "L4",
+      "title": "Lệnh nạp-nhân-cộng dồn có con trỏ tự tăng (lmac): một lệnh đọc dữ liệu và MAC",
+      "target": "layers.conv2.loops[0] (backedge 0xb40->0x69c, body_instr_dynamic = 5749920) và layers.conv1.loops[2] (backedge 0xd2c->0xc54, body_instr_dynamic = 2556320)",
+      "evidence": [
+        "share_by_sem_total.load_data = 44.5 cộng share_by_sem_total.mac = 40.47 = 84.97% tổng chu kỳ nằm trong một chuỗi lệnh duy nhất lặp lại",
+        "cycles_by_sem_total.load_data = 649618.0; cycles_by_sem_total.mac = 590880.0",
+        "cycles_per_mac_total = 7.602 (mỗi MAC tốn ~7.6 chu kỳ, trong đó ~3.38 là nạp và ~3.08 là nhân-cộng)",
+        "layers.conv2.cycles_per_mac = 7.213; layers.conv2.ipc_real = 0.589",
+        "layers.conv1.dist_to_roof_x = 13.22; layers.dense.dist_to_roof_x = 7.27; layers.conv2.dist_to_roof_x = 3.19",
+        "layers.conv1.share_by_sem.addr = 1.52 và layers.conv2.share_by_sem.addr = 0.42 (địa chỉ đã rẻ, nhưng gộp vào lệnh thì miễn phí hẳn)"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x2b (custom-1)",
+          "funct3": "0x1",
+          "funct7": "bit0 = xoá ACC trước khi cộng; bit1 = chế độ gói 4 làn int8 (đọc 4 byte mỗi con trỏ); bit[3:2] = chọn ACC0..ACC3"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # lmac: doc toan hang int8 tu DMEM qua hai con tro rs1 (activation) va rs2 (weight),\n    # cong don vao ACC, roi tu tang ca hai con tro. rd = ACC.\n    f7 = state.get('funct7', 0)\n    acc = 0 if (f7 & 1) else state.get('ACC', 0)\n    n = 4 if (f7 & 2) else 1\n    for i in range(n):\n        a = state['dmem'][(rs1 + i) & 0xFFFFFFFF] & 0xFF\n        b = state['dmem'][(rs2 + i) & 0xFFFFFFFF] & 0xFF\n        a = a - 256 if (a & 0x80) else a\n        b = b - 256 if (b & 0x80) else b\n        acc = (acc + a * b) & 0xFFFFFFFF\n    state['ACC'] = acc\n    state['rs1_writeback'] = (rs1 + n) & 0xFFFFFFFF\n    state['rs2_writeback'] = (rs2 + n) & 0xFFFFFFFF\n    return acc, state\n",
+        "latency_cycles": 4,
+        "timing_changes": {
+          "latency_single_port": "4 chu kỳ (hai truy cập dữ liệu x 2 chu kỳ trên BSRAM một cổng, nhân-cộng ẩn trong đó)",
+          "latency_with_C01": "2 chu kỳ (một truy cập mỗi chu kỳ khi đã tách I-mem/D-mem)",
+          "latency_packed_mode": "cùng số truy cập, 4 byte mỗi truy cập (chế độ funct7 bit1)"
+        },
+        "firmware_changes": "Thay chuỗi 6-7 lệnh của một bước MAC ('lb a / lb w / mul / add / addi pa / addi pw') bằng một 'lmac pa, pw'. Con trỏ activation và weight phải tiến đều (layers.conv1.dlp.n_strided = 545580; layers.conv2.dlp.n_strided = 387180 đều là truy cập theo bước đều). Bước không bằng 1 cần nạp vào thanh ghi bước phụ (custom-1 funct3=0x2) hoặc dùng kèm C08. Phép nhân và cộng 32 bit không đổi => đúng từng bit.",
+        "hw_resources_guess": {
+          "MULT18X18": "4 khối (chế độ gói 4 làn int8) hoặc 1 khối (chế độ vô hướng); budget.remaining.MULT18X18 = 44",
+          "BSRAM": "0 khối mới; nhưng cần 2 truy cập dữ liệu mỗi lệnh — tuần tự hoá trên một cổng, hoặc chia weight sang cổng/khối riêng",
+          "LUT4": "trung bình: máy trạng thái vi tuần tự + hai bộ cộng con trỏ + cây MAC",
+          "DFF": "~160: ACC0..ACC3 (128) + thanh ghi bước và trạng thái",
+          "new_arch_regs": "4 (ACC0..ACC3) + 1 thanh ghi bước",
+          "regfile_ports": "cần ghi lại cả rs1 và rs2 => hai cổng ghi thêm, HOẶC giữ con trỏ trong thanh ghi riêng của khối (không phải x1-x31) để không đụng tệp thanh ghi"
+        }
+      },
+      "estimate_method": "iss_plugin",
+      "expected_mechanism": "Gộp cả hai loại chu kỳ lớn nhất vào một lệnh: 'load_data' (44.5%), 'mac' (40.47%) và phần 'addr' (1.14%). Hiện một bước MAC vô hướng tiêu ~7.6 chu kỳ (cycles_per_mac_total = 7.602); lmac đưa nó về số chu kỳ truy cập bộ nhớ tối thiểu, và ở chế độ gói 4 làn thì 4 MAC dùng chung 2 truy cập. Khác C07 ở chỗ không cần dữ liệu đã nằm trong thanh ghi — chính các chu kỳ nạp bị xoá.",
+      "risks": [
+        "Cổng BSRAM là rủi ro CHÍNH: hai toán hạng cần hai truy cập dữ liệu mà core.md nói bộ nhớ MỘT CỔNG; nếu không tách được cổng thì độ trễ 4 chu kỳ làm lợi ích teo lại — nên ghép với C01.",
+        "Tệp thanh ghi: ghi lại hai con trỏ cần cổng ghi thêm (hiện 2 đọc 1 ghi); phương án giữ con trỏ trong thanh ghi riêng của khối tránh được việc này nhưng thêm lệnh cấu hình.",
+        "Fmax: đường từ dữ liệu BSRAM -> nhân -> cộng ACC trong một chu kỳ là đường tổ hợp dài nhất của đề xuất này; biên hiện có fmax_current_mhz = 56.47 so với fmax_min_mhz = 27.0, cần kiểm sau tổng hợp.",
+        "Độ đúng: mở rộng dấu từng byte và cộng modulo 2^32 phải khớp vòng vô hướng; chế độ gói đòi thẳng hàng 4 byte.",
+        "Phức tạp hiện thực CAO: thêm máy trạng thái vi tuần tự nhiều chu kỳ, trạng thái kiến trúc mới, và xử lý ngắt giữa lệnh.",
+        "Không dùng được cho layers.conv2 ở bố cục hiện tại nếu cần chế độ gói: layers.conv2.dlp.share_stride_1_pct = 0.0."
+      ],
+      "depends_on": ["C01-ldst-1cycle"]
+    },
+    {
+      "id": "C11-mac-array-4x4",
+      "level": "L4",
+      "template": "L4.mac_array",
+      "title": "Mảng MAC 4x4 gắn sát CPU với bộ đệm trọng số/activation cục bộ",
+      "target": "layers.conv2 (cycles_sum10 = 10054190, bound = \"compute/issue\") và layers.conv1 (cycles_sum10 = 3699090, bound = \"compute/issue\")",
+      "evidence": [
+        "layers.conv2.bound = \"compute/issue\"; layers.conv2.dist_to_roof_x = 3.19; layers.conv2.mac_per_cycle = 0.1386 so với roof_mac_per_cycle = 0.4428",
+        "layers.conv1.bound = \"compute/issue\"; layers.conv1.dist_to_roof_x = 13.22; layers.conv1.mac_per_cycle = 0.1316 so với roof_mac_per_cycle = 1.7399",
+        "share_by_sem_total.mac = 40.47 và share_by_sem_total.load_data = 44.5",
+        "layers.conv2.byte_per_mac = 4.516 với mem_bytes_per_cycle_available = 2.0 (cần tái sử dụng dữ liệu, đúng tín hiệu của mẫu L4.mac_array)",
+        "layers.conv2.mac = 139392 và layers.conv1.mac = 48672 mỗi ảnh",
+        "layers.dense.bound = \"compute/issue\"; layers.dense.dist_to_roof_x = 7.27"
+      ],
+      "spec": {
+        "encoding": {
+          "opcode": "0x5b (custom-2)",
+          "funct3": "0x0 = nạp hàng activation vào đệm; 0x1 = nạp cột trọng số vào đệm; 0x2 = chạy một bước mảng 4x4; 0x3 = đọc một ô kết quả ra rd",
+          "funct7": "chọn hàng/cột/ô (0x00-0x0f)"
+        },
+        "semantics_python": "def sem(rs1, rs2, state):\n    # Mang MAC 4x4 trong kien truc: ACC[i][j] += A[i] * W[j] cho i,j in 0..3,\n    # voi A, W la hai dem 4 phan tu int8 nap truoc tu DMEM.\n    f3 = state.get('funct3', 0)\n    acc = state.setdefault('ARR', [[0] * 4 for _ in range(4)])\n    if f3 == 0:\n        state['A'] = [((rs1 >> (8 * k)) & 0xFF) - 256 if ((rs1 >> (8 * k)) & 0x80) else ((rs1 >> (8 * k)) & 0xFF) for k in range(4)]\n        return 0, state\n    if f3 == 1:\n        state['W'] = [((rs1 >> (8 * k)) & 0xFF) - 256 if ((rs1 >> (8 * k)) & 0x80) else ((rs1 >> (8 * k)) & 0xFF) for k in range(4)]\n        return 0, state\n    if f3 == 2:\n        for i in range(4):\n            for j in range(4):\n                acc[i][j] = (acc[i][j] + state['A'][i] * state['W'][j]) & 0xFFFFFFFF\n        return 0, state\n    sel = state.get('funct7', 0) & 0x0F\n    v = acc[sel >> 2][sel & 3]\n    if state.get('funct7', 0) & 0x10:\n        acc[sel >> 2][sel & 3] = 0\n    return v & 0xFFFFFFFF, state\n",
+        "latency_cycles": 1,
+        "timing_changes": {
+          "array_step_cycles": 1,
+          "buffer_load_cycles": "2 (dùng lw hiện có; 1 nếu kèm C01)",
+          "result_readout_cycles": 1
+        },
+        "firmware_changes": "Viết lại vòng trong conv1/conv2 thành dạng chia ô 4 kênh vào x 4 kênh ra: nạp 4 activation và 4 trọng số vào đệm rồi phát một bước mảng, tạo 16 MAC. Trọng số được nhân bản/hoán vị offline để hợp bố cục đệm. Phép nhân int8 và cộng dồn 32 bit giữ nguyên; chỉ thứ tự cộng đổi (kết hợp modulo 2^32) nên đúng từng bit.",
+        "hw_resources_guess": {
+          "MULT18X18": "16 khối cho 16 nhân 8x8, hoặc hiện thực bằng LUT4 (nhân 8x8 rẻ); budget.remaining.MULT18X18 = 44 nên 16 là khả thi",
+          "BSRAM": "0-2 khối cho đệm trọng số cục bộ; budget.remaining.BSRAM = 14",
+          "LUT4": "lớn: 16 nhân + 16 bộ cộng 32 bit + mạng chọn (ước lượng định tính, cần tổng hợp để biết so với budget.remaining.LUT4 = 17481)",
+          "DFF": "512 cho 16 thanh ghi tích luỹ 32 bit + đệm A/W; budget.remaining.DFF = 14979",
+          "new_arch_regs": "16 ô tích luỹ + 2 đệm 4 phần tử (truy cập qua lệnh, không nằm trong x1-x31)"
+        }
+      },
+      "estimate_method": "analytic",
+      "expected_mechanism": "Cắt 'mac' (40.47%) tận gốc: 16 MAC mỗi chu kỳ thay vì một MAC mỗi 3 chu kỳ, và cắt 'load_data' (44.5%) nhờ tái sử dụng — mỗi activation nạp một lần dùng cho 4 kênh ra, mỗi trọng số dùng cho 4 kênh vào, nên byte/MAC giảm từ 4.516 (layers.conv2.byte_per_mac) xuống gần 2/16 của mức hiện tại. Đúng tín hiệu của mẫu: cả ba lớp có MAC đều bound = \"compute/issue\" và còn cách mái 3.19x-13.22x.",
+      "risks": [
+        "Chuyển dữ liệu trở thành nút thắt mới: mem_bytes_per_cycle_available = 2.0 trên bộ nhớ MỘT CỔNG (core.md) — nuôi 16 nhân cần đệm cục bộ và có thể cần DMA; nếu không, mảng ngồi chờ và lợi ích tan biến. Đây là rủi ro lớn nhất.",
+        "Fmax: 16 bộ cộng 32 bit song song và mạng chọn kết quả kéo dài đường tổ hợp; biên hiện có 56.47/27.0 = 2.09x nhưng đây là đề xuất dễ phá Fmax nhất trong danh sách — nếu Fmax < 27 MHz thì bị loại (budget.note).",
+        "Tài nguyên LUT4/DFF: ước lượng định tính, cần tổng hợp thật để đối chiếu budget.remaining.LUT4 = 17481 và DFF = 14979.",
+        "Độ đúng: tràn khi 16 ô tích luỹ 32 bit; thứ tự cộng khác vòng vô hướng (vẫn modulo 2^32); hoán vị trọng số dễ sai chỉ số.",
+        "Phức tạp hiện thực RẤT CAO: RTL mới + viết lại firmware conv1/conv2 + trạng thái kiến trúc lớn; estimate_method chỉ là analytic nên độ tin cậy dự báo thấp hơn các ứng viên đo bằng ISS."
+      ],
+      "depends_on": ["C08-layout-simd-conv2"]
+    },
+    {
+      "id": "C12-dual-issue",
+      "level": "L5",
+      "template": "L5.multi_issue",
+      "title": "Phát hai lệnh hẹp mỗi chu kỳ: một ALU + một load/store hoặc lệnh tuỳ biến",
+      "target": "layers.conv2 (ipc_real = 0.589), layers.dense (ipc_real = 0.594), layers.conv1 (ipc_real = 0.692)",
+      "evidence": [
+        "layers.conv2.ipc_real = 0.589 và layers.conv2.ipc_ideal = 45556.538",
+        "layers.conv1.ipc_real = 0.692 và layers.conv1.ipc_ideal = 3020.307",
+        "layers.dense.ipc_real = 0.594 và layers.dense.ipc_ideal = 1743.96",
+        "layers.pool1.ipc_real = 0.841 và layers.pool1.ipc_ideal = 3755.453",
+        "layers.conv2.cycles = 1005419 so với layers.conv2.instret = 592235 (1.70 chu kỳ mỗi lệnh)",
+        "layers.conv2.crit_path = 130 so với layers.conv2.cycles_sum10 = 10054190 (đường tới hạn phụ thuộc rất ngắn so với công việc => ILP dồi dào)",
+        "layers.conv1.crit_path = 847; layers.dense.crit_path = 101"
+      ],
+      "spec": {
+        "timing_changes": {
+          "issue_width": "1 -> 2 (ghép hạn chế: khe A = alu/shift/branch, khe B = load/store/mul/custom)",
+          "effective_cycles": "C = Σ n_c·λ_c của core.md trở thành tổng theo cặp đã ghép; chỉ các cặp lệnh liền kề không phụ thuộc mới ghép được",
+          "branch_penalty": "giữ 0 (core.md: nhánh nhảy hay không cũng 1 chu kỳ, không đoán nhánh) — chỉ ghép lệnh trong cùng khối cơ bản để không phải đoán",
+          "hazard_handling": "chuyển tiếp (forwarding) giữa hai khe; nếu khe B là load thì khe A không được dùng kết quả load trong cùng chu kỳ"
+        },
+        "firmware_changes": "Không cần đổi phép toán; nhưng cần sắp xếp lại thứ tự lệnh (lập lịch tĩnh) trong thân vòng nóng để các cặp ghép được xuất hiện cạnh nhau. Không đổi kết quả => đúng từng bit.",
+        "hw_resources_guess": {
+          "MULT18X18": 0,
+          "BSRAM": "có thể cần cổng thứ hai nếu hai khe cùng truy cập dữ liệu — hạn chế bằng cách cho tối đa MỘT lệnh bộ nhớ mỗi chu kỳ",
+          "LUT4": "lớn: giải mã đôi, logic hazard/forwarding, mạng chọn toán hạng",
+          "DFF": "trung bình",
+          "new_arch_regs": 0,
+          "regfile_ports": "4 cổng đọc + 2 cổng ghi (hiện 2 đọc 1 ghi) — nhân bản tệp thanh ghi bằng LUT/DFF vì BSRAM không đủ cổng"
+        }
+      },
+      "estimate_method": "analytic",
+      "expected_mechanism": "Không cắt một loại chu kỳ cụ thể mà cắt chu kỳ PHÁT LỆNH trên mọi loại: ipc_real chỉ 0.589-0.692 ở các lớp nặng, trong khi crit_path (130 ở conv2, 101 ở dense) nhỏ hơn hàng nghìn lần số chu kỳ — nghĩa là phụ thuộc dữ liệu không phải nguyên nhân, giới hạn là phát một lệnh mỗi chu kỳ (core.md). Ghép ALU với load/store làm chu kỳ chặn của load (λ_load = 2) được che bởi công việc ALU.",
+      "risks": [
+        "Tệp thanh ghi là rủi ro CHÍNH: catalog ghi rõ 'tệp thanh ghi nhiều cổng rất tốn trên FPGA'; đi từ 2R1W lên 4R2W phải nhân bản bằng LUT4/DFF và có thể ăn phần lớn budget.remaining.LUT4 = 17481.",
+        "Cổng BSRAM: nếu cho phép hai lệnh bộ nhớ cùng chu kỳ thì cần cổng thứ hai (trùng với C01); phương án giới hạn một lệnh bộ nhớ mỗi chu kỳ an toàn hơn nhưng giảm lợi ích.",
+        "Fmax: logic hazard và mạng chọn toán hạng kéo dài đường tổ hợp; nếu tụt dưới 27 MHz thì bị loại.",
+        "Áp lực thanh ghi của firmware giới hạn khả năng lập lịch: vòng nóng conv2 chỉ còn 3 thanh ghi rảnh (n_regs_free = 3 ở cả hai vòng ngoài), khó sắp cặp mà không tràn.",
+        "Phức tạp hiện thực RẤT CAO (viết lại tầng phát lệnh); estimate_method analytic nên dự báo kém chắc chắn hơn các ứng viên L1/L2/L3.",
+        "Trùng lặp lợi ích với C01 và C04: nếu đã che được chu kỳ chặn của load bằng cổng thứ hai thì phần lợi của phát đôi giảm đi."
+      ],
+      "depends_on": []
+    }
+  ]
+}
