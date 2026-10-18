@@ -2,6 +2,52 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — CHẶN rò rỉ ngữ cảnh cho chế độ mù: `cdp blind` (bắt buộc trước S5)
+
+Vấn đề từ S4: subagent mù được sinh ra TỪ phiên điều phối, nên harness tự chèn `CLAUDE.md` của dự
+án vào ngữ cảnh của nó — và `CLAUDE.md` có câu nêu đích danh **"thêm lệnh tùy biến (DOT4, REQ)"**,
+tức đúng đáp án mà S5 phải tái khám phá. Subagent tự khai báo việc này ở cả 4 vòng B1.
+
+### Cách chặn: đổi từ mù-bằng-chỉ-thị sang mù-bằng-CẤU-TRÚC
+Chạy AI trong **một tiến trình `claude` riêng**, với **thư mục làm việc nằm ngoài cây dự án**.
+`CLAUDE.md` được tìm từ thư mục làm việc đi lên, nên tiến trình đó không thấy `CLAUDE.md` của dự án.
+Prompt cũng **không nêu đường dẫn** tới cây dự án, nên không còn con trỏ nào dẫn tới đáp án.
+
+Đã thử cờ `--bare` (nó tắt hẳn "CLAUDE.md auto-discovery") nhưng cờ đó tắt luôn việc đọc keychain
+nên không đăng nhập được ("Not logged in") → không dùng được. Cách đổi thư mục làm việc đạt cùng
+mục đích mà vẫn chạy được.
+
+### Kiểm bằng thực nghiệm, không tin suông
+Chạy một phiên `claude -p` với thư mục làm việc trung tính và hỏi thẳng nó liệt kê mọi chỉ thị được
+chèn vào ngữ cảnh, rồi hỏi có biết gì về dự án TinyML RISC-V / Tang Nano 20K hay hai lệnh DOT4, REQ.
+Trả lời (nguyên văn): *"**Không.** Tôi không được cung cấp bất kỳ thông tin nào về dự án TinyML trên
+RISC-V / Tang Nano 20K, cũng không có gì về hai lệnh tùy biến tên DOT4 hay REQ. Lần đầu tiên những
+tên này xuất hiện trong context của tôi là ở chính câu hỏi của bạn."*
+Log: `results/pipeline/S5/blind_probe.txt`.
+
+### Công cụ: `cdp blind`
+`pipeline/cdp/blind.py` + `./cdp blind --sandbox <dir> --prompt|--prompt-file … [--collect MẪU]`:
+sao file được cấp sang thư mục trung tính → chạy `claude -p` ở đó → sao file kết quả về sandbox →
+ghi `ai/{prompt.md, output.txt, meta.json}` gồm model, thư mục làm việc, hash từng file được cấp,
+danh sách thông tin bị giữ lại, và **bản tự khai báo của chính AI** (prompt luôn buộc nó trả lời ba
+dòng: ngữ cảnh thêm · file đã đọc ngoài thư mục · lệnh đã chạy ra ngoài).
+
+Thử đầu-cuối: cấp 10 file hồ sơ, yêu cầu đọc một file và ghi `answer.md`. Kết quả sau 17 s đúng
+(`conv2, conv1, pool1` và `1.978.697 chu kỳ` — khớp hồ sơ), và bản tự khai báo: ngữ cảnh thêm chỉ có
+`~/.claude/CLAUDE.md` (Vnstock, không liên quan), **đọc ngoài: không có**, **lệnh ngoài: không có**.
+
+### Hai giới hạn còn lại, ghi rõ
+1. `~/.claude/CLAUDE.md` của người dùng **vẫn** được nạp (ở máy này là hướng dẫn cài "Vnstock",
+   hoàn toàn không liên quan dự án). Không chặn được từ phía dự án.
+2. Tiến trình vẫn chạy trên cùng hệ thống file. Nó không được cho biết đường dẫn cây dự án, và mỗi
+   lần gọi đều phải tự khai báo đã đọc/chạy gì ra ngoài — nhưng đây là **ghi nhận**, không phải
+   cách ly cứng.
+
+### Hệ quả cho các kết quả đã có
+S4 giữ nguyên nhãn **"mù một phần"** — không sửa lùi. Nếu sau này cần, có thể chạy lại một vòng B1
+bằng `cdp blind` để so "mù bằng chỉ thị" với "mù bằng cấu trúc"; đó sẽ là một đối chứng về phương
+pháp, không phải để thay số cũ.
+
 ## 2026-10-18 — PIPELINE CDP bước S4 ĐẠT: vòng B1 mù VƯỢT tối ưu phần mềm làm bằng tay
 
 Người dùng đổi quyết định: làm S4 (trước đó kế hoạch ghi "bỏ qua"). Trả lời PQ2.

@@ -12,7 +12,7 @@ import json
 import sys
 import time
 
-from . import (analyze, b1, build, estimate, kit, kitlock, ledger, paths, profile,
+from . import (analyze, b1, blind, build, estimate, kit, kitlock, ledger, paths, profile,
                propose, report, selftest, sim, spec, static_analysis, synth,
                targets, verify)
 from .iss import main as iss_main
@@ -24,6 +24,7 @@ STEP_OF = {
     "spec": "S0", "db": "S0", "targets": "S0", "lock": "S0", "selftest": "S0",
     "build": "S1", "sim": "S1", "kit": "S1", "synth": "S1",
     "iss": "S2", "profile": "S3", "analyze": "S3", "static": "S3", "b1": "S4",
+    "blind": "S4",
     "propose": "S5", "estimate": "S6", "verify": "S6", "report": "S8",
 }
 TOOLS_OF = {
@@ -80,6 +81,31 @@ def cmd_targets(args, run) -> int:
     return 0
 
 
+def cmd_blind(args, run) -> int:
+    """Gọi AI ở chế độ mù có cấu trúc (tiến trình riêng, cwd ngoài cây dự án)."""
+    from pathlib import Path
+    sb = Path(args.sandbox)
+    if not sb.is_absolute():
+        sb = paths.ROOT / sb
+    if not sb.exists():
+        run.say(f"không thấy sandbox {sb}")
+        run.finish("fail")
+        return 1
+    prompt = Path(args.prompt_file).read_text() if args.prompt_file else args.prompt
+    if not prompt:
+        run.say("cần --prompt hoặc --prompt-file")
+        run.finish("fail")
+        return 1
+    run.say(f"# cdp blind · sandbox {paths.ROOT and sb}")
+    meta = blind.run_blind(sb, prompt, run, model=args.model,
+                           timeout=args.timeout, collect=args.collect)
+    ok = meta["rc"] == 0 and bool(meta["files_produced"])
+    run.say("")
+    run.say(f"=> {'ĐẠT' if ok else 'KHÔNG ĐẠT'}")
+    run.finish("ok" if ok else "fail", meta)
+    return 0 if ok else 1
+
+
 def cmd_lock(args, run) -> int:
     """Giữ khoá kit một lúc. Dùng để kiểm cơ chế tuần tự, và để người dùng giữ kit."""
     t0 = time.time()
@@ -105,7 +131,7 @@ HANDLERS = {
     "selftest": selftest.main,
     "build": build.main, "sim": sim.main, "kit": kit.main, "synth": synth.main,
     "iss": iss_main, "profile": profile.main, "analyze": analyze.main,
-    "static": static_analysis.main, "b1": b1.main,
+    "static": static_analysis.main, "b1": b1.main, "blind": cmd_blind,
     "propose": propose.main, "estimate": estimate.main, "verify": verify.main,
     "report": report.main,
 }
@@ -169,6 +195,14 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--target", action="append", default=None)
     p.add_argument("--all", action="store_true")
     p.add_argument("--work", default="s1")
+
+    p = sub.add_parser("blind", help="gọi AI mù có cấu trúc (tiến trình riêng, cwd trung tính)")
+    p.add_argument("--sandbox", required=False, help="thư mục chứa file được cấp")
+    p.add_argument("--prompt", default=None)
+    p.add_argument("--prompt-file", default=None)
+    p.add_argument("--model", default="opus")
+    p.add_argument("--timeout", type=float, default=2400)
+    p.add_argument("--collect", default="cand_*.c", help="mẫu tên file cần lấy về")
 
     p = sub.add_parser("b1", help="vòng tối ưu phần mềm có AI hỗ trợ (S4), chế độ mù")
     p.add_argument("action", choices=["prepare", "sandbox", "eval"])

@@ -1,0 +1,29 @@
+# Kiểm thực nghiệm: thư mục làm việc ngoài cây dự án có chặn được rò rỉ CLAUDE.md không?
+#
+# Lệnh (thư mục làm việc: một thư mục tạm trung tính, KHÔNG thuộc cây dự án):
+#   claude -p --permission-mode acceptEdits --model opus --output-format text '<câu hỏi>'
+#
+# Câu hỏi yêu cầu liệt kê mọi chỉ thị/mô tả dự án được chèn vào ngữ cảnh, và hỏi thẳng
+# có biết gì về dự án TinyML RISC-V / Tang Nano 20K hay hai lệnh DOT4, REQ.
+#
+# TRẢ LỜI (trích nguyên văn phần quyết định):
+#
+# (1) Các chỉ thị được cung cấp: `/Users/v/.claude/CLAUDE.md` — chỉ thị global cá nhân,
+#     nội dung là quy trình "Vnstock Vibe Onboarding" [...]; chỉ thị hệ thống chung của
+#     harness; hướng dẫn riêng cho session; hệ thống memory (không có nội dung nào được
+#     nạp); thông tin môi trường; context người dùng.
+#
+# (2) Thư mục làm việc: /private/tmp/claude-501/.../scratchpad/probe (không phải git repo)
+#
+# (3) "Không. Tôi không được cung cấp bất kỳ thông tin nào về dự án TinyML trên RISC-V /
+#     Tang Nano 20K, cũng không có gì về hai lệnh tùy biến tên DOT4 hay REQ. Lần đầu tiên
+#     những tên này xuất hiện trong context của tôi là ở chính câu hỏi của bạn. Chỉ thị dự
+#     án duy nhất tôi có là file Vnstock nêu ở phần (1) — hoàn toàn không liên quan."
+#
+# KẾT LUẬN: cơ chế chặn được rò rỉ CLAUDE.md của DỰ ÁN. Hai giới hạn còn lại:
+#   - ~/.claude/CLAUDE.md của người dùng vẫn nạp (Vnstock, không liên quan dự án);
+#   - tiến trình vẫn chung hệ thống file, nhưng không được cho biết đường dẫn cây dự án.
+#
+# Ghi chú: cờ `--bare` của claude cũng tắt CLAUDE.md auto-discovery nhưng tắt luôn đọc
+# keychain nên không đăng nhập được ("Not logged in"); vì vậy dùng cách đổi thư mục
+# làm việc thay cho `--bare`.
