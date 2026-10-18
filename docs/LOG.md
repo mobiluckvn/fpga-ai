@@ -2,6 +2,37 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — S6: lượt đo PMAX4 sạch thất bại lần 2, và lỗi mất dữ liệu do chính bản sửa của tôi
+
+Mục tiêu: một run duy nhất đạt 2/2 lần đọc **và** chốt `SRC_HASH` để đưa dòng 15 vào bảng chính.
+
+UART **đã hồi phục** giữa hai lượt (nạp `min/top.fs`, đọc được 20 byte / 4 lần "MIN" ở `...171`,
+trước đó là 0 byte). Chạy `cdp kit --spec s6_pmax4.yaml` → run `20261018-192413-kit`:
+
+| đối chứng trước | đo | đối chứng sau |
+|---|---|---|
+| **ĐẠT** — 8 lần "MIN" ở `...171` | `check` treo **84,7 s**, **0 dòng CSV**, không lần đọc nào hoàn tất | **0/0 ở cả hai cổng** |
+
+Tệ hơn lần trước (`190840` còn hoàn tất được lần đọc 1). Quy luật đang thấy: UART sống qua phép đối
+chứng (chuỗi ngắn ~20 byte, phát liên tục) nhưng chết trong lần truyền dài của M1-S (~4.650 byte mỗi
+lần đọc). Sáng nay cùng lệnh này chạy 6,5 s là xong.
+
+**Dừng phần kit theo quy tắc 5** sau 2 lượt. Không thử lượt 3: đối chứng đã chứng minh đường đo đang
+chết, nên lượt sau sẽ bị chặn ngay ở bước đối chứng trước (`cdp kit` có sẵn đường thoát sớm đó).
+Cần rút/cắm lại cáp USB — thao tác vật lý, quy tắc 4.
+
+### Lỗi của tôi: bản `csv_drop()` vừa thêm làm MẤT số đo cũ
+
+`csv_drop()` tôi thêm ở mục trước xoá 10 dòng cũ **trước** khi đo. Phép đo chết giữa đường và không
+ghi lại gì → CSV còn **0 dòng**. Tức bản sửa cho một lỗi (ghi nối thành 20 dòng) đã tạo ra lỗi nặng
+hơn (mất sạch số đo). Phục hồi được vì đã lưu trữ và commit `results/pipeline/S6/kit/m1s_s6_kit.csv`
+**trước** khi chạy lại — đúng lý do quy tắc "lưu log thô" tồn tại.
+
+Đã sửa đúng cách: `csv_drop()` trả về bản sao các dòng đã xoá, và `csv_restore()` đặt lại **y nguyên**
+nếu phép đo không ĐẠT, đồng thời bỏ các dòng mới không đáng tin → CSV về đúng trạng thái trước khi
+chạy. Bài học: một bản sửa xoá dữ liệu trước khi có dữ liệu thay thế thì phải có đường lùi.
+
+
 ## 2026-10-18 — S6 phần 3: đo PMAX4 trên kit thật — 317.878 chu kỳ, 28,27× so A-V0
 
 Người dùng cắm kit. Ba phép đo, log đầy đủ ở `results/pipeline/S6/kit/`.

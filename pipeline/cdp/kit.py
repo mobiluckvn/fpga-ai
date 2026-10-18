@@ -83,27 +83,48 @@ def control(w: Path, ports: list[str], run) -> dict:
     return {"ok": ok, "load_rc": c.rc, "counts": counts, "port": port}
 
 
-def csv_drop(path: Path, label: str, run) -> int:
-    """Xoá các dòng của biến thể `label` trước khi đo lại.
+def _csv_write(path: Path, rows: list[dict], fields: list[str]) -> None:
+    with open(path, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=fields)
+        w.writeheader()
+        w.writerows(rows)
 
-    `scripts/branch_b_measure.sh` có đúng cơ chế này và có lý do: nếu không xoá thì
-    đo lại sẽ GHI NỐI, CSV thành 20 dòng cho một biến thể và trung vị mất nghĩa.
+
+def csv_drop(path: Path, label: str, run) -> tuple[list[dict], list[str]]:
+    """Xoá các dòng của biến thể `label` trước khi đo lại, TRẢ VỀ bản sao để phục hồi.
+
+    `scripts/branch_b_measure.sh` có đúng cơ chế xoá này và có lý do: nếu không xoá
+    thì đo lại sẽ GHI NỐI, CSV thành 20 dòng cho một biến thể và trung vị mất nghĩa.
     (Đã xảy ra thật ở phiên S6 khi đo lại cấu hình PMAX4.)
+
+    Nhưng xoá trước rồi đo mà phép đo CHẾT GIỮA ĐƯỜNG thì mất luôn số đo cũ — cũng
+    đã xảy ra thật ngay sau đó, khi UART của kit chết và CSV còn 0 dòng. Nên hàm này
+    trả về các dòng đã xoá; `csv_restore()` đặt lại y nguyên nếu phép đo không ĐẠT.
     """
     if not path.exists():
-        return 0
+        return [], []
     rows = list(csv.DictReader(open(path)))
     if not rows:
-        return 0
-    keep = [r for r in rows if r["bien_the"] != label]
-    n = len(rows) - len(keep)
-    if n:
-        with open(path, "w", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
-            w.writeheader()
-            w.writerows(keep)
-        run.say(f"    xoá {n} dòng cũ của `{label}` trong CSV trước khi đo lại")
-    return n
+        return [], []
+    fields = list(rows[0].keys())
+    gone = [r for r in rows if r["bien_the"] == label]
+    if gone:
+        _csv_write(path, [r for r in rows if r["bien_the"] != label], fields)
+        run.say(f"    xoá {len(gone)} dòng cũ của `{label}` trong CSV trước khi đo lại"
+                f" (giữ bản sao để phục hồi nếu đo thất bại)")
+    return gone, fields
+
+
+def csv_restore(path: Path, label: str, gone: list[dict], fields: list[str], run) -> None:
+    """Trả CSV về đúng trạng thái trước khi chạy: bỏ dòng mới, đặt lại dòng cũ."""
+    if not gone:
+        return
+    cur = list(csv.DictReader(open(path))) if path.exists() else []
+    f = fields or (list(cur[0].keys()) if cur else [])
+    new_n = sum(1 for r in cur if r["bien_the"] == label)
+    _csv_write(path, [r for r in cur if r["bien_the"] != label] + gone, f)
+    run.say(f"    phép đo thất bại → phục hồi {len(gone)} dòng cũ của `{label}`"
+            + (f", bỏ {new_n} dòng mới không đáng tin" if new_n else ""))
 
 
 def csv_rows(path: Path, label: str) -> list[dict]:
@@ -164,7 +185,7 @@ def main(args, run) -> int:
                 run.finish("fail", res)
                 return 1
 
-        csv_drop(w / t.kit_csv, t.kit_csv_label, run)
+        _gone, _fields = csv_drop(w / t.kit_csv, t.kit_csv_label, run)
         run.say(f"    nạp {t.var_dir}/top.fs (SRAM)")
         cl = wrap.make(w, t.make_dir, t.t_load, mvars=t.make_vars, run=run,
                        log_name=f"make-{t.t_load}.log")
@@ -182,6 +203,10 @@ def main(args, run) -> int:
         if not res["check"]["passed"] and not args.no_control:
             run.say("    phép đo KHÔNG ĐẠT — phân loại nguyên nhân bằng đối chứng")
             res["control_after"] = control(w, ports, run)
+
+        if not res["check"]["passed"]:
+            csv_restore(w / t.kit_csv, t.kit_csv_label, _gone, _fields, run)
+            res["csv_restored"] = len(_gone)
 
     # ---------------- đọc lại số đo ----------------
     kit_csv = w / t.kit_csv
