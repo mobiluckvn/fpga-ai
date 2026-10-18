@@ -2,6 +2,90 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — S7: thử đo B-V4 trên kit — KHÔNG ĐẠT vì UART của kit chết giữa phép đo
+
+Phiên này làm ba việc: thử đo B-V4 trên kit (thất bại, phân loại được), sửa một lỗi báo cáo
+dung lượng RAM, và chỉnh lại đánh số các bước của kế hoạch pipeline.
+
+### 1. Đo B-V4 trên kit: KHÔNG ĐẠT, nhưng đối chứng chỉ đúng nguyên nhân
+
+Trước khi chạy, tôi kiểm riêng đường UART bằng thiết kế đã biết chạy: nạp `rtl/mycore/min/top.fs`
+rồi đọc 2,5 s → `...171` cho **40 byte, thấy "MIN" 8 lần**. Đường đo sống, nên mới chạy phép đo.
+
+`./cdp kit --spec pipeline/specs/s7_dualport.yaml` → run `20261018-212201-kit`:
+
+| bước | kết quả |
+|---|---|
+| dựng firmware `cdp32` (RAMKB=32) | rc=0 · sha256 `2c5641d3d800a8c4…` |
+| tổng hợp `bs7dp` trong cây bóng | rc=0 · **1.139,6 s** · bitstream 7.261.470 byte |
+| **đối chứng TRƯỚC** | ĐẠT — thấy "MIN" **1.342 lần** trên `...171` |
+| nạp `bs7dp/top.fs` (SRAM) | rc=0 |
+| `m1s_check.py`, 2/2 lượt đọc | **0 dòng thô** cả hai lượt → `M1S_FAIL` |
+| **đối chứng SAU** | **KHÔNG ĐẠT — 0 byte cả hai cổng** |
+
+Đối chứng sau là chỗ quan trọng: cùng thiết kế `min` vừa phát 1.342 lần "MIN" trước phép đo, sau
+phép đo phát **0 byte**. Nên đây **không phải lỗi thiết kế B-V4** — đường UART của kit chết giữa
+phép đo. Đúng triệu chứng đã ghi nhiều lần: JTAG vẫn sống (`idcode 0x81b`, nạp `DONE`), chỉ kênh
+UART của FT2232 chết, và nó chết trong lần truyền dài (M1-S in ~4.650 byte mỗi lượt) chứ không
+chết với chuỗi ngắn.
+
+CSV được `csv_restore()` trả về nguyên trạng (0 dòng mới, không mất dòng cũ) — đường lùi thêm ở
+commit `3276883` chạy đúng như thiết kế.
+
+### 2. Ba hướng gỡ không cần tay người, tất cả thất bại (quy tắc 2)
+
+1. Nạp lại `min/top.fs` rồi đọc 3 s → 0 byte cả hai cổng.
+2. Đóng/mở lại cổng và **đảo DTR/RTS** (False→True→False) trên cả hai cổng, xả bộ đệm, đọc lại
+   3 s → 0 byte.
+3. `openFPGALoader --reset` (FPGA reset qua JTAG) → nạp lại `min/top.fs` → đọc **6 s** → 0 byte.
+
+Hết ba hướng. Theo quy tắc 2 và quy tắc 4 (việc vật lý do người dùng làm): **DỪNG, cần người dùng
+rút và cắm lại cáp USB**. Không có cách nào power-cycle cổng USB bằng phần mềm trên macOS.
+
+### 3. Kết quả phụ đáng ghi: luồng tổng hợp tái lập từng bit
+
+Lần tổng hợp này chạy trong **cây bóng** (`pipeline/work/s1`), độc lập với lần dựng trước ở
+`rtl/mycore/bs7dp/`. Hai bitstream **giống hệt từng bit**:
+
+| | kích thước | sha256 |
+|---|---:|---|
+| `rtl/mycore/bs7dp/top.fs` (lần trước) | 7.261.470 | `22bbbe32918954ef…` |
+| `pipeline/work/s1/.../bs7dp/top.fs` (lần này) | 7.261.470 | `22bbbe32918954ef…` |
+
+`report.json` cũng khớp hoàn toàn: `utilization`, `fmax` (53,011024475 MHz), `critical_paths` —
+cả ba trường bằng nhau tuyệt đối. Tức yosys → nextpnr-himbaechel → gowin_pack **tất định** cho
+thiết kế này, kể cả khi chip đã chiếm 75,9 %. Điều này có giá trị cho bài báo: mọi số tài nguyên
+và Fmax đã báo đều dựng lại được, không phụ thuộc thư mục hay thứ tự chạy.
+
+### 4. Lỗi hạ tầng phát hiện và sửa: % RAM tính theo 64 KB cứng
+
+`cdp` in `31.588/65.536 byte (48,2 %)` cho cấu hình RAM **32 KB**. `build.read_size()` chia cứng
+cho 65536. Con số thật: **31.588/32.768 = 96,4 %**, **chỉ còn 1.180 byte cho ngăn xếp**. Đây đúng
+là con số cần biết — Verilator chạy trọn 10 ảnh nên ngăn xếp đủ, nhưng biên độ mỏng tới mức phải
+ghi lại, và mô hình giữ lại ở S8 (M1-L gấp đôi kênh) gần như chắc chắn **không vừa** RAM 32 KB.
+Đã thêm `build.ram_bytes(t)` lấy `RAMKB` của chính cấu hình và in thêm phần dư.
+(Dòng log trong run `20261018-212201-kit` vẫn là bản cũ vì run chạy trước khi sửa.)
+
+### 5. Chỉnh lại đánh số bước của kế hoạch pipeline
+
+Kế hoạch gốc gộp vòng mở vào S6 và đặt "mô hình giữ lại" ở S7, nhưng vòng mở đã sinh ra **hai**
+ứng viên phần cứng hiện thực trọn vẹn, và kết quả cái thứ hai đã nằm ở `results/pipeline/S7/`.
+Đã tách: S6 = phễu + PMAX4 (đánh dấu ĐẠT, 4 cặp dự báo–đo kit), S7 = bộ nhớ hai cổng (B-V4),
+S8 = mô hình giữ lại, S9 = báo cáo. **Không đổi tên thư mục kết quả nào**; thêm bảng ánh xạ
+thư mục ↔ bước ở đầu `docs/PIPELINE_PLAN.md`. `CLAUDE.md` đổi "(S0 → S8)" thành "(S0 → S9)".
+
+### Việc tiếp theo / cần người dùng
+
+- **Cần người dùng: rút cáp USB của kit ra, chờ ~5 giây, cắm lại.** Sau đó tôi chạy lại
+  `./cdp kit --spec pipeline/specs/s7_dualport.yaml`. Lần này bitstream đã có trong cây bóng nên
+  không mất 19 phút tổng hợp lại — phép đo chỉ còn ~2 phút.
+- Nếu rút/cắm lại mà UART vẫn chết: triệu chứng này đã lặp nhiều lần và luôn tự hồi phục sau một
+  lúc. Phương án dự phòng nếu không hồi: B-V4 đã có số Verilator đúng tuyệt đối và đúng từng bit
+  (243.641 chu kỳ, `results/pipeline/S7/`), nên có thể ghi vào báo cáo là **"đo bằng mô phỏng,
+  chưa xác nhận trên kit"** — đúng như dòng 15 (PMAX4) đã làm trước khi đo được.
+- Chưa đưa B-V4 vào bảng chính `docs/KET_QUA_TONG_HOP.md` (vẫn thiếu phép đo kit).
+
+
 ## 2026-10-18 — S7: hiện thực bộ nhớ hai cổng — K2 sai số 0,00 %, nhưng LUT4 gấp 3,5 lần
 
 Kit vẫn chết (kiểm lại: nạp `min/top.fs` được, đọc 0 byte cả hai cổng) nên làm trọn phần

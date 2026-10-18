@@ -26,7 +26,17 @@ def _sha256(p: Path) -> str | None:
     return hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
 
 
-def read_size(p: Path) -> dict:
+def ram_bytes(t) -> int:
+    """Dung lượng RAM thật của cấu hình, theo RAMKB của chính nó (mặc định 64 KB).
+
+    Cấu hình bộ nhớ hai cổng (S7) liên kết với RAMKB=32. Trước đây hàm dưới chia
+    cứng cho 65.536 nên nó báo 48,2 % trong khi chỗ thật đã dùng 96,4 % — đúng con
+    số cần biết, vì phần còn lại là ngăn xếp.
+    """
+    return int(getattr(t, "fw_make_vars", {}).get("RAMKB", 64)) * 1024
+
+
+def read_size(p: Path, ram: int = 65536) -> dict:
     out = {}
     if not p.exists():
         return out
@@ -39,7 +49,9 @@ def read_size(p: Path) -> dict:
                 pass
     used = sum(v for k, v in out.items() if k in (".text", ".data", ".bss"))
     out["_used"] = used
-    out["_ram_pct"] = round(100.0 * used / 65536, 1)
+    out["_ram"] = ram
+    out["_ram_pct"] = round(100.0 * used / ram, 1)
+    out["_headroom"] = ram - used
     return out
 
 
@@ -50,14 +62,16 @@ def ensure_firmware(w: Path, t, run) -> dict:
     fp = fw_paths(w, t)
     info = {"target": t.t_fw, "rc": c.rc, "seconds": round(c.seconds, 1),
             "hex": rel(fp["hex"]) if fp["hex"].exists() else None,
-            "hex_sha256": _sha256(fp["hex"]), "size": read_size(fp["size"])}
+            "hex_sha256": _sha256(fp["hex"]),
+            "size": read_size(fp["size"], ram_bytes(t))}
     if not c.ok or not fp["hex"].exists():
         info["error"] = "không dựng được firmware"
         return info
     sz = info["size"]
     run.say(f"    firmware {t.fw_id}: .text {sz.get('.text', 0):,} + "
             f".data {sz.get('.data', 0):,} + .bss {sz.get('.bss', 0):,} = "
-            f"{sz.get('_used', 0):,}/65.536 byte ({sz.get('_ram_pct')} %)")
+            f"{sz.get('_used', 0):,}/{sz.get('_ram', 65536):,} byte "
+            f"({sz.get('_ram_pct')} %, còn {sz.get('_headroom', 0):,} byte cho ngăn xếp)")
     run.say(f"    sha256(firmware.hex) = {info['hex_sha256'][:16]}…")
     return info
 

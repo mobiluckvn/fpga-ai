@@ -135,8 +135,41 @@ make build-bs7dp FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1 DUAL_PORT=1
 ./cdp iss --target "B-V4"
 ```
 
-## 7. Còn thiếu
+## 7. Còn thiếu: đo trên kit
 
-**Chưa đo trên kit.** UART của kit chết (xem `../S6/kit/README.md`), cần rút/cắm lại cáp USB.
-`bs7dp/top.fs` đã dựng xong và sẵn sàng nạp. Cho tới khi đo được trên phần cứng thật, dòng
-B-V4 **chưa** vào bảng chính của `docs/KET_QUA_TONG_HOP.md` — y như dòng PMAX4.
+**Chưa đo được trên kit.** Dòng B-V4 vì vậy **chưa** vào bảng chính của
+`docs/KET_QUA_TONG_HOP.md` — y như dòng PMAX4 trước khi đo được.
+
+### Lần thử 1 — 2026-10-18, run `pipeline/runs/20261018-212201-kit`
+
+Trước phép đo, đường UART được kiểm riêng bằng thiết kế đã biết chạy (`min/top.fs`): đọc được
+40 byte, thấy "MIN" 8 lần. Rồi chạy `./cdp kit --spec pipeline/specs/s7_dualport.yaml`:
+
+| bước | kết quả |
+|---|---|
+| firmware `cdp32` (RAMKB=32) | rc=0 · sha256 `2c5641d3d800a8c4…` |
+| tổng hợp `bs7dp` trong cây bóng | rc=0 · 1.139,6 s · bitstream 7.261.470 byte |
+| **đối chứng TRƯỚC** (`min/top.fs`) | ĐẠT — "MIN" **1.342 lần** trên `...171` |
+| nạp `bs7dp/top.fs` (SRAM) | rc=0 |
+| `m1s_check.py` 2/2 lượt | **0 dòng thô** → `M1S_FAIL` |
+| **đối chứng SAU** (`min/top.fs`) | **KHÔNG ĐẠT — 0 byte cả hai cổng** |
+
+**Phân loại: đường đo chết, không phải lỗi thiết kế.** Cùng một thiết kế `min` phát 1.342 lần
+"MIN" trước phép đo và 0 byte sau phép đo. JTAG vẫn sống suốt (`idcode 0x81b`, nạp `DONE`).
+Đúng triệu chứng đã ghi nhiều lần của kênh UART trên FT2232: chết trong lần truyền dài
+(M1-S in ~4.650 byte/lượt), không chết với chuỗi ngắn.
+
+Ba hướng gỡ không cần tay người, tất cả **thất bại**: (1) nạp lại `min` rồi đọc 3 s;
+(2) đảo DTR/RTS rồi đọc lại; (3) `openFPGALoader --reset` → nạp lại `min` → đọc 6 s.
+Hết ba hướng → dừng, cần người dùng rút/cắm lại cáp USB (quy tắc 2 và 4).
+
+CSV được `csv_restore()` trả nguyên trạng: 0 dòng mới, không mất dòng cũ.
+
+### Kết quả phụ: luồng tổng hợp tái lập TỪNG BIT
+
+Lần tổng hợp này chạy trong cây bóng `pipeline/work/s1`, độc lập với lần dựng trước ở
+`rtl/mycore/bs7dp/`. Hai bitstream **giống hệt từng bit** (7.261.470 byte, sha256
+`22bbbe32918954ef…`), và `report.json` khớp hoàn toàn cả ba trường `utilization`, `fmax`
+(53,011024475 MHz), `critical_paths`. Tức luồng yosys → nextpnr-himbaechel → gowin_pack là
+**tất định** cho thiết kế này, kể cả ở mức chiếm chip 75,9 % — mọi số tài nguyên và Fmax trong
+mục 4 đều dựng lại được.
