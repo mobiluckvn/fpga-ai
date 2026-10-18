@@ -1,0 +1,31 @@
+{
+  "round": 1,
+  "mode": "blind",
+  "agent_type": "general-purpose",
+  "inherits_orchestrator_context": false,
+  "called_at": "2026-10-18T15:51:04+0700",
+  "files_given": {
+    "PROFILE.md": {
+      "sha256_16": "6f969706e88f7cae",
+      "bytes": 4393
+    },
+    "TASK.md": {
+      "sha256_16": "49cd57f28f770cbf",
+      "bytes": 3757
+    },
+    "kernels.c": {
+      "sha256_16": "277f2d19a81c442e",
+      "bytes": 5352
+    }
+  },
+  "prompt_sha256_16": "495452ba24cddafe",
+  "withheld": [
+    "experiment/m1s/main.c (bản đã tối ưu bằng tay)",
+    "pipeline/catalog/optimizations.yaml",
+    "docs/ (toàn bộ)",
+    "results/ (toàn bộ)",
+    "số đo của mọi biến thể khác",
+    "mốc thủ công B-V1 = 1.459.993 chu kỳ"
+  ],
+  "blindness_enforcement": "bằng chỉ thị, KHÔNG bằng sandbox hệ điều hành"
+}

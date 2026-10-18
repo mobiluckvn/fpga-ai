@@ -63,7 +63,14 @@ Bảng sai số vào `results/pipeline/S2/iss_vs_verilator.csv`.
 (A-V0→A-V1 cắt chủ yếu `addr`/`loop_ctrl`; B-V1→B-V1+DOT4 cắt chủ yếu `mac`+`load_data`; REQ cắt `requant`)
 — nêu số cụ thể từ profile cạnh hệ số đo.
 
-## S4 — B1: ĐÃ LÀM THỦ CÔNG → bỏ qua (quyết định của người dùng, 2026-10-18)
+## S4 — B1: ĐÃ LÀM, ĐẠT (2026-10-18) — xem `results/pipeline/S4/`
+> Ban đầu ghi "bỏ qua vì đã làm thủ công"; người dùng đổi quyết định trong cùng ngày và yêu cầu làm.
+> **Kết quả**: AI mù đạt **1,584×** (bản không phụ thuộc dữ liệu) so với **1,355×** của bản thủ công,
+> và **2,405×** nếu tính cả bản khai thác tính thưa (phụ thuộc đầu vào, biên độ 13,7 %). 12/12 ứng
+> viên đúng từng bit; Verilator xác nhận bằng tuyệt đối. Dừng ở vòng 4 theo quyết định của người dùng,
+> chưa tới bão hoà. Rò rỉ phải chặn trước S5: `CLAUDE.md` bị harness chèn vào ngữ cảnh subagent.
+
+### (Phần mô tả gốc, giữ lại)
 Tối ưu phần mềm đã làm thủ công: A-V1 (`-DOPT_KERNELS`, 1,45×). Đầu ra của B1 = firmware A-V1.
 Bố cục 4 pha (C1) KHÔNG tính vào B1 vì nó chỉ có ý nghĩa khi đã có DOT4 — ở S5 nó là một ứng viên L2
 (`L2.layout_for_simd`) cần được tái khám phá. Phần dưới giữ lại làm phương án tuỳ chọn sau S8 (trả lời PQ2).

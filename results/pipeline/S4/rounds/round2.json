@@ -1,0 +1,66 @@
+{
+  "round": 2,
+  "sandbox": "pipeline/runs/20261018-160203-b1/sandbox",
+  "candidates": [
+    {
+      "cand": "cand_a.c",
+      "tag": "r2a",
+      "built": true,
+      "ok": true,
+      "bit_exact": true,
+      "problems": [],
+      "median_cycles": 1256909,
+      "layers": {
+        "conv1": 369102,
+        "pool1": 42472,
+        "conv2": 792680,
+        "pool2": 12519,
+        "dense": 40114
+      },
+      "instret": 815976,
+      "src_hash": "f5f20d8d4fa2",
+      "iss_seconds": 21.1
+    },
+    {
+      "cand": "cand_b.c",
+      "tag": "r2b",
+      "built": true,
+      "ok": true,
+      "bit_exact": true,
+      "problems": [],
+      "median_cycles": 1799727,
+      "layers": {
+        "conv1": 724328,
+        "pool1": 42472,
+        "conv2": 980272,
+        "pool2": 12519,
+        "dense": 40114
+      },
+      "instret": 1213338,
+      "src_hash": "b9e569d54649",
+      "iss_seconds": 28.3
+    },
+    {
+      "cand": "cand_c.c",
+      "tag": "r2c",
+      "built": true,
+      "ok": true,
+      "bit_exact": true,
+      "problems": [],
+      "median_cycles": 1249201,
+      "layers": {
+        "conv1": 361394,
+        "pool1": 42472,
+        "conv2": 792680,
+        "pool2": 12519,
+        "dense": 40114
+      },
+      "instret": 807795,
+      "src_hash": "1b12763f0059",
+      "iss_seconds": 21.1
+    }
+  ],
+  "best_this_round": "r2c",
+  "best_cycles_this_round": 1249201,
+  "improved_pct": 22.512630766033862
+}

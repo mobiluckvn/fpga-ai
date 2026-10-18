@@ -12,7 +12,7 @@ import json
 import sys
 import time
 
-from . import (analyze, build, estimate, kit, kitlock, ledger, paths, profile,
+from . import (analyze, b1, build, estimate, kit, kitlock, ledger, paths, profile,
                propose, report, selftest, sim, spec, static_analysis, synth,
                targets, verify)
 from .iss import main as iss_main
@@ -23,7 +23,7 @@ from .util import fmt_int
 STEP_OF = {
     "spec": "S0", "db": "S0", "targets": "S0", "lock": "S0", "selftest": "S0",
     "build": "S1", "sim": "S1", "kit": "S1", "synth": "S1",
-    "iss": "S2", "profile": "S3", "analyze": "S3", "static": "S3",
+    "iss": "S2", "profile": "S3", "analyze": "S3", "static": "S3", "b1": "S4",
     "propose": "S5", "estimate": "S6", "verify": "S6", "report": "S8",
 }
 TOOLS_OF = {
@@ -105,7 +105,7 @@ HANDLERS = {
     "selftest": selftest.main,
     "build": build.main, "sim": sim.main, "kit": kit.main, "synth": synth.main,
     "iss": iss_main, "profile": profile.main, "analyze": analyze.main,
-    "static": static_analysis.main,
+    "static": static_analysis.main, "b1": b1.main,
     "propose": propose.main, "estimate": estimate.main, "verify": verify.main,
     "report": report.main,
 }
@@ -168,6 +168,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--spec", default=None)
     p.add_argument("--target", action="append", default=None)
     p.add_argument("--all", action="store_true")
+    p.add_argument("--work", default="s1")
+
+    p = sub.add_parser("b1", help="vòng tối ưu phần mềm có AI hỗ trợ (S4), chế độ mù")
+    p.add_argument("action", choices=["prepare", "sandbox", "eval"])
+    p.add_argument("--sandbox", default=None, help="thư mục sandbox của vòng cần chấm")
     p.add_argument("--work", default="s1")
 
     p = sub.add_parser("static", help="áp lực thanh ghi, phụ thuộc vòng lặp, không gian mã lệnh")

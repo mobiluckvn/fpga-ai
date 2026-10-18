@@ -1,0 +1,19 @@
+[cây bóng] pipeline/work/s1 (dùng lại)
+# cdp b1 eval — vòng 3 · 3 ứng viên
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_b1 fw KERNELS=rounds/r3a.c OUT=r3a   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_b1)
+    make fw → rc=0 · 1.3 s · log logs/make-fw-r3a.log
+    cand_a.c: 1.587.150 chu kỳ (1.247× so B-V0) · ĐÚNG BIT
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_b1 fw KERNELS=rounds/r3b.c OUT=r3b   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_b1)
+    make fw → rc=0 · 1.1 s · log logs/make-fw-r3b.log
+    cand_b.c: 1.191.308 chu kỳ (1.661× so B-V0) · ĐÚNG BIT
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_b1 fw KERNELS=rounds/r3c.c OUT=r3c   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_b1)
+    make fw → rc=0 · 1.0 s · log logs/make-fw-r3c.log
+    cand_c.c: 954.673 chu kỳ (2.073× so B-V0) · ĐÚNG BIT
+
+    tốt nhất vòng này : r3c · 954.673 chu kỳ
+    bản tốt nhất hiện tại: rounds/r3c.c · 954.673 chu kỳ (2.073× so B-V0)
+    cải thiện vòng này: 23.58 %
+    mốc thủ công (KHÔNG cấp cho subagent): B-V1 = 1.459.993 chu kỳ (1.355× so B-V0)
+
+=> tiếp vòng sau 
+[run 20261018-162940-b1] ok · 68.2 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-162940-b1

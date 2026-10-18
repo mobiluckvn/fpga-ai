@@ -38,6 +38,8 @@ LINK_RTL = ("uart", "picorv32", "ext")
 # (v*/ bv*/ obj_dir*/ tests/) và KHÔNG lấy nhị phân Verilator đã commit (Vsoc_b*).
 SRC_GLOBS = {
     "experiment/m1s": ("Makefile", "*.c", "*.cpp", "*.h"),
+    # hạ tầng vòng B1 (bước S4): có cả thư mục con rounds/ chứa ứng viên từng vòng
+    "experiment/m1s_b1": ("Makefile", "*.c", "rounds/*.c"),
     "rtl/mycore": ("Makefile", "*.v", "*.cpp"),
 }
 
@@ -70,8 +72,11 @@ def shadow_tree(name: str = "cdp", fresh: bool = False, say=print) -> Path:
         real.mkdir(parents=True, exist_ok=True)
         for g in globs:
             for f in sorted((paths.ROOT / rel).glob(g)):
-                if f.is_file():
-                    _link(f, real / f.name)
+                if not f.is_file():
+                    continue
+                dst = real / f.relative_to(paths.ROOT / rel)
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                _link(f, dst)
     (w / ".cdp-shadow").write_text(
         "Cây bóng của cdp. Chỉ chứa symlink tới mã nguồn + thư mục build mới.\n"
         f"Gốc dự án: {paths.ROOT}\n")

@@ -2,6 +2,75 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — PIPELINE CDP bước S4 ĐẠT: vòng B1 mù VƯỢT tối ưu phần mềm làm bằng tay
+
+Người dùng đổi quyết định: làm S4 (trước đó kế hoạch ghi "bỏ qua"). Trả lời PQ2.
+
+### Kết quả — hai con số, KHÔNG được trộn
+| | chu kỳ/ảnh | so B-V0 | biên độ theo ảnh |
+|---|---:|---:|---:|
+| B-V0 (C thẳng, điểm xuất phát) | 1.978.697 | 1,000× | 0,02 % |
+| **người làm bằng tay** (B-V1, KHÔNG cấp cho AI) | 1.459.993 | **1,355×** | 0,03 % |
+| **AI mù, tốt nhất không phụ thuộc dữ liệu** (`r2c`) | **1.249.201** | **1,584×** | 0,03 % |
+| **AI mù, tốt nhất kể cả phụ thuộc dữ liệu** (`r4a`) | **822.796** | **2,405×** | 13,70 % |
+
+**PQ2: có, và vượt.** So sánh ngang hàng: **1,584× so với 1,355×**, tức AI cắt thêm 14,4 % chu kỳ
+so với bản người làm — **sau hai vòng**. Đường cong: 1,000× → 1,227× → 1,584× → 2,073× → 2,405×
+(cải thiện 18,53 % · 22,51 % · 23,58 % · 13,81 %). **12/12 ứng viên trong 4 vòng ĐÚNG TỪNG BIT.**
+Vòng lặp **dừng theo quyết định của người dùng ở vòng 4**, chưa tới bão hoà (quy tắc dừng là 2 vòng
+liên tiếp < 2 %; vòng 4 vẫn còn 13,81 %).
+
+### Phát hiện đáng kể nhất: AI tìm ra một LỚP tối ưu mà người không dùng
+Từ vòng 3, AI khai thác **tính thưa**: bỏ qua cả chùm phép nhân khi gặp giá trị 0 (`p1` là đầu ra
+ReLU+MaxPool nên tỷ lệ 0 cao). Hợp lệ, đúng từng bit — nhưng làm số chu kỳ **phụ thuộc đầu vào**:
+biên độ giữa 10 ảnh nhảy từ **0,03 %** lên **8,61 %** rồi **13,70 %**. Hệ quả phương pháp: từ đây
+"tăng tốc" không còn là một hằng số của thiết kế mà là một **phân bố** phụ thuộc thống kê đầu vào,
+nên phải báo kèm biên độ, và 10 ảnh là mẫu quá nhỏ cho loại tối ưu này.
+Bản thủ công A-V1 và **mọi** cấu hình trong 14 cấu hình cũ đều không phụ thuộc dữ liệu (0,02–0,03 %).
+
+### Xác nhận Verilator — và một kết quả ngoài dự kiến cho PQ1
+`r2c`: ISS 1.249.201 = Verilator 1.249.201. `r4a`: ISS 822.796 = Verilator 822.796. Cả hai **bằng
+tuyệt đối từng lớp từng ảnh**, CRC khớp golden. Ở S2 mô hình chu kỳ được kiểm trên 14 cấu hình **đã
+biết**; đây là lần đầu nó dự báo cho **mã hoàn toàn mới** do AI sinh (cấu trúc vòng khác hẳn, có cả
+nhánh phụ thuộc dữ liệu) và vẫn đúng tuyệt đối — bằng chứng cho PQ1 mạnh hơn hẳn việc chỉ khớp trên
+các cấu hình đã hiệu chuẩn.
+
+### Hạ tầng mù, và cổng kiểm của nó
+`experiment/m1s_b1/` (thư mục MỚI): `main.c` + một `kernels.c` thay được. `cdp/b1/prepare.py` giải
+chỉ thị tiền xử lý của sáu macro tính năng ở trạng thái **không định nghĩa** rồi cắt vùng kernel ra —
+nếu đưa thẳng `main.c` gốc thì subagent thấy luôn bản đã tối ưu nằm trong `#ifdef OPT_KERNELS`.
+**Cổng kiểm bắt buộc** (bài học số 3): firmware từ `kernels_v0.c` cho đúng 1.978.697 chu kỳ, bằng
+tuyệt đối từng lớp từng ảnh như B-V0. Không kiểm trước thì mọi sai lệch sau sẽ bị gán cho AI thay vì
+cho hạ tầng. Thêm `cdp b1 prepare|sandbox|eval`, `cdp/isa.py`, và `wrap.py` symlink được thư mục con.
+
+### Chất lượng lập luận của subagent — ba điểm đáng ghi
+1. **Nó dùng đúng cột "thanh ghi còn trống" của phân tích tĩnh S3 làm căn cứ định lượng**, và tự chẩn
+   đoán ra rằng bản thắng vòng 2 (ghim 18 trọng số) **đã gây tràn thanh ghi**: *"`load_data` 97.938
+   chu kỳ ≈ 48.969 truy cập, gấp ~2 lần số byte ảnh thật sự cần (24.336 `lb`), trong khi vòng `conv1`
+   chỉ còn 3 thanh ghi trống"*. Vòng 4 nó đưa ra bản sửa.
+2. **Nó tự suy ra rằng phần mềm một mình KHÔNG khai thác được DLP trên lõi này** (vòng 2): *"nạp
+   32 bit cho 4 byte không có lợi — một `lw` tốn 2 chu kỳ nhưng tách 4 byte có dấu cần 7 lệnh dịch,
+   tổng 9 > 8 chu kỳ của 4 lệnh `lb`"*. Vòng 3 nó tự sửa con số 7 thành 2 nhưng giữ kết luận. Đây
+   chính là lý do **cần một lệnh phần cứng** — và nó suy ra chỉ từ bảng λ, không thấy DOT4.
+3. Nó tính điểm hoà vốn của phép bỏ-qua-0 bằng λ của lõi (1 chu kỳ nhánh để bỏ 6 ⟹ hoà vốn ở 17 %
+   số 0), và tự thêm khẳng định lúc biên dịch để build **dừng hẳn** nếu `M1S_C2 ≠ 16` thay vì cho
+   kết quả sai.
+
+### RÒ RỈ PHẢI GHI RÕ, và phải chặn trước S5
+Hệ thống **tự chèn `CLAUDE.md` của dự án vào ngữ cảnh subagent ở cả 4 vòng** — subagent tự khai báo
+mỗi vòng, kèm cả `~/.claude/CLAUDE.md` của người dùng (khối "Vnstock", không liên quan).
+`CLAUDE.md` dự án có câu nêu đích danh **"thêm lệnh tùy biến (DOT4, REQ) để giảm số chu kỳ"**.
+- Với S4: gần như vô hại — nhiệm vụ **cấm** dùng lệnh tùy biến/hợp ngữ, và `CLAUDE.md` không nói gì
+  về biến đổi vòng lặp (thứ mà A-V1 làm). Nhưng vẫn phải coi đây là **mù một phần**.
+- Với S5: **nghiêm trọng** — DOT4 và REQ chính là đáp án cần tái khám phá. Phải chặn trước khi chạy
+  S5. Chưa có cách chặn kỹ thuật (việc chèn do harness làm, không do tôi); hướng đang tính: dựng
+  sandbox ngoài cây dự án và/hoặc chạy subagent ở một phiên riêng không có `CLAUDE.md`.
+- Ngoài ra, chế độ mù nói chung bảo đảm bằng **chỉ thị**, không bằng sandbox hệ điều hành.
+
+### Việc tiếp theo
+Chặn rò rỉ `CLAUDE.md` rồi mới sang S5 (sinh ứng viên phần cứng mù + bộ sinh theo luật đối chứng).
+Nếu muốn chốt S4 ở mức bão hoà thì chạy tiếp vòng 5+ (mỗi vòng ~13 phút).
+
 ## 2026-10-18 — S3 bổ sung: phân tích TĨNH (`cdp static`) — áp lực thanh ghi, phụ thuộc vòng lặp, không gian mã lệnh
 
 Theo yêu cầu của người dùng, thêm lớp phân tích tĩnh vào S3. Phân tích động cho biết chu kỳ đi
