@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CDP experiment spec",
+  "description": "Đặc tả một thí nghiệm: mô hình · firmware · lõi · tham số RTL · ngân sách. Xem docs/PIPELINE_SPEC.md mục 1.",
+  "type": "object",
+  "required": ["name", "model", "firmware", "core"],
+  "additionalProperties": false,
+  "properties": {
+    "name":   {"type": "string", "pattern": "^[A-Za-z0-9_.+-]+$"},
+    "model":  {"enum": ["m1s"]},
+    "notes":  {"type": "string"},
+    "firmware": {
+      "type": "object",
+      "required": ["source"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {"type": "string", "description": "đường dẫn mã nguồn firmware, tương đối gốc dự án"},
+        "flags":  {"type": "array", "items": {"type": "string", "pattern": "^(-D)?[A-Z0-9_]+$"},
+                   "uniqueItems": true,
+                   "description": "macro -D ĐÚNG như Makefile truyền cho gcc"},
+        "id":     {"type": "string", "description": "thư mục build firmware (v0, v1, v1d, v1dc, v1dcr); để trống thì cdp suy ra từ flags"}
+      }
+    },
+    "core": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name":         {"enum": ["picorv32", "mycore"]},
+        "rtl_params":   {"type": "object",
+                         "additionalProperties": {"type": ["integer", "string"]},
+                         "description": "tham số RTL phân biệt cấu hình (FAST_ADDR, WITH_DOT4, WITH_REQ, WITH_MULDIV)"},
+        "timing_model": {"type": "string", "description": "file mô hình chu kỳ cho ISS (S2 mới cần)"}
+      }
+    },
+    "clock_mhz": {"type": "number", "exclusiveMinimum": 0},
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "lut4":          {"type": "integer", "minimum": 0},
+        "dff":           {"type": "integer", "minimum": 0},
+        "mult18x18":     {"type": "integer", "minimum": 0},
+        "bsram_blocks":  {"type": "integer", "minimum": 0},
+        "fmax_min_mhz":  {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "evaluate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "images":    {"type": "integer", "minimum": 1, "maximum": 10000},
+        "iss":       {"type": "boolean"},
+        "verilator": {"type": "boolean"},
+        "kit":       {"type": "boolean"},
+        "synth":     {"type": "boolean"}
+      }
+    },
+    "expect": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "chỉ dùng để kiểm tái lập (S1): trung vị = int(statistics.median(10 ảnh))",
+      "properties": {
+        "target":       {"type": "string", "description": "tên cấu hình trong docs/KET_QUA_TONG_HOP.md, vd B-V3"},
+        "total_cycles": {"type": "integer", "minimum": 1},
+        "src_hash":     {"type": "string"}
+      }
+    }
+  }
+}

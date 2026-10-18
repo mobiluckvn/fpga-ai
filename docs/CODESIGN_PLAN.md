@@ -1,3 +1,6 @@
+> **ĐÃ ĐƯỢC THAY** bởi `docs/PIPELINE_PLAN.md` + `docs/PIPELINE_SPEC.md` (2026-10-18). Giữ lại làm tham khảo;
+> P5 (nhánh B) đã hoàn tất trước khi kế hoạch này được dùng.
+
 # Giai đoạn đồng thiết kế dựa trên profile (P0 → P6)
 
 Tiếp nối giai đoạn khả thi (F0–F8, đã GO có điều kiện) và thí nghiệm chính M1-S (`docs/KET_QUA_M1S.md`).

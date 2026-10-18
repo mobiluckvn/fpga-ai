@@ -2,6 +2,66 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — PIPELINE CDP bước S0 ĐẠT: khung `cdp`, sổ cái, khoá kit, kiểm đặc tả
+
+Bắt đầu giai đoạn dựng pipeline đồng thiết kế có AI hỗ trợ (`docs/PIPELINE_PLAN.md`, S0→S8).
+S0 là hạ tầng: không có số đo hiệu năng mới nào, chỉ có hạ tầng để mọi số sau này truy được nguồn.
+
+### Đã dựng
+- Gói `pipeline/cdp/` + lối vào `./cdp` (tương đương `PYTHONPATH=pipeline python -m cdp`).
+  Đã hiện thực: `spec`, `db`, `targets`, `lock`, `selftest`. Mười một lệnh còn lại in "chưa hiện thực"
+  kèm bước dự kiến và trả mã thoát 2 (`build`/`sim`/`kit`/`synth` → S1, `iss` → S2,
+  `profile`/`analyze` → S3, `propose` → S5, `estimate`/`verify` → S6, `report` → S8).
+- Sổ cái `pipeline/db/ledger.sqlite` theo SPEC mục 3, **ba** bảng: `runs`, `candidates`, và
+  `measurements` (thêm ngoài SPEC — S1/S2 cần so từng ảnh từng lớp, không chỉ trung vị).
+  `./cdp db export` ra `ledger.csv`, `candidates.csv`, `measurements.csv`.
+- Khoá kit `pipeline/runs/kit.lock` (`fcntl.flock`); file khoá chứa thông tin ai đang giữ.
+- `pipeline/schemas/spec.schema.json` (tự viết từ `pipeline/specs/example_bv3.yaml`), kiểm ba lớp:
+  cú pháp YAML → lược đồ → **phân giải về đúng một trong 14 cấu hình** và đối chiếu trường `expect`.
+- `pipeline/cdp/targets.py`: bản ĐỌC MÁY của bảng 14 cấu hình (đích make, thư mục build, cờ `-D`,
+  tham số RTL, nhãn CSV, chu kỳ trung vị). Nhờ vậy S1 chỉ cần gọi đúng đích make, không phải đoán.
+- Mỗi lệnh ghi `pipeline/runs/<id>/meta.json`: git commit + sạch/bẩn, `SRC_HASH`, phiên bản
+  yosys/nextpnr/verilator/openFPGALoader/riscv-gcc/make/gowin_pack (lấy bằng cách source chính
+  `env/setup_env.sh`, không nhân bản logic PATH), tham số, máy, kết quả.
+
+### Tiêu chí ĐẠT (`./cdp selftest` — log: `results/pipeline/S0/`)
+| # | Tiêu chí | Kết quả |
+|---|---|---|
+| 1 | `cdp spec pipeline/specs/example_bv3.yaml` hợp lệ | **ĐẠT** — phân giải về **B-V3** |
+| 2 | Hai tiến trình xin khoá kit, tiến trình thứ hai chờ | **ĐẠT** — A giữ 2 s, B xin sau 0,5 s, B chờ **1,53 s** |
+| 3 | Sổ cái ghi / đọc / xuất CSV | **ĐẠT** |
+| 4 | (tự thêm) Bảng 14 cấu hình của `cdp` = số đo thật | **ĐẠT** — cả 14 trung vị tính lại từ CSV kit **và** từ `sim.log` đều bằng số trong `KET_QUA_TONG_HOP.md`; kit = Verilator từng ảnh |
+
+### Hai điều phát hiện khi đối chiếu số cũ (quan trọng cho S1)
+1. **Trong dự án có hai định nghĩa "trung vị".** `scripts/m1s_check.py` lấy phần tử thứ 6 của 10
+   (`sorted[n//2]`), còn `scripts/branch_b_table.py` dùng `statistics.median` (trung bình hai phần tử
+   giữa). Chênh đúng **23 chu kỳ** ở mọi biến thể. Mọi số trong báo cáo (8.987.660 · 1.459.993 ·
+   365.992) là số của `branch_b_table.py`; `m1s_check.py` in 8.987.683 · 1.460.016 · 366.015.
+   `cdp` chốt dùng `statistics.median` và đã kiểm khớp **cả 14 dòng**.
+2. **12/14 cấu hình đã đo được dựng từ `main.c` cũ** (`SRC_HASH=647f1d071aca`); bản hiện tại là
+   `c3966b0011df` (commit `542764e` thêm mã REQ trong `#ifdef`). Firmware nhúng cả `GIT_HASH` và
+   `SRC_HASH` nên **không thể** dựng lại ra file giống từng byte — nếu không kiểm trước, tiêu chí
+   "bằng tuyệt đối" của S1 sẽ hỏng vì một lý do chẳng liên quan gì tới `cdp`.
+   Đã thăm dò: dựng lại A-V1 từ `main.c` hiện tại rồi chạy trên `rtl/mycore/Vsoc_b1` → **đúng từng
+   chu kỳ, từng lớp, từng ảnh** như `rtl/mycore/bv1/sim.log` đã ghi.
+   Log: `results/pipeline/S0/recon_rebuild_av1_sim.log` · so sánh: `recon_rebuild_av1.json`.
+
+### Quyết định ghi lại để S1 làm theo
+- `cdp build` của S1 dựng **ngoài cây**: `experiment/m1s/v*/` và `rtl/mycore/bv*/` **đã nằm trong git**
+  (130 + 839 file), nên dựng tại chỗ là sửa thư mục kết quả cũ — trái quy tắc. Cách làm: thư mục bóng
+  có symlink tới mã nguồn để `../../fw`, `../../scripts`, `../../hw` của hai Makefile vẫn đúng, còn
+  `results/` trong thư mục bóng là thư mục **thật và rỗng** để không bao giờ ghi lên CSV cũ.
+- `pipeline/runs/` không vào git (đã thêm `.gitignore`); bằng chứng từng bước sao sang
+  `results/pipeline/S<n>/`.
+
+### Vấn đề, đã thử
+Không có lỗi phải xử lý. Đã thêm `pyyaml 6.0.3` + `jsonschema 4.26.0` vào `.venv`.
+
+### Việc tiếp theo / cần người dùng
+- S1: bọc build/sim/kit/synth và tái tạo A-V0, B-V1, B-V3. Phần build + Verilator làm được ngay.
+- **Cần kit cho phần đo**: hiện **không** thấy `/dev/cu.usbserial*` (kit chưa cắm). Tới bước đo sẽ dừng
+  và xin người dùng cắm kit; chỉ nạp SRAM, có đối chứng như `scripts/branch_b_measure.sh`.
+
 ## 2026-10-17 — HOÀN TẤT: A-V3 và B-V3 đo trên kit · 14 cấu hình · 332,9 ms → 13,6 ms (24,6×)
 
 Cổng B5 ĐẠT và biến thể A-V3 xong. Toàn bộ kế hoạch gốc (nhánh A V0–V3, nhánh B V0–V3) đã **đo trên

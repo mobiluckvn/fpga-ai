@@ -1,0 +1,7 @@
+#!/bin/sh
+# Lối vào ngắn cho pipeline đồng thiết kế: ./cdp <lệnh> ...
+# Tương đương: PYTHONPATH=pipeline .venv/bin/python -m cdp <lệnh> ...
+ROOT=$(cd "$(dirname "$0")" && pwd)
+PY="$ROOT/.venv/bin/python"
+[ -x "$PY" ] || PY=python3
+PYTHONPATH="$ROOT/pipeline${PYTHONPATH:+:$PYTHONPATH}" exec "$PY" -m cdp "$@"

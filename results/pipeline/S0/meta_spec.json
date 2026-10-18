@@ -1,0 +1,62 @@
+{
+  "run_id": "20261018-121934-spec",
+  "cmd": "spec",
+  "step": "S0",
+  "argv": [
+    "spec"
+  ],
+  "spec": null,
+  "target": null,
+  "params": {
+    "files": []
+  },
+  "started_at": "2026-10-18T12:19:34+0700",
+  "finished_at": "2026-10-18T12:19:37+0700",
+  "duration_s": 2.068,
+  "status": "ok",
+  "git": {
+    "commit": "98e209350053fe40b5eadde3b2271fb9abd72247",
+    "short": "98e2093",
+    "branch": "main",
+    "dirty": true,
+    "dirty_files": 9
+  },
+  "src_hash": "c3966b0011df",
+  "tools": {
+    "python": "3.14.7",
+    "numpy": "2.5.4",
+    "yosys": "Yosys 0.70+145 (git sha1 a31d95ea0, Release, Clang /usr/local/osxcross/target/bin/x86_64-apple-darwin25.5-clang++ 21.1.8)",
+    "nextpnr": "\"nextpnr-himbaechel\" -- Next Generation Place and Route (Version nextpnr-0.11.1-63-g44a6c739)",
+    "verilator": "Verilator 5.053 devel rev v5.052-448-g1272f7355 (mod)",
+    "openFPGALoader": "openFPGALoader v1.1.1",
+    "riscv-gcc": "15.2.0",
+    "make": "GNU Make 3.81",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "gowin_pack_path": "/Users/v/tools/oss-cad-suite/bin/gowin_pack",
+    "oss_cad_suite": "20261016"
+  },
+  "host": {
+    "platform": "macOS-26.6.2-x86_64-i386-64bit-Mach-O",
+    "machine": "x86_64",
+    "python": "3.14.7"
+  },
+  "cwd": "/Users/v/Documents/NCS/tinyml-riscv-tn20k",
+  "run_dir": "pipeline/runs/20261018-121934-spec",
+  "note": null,
+  "result": {
+    "n_ok": 1,
+    "n_bad": 0,
+    "specs": [
+      "pipeline/specs/example_bv3.yaml"
+    ],
+    "targets": [
+      "B-V3"
+    ],
+    "warnings": {
+      "example_bv3.yaml": [
+        "chưa có mô hình chu kỳ pipeline/cdp/iss/timing/mycore.yaml (S2 mới dựng) — bỏ qua ở S0/S1"
+      ]
+    },
+    "errors": {}
+  }
+}

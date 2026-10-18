@@ -30,3 +30,8 @@ obj_dir/
 
 # bản sao riscv-tests (ghim commit trong env/VERSIONS.md, tải lại bằng git clone)
 rtl/mycore/tests/riscv-tests/
+
+# Thư mục chạy của pipeline CDP: mỗi lệnh một thư mục (meta.json + log thô).
+# Bằng chứng của từng bước đã được sao vào results/pipeline/S<n>/ nên không commit.
+pipeline/runs/*
+!pipeline/runs/.gitkeep

@@ -5,8 +5,9 @@ Dự án nghiên cứu của Vũ Trí Công (học viên cao học PTIT). Mục 
 trên lõi RISC-V mềm trong FPGA Tang Nano 20K, rồi thêm lệnh tùy biến (DOT4, REQ) để giảm số chu kỳ.
 Kế hoạch đầy đủ: https://claude.ai/code/artifact/f8fb8ed1-998c-4dbb-8fa7-dda34aba7bd3
 
-**Giai đoạn hiện tại: KIỂM CHỨNG TÍNH KHẢ THI TRÊN PHẦN CỨNG THẬT.**
-Làm lần lượt các cổng F0 → F8 trong `docs/FEASIBILITY_PLAN.md`. Chưa làm mô hình MNIST đầy đủ.
+**Giai đoạn hiện tại: DỰNG VÀ ĐO PIPELINE ĐỒNG THIẾT KẾ CÓ AI HỖ TRỢ (CDP).**
+Làm theo `docs/PIPELINE_PLAN.md` (S0 → S8), đặc tả trong `docs/PIPELINE_SPEC.md`. Giai đoạn khả thi (F0–F8),
+nhánh A và nhánh B đã xong — xem `docs/KET_QUA_TONG_HOP.md`. Không sửa/xoá các thư mục kết quả đã có.
 
 ## Phần cứng và máy
 - Kit: Sipeed Tang Nano 20K, FPGA GW2AR-LV18QN88C8/I7 (họ GW2A-18C), thạch anh 27 MHz,

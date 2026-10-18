@@ -1,0 +1,227 @@
+{
+  "run_id": "20261018-122228-selftest",
+  "git": {
+    "commit": "98e209350053fe40b5eadde3b2271fb9abd72247",
+    "short": "98e2093",
+    "branch": "main",
+    "dirty": true,
+    "dirty_files": 11
+  },
+  "src_hash": "c3966b0011df",
+  "tools": {
+    "python": "3.14.7",
+    "numpy": "2.5.4",
+    "yosys": "Yosys 0.70+145 (git sha1 a31d95ea0, Release, Clang /usr/local/osxcross/target/bin/x86_64-apple-darwin25.5-clang++ 21.1.8)",
+    "nextpnr": "\"nextpnr-himbaechel\" -- Next Generation Place and Route (Version nextpnr-0.11.1-63-g44a6c739)",
+    "verilator": "Verilator 5.053 devel rev v5.052-448-g1272f7355 (mod)",
+    "openFPGALoader": "openFPGALoader v1.1.1",
+    "riscv-gcc": "15.2.0",
+    "make": "GNU Make 3.81",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "gowin_pack_path": "/Users/v/tools/oss-cad-suite/bin/gowin_pack",
+    "oss_cad_suite": "20261016"
+  },
+  "pass": true,
+  "checks": {
+    "spec": {
+      "pass": true,
+      "n_files": 1,
+      "n_ok": 1,
+      "n_bad": 0,
+      "resolved": {
+        "example_bv3.yaml": "B-V3"
+      },
+      "errors": {}
+    },
+    "ledger": {
+      "pass": true,
+      "write_read": true,
+      "csv": true,
+      "delete": true,
+      "counts": {
+        "runs": 23,
+        "candidates": 0,
+        "measurements": 0
+      },
+      "csv_files": [
+        "pipeline/db/ledger.csv",
+        "pipeline/db/candidates.csv",
+        "pipeline/db/measurements.csv"
+      ]
+    },
+    "kitlock": {
+      "pass": true,
+      "b_waited_s": 1.54,
+      "b_total_s": 4.275,
+      "hold_a_s": 2.0,
+      "rc_a": 0,
+      "rc_b": 0,
+      "b_out": [
+        "[kit.lock] khoá đang bị giữ bởi {'owner': 'selftest-A', 'pid': 44507, 'acquired_at': '2026-10-18T12:22:31+0700', 'waited_s': 0.0, 'path': '/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/kit.lock'} — CHỜ…",
+        "[kit.lock] đã lấy được khoá sau khi chờ 1.54 s",
+        "[12:22:33] GIỮ khoá kit (chờ 1.54 s) trong 0.1 s",
+        "[12:22:33] NHẢ khoá kit",
+        "[run 20261018-122230-lock] ok · 3.2 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-122230-lock"
+      ]
+    },
+    "targets": {
+      "pass": true,
+      "rows": [
+        {
+          "target": "A-V0",
+          "n_csv": 10,
+          "median_csv": 8987660,
+          "median_simlog": 8987660,
+          "expect": 8987660,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "experiment/m1s/v0/sim.log"
+        },
+        {
+          "target": "A-V1",
+          "n_csv": 10,
+          "median_csv": 6217634,
+          "median_simlog": 6217634,
+          "expect": 6217634,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "experiment/m1s/v1/sim.log"
+        },
+        {
+          "target": "A-V2",
+          "n_csv": 10,
+          "median_csv": 5758001,
+          "median_simlog": 5758001,
+          "expect": 5758001,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "experiment/m1s/v2/sim.log"
+        },
+        {
+          "target": "A-V1+DOT4",
+          "n_csv": 10,
+          "median_csv": 2917079,
+          "median_simlog": 2917079,
+          "expect": 2917079,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "experiment/m1s/v1d/sim.log"
+        },
+        {
+          "target": "A-V1+DOT4+C1",
+          "n_csv": 10,
+          "median_csv": 2450494,
+          "median_simlog": 2450494,
+          "expect": 2450494,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "experiment/m1s/v1dc/sim.log"
+        },
+        {
+          "target": "A-V3",
+          "n_csv": 10,
+          "median_csv": 1842219,
+          "median_simlog": 1842219,
+          "expect": 1842219,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "experiment/m1s/v1dcr/sim.log"
+        },
+        {
+          "target": "B-V0r",
+          "n_csv": 10,
+          "median_csv": 3750617,
+          "median_simlog": 3750617,
+          "expect": 3750617,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "rtl/mycore/bv0r/sim.log"
+        },
+        {
+          "target": "B-V1r",
+          "n_csv": 10,
+          "median_csv": 2713235,
+          "median_simlog": 2713235,
+          "expect": 2713235,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "rtl/mycore/bv1r/sim.log"
+        },
+        {
+          "target": "B-V0",
+          "n_csv": 10,
+          "median_csv": 1978697,
+          "median_simlog": 1978697,
+          "expect": 1978697,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "rtl/mycore/bv0/sim.log"
+        },
+        {
+          "target": "B-V1",
+          "n_csv": 10,
+          "median_csv": 1459993,
+          "median_simlog": 1459993,
+          "expect": 1459993,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "rtl/mycore/bv1/sim.log"
+        },
+        {
+          "target": "B-V2",
+          "n_csv": 10,
+          "median_csv": 1169050,
+          "median_simlog": 1169050,
+          "expect": 1169050,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "rtl/mycore/bv2/sim.log"
+        },
+        {
+          "target": "B-V1+DOT4",
+          "n_csv": 10,
+          "median_csv": 631130,
+          "median_simlog": 631130,
+          "expect": 631130,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "rtl/mycore/bv1d/sim.log"
+        },
+        {
+          "target": "B-V1+DOT4+C1",
+          "n_csv": 10,
+          "median_csv": 487865,
+          "median_simlog": 487865,
+          "expect": 487865,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "rtl/mycore/bv1dc/sim.log"
+        },
+        {
+          "target": "B-V3",
+          "n_csv": 10,
+          "median_csv": 365992,
+          "median_simlog": 365992,
+          "expect": 365992,
+          "ok_median": true,
+          "ok_kit_eq_sim": true,
+          "ok_simlog": true,
+          "sim_log": "rtl/mycore/bv1dcr/sim.log"
+        }
+      ]
+    }
+  }
+}

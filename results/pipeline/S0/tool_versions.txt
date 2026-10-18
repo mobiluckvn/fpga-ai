@@ -1,0 +1,11 @@
+python: 3.14.7
+numpy: 2.5.4
+yosys: Yosys 0.70+145 (git sha1 a31d95ea0, Release, Clang /usr/local/osxcross/target/bin/x86_64-apple-darwin25.5-clang++ 21.1.8)
+nextpnr: "nextpnr-himbaechel" -- Next Generation Place and Route (Version nextpnr-0.11.1-63-g44a6c739)
+verilator: Verilator 5.053 devel rev v5.052-448-g1272f7355 (mod)
+openFPGALoader: openFPGALoader v1.1.1
+riscv-gcc: 15.2.0
+make: GNU Make 3.81
+git: git version 2.50.1 (Apple Git-155)
+gowin_pack_path: /Users/v/tools/oss-cad-suite/bin/gowin_pack
+oss_cad_suite: 20261016

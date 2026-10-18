@@ -1,0 +1,36 @@
+# cdp selftest — hạ tầng S0
+git 98e2093 · SRC_HASH c3966b0011df
+
+1. đặc tả YAML hợp lệ và phân giải được
+    example_bv3.yaml → B-V3
+    => ĐẠT
+
+2. sổ cái ghi/đọc/xuất CSV
+    xuất pipeline/db/ledger.csv
+    xuất pipeline/db/candidates.csv
+    xuất pipeline/db/measurements.csv
+    ghi=True đọc=True xoá=True CSV=True · {'runs': 23, 'candidates': 0, 'measurements': 0}
+    => ĐẠT
+
+3. khoá kit: tiến trình thứ hai phải CHỜ
+    A giữ 2 s · B xin sau 0,5 s → B chờ 1.54 s (xong ở 4.28 s)
+    => ĐẠT
+
+4. bảng 14 cấu hình = trung vị tính lại từ CSV số đo
+    A-V0             n=10  CSV=  8987660 simlog=  8987660 bảng=  8987660  ĐẠT
+    A-V1             n=10  CSV=  6217634 simlog=  6217634 bảng=  6217634  ĐẠT
+    A-V2             n=10  CSV=  5758001 simlog=  5758001 bảng=  5758001  ĐẠT
+    A-V1+DOT4        n=10  CSV=  2917079 simlog=  2917079 bảng=  2917079  ĐẠT
+    A-V1+DOT4+C1     n=10  CSV=  2450494 simlog=  2450494 bảng=  2450494  ĐẠT
+    A-V3             n=10  CSV=  1842219 simlog=  1842219 bảng=  1842219  ĐẠT
+    B-V0r            n=10  CSV=  3750617 simlog=  3750617 bảng=  3750617  ĐẠT
+    B-V1r            n=10  CSV=  2713235 simlog=  2713235 bảng=  2713235  ĐẠT
+    B-V0             n=10  CSV=  1978697 simlog=  1978697 bảng=  1978697  ĐẠT
+    B-V1             n=10  CSV=  1459993 simlog=  1459993 bảng=  1459993  ĐẠT
+    B-V2             n=10  CSV=  1169050 simlog=  1169050 bảng=  1169050  ĐẠT
+    B-V1+DOT4        n=10  CSV=   631130 simlog=   631130 bảng=   631130  ĐẠT
+    B-V1+DOT4+C1     n=10  CSV=   487865 simlog=   487865 bảng=   487865  ĐẠT
+    B-V3             n=10  CSV=   365992 simlog=   365992 bảng=   365992  ĐẠT
+    => ĐẠT
+
+KẾT LUẬN S0: ĐẠT  spec=ĐẠT · ledger=ĐẠT · kitlock=ĐẠT · targets=ĐẠT
