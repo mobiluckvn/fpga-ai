@@ -16,9 +16,13 @@ ARCH       := -march=rv32im -mabi=ilp32
 OPT        ?= -O2
 KERNELS    ?= kernels_v3.c
 OUT        ?= v3
+# WEIGHTS: header trọng số. Mặc định là của M1-S — giữ nguyên mọi hành vi cũ.
+# Mô hình giữ lại (S8) truyền WEIGHTS=../../fw/weights_m1l.h. Header được CHÉP vào
+# $(OUT)/ y như kernels.c, và -I$(OUT) đứng TRƯỚC -I$(FWDIR) để bản chép thắng.
+WEIGHTS    ?= $(FWDIR)/weights.h
 GIT_HASH   := $(shell git -C ../.. rev-parse --short HEAD 2>/dev/null || echo nogit)
 # Dấu vân tay bao luôn file kernel đang dùng — mỗi biến thể B1 có SRC_HASH riêng.
-SRC_HASH   := $(shell cat main.c $(KERNELS) $(FWDIR)/weights.h | shasum -a 256 | cut -c1-12)
+SRC_HASH   := $(shell cat main.c $(KERNELS) $(WEIGHTS) | shasum -a 256 | cut -c1-12)
 CFLAGS     := $(ARCH) $(OPT) -ffreestanding -fno-builtin -nostdlib -nostartfiles \
               -fno-pic -mno-relax -Wall -Wextra -I$(FWDIR) -I. \
               -DGIT_HASH=\"$(GIT_HASH)\" -DSRC_HASH=\"$(SRC_HASH)\"
@@ -41,11 +45,12 @@ LDF        := $(ARCH) -nostdlib -nostartfiles -T $(LDSCRIPT) -Wl,--gc-sections
 .PHONY: fw clean
 fw: $(OUT)/firmware.hex
 
-$(OUT)/firmware.elf: main.c $(KERNELS) $(FWDIR)/weights.h $(FWDIR)/start.S \
+$(OUT)/firmware.elf: main.c $(KERNELS) $(WEIGHTS) $(FWDIR)/start.S \
                      $(LDSCRIPT) $(FWDIR)/soc.h
 	@mkdir -p $(OUT)
 	@cp $(KERNELS) $(OUT)/kernels.c
-	$(CROSS)gcc $(CFLAGS) -I$(OUT) $(LDF) -Wl,-Map=$(OUT)/firmware.map -o $@ \
+	@cp $(WEIGHTS) $(OUT)/weights.h
+	$(CROSS)gcc -I$(OUT) $(CFLAGS) $(LDF) -Wl,-Map=$(OUT)/firmware.map -o $@ \
 	    $(FWDIR)/start.S main.c
 	$(CROSS)objdump -D $@ > $(OUT)/firmware.dis
 	$(CROSS)size -A $@ | tee $(OUT)/firmware.size.txt

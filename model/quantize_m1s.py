@@ -35,25 +35,33 @@ def relu(x):
 def float_forward(x, w1, b1, w2, b2, w3, b3):
     """Chạy mô hình float bằng numpy, trả về các activation sau ReLU + logits."""
     n = x.shape[0]
-    # conv1: valid, 1 -> 8
-    a1 = np.zeros((n, 8, 26, 26), dtype=np.float64)
-    for oc in range(8):
+    # Mọi kích thước suy từ hình dạng trọng số — không ghim cứng theo M1-S, nên
+    # cùng hàm này chạy được cho mô hình giữ lại M1-L (16/32 kênh).
+    c1 = w1.shape[0]
+    c2 = w2.shape[0]
+    o1 = x.shape[1] - 2                 # 28 -> 26
+    q1 = o1 // 2                        # 26 -> 13
+    o2 = q1 - 2                         # 13 -> 11
+    q2 = o2 // 2                        # 11 -> 5 (lấy sàn: bỏ hàng/cột lẻ)
+    # conv1: valid, 1 -> c1
+    a1 = np.zeros((n, c1, o1, o1), dtype=np.float64)
+    for oc in range(c1):
         for ky in range(3):
             for kx in range(3):
-                a1[:, oc] += x[:, ky:ky + 26, kx:kx + 26] * w1[oc, 0, ky, kx]
+                a1[:, oc] += x[:, ky:ky + o1, kx:kx + o1] * w1[oc, 0, ky, kx]
         a1[:, oc] += b1[oc]
     a1 = relu(a1)
-    p1 = a1.reshape(n, 8, 13, 2, 13, 2).max(axis=(3, 5))
-    # conv2: valid, 8 -> 16
-    a2 = np.zeros((n, 16, 11, 11), dtype=np.float64)
-    for oc in range(16):
-        for ic in range(8):
+    p1 = a1.reshape(n, c1, q1, 2, q1, 2).max(axis=(3, 5))
+    # conv2: valid, c1 -> c2
+    a2 = np.zeros((n, c2, o2, o2), dtype=np.float64)
+    for oc in range(c2):
+        for ic in range(c1):
             for ky in range(3):
                 for kx in range(3):
-                    a2[:, oc] += p1[:, ic, ky:ky + 11, kx:kx + 11] * w2[oc, ic, ky, kx]
+                    a2[:, oc] += p1[:, ic, ky:ky + o2, kx:kx + o2] * w2[oc, ic, ky, kx]
         a2[:, oc] += b2[oc]
     a2 = relu(a2)
-    p2 = a2[:, :, :10, :10].reshape(n, 16, 5, 2, 5, 2).max(axis=(3, 5))
+    p2 = a2[:, :, :2 * q2, :2 * q2].reshape(n, c2, q2, 2, q2, 2).max(axis=(3, 5))
     flat = p2.reshape(n, -1)
     logit = flat @ w3.T + b3
     return a1, p1, a2, p2, logit
@@ -104,9 +112,12 @@ def main() -> int:
     w2q = np.clip(np.rint(w2f / Sw2), -127, 127).astype(np.int8).transpose(0, 2, 3, 1).copy()
     # Dense: torch làm phẳng theo (C,H,W); ta làm phẳng theo (H,W,C) nên phải hoán vị cột
     w3q = np.clip(np.rint(w3f / Sw3), -127, 127).astype(np.int8)
-    w3q = (w3q.reshape(G.NCLS, G.C2, G.POOL2, G.POOL2)
+    _ncls, _c2 = w3f.shape[0], w2f.shape[0]
+    _pool2 = int(round((w3f.shape[1] / _c2) ** 0.5))
+    assert _pool2 * _pool2 * _c2 == w3f.shape[1], (w3f.shape, _c2, _pool2)
+    w3q = (w3q.reshape(_ncls, _c2, _pool2, _pool2)
                .transpose(0, 2, 3, 1)
-               .reshape(G.NCLS, G.NFLAT).copy())
+               .reshape(_ncls, _pool2 * _pool2 * _c2).copy())
     b1q = np.rint(b1f / (S0 * Sw1)).astype(np.int64)
     b2q = np.rint(b2f / (S1 * Sw2)).astype(np.int64)
     b3q = np.rint(b3f / (S2 * Sw3)).astype(np.int64)
@@ -184,17 +195,46 @@ def c_arr(name, arr, ctype, per_line):
             + "\n".join(lines) + "\n};\n")
 
 
-def write_header(path, q, imgs, labels, crc_rows, int8_acc, float_acc):
+def dims(q, img=28):
+    """Suy mọi kích thước từ chính hình dạng trọng số — không ghim cứng theo M1-S.
+
+    `w1` là [Cout][ky][kx][Cin], `w3` là [Cls][flat]. Nhờ vậy cùng một script dùng
+    được cho mô hình giữ lại (M1-L) mà không phải nhân bản mã.
+    """
+    c1 = q["w1"].shape[0]
+    c2 = q["w2"].shape[0]
+    ncls = q["w3"].shape[0]
+    out1 = img - 2
+    pool1 = out1 // 2
+    out2 = pool1 - 2
+    pool2 = out2 // 2
+    flat = pool2 * pool2 * c2
+    assert q["w3"].shape[1] == flat, (q["w3"].shape, flat)
+    mac1 = out1 * out1 * c1 * 1 * 9
+    mac2 = out2 * out2 * c2 * c1 * 9
+    mac3 = flat * ncls
+    return dict(img=img, c1=c1, out1=out1, pool1=pool1, c2=c2, out2=out2,
+                pool2=pool2, ncls=ncls, flat=flat, mac1=mac1, mac2=mac2,
+                mac3=mac3, mac=mac1 + mac2 + mac3)
+
+
+def vn(n):
+    """Số nguyên với dấu chấm phân cách hàng nghìn, đúng quy ước trong mọi tài liệu dự án."""
+    return f"{n:,}".replace(",", ".")
+
+
+def write_header(path, q, imgs, labels, crc_rows, int8_acc, float_acc, name="M1-S"):
     n = len(imgs)
-    hdr = f"""/* M1-S int8 — SINH TỰ ĐỘNG bởi model/quantize_m1s.py. KHÔNG sửa tay.
+    d = dims(q, img=imgs.shape[-1] if imgs.ndim > 1 else 28)
+    hdr = f"""/* {name} int8 — SINH TỰ ĐỘNG bởi model/quantize_m1s.py. KHÔNG sửa tay.
  *
- * Kiến trúc (đầu vào 28x28x1 int8, không đệm biên):
- *   Conv 3x3 1->8  + bias + ReLU + requantize -> 26x26x8   48.672 MAC
- *   MaxPool 2x2                               -> 13x13x8
- *   Conv 3x3 8->16 + bias + ReLU + requantize -> 11x11x16  139.392 MAC
- *   MaxPool 2x2                               ->  5x5x16
- *   Dense 400->10 + bias (giữ int32, argmax)  -> 10          4.000 MAC
- *                                               tổng       192.064 MAC
+ * Kiến trúc (đầu vào {d['img']}x{d['img']}x1 int8, không đệm biên):
+ *   Conv 3x3 1->{d['c1']}  + bias + ReLU + requantize -> {d['out1']}x{d['out1']}x{d['c1']}   {vn(d['mac1'])} MAC
+ *   MaxPool 2x2                               -> {d['pool1']}x{d['pool1']}x{d['c1']}
+ *   Conv 3x3 {d['c1']}->{d['c2']} + bias + ReLU + requantize -> {d['out2']}x{d['out2']}x{d['c2']}  {vn(d['mac2'])} MAC
+ *   MaxPool 2x2                               ->  {d['pool2']}x{d['pool2']}x{d['c2']}
+ *   Dense {d['flat']}->{d['ncls']} + bias (giữ int32, argmax)  -> {d['ncls']}          {vn(d['mac3'])} MAC
+ *                                               tổng       {vn(d['mac'])} MAC
  *
  * Độ chính xác: float {float_acc*100:.2f}% · int8 {int8_acc*100:.2f}% (10.000 ảnh test MNIST)
  * Lượng tử hoá đối xứng, zero-point = 0. requantize kiểu gemmlowp (M0, shift).
@@ -207,20 +247,20 @@ def write_header(path, q, imgs, labels, crc_rows, int8_acc, float_acc):
 #ifndef WEIGHTS_H
 #define WEIGHTS_H
 
-#define M1S_IMG     28
-#define M1S_C1      8
-#define M1S_OUT1    26
-#define M1S_POOL1   13
-#define M1S_C2      16
-#define M1S_OUT2    11
-#define M1S_POOL2   5
-#define M1S_NCLS    10
+#define M1S_IMG     {d['img']}
+#define M1S_C1      {d['c1']}
+#define M1S_OUT1    {d['out1']}
+#define M1S_POOL1   {d['pool1']}
+#define M1S_C2      {d['c2']}
+#define M1S_OUT2    {d['out2']}
+#define M1S_POOL2   {d['pool2']}
+#define M1S_NCLS    {d['ncls']}
 #define M1S_M0_1    {q['m0_1']}
 #define M1S_SH_1    {q['sh_1']}
 #define M1S_M0_2    {q['m0_2']}
 #define M1S_SH_2    {q['sh_2']}
 #define M1S_NIMG    {n}
-#define M1S_MAC     192064
+#define M1S_MAC     {d['mac']}
 
 {c_arr("m1s_w1", q["w1"], "signed char", 9)}
 {c_arr("m1s_b1", q["b1"], "int", 8)}

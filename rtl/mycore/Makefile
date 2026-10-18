@@ -248,6 +248,23 @@ $(eval $(call S6VAR,bs6off,$(M1S)/v1dcr/firmware.hex,A-V1+DOT4+C1+REQ,--append))
 $(eval $(call S6VAR,bs7ref,$(S6)/cdp32/firmware.hex,A-V1+DOT4+C1+REQ,--append))
 $(eval $(call S6VAR,bs7dp,$(S6)/cdp32/firmware.hex,A-V1+DOT4+C1+REQ,--append))
 
+# ---------------- bước S8: mô hình giữ lại (M1-L) ----------------
+# Sáu biến thể = 3 mức phần mềm x 2 mô hình, dùng CÙNG một bộ kernel tổng quát
+# (experiment/m1s_s6/cand/gen_*.c) nên phép so mô hình-với-mô hình là sòng phẳng:
+#   gen_plain — C thẳng, không lệnh tùy biến   -> chạy trên B-V1 (VTAG 100)
+#   gen_dcr   — DOT4 + bố cục 4 pha + REQ      -> chạy trên B-V3 (VTAG 110)
+#   gen_dcrp  — thêm PMAX4                     -> chạy trên B-V3+PMAX4 (VTAG 111p)
+# gs_* là M1-S (192.064 MAC), gl_* là M1-L (662.912 MAC, 3,45x) — mô hình GIỮ LẠI,
+# không hề dùng khi chọn ứng viên phần cứng ở S5/S6/S7.
+# Chạy ví dụ:
+#   make sim-gl_dcrp WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1
+$(eval $(call S6VAR,gs_plain,$(S6)/gs_plain/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+$(eval $(call S6VAR,gl_plain,$(S6)/gl_plain/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+$(eval $(call S6VAR,gs_dcr,$(S6)/gs_dcr/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+$(eval $(call S6VAR,gl_dcr,$(S6)/gl_dcr/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+$(eval $(call S6VAR,gs_dcrp,$(S6)/gs_dcrp/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+$(eval $(call S6VAR,gl_dcrp,$(S6)/gl_dcrp/firmware.hex,A-V1+DOT4+C1+REQ,--append))
+
 archive:
 	@mkdir -p $(RESULTS)
 	@for v in bv0 bv1 bv0r bv1r bv2 bv1d bv1dc bv1dcr; do \

@@ -30,18 +30,26 @@ HERE = Path(__file__).resolve().parent
 
 
 class M1S(nn.Module):
-    def __init__(self):
+    """Cùng một kiến trúc, số kênh tham số hoá.
+
+    Mặc định (8, 16) là M1-S đúng như kế hoạch. Mô hình giữ lại M1-L dùng (16, 32)
+    — gấp đôi kênh — và chạy qua ĐÚNG script này, ĐÚNG script lượng tử hoá, ĐÚNG
+    golden của M1-S. Không có nhánh mã riêng cho mô hình giữ lại, nên nó thật sự
+    "giữ lại": không gì trong đường đo được chỉnh theo nó.
+    """
+
+    def __init__(self, c1=8, c2=16, ncls=10):
         super().__init__()
-        self.c1 = nn.Conv2d(1, 8, 3, bias=True)     # 28 -> 26
-        self.c2 = nn.Conv2d(8, 16, 3, bias=True)    # 13 -> 11
-        self.fc = nn.Linear(400, 10, bias=True)
+        self.c1 = nn.Conv2d(1, c1, 3, bias=True)     # 28 -> 26
+        self.c2 = nn.Conv2d(c1, c2, 3, bias=True)    # 13 -> 11
+        self.fc = nn.Linear(5 * 5 * c2, ncls, bias=True)
 
     def forward(self, x):
         x = F.relu(self.c1(x))
         x = F.max_pool2d(x, 2)                      # 26 -> 13
         x = F.relu(self.c2(x))
         x = F.max_pool2d(x, 2)                      # 11 -> 5
-        x = x.flatten(1)                            # 5*5*16 = 400
+        x = x.flatten(1)                            # 5*5*C2
         return self.fc(x)
 
 
@@ -68,6 +76,9 @@ def main() -> int:
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--seed", type=int, default=1234)
     ap.add_argument("--out", default=str(HERE / "m1s_float.npz"))
+    ap.add_argument("--c1", type=int, default=8, help="số kênh conv1 (M1-S: 8, M1-L: 16)")
+    ap.add_argument("--c2", type=int, default=16, help="số kênh conv2 (M1-S: 16, M1-L: 32)")
+    ap.add_argument("--name", default=None, help="tên mô hình để in ra (mặc định suy từ kênh)")
     args = ap.parse_args()
 
     torch.manual_seed(args.seed)
@@ -79,10 +90,12 @@ def main() -> int:
     xte = to_tensor(ex)
     yte = torch.from_numpy(ey.astype(np.int64))
 
-    net = M1S()
+    net = M1S(args.c1, args.c2)
     nparam = sum(p.numel() for p in net.parameters())
-    print(f"# Huấn luyện M1-S")
-    print(f"tham số    : {nparam} (kế hoạch: 5.258)")
+    name = args.name or ("M1-S" if (args.c1, args.c2) == (8, 16) else
+                         f"M1-?({args.c1}/{args.c2})")
+    print(f"# Huấn luyện {name}  (conv1 1->{args.c1}, conv2 {args.c1}->{args.c2})")
+    print(f"tham số    : {nparam}" + (" (kế hoạch: 5.258)" if name == "M1-S" else ""))
     print(f"train/test : {len(xtr)} / {len(xte)}")
     print(f"epochs={args.epochs} batch={args.batch} lr={args.lr} seed={args.seed}")
 
