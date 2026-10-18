@@ -2,6 +2,69 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — Dòng 15 ĐẠT: nguyên nhân nằm ở script đo của chính tôi, không phải ở kit
+
+Người dùng đồng ý hướng `--keep-open`. Làm xong, đo lại, **ĐẠT ngay lần đầu**.
+
+### Kết quả
+
+Run `20261018-221645-kit` với `--keep-open`:
+
+| | trước (đóng/mở cổng giữa hai lần đọc) | sau (`--keep-open`) |
+|---|---|---|
+| lần đọc 1 | ĐẠT | ĐẠT |
+| lần đọc 2 | **0 dòng thô**, 4 run liên tiếp | **ĐẠT** |
+| thời gian `check` | 46,1 s | **4,2 s** |
+
+Thoả **đủ** tiêu chí trong một run: CRC 5 tensor × 10 ảnh = golden 10/10 · dự đoán khớp golden
+10/10 · chu kỳ kit = Verilator bằng tuyệt đối từng ảnh · **2/2 lần đọc** · chốt `SRC_HASH`
+= `a7dca19c8cec` · 10/10 dòng CSV. **Dòng 15 đã vào bảng chính.**
+
+Bảng chính nay có **16 dòng**: 332,9 ms → **9,0 ms**, **36,89×**, 110,8 ảnh/s, vẫn đúng từng bit.
+
+### Nguyên nhân thật — và đó là lỗi của chính dự án
+
+`scripts/m1s_check.py` đóng cổng serial sau mỗi lần đọc rồi mở lại cho lần sau, trong khi kit
+**vẫn phát liên tục**; bộ đệm FT2232 đầy và kênh kẹt ở đúng nhịp mở lại. Không phải lỗi phần cứng
+kit, không phải lỗi thiết kế RTL. **Bốn lần tôi đã bắt người dùng rút/cắm lại cáp USB trong khi
+nguyên nhân nằm ngay trong mã nguồn của dự án.**
+
+Con số 46,1 s → 4,2 s khớp với giải thích: phần lớn 46 s kia là lần đọc 2 **chờ hết timeout**.
+
+### Hai giả thuyết của tôi trong phiên này: một sai, một đúng
+
+1. **Sai** — "kênh UART chịu được ba lần truyền dài sau mỗi lần cắm cáp rồi chết". Run `220038`
+   bác bỏ: đo PMAX4 ngay sau khi cắm cáp, lần truyền dài đầu tiên, vẫn chết ở lần đọc 2. Tôi đã
+   sửa lại chỗ đã viết giả thuyết này vào báo cáo.
+2. **Đúng** — "nhịp đóng/mở cổng giữa hai lần đọc làm kẹt kênh". Run `221645` xác nhận.
+
+Khác biệt giữa hai lần: giả thuyết 1 suy từ **thứ tự thời gian** của các lần thất bại; giả thuyết 2
+suy từ **đọc mã nguồn** của đường đo. Cái thứ hai mới là chỗ đáng nhìn trước.
+
+### Bài học ghi lại
+
+**Khi một phép đo hỏng lặp lại ở ĐÚNG một chỗ — lần đọc 2, mất SẠCH chứ không phải sai — hãy nghi
+hạ tầng đo trước khi nghi phần cứng.** Phép đối chứng `min/top.fs` chỉ nói được "đường UART đang
+chết"; nó không nói được **ai** làm nó chết, nên dễ dẫn tới kết luận "kit hỏng" và cứ thế rút cắm.
+
+### Về cách sửa: không nới tiêu chí
+
+`--keep-open` **mặc định tắt**, nên mọi số đã ghi nhận giữ nguyên cách đo. Hai lần đọc vẫn là hai
+khối báo cáo độc lập — thậm chí chặt hơn, vì không có gì bị khởi động lại ở giữa. Đã kiểm riêng
+đường mặc định bằng cổng giả: vẫn mở → đọc một khối → đóng cổng.
+
+Phép chạy khô trước khi đo cũng bắt được một lỗi thật của bản đầu: hàm đọc vứt phần byte dư sau
+khi parse xong, mà khối kế tiếp thường đã nằm sẵn trong chunk vừa đọc — nên lần đọc 2 trả `None`
+dù dữ liệu có trong luồng. `BlockReader` giữ lại phần dư đó. **Nếu không chạy khô thì đã tốn thêm
+một lần cắm cáp của người dùng để phát hiện.**
+
+### Trạng thái
+
+S0–S7 ĐẠT hết. Bảng chính đủ 16 dòng. Còn lại: **S8** (mô hình giữ lại) và **S9** (báo cáo tổng
+hợp). Ràng buộc đã biết cho S8: B-V4 chỉ còn 1.180 byte ngăn xếp, mô hình lớn hơn có thể không
+vừa RAM 32 KB — cân nhắc đo mô hình giữ lại trên B-V3/B-V3+PMAX4 (RAM 64 KB).
+
+
 ## 2026-10-18 — PMAX4 lần thử 4: giả thuyết của tôi bị bác bỏ, dừng theo quy tắc 3 lần
 
 Người dùng cắm lại cáp USB. Tôi đo **PMAX4 trước tiên**, không chạy gì khác trước nó —

@@ -6,7 +6,7 @@ Mô hình: M1-S (CNN int8, MNIST, 192.064 MAC) · Kế hoạch gốc: xem `CLAUD
 Tài liệu này là bảng tổng kết. Chi tiết: `docs/FEASIBILITY_REPORT.md` (F0–F8),
 `docs/KET_QUA_M1S.md` (nhánh A), `docs/KET_QUA_NHANH_B.md` (nhánh B), `docs/LOG.md` (nhật ký).
 
-## 1. Mười lăm cấu hình, tất cả đo trên phần cứng thật
+## 1. Mười sáu cấu hình, tất cả đo trên phần cứng thật
 
 | # | Biến thể | Phần cứng | Chu kỳ/ảnh | ms | chu kỳ/MAC | IPC | ảnh/s | so A-V0 |
 |---|---|---|---:|---:|---:|---:|---:|---:|
@@ -24,18 +24,22 @@ Tài liệu này là bảng tổng kết. Chi tiết: `docs/FEASIBILITY_REPORT.m
 | 12 | B-V1+DOT4 | mycore + DOT4 | 631.130 | 23,4 | 3,29 | 0,730 | 42,8 | 14,24× |
 | 13 | B-V1+DOT4+C1 | mycore + DOT4 | 487.865 | 18,1 | 2,54 | 0,802 | 55,3 | 18,42× |
 | 14 | **B-V3** | mycore + DOT4 + REQ | **365.992** | **13,6** | **1,91** | 0,759 | **73,8** | **24,56×** |
+| 15 | B-V3+PMAX4 † | mycore + DOT4 + REQ + PMAX4 | 317.878 | 11,8 | 1,66 | 0,743 | 84,9 | 28,27× |
 | 16 | **B-V4** † | mycore + DOT4 + REQ + PMAX4 + bộ nhớ hai cổng | **243.641** | **9,0** | **1,27** | **0,970** | **110,8** | **36,89×** |
 
 **Từ 332,9 ms xuống 13,6 ms — 24,6× — trên cùng một FPGA, cùng một xung nhịp 27 MHz, cùng một mô
 hình, và mọi lớp vẫn đúng từng bit so với golden Python.** 73,8 ảnh/giây. Đó là kết quả của hai
 nhánh A và B (dòng 1–14).
 
-† **Dòng 16 đến từ giai đoạn sau**: pipeline đồng thiết kế có AI hỗ trợ (bước S7). Nó đẩy tiếp
-xuống **9,0 ms — 36,89× — 110,8 ảnh/giây**, và là ứng viên đầu tiên có **dự báo đúng tuyệt đối**
-(mức A: dự báo 243.641, đo 243.641, sai số 0,00 %). Dòng 15 (PMAX4, 317.878 chu kỳ, 28,27×) đã đo
-trên kit nhưng chưa thoả đủ tiêu chí trong **một** run — xem mục dưới. Vì B-V4 **bao gồm** PMAX4,
-phép đo ĐẠT của dòng 16 đã xác nhận lệnh PMAX4 chạy đúng trên phần cứng thật; chỉ riêng **con số
-317.878 của dòng 15** là còn thiếu một run sạch.
+† **Hai dòng 15 và 16 đến từ giai đoạn sau**: pipeline đồng thiết kế có AI hỗ trợ (bước S6 và S7).
+Cả hai đều do pipeline **tự đề xuất**, tự dự báo trước khi hiện thực, rồi mới đo:
+
+- **Dòng 15 — PMAX4** (lệnh lấy max gói 4 làn int8 cho pooling), do bước S5 sinh ra ở **chế độ mù**:
+  dự báo mức B **316.695** chu kỳ ghi trước khi viết RTL, đo được **317.878** — **sai 0,37 %**.
+- **Dòng 16 — bộ nhớ hai cổng**: dự báo **mức A** **243.641** chu kỳ ghi trước khi viết RTL,
+  đo được **243.641** — **sai 0,00 %**, vì mức A là đẳng thức chứ không phải ước lượng.
+
+Từ 332,9 ms xuống **9,0 ms — 36,89× — 110,8 ảnh/giây**, vẫn đúng từng bit.
 
 ### Điều kiện để một dòng được ghi nhận
 Mọi dòng đều thoả **tất cả**: CRC32 của **cả 5 tensor trung gian** × 10 ảnh khớp golden Python ·
@@ -46,14 +50,13 @@ kiểm **từ chối** ghi nhận nếu lệch.
 Nhánh B chạy **đúng các file `firmware.hex` của nhánh A, không biên dịch lại**, nên `rdinstret` khớp
 **tuyệt đối** từng cặp — mọi chênh lệch giữa hai nhánh là **thuần vi kiến trúc**.
 
-### Hai dòng của pipeline đồng thiết kế: một đã vào bảng, một còn thiếu một run sạch
+### Hai dòng của pipeline đồng thiết kế — cả hai nay đã thoả đủ tiêu chí
 
 Pipeline đồng thiết kế (S5–S7) đã đề xuất, dự báo, hiện thực và kiểm hai thay đổi phần cứng
-tiếp theo. **Dòng 16 (B-V4) đã thoả đủ tiêu chí và đã vào bảng chính** (run
-`pipeline/runs/20261018-214712-kit`). **Dòng 15 (PMAX4) chưa** — thiếu đúng một run gộp cả
-2/2 lần đọc và chốt `SRC_HASH`.
+tiếp theo. **Cả hai nay đều có một run duy nhất thoả đủ tiêu chí** và đã vào bảng chính:
+dòng 15 ở run `20261018-221645-kit`, dòng 16 ở run `20261018-214712-kit`.
 
-#### Dòng 15: B-V3+PMAX4 — 317.878 chu kỳ, 28,27× (đã đo trên kit, chưa đủ trong một run)
+#### Dòng 15: B-V3+PMAX4 — 317.878 chu kỳ, 28,27× (đã đo trên kit, ĐẠT đủ tiêu chí)
 
 Lệnh thứ ba (`PMAX4`, lấy max gói 4 làn int8 cho pooling) do pipeline đồng thiết kế S5/S6 đề xuất,
 đã hiện thực và **đo trên kit thật**:
@@ -65,30 +68,21 @@ Lệnh thứ ba (`PMAX4`, lấy max gói 4 làn int8 cho pooling) do pipeline đ
 Hai lớp pooling: 54.991 → 6.899 chu kỳ. Giá phần cứng **+148 LUT4** (+3,5 %), Fmax 65,89 → 55,26 MHz
 (vẫn ĐẠT ràng buộc 27 MHz). Dự báo ghi **trước** khi viết RTL: 316.695 chu kỳ — **sai số +0,37 %**.
 
-**Vì sao chưa vào bảng trên.** Tiêu chí ghi nhận đòi **đồng thời** 2/2 lần đọc **và** chốt `SRC_HASH`
-trong **một** phép đo. Đã có **ba** run, mọi tiêu chí đều có bằng chứng nhưng **rải ra**:
+**Đã ĐẠT đủ tiêu chí trong một run** (`20261018-221645-kit`): CRC 5 tensor × 10 ảnh = golden
+10/10 · dự đoán khớp golden 10/10 · chu kỳ kit = Verilator **bằng tuyệt đối từng ảnh** ·
+**2/2 lần đọc độc lập** · chốt `SRC_HASH` = `a7dca19c8cec` · 10/10 dòng CSV.
 
-| run | nội dung (CRC, dự đoán, kit=Verilator) | 2/2 lần đọc | chốt `SRC_HASH` | ghi chú |
-|---|---|---|---|---|
-| `190740` | ĐẠT | **2/2** | không | |
-| `190840` | ĐẠT ở lần đọc 1 | 1/2 | **có** | chết ở lần đọc 2 |
-| `214915` | ĐẠT ở lần đọc 1 | 1/2 | **có** | chết ở lần đọc 2 |
-| `220038` | ĐẠT ở lần đọc 1 | 1/2 | **có** | chết ở lần đọc 2, **dù đo ngay sau khi cắm cáp** |
+**Phải mất năm lần thử, và nguyên nhân hoá ra nằm ở script đo, không phải ở kit.** Bốn run
+trước đều ĐẠT ở lần đọc 1 rồi **mất sạch** dữ liệu ở lần đọc 2 (0 dòng thô, không phải dữ liệu
+sai), và mỗi lần đều phải nhờ người dùng rút/cắm lại cáp USB. Nghi can: `scripts/m1s_check.py`
+**đóng cổng serial sau mỗi lần đọc rồi mở lại** cho lần sau, trong khi kit vẫn phát liên tục —
+kênh FT2232 kẹt ở đúng nhịp đó. Thêm tuỳ chọn `--keep-open` (giữ cổng mở xuyên hai lần đọc,
+**mặc định tắt** nên không đổi cách đo của mọi số đã ghi nhận) thì **lần đọc 2 qua ngay**, và
+toàn bộ phép kiểm chạy **4,2 s** thay vì 46 s. Giả thuyết được xác nhận.
 
-Cả bốn nạp **cùng một tệp nhị phân giống từng bit**. Ba run sau chết ở lần đọc 2 vì **UART của kit
-chết** (đối chứng sau cho 0 byte ở cả hai cổng, JTAG vẫn nạp được).
-
-**Một giả thuyết đã bị bác bỏ.** Sau run `214915` tôi cho rằng kênh UART chịu được khoảng ba lần
-truyền dài sau mỗi lần cắm cáp rồi mới chết, và rằng đo PMAX4 **trước tiên** sẽ qua. Run `220038`
-đo PMAX4 ngay sau khi cắm lại cáp, là lần truyền dài **đầu tiên** — vẫn chết đúng ở lần đọc 2.
-Giả thuyết sai; chưa biết cơ chế thật.
-
-**Điều quan sát được còn đứng vững**: lần đọc 1 luôn ĐẠT, lần đọc 2 luôn mất sạch (0 dòng thô), và
-riêng B-V4 thì qua được cả hai. Một nghi can ở phía phần mềm: `scripts/m1s_check.py` **đóng cổng
-serial sau mỗi lần đọc rồi mở lại** cho lần sau (`read_kit()` có `finally: ser.close()`), trong khi
-kit vẫn phát liên tục — kênh FT2232 có thể kẹt ở đúng nhịp đó. Chưa kiểm chứng.
-
-Dòng 15 chỉ vào bảng chính khi có một run duy nhất đạt 2/2 **và** chốt hash.
+Một giả thuyết trước đó — "kênh UART chịu được ba lần truyền dài sau mỗi lần cắm cáp rồi chết" —
+**đã bị bác bỏ** bởi run `220038`: đo PMAX4 ngay sau khi cắm cáp, là lần truyền dài đầu tiên,
+vẫn chết đúng ở lần đọc 2.
 
 Chi tiết và log thô: `results/pipeline/S6/kit/README.md`.
 

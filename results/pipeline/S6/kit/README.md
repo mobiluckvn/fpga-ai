@@ -65,6 +65,7 @@ golden · chu kỳ kit = Verilator bằng tuyệt đối · **2/2 lần đọc �
 | B-V3+PMAX4, run `190840` | ĐẠT ở lần đọc 1 | **1/2** | **có** (`a7dca19c8cec`) | UART chết ở lần đọc 2 |
 | B-V3+PMAX4, run `214915` | ĐẠT ở lần đọc 1 | **1/2** | **có** (`a7dca19c8cec`) | UART chết ở lần đọc 2 (**y hệt**) |
 | B-V3+PMAX4, run `220038` | ĐẠT ở lần đọc 1 | **1/2** | **có** (`a7dca19c8cec`) | chết ở lần đọc 2 **dù là lần truyền dài ĐẦU TIÊN sau khi cắm cáp** |
+| **B-V3+PMAX4, run `221645`** | **ĐẠT** | **2/2** | **có** (`a7dca19c8cec`) | **thoả đủ trong một run** — chạy với `--keep-open` |
 
 Hai run PMAX4 nạp **cùng một tệp nhị phân, giống từng bit**:
 `firmware.hex sha256 = e477ee612247d892abc3c82cf34f0bb1490acbd3d34c6cfaf2e4bbcca7bfd3f7`
@@ -119,8 +120,37 @@ lần đọc (đọc hai khối báo cáo liên tiếp từ cùng một luồng,
 đọc vẫn độc lập về nội dung — thậm chí chặt hơn, vì không có gì bị khởi động lại ở giữa. Tuỳ chọn
 phải **mặc định tắt** để mọi số đã ghi nhận trước đây giữ nguyên cách đo.
 
-PMAX4 nay có **bốn** run với lần đọc 1 đạt đủ nội dung và **một** run đạt 2/2 (không chốt hash),
-tất cả trên cùng một tệp nhị phân giống từng bit. Thiếu duy nhất vẫn là một run gộp cả hai điều kiện.
+### Lần thử 5 (run `221645`) — ĐẠT, và nghi can trên được XÁC NHẬN
+
+Thêm tuỳ chọn `--keep-open` cho `scripts/m1s_check.py`: giữ cổng serial **mở** xuyên suốt hai lần
+đọc, đọc hai khối báo cáo liên tiếp từ cùng một luồng thay vì đóng rồi mở lại. **Mặc định tắt**,
+nên cách đo của mọi số đã ghi nhận trước đây không đổi. Truyền qua `CHECK_EXTRA` của
+`rtl/mycore/Makefile` và `./cdp kit --keep-open`.
+
+Kết quả ngay lần chạy đầu:
+
+| | trước (đóng/mở cổng) | sau (`--keep-open`) |
+|---|---|---|
+| lần đọc 1 | ĐẠT | ĐẠT |
+| lần đọc 2 | **0 dòng thô** (4 lần liên tiếp) | **ĐẠT** |
+| thời gian chạy `check` | 46,1 s | **4,2 s** |
+
+**Nghi can được xác nhận: nhịp đóng rồi mở lại cổng serial giữa hai lần đọc làm kẹt kênh FT2232**,
+trong khi kit vẫn phát liên tục và bộ đệm đầy. Không phải lỗi phần cứng kit, không phải lỗi thiết
+kế — là lỗi của chính script đo. Bốn lần trước đó tôi đã bắt người dùng rút/cắm lại cáp mà nguyên
+nhân nằm ngay trong mã nguồn của dự án.
+
+Thời gian 46,1 s → 4,2 s cũng khớp: phần lớn 46 s kia là lần đọc 2 **chờ hết timeout** chứ không
+phải truyền dữ liệu.
+
+**Bài học**: khi một phép đo hỏng lặp đi lặp lại ở ĐÚNG một chỗ (lần đọc 2, mất sạch chứ không
+phải sai), hãy nghi hạ tầng đo trước khi nghi phần cứng. Phép đối chứng `min/top.fs` chỉ nói được
+"đường UART đang chết", nó không nói được **ai** làm nó chết.
+
+### Tổng kết dòng B-V3+PMAX4
+
+Năm run, cùng một tệp nhị phân giống từng bit. Run `221645` thoả **đủ** mọi tiêu chí trong một
+run duy nhất, nên **dòng 15 đã vào bảng chính** của `docs/KET_QUA_TONG_HOP.md`.
 
 ## 5. Phân loại nguyên nhân thất bại — và hai lỗi của tôi
 

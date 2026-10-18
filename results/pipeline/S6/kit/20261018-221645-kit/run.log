@@ -1,0 +1,26 @@
+# cdp kit · đặc tả s6_pmax4.yaml → cấu hình B-V3+PMAX4 (mycore + DOT4 + REQ + PMAX4)
+    cổng UART thấy được: ['/dev/cu.usbserial-20250303170', '/dev/cu.usbserial-20250303171']
+[cây bóng] pipeline/work/s1 (dùng lại)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_s6 fw KERNELS=cand/pmax4.c OUT=cpmax4   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_s6)
+    make fw → rc=0 · 0.1 s · log logs/make-fw-cpmax4.log
+    firmware cpmax4: .text 18,772 + .data 0 + .bss 12,816 = 31,588/65,536 byte (48.2 %, còn 33,948 byte cho ngăn xếp)
+    sha256(firmware.hex) = e996de2d9b093423…
+    [đối chứng] dựng + nạp min/top.fs (thiết kế đã biết chạy)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore build-min   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make build-min → rc=0 · 0.1 s · log logs/make-build-min.log
+    [đối chứng] số lần thấy 'MIN': {'/dev/cu.usbserial-20250303170': 0, '/dev/cu.usbserial-20250303171': 8} → ĐẠT, cổng phát byte: /dev/cu.usbserial-20250303171
+    xoá 10 dòng cũ của `bs6pmax4` trong CSV trước khi đo lại (giữ bản sao để phục hồi nếu đo thất bại)
+    nạp bs6pmax4/top.fs (SRAM)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore load-bs6pmax4 FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make load-bs6pmax4 → rc=0 · 2.9 s · log logs/make-load-bs6pmax4.log
+    giữ cổng serial mở xuyên suốt hai lần đọc (--keep-open)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore check-bs6pmax4 FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1 UART_PORT=/dev/cu.usbserial-20250303171 CSV_APPEND=--append CHECK_EXTRA=--keep-open   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make check-bs6pmax4 → rc=0 · 4.2 s · log logs/make-check-bs6pmax4.log
+
+    số dòng CSV          : 10 (mong đợi 10)
+    trung vị chu kỳ/ảnh  : 317.878 · bảng 317.878 ✓
+    kit = Verilator từng ảnh: BẰNG TUYỆT ĐỐI
+    m1s_check.py         : M1S_PASS
+
+=> ĐẠT
+[run 20261018-221645-kit] ok · 15.8 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-221645-kit
