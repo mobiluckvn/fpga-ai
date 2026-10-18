@@ -12,7 +12,10 @@ S6         := ../../experiment/m1s_s6
 # Dấu vân tay nội dung mã nguồn của biến thể S6 — PHẢI tính cùng công thức với
 # experiment/m1s_s6/Makefile, nếu không thì m1s_check.py sẽ từ chối số đo.
 S6_KERNELS ?= cand/pmax4.c
-S6_SRC_HASH := $(shell cat $(S6)/main.c $(S6)/$(S6_KERNELS) ../../fw/weights.h | shasum -a 256 | cut -c1-12)
+# Dấu vân tay nguồn phải tính trên ĐÚNG bộ tệp đã dựng firmware đó. Bước S8 đổi cả
+# kernel lẫn header trọng số, nên cả hai thành biến. Mặc định giữ nguyên của M1-S.
+S6_WEIGHTS  ?= ../../fw/weights.h
+S6_SRC_HASH := $(shell cat $(S6)/main.c $(S6)/$(S6_KERNELS) $(S6_WEIGHTS) | shasum -a 256 | cut -c1-12)
 RESULTS    := ../../results/branch_b
 CORE       := soc_b.v mycore.v ../uart/uart_tx.v ../uart/uart_rx.v
 

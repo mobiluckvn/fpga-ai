@@ -135,9 +135,44 @@ Giá thứ ba chỉ lộ ra khi có một mô hình thứ hai. Đó là lý lẽ
 
 ## 8. Còn thiếu
 
-- **Chưa đo M1-L trên kit.** Bitstream `gl_dcrp` đang dựng. Verilator đã đúng bit 10/10.
-- **Chưa có dòng PicoRV32** cho M1-L (nhánh A dùng cây RTL khác). Bảng hiện so trong nội bộ
-  các cấu hình mycore, đủ để trả lời PQ6.
+### Chưa đo M1-L trên kit — lần thử 1 thất bại vì đường UART
+
+Bitstream `gl_dcrp` đã dựng xong (Fmax **59,08 MHz**, LUT4 4.459 = 21,5 %, BSRAM 32/46),
+nạp SRAM thành công (`DONE`). Nhưng cả hai lượt đọc đều **0 dòng thô**, và phép đối chứng sau
+(nạp `min/top.fs`) cũng **0 byte** → **đường UART chết, không phải lỗi thiết kế**.
+
+Điều đáng ghi: **ngay trước lần nạp này, UART đang sống** — đọc thô được **6.662 byte** từ
+cấu hình `bs6pmax4` còn lại của lần đo trước. Tức kênh sống qua trọn một phép đo `--keep-open`,
+rồi chết trong khoảng giữa phép đọc thô đó và lần đo này.
+
+**Nhận định đã tinh lại** (chưa kiểm chứng): kênh UART của FT2232 kẹt khi **kit phát một lúc mà
+phía máy không có ai đọc** — bộ đệm tràn. Điều này khớp với cả ba quan sát:
+
+| tình huống | có khoảng trống không ai đọc? | kết quả |
+|---|---|---|
+| 4 run trước, giữa lần đọc 1 và 2 (cổng đóng rồi mở lại) | **có** | chết |
+| run `221645` với `--keep-open` | không | **ĐẠT 2/2** |
+| lần này: đọc thô rồi đóng cổng, chạy `make load` | **có** | chết |
+
+Nhận định cũ ("đóng/mở cổng làm kẹt") là **trường hợp riêng** của nhận định này. Chưa đủ bằng
+chứng để khẳng định; cần một phép kiểm có chủ đích.
+
+### Một lỗi phải sửa trước lần đo sau
+
+`scripts/m1s_check.py` nạp golden từ `fw/weights.h` **mặc định**, nên nếu không truyền
+`--weights ../../fw/weights_m1l.h` thì CRC của M1-L sẽ bị so với golden của M1-S và chắc chắn
+sai. Tuỳ chọn `--weights` đã có sẵn, chỉ cần truyền qua `CHECK_EXTRA`. Dòng in "Độ chính xác mô
+hình" vẫn lấy từ npz của M1-S — chỉ là hiển thị, không ảnh hưởng ĐẠT/KHÔNG ĐẠT, nhưng gây hiểu nhầm.
+
+Lệnh đầy đủ cho lần sau:
+
+    make -C rtl/mycore load-gl_dcrp  WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1
+    make -C rtl/mycore check-gl_dcrp WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1 \
+        S6_KERNELS=cand/gen_dcrp.c S6_WEIGHTS=../../fw/weights_m1l.h \
+        CHECK_EXTRA="--keep-open --weights ../../fw/weights_m1l.h" CSV_APPEND=--append
+
+### Chưa có dòng PicoRV32 cho M1-L
+Nhánh A dùng cây RTL khác. Bảng hiện so trong nội bộ các cấu hình mycore, đủ để trả lời PQ6.
 
 ## 9. Tệp
 
