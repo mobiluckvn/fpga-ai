@@ -27,8 +27,30 @@ import serial
 
 HERE = Path(__file__).resolve().parent
 WEIGHTS_H = HERE.parent / "fw" / "weights.h"
+# Số MAC mặc định là của M1-S; `macs_from_weights()` ghi đè theo đúng header đang dùng,
+# nên cột "chu kỳ/MAC" đúng cho cả mô hình giữ lại M1-L (662.912 MAC). Trước khi có hàm
+# này, phép đo M1-L in ra 5,81 chu kỳ/MAC vì chia cho 192.064 của M1-S.
 MAC_TOTAL = 192064
 MAC_LAYER = {"conv1": 48672, "conv2": 139392, "dense": 4000, "pool1": 0, "pool2": 0}
+
+
+def macs_from_weights(path):
+    """Suy số MAC từng lớp từ các #define trong weights.h (do quantize sinh ra)."""
+    txt = pathlib.Path(path).read_text() if not isinstance(path, Path) else path.read_text()
+    d = {k: int(v) for k, v in
+         re.findall(r"^#define\s+M1S_(\w+)\s+(\d+)\s*$", txt, re.M)}
+    try:
+        c1, c2 = d["C1"], d["C2"]
+        o1, o2 = d["OUT1"], d["OUT2"]
+        p2, ncls = d["POOL2"], d["NCLS"]
+    except KeyError:
+        return None, None
+    lay = {"conv1": o1 * o1 * c1 * 9,
+           "conv2": o2 * o2 * c2 * c1 * 9,
+           "dense": p2 * p2 * c2 * ncls,
+           "pool1": 0, "pool2": 0}
+    tot = d.get("MAC", sum(lay.values()))
+    return tot, lay
 LINE_RE = re.compile(r"^M1S,([a-z]+),?(.*)$")   # dấu phẩy thứ hai là tùy chọn: dòng "M1S,done" không có
 
 
@@ -218,6 +240,10 @@ def main() -> int:
         say("# M1-S check")
         say(f"Thời điểm: {time.strftime('%Y-%m-%d %H:%M:%S %z')}  ·  biến thể: {args.variant}")
         g = read_golden(Path(args.weights))
+        _tot, _lay = macs_from_weights(Path(args.weights))
+        if _tot:
+            global MAC_TOTAL, MAC_LAYER
+            MAC_TOTAL, MAC_LAYER = _tot, _lay
         nimg = len(g["m1s_labels"])
         if g["acc"]:
             say(f"Độ chính xác mô hình (10.000 ảnh test): float {g['acc'][0]:.2f}% · "

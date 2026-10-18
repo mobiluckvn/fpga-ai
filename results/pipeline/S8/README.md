@@ -31,7 +31,7 @@ Ba phép kiểm giống-hệt-từng-bit chứng minh việc tổng quát hoá k
 | M1-S | B-V3+PMAX4 | 317.878 | 11,8 | 1,66 | 0,743 | **7,699×** | ĐẠT 10/10 |
 | **M1-L** | B-V1 (C thẳng) | 7.637.179 | 282,9 | 11,52 | 0,731 | 1,000× | ĐẠT 10/10 |
 | **M1-L** | B-V3 (DOT4+REQ) | 1.208.331 | 44,8 | 1,82 | 0,710 | **6,320×** | ĐẠT 10/10 |
-| **M1-L** | B-V3+PMAX4 | **1.116.402** | **41,3** | **1,68** | 0,698 | **6,841×** | ĐẠT 10/10 |
+| **M1-L** | B-V3+PMAX4 | **1.116.402** | **41,3** | **1,68** | 0,698 | **6,841×** | ĐẠT 10/10 · **đo trên kit** |
 
 "đúng bit" = firmware tự so CRC32 của **cả 5 tensor trung gian** với golden Python nhúng sẵn,
 10/10 ảnh, và dự đoán khớp golden. Dòng `M1S,sum,10,10,10,10` trong mọi `sim/*_sim.log`.
@@ -135,7 +135,28 @@ Giá thứ ba chỉ lộ ra khi có một mô hình thứ hai. Đó là lý lẽ
 
 ## 8. Còn thiếu
 
-### Chưa đo M1-L trên kit — lần thử 1 thất bại vì đường UART
+### Đã đo M1-L trên kit — ĐẠT (2026-10-18, lần thử 2)
+
+**1.116.402 chu kỳ trên kit thật, bằng tuyệt đối số Verilator, cả 10 ảnh giống hệt nhau.**
+
+| tiêu chí | kết quả |
+|---|---|
+| CRC 5 tensor × 10 ảnh vs golden **của M1-L** | **10/10** |
+| dự đoán khớp golden | **10/10** |
+| chu kỳ kit = Verilator từng ảnh | **BẰNG TUYỆT ĐỐI** (10/10 ảnh đều 1.116.402) |
+| **2/2 lần đọc độc lập** | **ĐẠT** |
+| chốt `SRC_HASH` | **có** (`4a71d2de787c`) |
+
+**41,3 ms · 24,2 ảnh/s · 1,68 chu kỳ/MAC.** Phân rã: conv1 251.437 (22,5 %) · pool1 12.594 ·
+conv2 833.636 (74,7 %) · pool2 3.621 · dense 15.114. `conv2` đạt **1,50 chu kỳ/MAC**.
+
+Tài nguyên cấu hình này: LUT4 4.459 (21,5 %) · BSRAM 32/46 · **Fmax 59,08 MHz** (ĐẠT 27 MHz).
+
+Nên **mô hình giữ lại nặng gấp 3,45× vẫn chạy 24 ảnh/giây trên cùng con FPGA**, đúng từng bit.
+
+Log: `kit/check.log`, `kit/m1s_kit_gl_dcrp.csv`, `kit/resources_gl_dcrp.txt`.
+
+### Lần thử 1 đã thất bại vì đường UART
 
 Bitstream `gl_dcrp` đã dựng xong (Fmax **59,08 MHz**, LUT4 4.459 = 21,5 %, BSRAM 32/46),
 nạp SRAM thành công (`DONE`). Nhưng cả hai lượt đọc đều **0 dòng thô**, và phép đối chứng sau
@@ -157,14 +178,22 @@ phía máy không có ai đọc** — bộ đệm tràn. Điều này khớp v�
 Nhận định cũ ("đóng/mở cổng làm kẹt") là **trường hợp riêng** của nhận định này. Chưa đủ bằng
 chứng để khẳng định; cần một phép kiểm có chủ đích.
 
-### Một lỗi phải sửa trước lần đo sau
+Sau khi cắm lại cáp, **hai phép đo `--keep-open` liên tiếp đều ĐẠT 2/2** mà kênh không chết —
+thêm một quan sát khớp, vẫn chưa phải phép kiểm có chủ đích.
 
-`scripts/m1s_check.py` nạp golden từ `fw/weights.h` **mặc định**, nên nếu không truyền
-`--weights ../../fw/weights_m1l.h` thì CRC của M1-L sẽ bị so với golden của M1-S và chắc chắn
-sai. Tuỳ chọn `--weights` đã có sẵn, chỉ cần truyền qua `CHECK_EXTRA`. Dòng in "Độ chính xác mô
-hình" vẫn lấy từ npz của M1-S — chỉ là hiển thị, không ảnh hưởng ĐẠT/KHÔNG ĐẠT, nhưng gây hiểu nhầm.
+### Hai lỗi của script đo, phát hiện khi đo mô hình thứ hai
 
-Lệnh đầy đủ cho lần sau:
+1. **Golden mặc định là của M1-S.** `scripts/m1s_check.py` nạp golden từ `fw/weights.h`, nên
+   phải truyền `--weights ../../fw/weights_m1l.h`; nếu quên thì CRC của M1-L bị so với golden
+   của M1-S. Tuỳ chọn đã có sẵn, chỉ cần truyền qua `CHECK_EXTRA`.
+2. **Số MAC ghim cứng theo M1-S.** `MAC_TOTAL = 192064` và bảng MAC từng lớp được viết cứng,
+   nên lần đo M1-L đầu tiên in ra **5,81 chu kỳ/MAC** (chia cho 192.064 thay vì 662.912) và
+   ghi con số sai đó vào CSV. Đã thêm `macs_from_weights()` suy số MAC từ các `#define` trong
+   chính header đang dùng. Hàm này tái lập **đúng** bộ số ghim cứng cũ của M1-S
+   (192.064 · 48.672 · 139.392 · 4.000), nên nó tự là một phép kiểm hồi quy. Phép đo đã chạy
+   lại với số đúng; 10 dòng CSV tính sai đã bị bỏ.
+
+Lệnh đầy đủ:
 
     make -C rtl/mycore load-gl_dcrp  WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1
     make -C rtl/mycore check-gl_dcrp WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1 \
