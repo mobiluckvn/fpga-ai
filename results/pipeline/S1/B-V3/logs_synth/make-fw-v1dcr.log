@@ -1,0 +1,5 @@
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1dcr
+# cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s
+# rc=0 · 0.1 s · 2026-10-18T13:32:33+0700
+
+make: Nothing to be done for `fw-v1dcr'.

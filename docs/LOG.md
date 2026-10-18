@@ -2,6 +2,73 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — PIPELINE CDP bước S1: tái lập qua `cdp` ĐẠT trên Verilator và tổng hợp · bỏ đo kit
+
+Bọc hai Makefile và script có sẵn bằng `cdp`, rồi tái tạo ba cấu hình đã công bố (A-V0, B-V1, B-V3).
+Không viết lại một dòng nào của luồng build/sim/tổng hợp/đo — `cdp` chỉ gọi `make` và `scripts/*.py`,
+đọc log, so sánh, ghi sổ cái.
+
+### Cách giải bài "không được sửa cây cũ": cây bóng
+`experiment/m1s/v*/` và `rtl/mycore/bv*/` đã nằm trong git (130 + 839 file) và là bằng chứng của giai
+đoạn trước, nên chạy `make` tại chỗ là ghi đè chúng. `cdp/wrap.py` dựng **cây bóng** `pipeline/work/s1/`:
+chỉ gồm symlink tới mã nguồn, sắp đúng độ sâu để mọi đường dẫn tương đối trong hai Makefile
+(`../../fw`, `../../scripts`, `../../hw`, `../uart`, `../../feasibility/...`, `../../experiment/m1s`) vẫn
+trỏ đúng. Riêng `results/` trong cây bóng là thư mục **thật và rỗng**, nên `make check-*` không bao giờ
+ghi lên CSV số đo cũ. Nhánh B trong cây bóng dùng lại đúng `firmware.hex` mà nhánh A vừa dựng trong cùng
+cây bóng, nên vẫn giữ tính chất "chênh lệch giữa hai nhánh là thuần vi kiến trúc".
+
+### Tiêu chí ĐẠT của S1 và kết quả
+| # | Tiêu chí | Kết quả |
+|---|---|---|
+| 1 | `cdp build/sim/synth/kit` gọi Makefile + script có sẵn | **ĐẠT** — `build` `sim` `synth` đã chạy thật; `kit` viết xong, dừng đúng chỗ khi không thấy `/dev/cu.usbserial*` |
+| 2 | Đặc tả YAML cho A-V0, B-V1, B-V3 | **ĐẠT** — `pipeline/specs/s1_{av0,bv1,bv3}.yaml`, cả ba phân giải đúng cấu hình |
+| 3 | Chu kỳ **bằng tuyệt đối** 8.987.660 / 1.459.993 / 365.992 | **ĐẠT** — và bằng tuyệt đối **từng lớp, từng ảnh**, không chỉ trung vị |
+| 4 | CRC khớp golden | **ĐẠT** — CRC32 cả 5 tensor × 10 ảnh + dự đoán, cả ba cấu hình |
+| 5 | SRC_HASH khớp | **ĐẠT** — firmware tự báo `c3966b0011df` = dấu vân tay mã nguồn hiện tại |
+| 6 | Ba dòng sổ cái `origin=human_replay` | **ĐẠT** — `replay.A-V0`, `replay.B-V1`, `replay.B-V3`; 30 dòng `measurements` nguồn `verilator` |
+| 7 | Đo trên kit | **BỎ** theo quyết định của người dùng (xem dưới) |
+
+### Số đo (Verilator, qua `cdp`, log: `results/pipeline/S1/`)
+| cấu hình | chu kỳ/ảnh | ms @27 MHz | chu kỳ/MAC | chu kỳ/lệnh | IPC |
+|---|---:|---:|---:|---:|---:|
+| A-V0 (PicoRV32) | 8.987.660 | 332,9 | 46,80 | 6,617 | 0,151 |
+| B-V1 (mycore) | 1.459.993 | 54,1 | 7,60 | 1,601 | 0,625 |
+| B-V3 (mycore+DOT4+REQ) | 365.992 | 13,6 | 1,91 | 1,317 | 0,759 |
+
+Mỗi cấu hình chạy **hai lượt độc lập** → 60 dòng `measurements`, hai lượt cho số **giống nhau từng ảnh**.
+
+### Tổng hợp lại netlist: hai trong ba cấu hình ra ĐÚNG TỪNG CON SỐ
+| cấu hình | LUT4 lần này | LUT4 đã ghi | Fmax lần này | Fmax đã ghi |
+|---|---:|---:|---:|---:|
+| A-V0 | 7.941 | 7.941 | 71,76 MHz | 71,76 MHz |
+| B-V1 | 3.255 | 3.235 (**+20**) | 56,47 MHz | 53,05 MHz |
+| B-V3 | 5.073 | 5.073 | 55,82 MHz | 55,82 MHz |
+
+Việc A-V0 và B-V3 trùng khít cả LUT4, ALU, DFF, BSRAM, MULT18X18 **và** Fmax chứng minh luồng
+yosys + nextpnr ở đây **tất định**. Nhờ vậy chênh +20 LUT4 của B-V1 **không phải nhiễu công cụ**: netlist
+`bv1` cũ được tổng hợp từ bản `mycore.v` **chưa có** khối REQ (lệnh yosys trong `bv1/yosys.log` thậm chí
+chưa có tham số `WITH_REQ`, và log đó không có một lần nhắc `req` nào), còn `mycore.v` hôm nay có khối REQ
+và `WITH_REQ=0` không gấp hằng được hết. Đây là một ví dụ cụ thể cho cạm bẫy số 5 của
+`KET_QUA_TONG_HOP.md`: **hiệu hai lần tổng hợp chỉ đo được chi phí phần cứng khi RTL giống hệt nhau.**
+Số chu kỳ thì không đổi — vẫn bằng tuyệt đối.
+
+### Quyết định của người dùng: BỎ bước đo kit của S1
+Người dùng chốt (2026-10-18): ba cấu hình này đã có số đo kit đầy đủ, nạp lại chỉ để thấy lại số cũ nên
+không có giá trị. Phép kiểm đường đo `cdp kit` gộp vào lần đo thật đầu tiên ở S6. `cdp kit` đã viết xong
+và đã kiểm nhánh "không có kit" (dừng ngay, không nạp gì). Bitstream cả ba cấu hình đã dựng sẵn.
+Hệ quả phải ghi rõ: tiêu chí *chu kỳ kit = Verilator bằng tuyệt đối* KHÔNG được kiểm lại trong phiên này.
+
+### Vấn đề, đã thử
+1. `cdp sim` hỏng ngay lần đầu vì `Path.relative_to` trên đường dẫn tương đối — sửa bằng `resolve()` trong
+   `spec.load` và một hàm `util.rel()` hiển thị an toàn.
+2. `cdp kit` ban đầu định đọc dòng `M1S,*` thô từ log của `make check-*`, nhưng `m1s_check.py` **không**
+   in lại các dòng đó; nguồn đủ số duy nhất là CSV nó ghi. Đã đổi sang đọc CSV
+   (`wrap.measurement_rows_from_csv`).
+
+### Việc tiếp theo
+S2 (ISS + mô hình chu kỳ) rồi S3 (profile 3 tầng + phân tích), theo yêu cầu của người dùng: tập trung vào
+phân tích firmware và **dựng thành một lý thuyết** (mô hình chi phí tường minh) để dẫn ra hướng tối ưu.
+
 ## 2026-10-18 — PIPELINE CDP bước S0 ĐẠT: khung `cdp`, sổ cái, khoá kit, kiểm đặc tả
 
 Bắt đầu giai đoạn dựng pipeline đồng thiết kế có AI hỗ trợ (`docs/PIPELINE_PLAN.md`, S0→S8).

@@ -1,0 +1,99 @@
+{
+  "run_id": "20261018-133810-sim",
+  "cmd": "sim",
+  "step": "S1",
+  "argv": [
+    "sim",
+    "--spec",
+    "pipeline/specs/s1_bv3.yaml"
+  ],
+  "spec": "pipeline/specs/s1_bv3.yaml",
+  "target": "B-V3",
+  "params": {
+    "spec": "pipeline/specs/s1_bv3.yaml",
+    "work": "s1",
+    "fresh": false
+  },
+  "started_at": "2026-10-18T13:38:10+0700",
+  "finished_at": "2026-10-18T13:38:18+0700",
+  "duration_s": 7.843,
+  "status": "ok",
+  "git": {
+    "commit": "9512481a38bac5f8ca5d3cf294925a4640fd0023",
+    "short": "9512481",
+    "branch": "main",
+    "dirty": true,
+    "dirty_files": 15
+  },
+  "src_hash": "c3966b0011df",
+  "tools": {
+    "python": "3.14.7",
+    "numpy": "2.5.4",
+    "verilator": "Verilator 5.053 devel rev v5.052-448-g1272f7355 (mod)",
+    "make": "GNU Make 3.81",
+    "git": "git version 2.50.1 (Apple Git-155)"
+  },
+  "host": {
+    "platform": "macOS-26.6.2-x86_64-i386-64bit-Mach-O",
+    "machine": "x86_64",
+    "python": "3.14.7"
+  },
+  "cwd": "/Users/v/Documents/NCS/tinyml-riscv-tn20k",
+  "run_dir": "pipeline/runs/20261018-133810-sim",
+  "note": null,
+  "result": {
+    "target": "B-V3",
+    "spec": "pipeline/specs/s1_bv3.yaml",
+    "work": "pipeline/work/s1",
+    "src_hash": "c3966b0011df",
+    "firmware": {
+      "target": "fw-v1dcr",
+      "rc": 0,
+      "seconds": 0.2,
+      "hex": "pipeline/work/s1/experiment/m1s/v1dcr/firmware.hex",
+      "hex_sha256": "7310380cf8df6c9e6ccc504929b72e709227f4ebb2f22a331be59947bd48ac40",
+      "size": {
+        ".text": 19040,
+        ".bss": 12816,
+        ".riscv.attributes": 42,
+        ".comment": 51,
+        "_used": 31856,
+        "_ram_pct": 48.6
+      }
+    },
+    "sim": {
+      "target": "sim-bv1dcr",
+      "rc": 0,
+      "seconds": 6.3,
+      "sim_log": "/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore/bv1dcr/sim.log",
+      "total_sim_cycles": 12780160
+    },
+    "reference_sim_log": "rtl/mycore/bv1dcr/sim.log",
+    "check": {
+      "pass": true,
+      "median_total": 365992,
+      "median_ref": 365992,
+      "expect_total": 365992,
+      "variant_reported": "A-V1+DOT4+C1+REQ",
+      "src_reported": "c3966b0011df",
+      "src_ok": true,
+      "cycles_equal": true,
+      "cycles_diffs": [],
+      "golden": {
+        "ok": true,
+        "n_img": 10,
+        "problems": []
+      },
+      "layers_median": {
+        "conv1": 138213,
+        "pool1": 42472,
+        "conv2": 165152,
+        "pool2": 12519,
+        "dense": 7614
+      },
+      "ms_27mhz": 13.6,
+      "cycles_per_mac": 1.91
+    },
+    "measurements_written": 10
+  }
+}

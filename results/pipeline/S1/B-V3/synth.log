@@ -1,0 +1,24 @@
+# cdp synth · đặc tả s1_bv3.yaml → cấu hình B-V3 (mycore + DOT4 + REQ)
+[cây bóng] pipeline/work/s1 (dùng lại)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v1dcr   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v1dcr → rc=0 · 0.1 s · log logs/make-fw-v1dcr.log
+    firmware v1dcr: .text 19,040 + .data 0 + .bss 12,816 = 31,856/65.536 byte (48.6 %)
+    sha256(firmware.hex) = 7310380cf8df6c9e…
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore build-bv1dcr FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make build-bv1dcr → rc=0 · 268.7 s · log logs/make-build-bv1dcr.log
+    bitstream bv1dcr/top.fs = 7,261,470 byte
+
+    | tài nguyên | lần này | đã ghi trước | lệch |
+    |---|---:|---:|---:|
+    | LUT4 | 5.073 | 5.073 | +0 |
+    | ALU | 968 | 968 | +0 |
+    | DFF | 580 | 580 | +0 |
+    | BSRAM | 32 | 32 | +0 |
+    | MULT18X18 | 4 | 4 | +0 |
+    | MULT9X9 | 0 | 0 | +0 |
+    | MULT36X36 | 0 | 0 | +0 |
+    | IOB | 9 | 9 | +0 |
+    Fmax[u_soc.clk] = 55.82 MHz (ràng buộc 27 MHz) · đã ghi trước 55.82 MHz
+
+=> ĐẠT (tiêu chí: Fmax >= ràng buộc 27 MHz)
+[run 20261018-133232-synth] ok · 270.2 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-133232-synth

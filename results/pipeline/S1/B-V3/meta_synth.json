@@ -1,0 +1,319 @@
+{
+  "run_id": "20261018-133232-synth",
+  "cmd": "synth",
+  "step": "S1",
+  "argv": [
+    "synth",
+    "--spec",
+    "pipeline/specs/s1_bv3.yaml"
+  ],
+  "spec": "pipeline/specs/s1_bv3.yaml",
+  "target": "B-V3",
+  "params": {
+    "spec": "pipeline/specs/s1_bv3.yaml",
+    "work": "s1",
+    "fresh": false
+  },
+  "started_at": "2026-10-18T13:32:32+0700",
+  "finished_at": "2026-10-18T13:37:02+0700",
+  "duration_s": 270.147,
+  "status": "ok",
+  "git": {
+    "commit": "9512481a38bac5f8ca5d3cf294925a4640fd0023",
+    "short": "9512481",
+    "branch": "main",
+    "dirty": true,
+    "dirty_files": 15
+  },
+  "src_hash": "c3966b0011df",
+  "tools": {
+    "python": "3.14.7",
+    "numpy": "2.5.4",
+    "yosys": "Yosys 0.70+145 (git sha1 a31d95ea0, Release, Clang /usr/local/osxcross/target/bin/x86_64-apple-darwin25.5-clang++ 21.1.8)",
+    "nextpnr": "\"nextpnr-himbaechel\" -- Next Generation Place and Route (Version nextpnr-0.11.1-63-g44a6c739)",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "gowin_pack_path": "/Users/v/tools/oss-cad-suite/bin/gowin_pack",
+    "oss_cad_suite": "20261016"
+  },
+  "host": {
+    "platform": "macOS-26.6.2-x86_64-i386-64bit-Mach-O",
+    "machine": "x86_64",
+    "python": "3.14.7"
+  },
+  "cwd": "/Users/v/Documents/NCS/tinyml-riscv-tn20k",
+  "run_dir": "pipeline/runs/20261018-133232-synth",
+  "note": null,
+  "result": {
+    "target": "B-V3",
+    "spec": "pipeline/specs/s1_bv3.yaml",
+    "work": "pipeline/work/s1",
+    "firmware": {
+      "target": "fw-v1dcr",
+      "rc": 0,
+      "seconds": 0.1,
+      "hex": "pipeline/work/s1/experiment/m1s/v1dcr/firmware.hex",
+      "hex_sha256": "7310380cf8df6c9e6ccc504929b72e709227f4ebb2f22a331be59947bd48ac40",
+      "size": {
+        ".text": 19040,
+        ".bss": 12816,
+        ".riscv.attributes": 42,
+        ".comment": 51,
+        "_used": 31856,
+        "_ram_pct": 48.6
+      }
+    },
+    "bitstream": {
+      "target": "build-bv1dcr",
+      "rc": 0,
+      "seconds": 268.7,
+      "fs": "pipeline/work/s1/rtl/mycore/bv1dcr/top.fs",
+      "fs_sha256": "5cc6a63777d3e028ad62b94e0985379ed035f401283cd1e69340a469df0c080a",
+      "report_json": "pipeline/work/s1/rtl/mycore/bv1dcr/report.json"
+    },
+    "report": {
+      "utilization": {
+        "ALU": {
+          "used": 968,
+          "available": 15552
+        },
+        "ALU54D": {
+          "used": 0,
+          "available": 24
+        },
+        "BSRAM": {
+          "used": 32,
+          "available": 46
+        },
+        "BUFG": {
+          "used": 1,
+          "available": 24
+        },
+        "CLKDIV": {
+          "used": 0,
+          "available": 8
+        },
+        "CLKDIV2": {
+          "used": 0,
+          "available": 16
+        },
+        "DCS": {
+          "used": 0,
+          "available": 8
+        },
+        "DFF": {
+          "used": 580,
+          "available": 15552
+        },
+        "DHCEN": {
+          "used": 0,
+          "available": 24
+        },
+        "DQCE": {
+          "used": 0,
+          "available": 24
+        },
+        "DUMMY_CELL": {
+          "used": 16,
+          "available": 0
+        },
+        "GND": {
+          "used": 1,
+          "available": 1
+        },
+        "GSR": {
+          "used": 1,
+          "available": 1
+        },
+        "GW_JTAG": {
+          "used": 0,
+          "available": 1
+        },
+        "IOB": {
+          "used": 9,
+          "available": 384
+        },
+        "IOLOGICI": {
+          "used": 0,
+          "available": 384
+        },
+        "IOLOGICO": {
+          "used": 0,
+          "available": 384
+        },
+        "LUT4": {
+          "used": 5073,
+          "available": 20736
+        },
+        "MULT18X18": {
+          "used": 4,
+          "available": 48
+        },
+        "MULT36X36": {
+          "used": 0,
+          "available": 12
+        },
+        "MULT9X9": {
+          "used": 0,
+          "available": 96
+        },
+        "MULTADDALU18X18": {
+          "used": 0,
+          "available": 24
+        },
+        "MULTALU18X18": {
+          "used": 0,
+          "available": 24
+        },
+        "MULTALU36X18": {
+          "used": 0,
+          "available": 24
+        },
+        "MUX2_LUT5": {
+          "used": 1030,
+          "available": 10368
+        },
+        "MUX2_LUT6": {
+          "used": 347,
+          "available": 5184
+        },
+        "MUX2_LUT7": {
+          "used": 142,
+          "available": 2592
+        },
+        "MUX2_LUT8": {
+          "used": 45,
+          "available": 2592
+        },
+        "OSC": {
+          "used": 0,
+          "available": 1
+        },
+        "PADD18": {
+          "used": 0,
+          "available": 48
+        },
+        "PADD9": {
+          "used": 0,
+          "available": 96
+        },
+        "RAM16SDP4": {
+          "used": 32,
+          "available": 648
+        },
+        "VCC": {
+          "used": 1,
+          "available": 1
+        },
+        "rPLL": {
+          "used": 0,
+          "available": 2
+        }
+      },
+      "fmax": {
+        "u_soc.clk": {
+          "achieved": 55.8160285949707,
+          "constraint": 27
+        }
+      }
+    },
+    "reference_resources_txt": "rtl/mycore/bv1dcr/resources.txt",
+    "reference": {
+      "utilization": {
+        "ALU": {
+          "used": 968,
+          "available": 15552
+        },
+        "ALU54D": {
+          "used": 0,
+          "available": 24
+        },
+        "BSRAM": {
+          "used": 32,
+          "available": 46
+        },
+        "BUFG": {
+          "used": 1,
+          "available": 24
+        },
+        "DFF": {
+          "used": 580,
+          "available": 15552
+        },
+        "DUMMY_CELL": {
+          "used": 16,
+          "available": 0
+        },
+        "GND": {
+          "used": 1,
+          "available": 1
+        },
+        "GSR": {
+          "used": 1,
+          "available": 1
+        },
+        "IOB": {
+          "used": 9,
+          "available": 384
+        },
+        "LUT4": {
+          "used": 5073,
+          "available": 20736
+        },
+        "MULT18X18": {
+          "used": 4,
+          "available": 48
+        },
+        "MULT36X36": {
+          "used": 0,
+          "available": 12
+        },
+        "MULT9X9": {
+          "used": 0,
+          "available": 96
+        },
+        "MULTADDALU18X18": {
+          "used": 0,
+          "available": 24
+        },
+        "MULTALU18X18": {
+          "used": 0,
+          "available": 24
+        },
+        "MULTALU36X18": {
+          "used": 0,
+          "available": 24
+        },
+        "MUX2_LUT5": {
+          "used": 1030,
+          "available": 10368
+        },
+        "MUX2_LUT6": {
+          "used": 347,
+          "available": 5184
+        },
+        "MUX2_LUT7": {
+          "used": 142,
+          "available": 2592
+        },
+        "MUX2_LUT8": {
+          "used": 45,
+          "available": 2592
+        },
+        "RAM16SDP4": {
+          "used": 32,
+          "available": 648
+        },
+        "VCC": {
+          "used": 1,
+          "available": 1
+        }
+      },
+      "fmax": {
+        "u_soc.clk": {
+          "achieved": 55.82
+        }
+      }
+    },
+    "fmax_ok": true
+  }
+}

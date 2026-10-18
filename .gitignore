@@ -35,3 +35,6 @@ rtl/mycore/tests/riscv-tests/
 # Bằng chứng của từng bước đã được sao vào results/pipeline/S<n>/ nên không commit.
 pipeline/runs/*
 !pipeline/runs/.gitkeep
+
+# Cây bóng để cdp dựng ngoài cây (chỉ symlink + thư mục build mới)
+pipeline/work/

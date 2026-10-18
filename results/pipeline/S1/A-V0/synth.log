@@ -1,0 +1,24 @@
+# cdp synth · đặc tả s1_av0.yaml → cấu hình A-V0 (PicoRV32)
+[cây bóng] pipeline/work/s1 (dùng lại)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s fw-v0   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make fw-v0 → rc=0 · 0.1 s · log logs/make-fw-v0.log
+    firmware v0: .text 18,684 + .data 0 + .bss 9,136 = 27,820/65.536 byte (42.4 %)
+    sha256(firmware.hex) = 89383bb291c0edac…
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s build-v0   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s)
+    make build-v0 → rc=0 · 294.4 s · log logs/make-build-v0.log
+    bitstream v0/top.fs = 7,261,470 byte
+
+    | tài nguyên | lần này | đã ghi trước | lệch |
+    |---|---:|---:|---:|
+    | LUT4 | 7.941 | 7.941 | +0 |
+    | ALU | 754 | 754 | +0 |
+    | DFF | 1.069 | 1.069 | +0 |
+    | BSRAM | 32 | 32 | +0 |
+    | MULT18X18 | 0 | 0 | +0 |
+    | MULT9X9 | 0 | 0 | +0 |
+    | MULT36X36 | 0 | 0 | +0 |
+    | IOB | 9 | 9 | +0 |
+    Fmax[u_soc.clk] = 71.76 MHz (ràng buộc 27 MHz) · đã ghi trước 71.76 MHz
+
+=> ĐẠT (tiêu chí: Fmax >= ràng buộc 27 MHz)
+[run 20261018-132736-synth] ok · 295.5 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-132736-synth

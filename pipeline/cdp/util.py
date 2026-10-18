@@ -96,6 +96,14 @@ def sh(argv, cwd: Path | None = None, log_path: Path | None = None,
     return Cmd([str(a) for a in argv], rc, out, dt, cwd, log_path)
 
 
+def rel(p) -> str:
+    """Đường dẫn tương đối gốc dự án nếu được, không thì giữ nguyên."""
+    try:
+        return str(Path(p).resolve().relative_to(paths.ROOT))
+    except ValueError:
+        return str(p)
+
+
 def fmt_int(n) -> str:
     """Số nguyên kiểu Việt Nam: 1.459.993."""
     try:

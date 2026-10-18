@@ -72,6 +72,7 @@ def load(path: str | Path) -> Spec:
                 break
     if not p.exists():
         raise FileNotFoundError(f"không thấy đặc tả {path}")
+    p = p.resolve()
     raw = yaml.safe_load(p.read_text())
     if not isinstance(raw, dict):
         raise ValueError(f"{p}: đặc tả phải là một map YAML")

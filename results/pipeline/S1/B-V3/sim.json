@@ -1,0 +1,55 @@
+{
+  "target": "B-V3",
+  "spec": "pipeline/specs/s1_bv3.yaml",
+  "work": "pipeline/work/s1",
+  "src_hash": "c3966b0011df",
+  "firmware": {
+    "target": "fw-v1dcr",
+    "rc": 0,
+    "seconds": 0.2,
+    "hex": "pipeline/work/s1/experiment/m1s/v1dcr/firmware.hex",
+    "hex_sha256": "7310380cf8df6c9e6ccc504929b72e709227f4ebb2f22a331be59947bd48ac40",
+    "size": {
+      ".text": 19040,
+      ".bss": 12816,
+      ".riscv.attributes": 42,
+      ".comment": 51,
+      "_used": 31856,
+      "_ram_pct": 48.6
+    }
+  },
+  "sim": {
+    "target": "sim-bv1dcr",
+    "rc": 0,
+    "seconds": 6.3,
+    "sim_log": "/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore/bv1dcr/sim.log",
+    "total_sim_cycles": 12780160
+  },
+  "reference_sim_log": "rtl/mycore/bv1dcr/sim.log",
+  "check": {
+    "pass": true,
+    "median_total": 365992,
+    "median_ref": 365992,
+    "expect_total": 365992,
+    "variant_reported": "A-V1+DOT4+C1+REQ",
+    "src_reported": "c3966b0011df",
+    "src_ok": true,
+    "cycles_equal": true,
+    "cycles_diffs": [],
+    "golden": {
+      "ok": true,
+      "n_img": 10,
+      "problems": []
+    },
+    "layers_median": {
+      "conv1": 138213,
+      "pool1": 42472,
+      "conv2": 165152,
+      "pool2": 12519,
+      "dense": 7614
+    },
+    "ms_27mhz": 13.6,
+    "cycles_per_mac": 1.91
+  },
+  "measurements_written": 10
+}

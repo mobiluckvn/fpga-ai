@@ -1,0 +1,14 @@
+# S1 — tái tạo A-V0: C thẳng trên PicoRV32 (dòng 1 của docs/KET_QUA_TONG_HOP.md)
+name: s1_av0
+model: m1s
+firmware:
+  source: experiment/m1s/main.c
+  flags: []                      # không cờ nào -> macro VARIANT = "A-V0"
+  id: v0
+core:
+  name: picorv32
+  rtl_params: {WITH_DOT4: 0, WITH_REQ: 0}   # SoC feasibility/F5_soc/soc.v, không mở rộng
+clock_mhz: 27
+budget: {lut4: 20736, mult18x18: 48, bsram_blocks: 46, fmax_min_mhz: 27}
+evaluate: {images: 10, iss: false, verilator: true, kit: true}
+expect: {target: A-V0, total_cycles: 8987660}

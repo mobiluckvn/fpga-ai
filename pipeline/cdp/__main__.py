@@ -135,8 +135,34 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--out", default=None, help="thư mục ghi kết quả "
                                               "(mặc định results/pipeline/S0)")
 
-    for name, mod in (("build", build), ("sim", sim), ("kit", kit), ("synth", synth),
-                      ("profile", profile), ("analyze", analyze), ("propose", propose),
+    # ---- S1: bọc Makefile có sẵn, dựng trong cây bóng ----
+    p = sub.add_parser("build", help="dựng firmware (+ bitstream) ngoài cây")
+    p.add_argument("--spec", required=False, help="đặc tả YAML")
+    p.add_argument("--work", default="s1", help="tên cây bóng trong pipeline/work/")
+    p.add_argument("--fresh", action="store_true", help="dựng lại cây bóng từ đầu")
+    p.add_argument("--bitstream", action="store_true", help="dựng cả bitstream (chậm)")
+
+    p = sub.add_parser("sim", help="chạy Verilator và đối chứng từng con số")
+    p.add_argument("--spec", required=False)
+    p.add_argument("--work", default="s1")
+    p.add_argument("--fresh", action="store_true")
+
+    p = sub.add_parser("kit", help="nạp + đo trên kit (qua khoá kit, có đối chứng)")
+    p.add_argument("--spec", required=False)
+    p.add_argument("--work", default="s1")
+    p.add_argument("--fresh", action="store_true")
+    p.add_argument("--port", action="append", default=None, help="cổng UART của kit")
+    p.add_argument("--repeat", type=int, default=2, help="số lần đọc độc lập")
+    p.add_argument("--no-control", action="store_true",
+                   help="bỏ đối chứng đường đo (KHÔNG khuyến nghị)")
+    p.add_argument("--lock-timeout", type=float, default=None)
+
+    p = sub.add_parser("synth", help="tổng hợp: LUT/DFF/MULT/BSRAM + Fmax")
+    p.add_argument("--spec", required=False)
+    p.add_argument("--work", default="s1")
+    p.add_argument("--fresh", action="store_true")
+
+    for name, mod in (("profile", profile), ("analyze", analyze), ("propose", propose),
                       ("estimate", estimate), ("verify", verify), ("report", report)):
         p = sub.add_parser(name, help=(mod.__doc__ or "").splitlines()[0])
         p.add_argument("--spec", default=None, help="đặc tả YAML")

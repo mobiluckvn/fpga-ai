@@ -157,3 +157,18 @@ def export_csv(con, out_dir: Path | None = None) -> list[Path]:
 
 def counts(con) -> dict:
     return {t: con.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0] for t in TABLES}
+
+
+def upsert_candidate(con, cid: str, **fields) -> None:
+    """Ghi/cập nhật một dòng `candidates`, giữ `created_at` của lần đầu."""
+    row = con.execute("SELECT created_at FROM candidates WHERE id=?", (cid,)).fetchone()
+    now = time.strftime("%Y-%m-%dT%H:%M:%S%z")
+    data = {"id": cid, "created_at": row["created_at"] if row else now,
+            "updated_at": now}
+    if row:                      # giữ nguyên các cột không được truyền vào
+        cur = con.execute("SELECT * FROM candidates WHERE id=?", (cid,)).fetchone()
+        for k in cur.keys():
+            if k not in ("id", "created_at", "updated_at") and cur[k] is not None:
+                data[k] = cur[k]
+    data.update({k: v for k, v in fields.items() if v is not None})
+    upsert(con, "candidates", data)

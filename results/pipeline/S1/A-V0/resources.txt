@@ -1,0 +1,28 @@
+$ /Users/v/Documents/NCS/tinyml-riscv-tn20k/.venv/bin/python /Users/v/Documents/NCS/tinyml-riscv-tn20k/scripts/pnr_report.py /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s/v0/report.json
+# cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k
+# rc=0 · 0.1 s · 2026-10-18T13:32:31+0700
+
+Tài nguyên          dùng /      có   %
+ALU                  754 /   15552    4.8%
+ALU54D                 0 /      24    0.0%
+BSRAM                 32 /      46   69.6%
+BUFG                   1 /      24    4.2%
+DFF                 1069 /   15552    6.9%
+GND                    1 /       1  100.0%
+GSR                    1 /       1  100.0%
+IOB                    9 /     384    2.3%
+LUT4                7941 /   20736   38.3%
+MULT18X18              0 /      48    0.0%
+MULT36X36              0 /      12    0.0%
+MULT9X9                0 /      96    0.0%
+MULTADDALU18X18        0 /      24    0.0%
+MULTALU18X18           0 /      24    0.0%
+MULTALU36X18           0 /      24    0.0%
+MUX2_LUT5           1961 /   10368   18.9%
+MUX2_LUT6            594 /    5184   11.5%
+MUX2_LUT7            254 /    2592    9.8%
+MUX2_LUT8             79 /    2592    3.0%
+RAM16SDP4             32 /     648    4.9%
+VCC                    1 /       1  100.0%
+
+Fmax[u_soc.clk] = 71.76 MHz (ràng buộc 27 MHz) -> ĐẠT

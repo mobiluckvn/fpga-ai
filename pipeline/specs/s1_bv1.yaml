@@ -1,0 +1,15 @@
+# S1 — tái tạo B-V1: firmware A-V1 trên lõi tự viết (dòng 10 của docs/KET_QUA_TONG_HOP.md)
+# Nhánh B dùng lại ĐÚNG file firmware.hex của nhánh A, không biên dịch lại.
+name: s1_bv1
+model: m1s
+firmware:
+  source: experiment/m1s/main.c
+  flags: [-DOPT_KERNELS]
+  id: v1
+core:
+  name: mycore
+  rtl_params: {FAST_ADDR: 1, WITH_DOT4: 0, WITH_REQ: 0, WITH_MULDIV: 1}
+clock_mhz: 27
+budget: {lut4: 20736, mult18x18: 48, bsram_blocks: 46, fmax_min_mhz: 27}
+evaluate: {images: 10, iss: false, verilator: true, kit: true}
+expect: {target: B-V1, total_cycles: 1459993}
