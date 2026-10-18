@@ -18,7 +18,7 @@ chứng mạnh nhất cho phương pháp. Sau đó mới cho pipeline đi tiếp
 | S5 | B2: sinh ứng viên (AI và theo luật), chế độ mù, trên firmware A-V1 + lõi mycore gốc (cấu hình B-V1) | PQ3, PQ4 |
 | S6 | Phễu: dự báo → hiện thực top-K → đo kit; vòng mở lần 1 (PMAX4 trên B-V3) | PQ1, PQ5 |
 | S7 | Vòng mở lần 2: bộ nhớ hai cổng (B-V4) — ứng viên **mức A** đầu tiên, **ĐẠT** | PQ1, PQ5 |
-| S8 | Mô hình giữ lại — **ĐẠT trên Verilator** | PQ6 |
+| S8 | Mô hình giữ lại — **ĐẠT** | PQ6 |
 | S9 | Báo cáo tổng hợp, biểu đồ cho bài báo | — |
 
 > **Ghi chú đánh số (sửa 2026-10-18).** Kế hoạch gốc gộp cả vòng mở vào S6 và đặt "mô hình giữ lại" ở S7.
@@ -149,7 +149,7 @@ Bố cục 4 pha (C1) KHÔNG tính vào B1 vì nó chỉ có ý nghĩa khi đã 
 - Ràng buộc kéo theo cho S8: RAM còn 32 KB và M1-S đã chiếm 96,4 % (1.180 byte ngăn xếp), nên
   **mô hình giữ lại lớn hơn có thể không vừa trên B-V4** — phải tính trước khi chọn mô hình.
 
-## S8 — Mô hình giữ lại — ĐẠT trên Verilator (2026-10-18), xem `results/pipeline/S8/`
+## S8 — Mô hình giữ lại — ĐẠT (2026-10-18), xem `results/pipeline/S8/`
 1. Thêm ít nhất một mô hình KHÔNG dùng khi chọn ứng viên (đề xuất: M1-L gấp đôi kênh; nếu kịp, Dense
    autoencoder hoặc KWS DS-CNN rút gọn vừa 64 KB). Golden Python + firmware C thẳng.
 2. Chạy B1 (ngắn) rồi áp các ứng viên phần cứng đã chọn ở S6/S7, không chọn lại.
@@ -182,7 +182,11 @@ Hai kết quả phụ:
 Ba phép kiểm giống-hệt-từng-bit cho việc tổng quát hoá (weights.h sinh lại giống từng byte; firmware
 M1-S giống từng bit; mã máy của kernel tổng quát giống từng bit) — chi tiết trong README của S8.
 
-**Còn thiếu**: chưa đo M1-L trên kit; chưa có dòng PicoRV32 cho M1-L.
+**Đo trên kit**: M1-L ở cấu hình B-V3+PMAX4 cho **1.116.402 chu kỳ = 41,3 ms = 24,2 ảnh/s**,
+bằng tuyệt đối Verilator từng ảnh, CRC 5 tensor × 10 ảnh khớp golden của M1-L, 2/2 lượt đọc,
+chốt `SRC_HASH`. Tức mô hình nặng gấp 3,45× vẫn chạy 24 ảnh/giây trên cùng con FPGA, đúng từng bit.
+
+**Còn thiếu**: chưa có dòng PicoRV32 cho M1-L (nhánh A dùng cây RTL khác).
 
 ## S9 — Báo cáo
 `docs/KET_QUA_PIPELINE.md` + `report/pipeline/`: trả lời PQ1–PQ6 bằng số, biểu đồ (dự báo-vs-đo, Pareto
