@@ -17,7 +17,7 @@ chứng mạnh nhất cho phương pháp. Sau đó mới cho pipeline đi tiếp
 | S4 | B1: ĐÃ LÀM THỦ CÔNG (A-V1) — bỏ qua; tái khám phá mù B1 để tuỳ chọn sau S9 | (PQ2 tuỳ chọn) |
 | S5 | B2: sinh ứng viên (AI và theo luật), chế độ mù, trên firmware A-V1 + lõi mycore gốc (cấu hình B-V1) | PQ3, PQ4 |
 | S6 | Phễu: dự báo → hiện thực top-K → đo kit; vòng mở lần 1 (PMAX4 trên B-V3) | PQ1, PQ5 |
-| S7 | Vòng mở lần 2: bộ nhớ hai cổng (B-V4) — ứng viên **mức A** đầu tiên | PQ1, PQ5 |
+| S7 | Vòng mở lần 2: bộ nhớ hai cổng (B-V4) — ứng viên **mức A** đầu tiên, **ĐẠT** | PQ1, PQ5 |
 | S8 | Mô hình giữ lại | PQ6 |
 | S9 | Báo cáo tổng hợp, biểu đồ cho bài báo | — |
 
@@ -125,7 +125,7 @@ Bố cục 4 pha (C1) KHÔNG tính vào B1 vì nó chỉ có ý nghĩa khi đã 
 > PMAX4 là ứng viên **đầu tiên do pipeline tự đề xuất** được đo trên kit: **317.878 chu kỳ (28,27×)**,
 > dự báo mức B lệch **0,37 %**, 5/5 cổng kiểm ĐẠT.
 
-## S7 — Vòng mở lần 2: bộ nhớ hai cổng (B-V4)
+## S7 — Vòng mở lần 2: bộ nhớ hai cổng (B-V4) — ĐẠT (2026-10-18)
 Ứng viên **mức A** đầu tiên: không sửa một dòng mã phần mềm, không thêm lệnh nào — chỉ hạ `λ_load` và
 `λ_store` từ 2 về 1 bằng cổng lệnh riêng kiểu Harvard. Vì `n_c` giữ nguyên nên `ΔC = Σ n_c·Δλ_c` là
 **đẳng thức**, không phải chặn — đây là phép kiểm **K2** của `docs/MO_HINH_CHI_PHI.md`.
@@ -137,13 +137,17 @@ Bố cục 4 pha (C1) KHÔNG tính vào B1 vì nó chỉ có ý nghĩa khi đã 
 
 **ĐẠT khi**: sai số dự báo mức A được ghi thành số; chi phí LUT quy được về nguyên nhân; đúng bit trên kit.
 
-### Trạng thái (2026-10-18)
-- Dự báo đóng băng **243.641** chu kỳ · Verilator **243.641** · **sai số 0,00 %** — mức A đúng tuyệt đối.
+### Trạng thái: ĐẠT (2026-10-18) — xem `results/pipeline/S7/`
+- Dự báo đóng băng **243.641** chu kỳ · Verilator **243.641** · **đo trên kit 243.641** ·
+  **sai số 0,00 %** — mức A đúng tuyệt đối, phép kiểm K2 ĐẠT.
 - Giá phần cứng: LUT4 **4.459 → 15.736** (×3,5; 75,9 % chip), trong đó **riêng cổng ghi thứ hai +8.724 LUT**
   vì tệp thanh ghi mất khả năng map vào `RAM16SDP4`. Hiệu quả diện tích: PMAX4 **9,8 LUT4** cho mỗi 1 %
   tăng tốc, bộ nhớ hai cổng **370** — chênh 38 lần.
 - riscv-tests 48/48 ĐẠT · Fmax 53,01 MHz ĐẠT.
-- **Đo kit**: xem mục nhật ký mới nhất trong `docs/LOG.md`.
+- **Đo kit ĐẠT** (run `20261018-214712-kit`): 2/2 lần đọc, chốt `SRC_HASH`, CRC 10/10,
+  kit = Verilator bằng tuyệt đối từng ảnh. Dòng 16 đã vào bảng chính `docs/KET_QUA_TONG_HOP.md`.
+- Ràng buộc kéo theo cho S8: RAM còn 32 KB và M1-S đã chiếm 96,4 % (1.180 byte ngăn xếp), nên
+  **mô hình giữ lại lớn hơn có thể không vừa trên B-V4** — phải tính trước khi chọn mô hình.
 
 ## S8 — Mô hình giữ lại
 1. Thêm ít nhất một mô hình KHÔNG dùng khi chọn ứng viên (đề xuất: M1-L gấp đôi kênh; nếu kịp, Dense

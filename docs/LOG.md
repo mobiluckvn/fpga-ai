@@ -2,6 +2,95 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — S7 ĐẠT: B-V4 đo trên kit 243.641 chu kỳ, dự báo mức A sai 0,00 %
+
+Người dùng rút/cắm lại cáp USB. UART sống lại (`...171`, "MIN" 10 lần). Đo lại và **ĐẠT**.
+
+### Kết quả: 243.641 chu kỳ trên kit — bằng tuyệt đối dự báo đóng băng
+
+Run `20261018-214712-kit`, 18,7 s (bitstream đã có trong cây bóng nên không tổng hợp lại):
+
+| tiêu chí | kết quả |
+|---|---|
+| đối chứng TRƯỚC (`min/top.fs`) | ĐẠT — "MIN" 8 lần |
+| CRC 5 tensor × 10 ảnh vs golden | **10/10** |
+| dự đoán khớp golden | **10/10** |
+| chu kỳ kit = Verilator từng ảnh | **BẰNG TUYỆT ĐỐI** (10/10 ảnh đều 243.641) |
+| 2/2 lần đọc độc lập | **ĐẠT** |
+| chốt `SRC_HASH` | **có** (`a7dca19c8cec`) |
+
+**Chuỗi ba số bằng nhau tuyệt đối: dự báo mức A (đóng băng trước khi viết RTL) = Verilator =
+kit = 243.641.** Sai số 0,00 %. Đây là phép kiểm **K2** của `docs/MO_HINH_CHI_PHI.md`, và là
+lần đầu một dự báo mức A được đối chiếu số đo phần cứng thật.
+
+**9,0 ms · 110,8 ảnh/s · 1,27 chu kỳ/MAC · IPC 0,970 · 36,89× so A-V0.** Phân rã trên kit:
+conv1 109.636 (45,0 %) · pool1 3.288 · conv2 123.702 (50,8 %) · pool2 1.421 · dense 5.594.
+
+Dòng 16 đã vào **bảng chính** của `docs/KET_QUA_TONG_HOP.md`.
+
+### Quy luật UART: ba lần truyền dài mỗi lần cắm cáp
+
+Sau khi đo B-V4 xong, tôi tranh thủ đo luôn PMAX4 (dòng 15 còn thiếu một run sạch). Nó **chết
+đúng ở lần đọc 2** — lần thứ ba cùng một kiểu. Xếp theo thời gian thì quy luật rõ ràng:
+
+| # | việc | độ dài truyền | kết quả |
+|---|---|---|---|
+| 1 | cắm lại cáp, đối chứng `min` | ngắn (~50 byte) | ĐẠT |
+| 2 | B-V4 lần đọc 1 | dài (~4,8 KB) | ĐẠT |
+| 3 | B-V4 lần đọc 2 | dài | ĐẠT |
+| 4 | đối chứng `min` trước PMAX4 | ngắn | ĐẠT ("MIN" 9 lần) |
+| 5 | PMAX4 lần đọc 1 | dài (~9,4 KB tồn) | ĐẠT |
+| 6 | PMAX4 lần đọc 2 | dài | **0 byte — chết** |
+
+Kênh UART của FT2232 chịu được khoảng **ba lần truyền dài** sau mỗi lần cắm lại cáp rồi chết;
+chuỗi ngắn không làm nó chết. Lần trước (`190740` → `190840`) cũng đúng mẫu này.
+
+**Hệ quả cho cách làm: mỗi lần cắm lại cáp chỉ đo MỘT cấu hình, và đo cấu hình quan trọng nhất
+trước.** Phiên này vô tình kiểm chứng đúng điều đó — B-V4 đo trước nên ĐẠT trọn vẹn, PMAX4 đo
+sau nên chết. Nếu lúc đó tôi đo PMAX4 trước thì có lẽ cả hai dòng đã xong.
+
+`csv_restore()` lại chạy đúng: trả 10 dòng cũ của `bs6pmax4`, bỏ 10 dòng mới không đáng tin.
+
+### Lỗi hạ tầng: thêm cấu hình S7 làm hỏng đặc tả S6 (hồi quy)
+
+`./cdp kit --spec pipeline/specs/s6_pmax4.yaml` **không chạy được nữa**:
+
+    ValueError: tham số RTL chưa đủ để phân giải: còn
+    ['B-V3+PMAX4', 'B-V3+PMAX4@32K', 'B-V4']
+
+`targets.resolve()` phân giải cấu hình theo (lõi, tập cờ, tham số RTL). Ba cấu hình S7 có **cùng
+tập cờ** với `s6_pmax4.yaml` và chỉ khác nhau ở `DUAL_PORT` cùng `RAMKB` — mà `RAMKB` thuộc
+firmware, **không nằm trong `rtl_params`**, nên không có cách nào phân biệt `B-V3+PMAX4` với
+`B-V3+PMAX4@32K` bằng `rtl_params`. Tức việc thêm cấu hình mới ở phiên trước đã **âm thầm làm
+hỏng một đặc tả đang chạy được** — không ai phát hiện vì không chạy lại đặc tả cũ.
+
+Sửa: `spec.load()` nay dùng `expect.target` để **chốt thẳng tên cấu hình** khi đặc tả có ghi (cả
+sáu đặc tả hiện tại đều ghi), và vẫn **kiểm nhất quán** lõi, tập cờ và từng tham số RTL — nên đây
+là chốt chứ không phải đường tránh. Không có `expect.target` thì vẫn phân giải như cũ. Đã kiểm
+cả 6 đặc tả: `example_bv3`, `s1_av0`, `s1_bv1`, `s1_bv3`, `s6_pmax4`, `s7_dualport` — tất cả ĐẠT
+và ra đúng cấu hình mong đợi.
+
+**Bài học**: thêm cấu hình vào `targets.py` phải chạy lại `./cdp spec` cho **mọi** đặc tả cũ.
+
+### Lỗi báo cáo % RAM: đã sửa và thấy hiệu lực ngay
+
+Lần chạy này in đúng: `31.588/32.768 byte (96,4 %, còn 1.180 byte cho ngăn xếp)` cho B-V4
+(RAMKB=32) và `31.588/65.536 byte (48,2 %, còn 33.948 byte)` cho PMAX4 (64 KB). Trước khi sửa,
+cả hai đều báo 48,2 %.
+
+**Ràng buộc kéo theo cho S8**: B-V4 chỉ còn 1.180 byte ngăn xếp. Mô hình giữ lại lớn hơn (M1-L
+gấp đôi kênh) gần như chắc chắn **không vừa** RAM 32 KB. Phải tính trước khi chọn mô hình ở S8 —
+hoặc chọn mô hình nhỏ, hoặc đo mô hình giữ lại trên B-V3/B-V3+PMAX4 (RAM 64 KB) thay vì B-V4.
+
+### Việc tiếp theo / cần người dùng
+
+- **Để xong dòng 15 (PMAX4)**: cần người dùng rút/cắm lại cáp USB **một lần nữa**, rồi tôi đo
+  **PMAX4 trước tiên** (`./cdp kit --spec pipeline/specs/s6_pmax4.yaml`), không đo gì khác trước
+  nó. Khoảng 20 s.
+- Sau đó: S8 (mô hình giữ lại) — nhưng phải giải quyết ràng buộc RAM 32 KB nói trên trước khi
+  chọn mô hình.
+
+
 ## 2026-10-18 — S7: thử đo B-V4 trên kit — KHÔNG ĐẠT vì UART của kit chết giữa phép đo
 
 Phiên này làm ba việc: thử đo B-V4 trên kit (thất bại, phân loại được), sửa một lỗi báo cáo

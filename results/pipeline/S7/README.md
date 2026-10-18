@@ -135,10 +135,29 @@ make build-bs7dp FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1 DUAL_PORT=1
 ./cdp iss --target "B-V4"
 ```
 
-## 7. Còn thiếu: đo trên kit
+## 7. Đo trên kit — ĐẠT (2026-10-18, lần thử 2)
 
-**Chưa đo được trên kit.** Dòng B-V4 vì vậy **chưa** vào bảng chính của
-`docs/KET_QUA_TONG_HOP.md` — y như dòng PMAX4 trước khi đo được.
+**243.641 chu kỳ trên kit thật, bằng tuyệt đối số Verilator và bằng tuyệt đối dự báo mức A
+đã đóng băng trước khi viết RTL. Sai số dự báo: 0,00 %.**
+
+Run `pipeline/runs/20261018-214712-kit` (log thô: `kit/20261018-214712-kit/`):
+
+| tiêu chí ghi nhận | kết quả |
+|---|---|
+| đối chứng TRƯỚC (`min/top.fs`) | ĐẠT — "MIN" 8 lần trên `...171` |
+| CRC 5 tensor × 10 ảnh vs golden Python | **ĐẠT 10/10** |
+| dự đoán khớp golden | **10/10** (nhãn `[7,2,1,0,4,1,4,9,5,9]`) |
+| chu kỳ kit = Verilator **từng ảnh** | **BẰNG TUYỆT ĐỐI** (10/10 ảnh đều 243.641) |
+| **2/2 lần đọc độc lập** | **ĐẠT** (`lần_đọc_đạt=2/2`) |
+| chốt `SRC_HASH` | **có** (`a7dca19c8cec`) |
+| số dòng CSV | 10/10 |
+
+Tức **thoả đủ mọi tiêu chí trong MỘT run duy nhất** — điều dòng PMAX4 vẫn còn thiếu.
+
+Phân rã trên kit (trung vị): conv1 109.636 (45,0 %) · pool1 3.288 · conv2 123.702 (50,8 %) ·
+pool2 1.421 · dense 5.594. **9,0 ms · 110,8 ảnh/s · 1,27 chu kỳ/MAC · 36,89× so A-V0.**
+
+Dòng B-V4 đã vào bảng chính của `docs/KET_QUA_TONG_HOP.md` (dòng 16).
 
 ### Lần thử 1 — 2026-10-18, run `pipeline/runs/20261018-212201-kit`
 

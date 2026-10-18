@@ -6,7 +6,7 @@ Mô hình: M1-S (CNN int8, MNIST, 192.064 MAC) · Kế hoạch gốc: xem `CLAUD
 Tài liệu này là bảng tổng kết. Chi tiết: `docs/FEASIBILITY_REPORT.md` (F0–F8),
 `docs/KET_QUA_M1S.md` (nhánh A), `docs/KET_QUA_NHANH_B.md` (nhánh B), `docs/LOG.md` (nhật ký).
 
-## 1. Mười bốn cấu hình, tất cả đo trên phần cứng thật
+## 1. Mười lăm cấu hình, tất cả đo trên phần cứng thật
 
 | # | Biến thể | Phần cứng | Chu kỳ/ảnh | ms | chu kỳ/MAC | IPC | ảnh/s | so A-V0 |
 |---|---|---|---:|---:|---:|---:|---:|---:|
@@ -24,9 +24,18 @@ Tài liệu này là bảng tổng kết. Chi tiết: `docs/FEASIBILITY_REPORT.m
 | 12 | B-V1+DOT4 | mycore + DOT4 | 631.130 | 23,4 | 3,29 | 0,730 | 42,8 | 14,24× |
 | 13 | B-V1+DOT4+C1 | mycore + DOT4 | 487.865 | 18,1 | 2,54 | 0,802 | 55,3 | 18,42× |
 | 14 | **B-V3** | mycore + DOT4 + REQ | **365.992** | **13,6** | **1,91** | 0,759 | **73,8** | **24,56×** |
+| 16 | **B-V4** † | mycore + DOT4 + REQ + PMAX4 + bộ nhớ hai cổng | **243.641** | **9,0** | **1,27** | **0,970** | **110,8** | **36,89×** |
 
 **Từ 332,9 ms xuống 13,6 ms — 24,6× — trên cùng một FPGA, cùng một xung nhịp 27 MHz, cùng một mô
-hình, và mọi lớp vẫn đúng từng bit so với golden Python.** 73,8 ảnh/giây.
+hình, và mọi lớp vẫn đúng từng bit so với golden Python.** 73,8 ảnh/giây. Đó là kết quả của hai
+nhánh A và B (dòng 1–14).
+
+† **Dòng 16 đến từ giai đoạn sau**: pipeline đồng thiết kế có AI hỗ trợ (bước S7). Nó đẩy tiếp
+xuống **9,0 ms — 36,89× — 110,8 ảnh/giây**, và là ứng viên đầu tiên có **dự báo đúng tuyệt đối**
+(mức A: dự báo 243.641, đo 243.641, sai số 0,00 %). Dòng 15 (PMAX4, 317.878 chu kỳ, 28,27×) đã đo
+trên kit nhưng chưa thoả đủ tiêu chí trong **một** run — xem mục dưới. Vì B-V4 **bao gồm** PMAX4,
+phép đo ĐẠT của dòng 16 đã xác nhận lệnh PMAX4 chạy đúng trên phần cứng thật; chỉ riêng **con số
+317.878 của dòng 15** là còn thiếu một run sạch.
 
 ### Điều kiện để một dòng được ghi nhận
 Mọi dòng đều thoả **tất cả**: CRC32 của **cả 5 tensor trung gian** × 10 ảnh khớp golden Python ·
@@ -37,13 +46,14 @@ kiểm **từ chối** ghi nhận nếu lệch.
 Nhánh B chạy **đúng các file `firmware.hex` của nhánh A, không biên dịch lại**, nên `rdinstret` khớp
 **tuyệt đối** từng cặp — mọi chênh lệch giữa hai nhánh là **thuần vi kiến trúc**.
 
-### Hai dòng nữa đã làm xong nhưng CHƯA vào bảng trên
+### Hai dòng của pipeline đồng thiết kế: một đã vào bảng, một còn thiếu một run sạch
 
 Pipeline đồng thiết kế (S5–S7) đã đề xuất, dự báo, hiện thực và kiểm hai thay đổi phần cứng
-tiếp theo. Cả hai **chưa** vào bảng chính vì chưa có một phép đo kit thoả **đủ** tiêu chí —
-xem cuối mỗi mục.
+tiếp theo. **Dòng 16 (B-V4) đã thoả đủ tiêu chí và đã vào bảng chính** (run
+`pipeline/runs/20261018-214712-kit`). **Dòng 15 (PMAX4) chưa** — thiếu đúng một run gộp cả
+2/2 lần đọc và chốt `SRC_HASH`.
 
-#### Dòng 15: B-V3+PMAX4 — 317.878 chu kỳ, 28,27× (đã đo trên kit)
+#### Dòng 15: B-V3+PMAX4 — 317.878 chu kỳ, 28,27× (đã đo trên kit, chưa đủ trong một run)
 
 Lệnh thứ ba (`PMAX4`, lấy max gói 4 làn int8 cho pooling) do pipeline đồng thiết kế S5/S6 đề xuất,
 đã hiện thực và **đo trên kit thật**:
@@ -56,19 +66,31 @@ Hai lớp pooling: 54.991 → 6.899 chu kỳ. Giá phần cứng **+148 LUT4** (
 (vẫn ĐẠT ràng buộc 27 MHz). Dự báo ghi **trước** khi viết RTL: 316.695 chu kỳ — **sai số +0,37 %**.
 
 **Vì sao chưa vào bảng trên.** Tiêu chí ghi nhận đòi **đồng thời** 2/2 lần đọc **và** chốt `SRC_HASH`
-trong **một** phép đo. Hiện có: một run đạt 2/2 nhưng chưa chốt hash, và một run chốt hash với lần đọc
-1 đạt đủ tiêu chí trước khi **UART của kit chết** ở lần đọc 2 (phép đối chứng sau cho 0 byte ở cả hai
-cổng; JTAG vẫn nạp được — triệu chứng đã ghi trong `docs/LOG.md`). Hai run nạp **cùng một tệp nhị phân
-giống từng bit**, nên mọi tiêu chí **đều** có bằng chứng — nhưng **rải trên hai run**. Dòng này vào bảng
-chính sau một run duy nhất thoả cả hai, việc đó cần rút/cắm lại cáp USB.
+trong **một** phép đo. Đã có **ba** run, mọi tiêu chí đều có bằng chứng nhưng **rải ra**:
+
+| run | nội dung (CRC, dự đoán, kit=Verilator) | 2/2 lần đọc | chốt `SRC_HASH` |
+|---|---|---|---|
+| `190740` | ĐẠT | **2/2** | không |
+| `190840` | ĐẠT ở lần đọc 1 | 1/2 | **có** |
+| `214915` | ĐẠT ở lần đọc 1 | 1/2 | **có** |
+
+Cả ba nạp **cùng một tệp nhị phân giống từng bit**. Hai run sau chết ở lần đọc 2 vì **UART của kit
+chết** (đối chứng sau cho 0 byte ở cả hai cổng, JTAG vẫn nạp được).
+
+**Quy luật đã thấy được** (ghi trong `results/pipeline/S6/kit/README.md`): sau mỗi lần cắm lại cáp
+USB, kênh UART chịu được khoảng **ba lần truyền dài** (~5–9 KB mỗi lần) rồi chết; chuỗi ngắn không
+làm nó chết. Phiên 2026-10-18 kiểm chứng đúng điều này: đo B-V4 **trước** thì B-V4 đạt 2/2 trọn vẹn,
+còn PMAX4 đo ngay sau đó chết đúng ở lần đọc 2. **Cách làm từ nay**: mỗi lần cắm lại cáp chỉ đo
+**một** cấu hình. Dòng 15 vào bảng chính sau một lần cắm lại cáp mà **PMAX4 được đo trước tiên**.
 
 Chi tiết và log thô: `results/pipeline/S6/kit/README.md`.
 
-#### Dòng 16: B-V4 = + bộ nhớ hai cổng — 243.641 chu kỳ, 36,89× (chưa đo trên kit)
+#### Dòng 16: B-V4 = + bộ nhớ hai cổng — 243.641 chu kỳ, 36,89× (**đã đo trên kit, ĐẠT đủ tiêu chí**)
 
-| # | Biến thể | Phần cứng | Chu kỳ/ảnh | ms | chu kỳ/MAC | IPC | ảnh/s | so A-V0 |
-|---|---|---|---:|---:|---:|---:|---:|---:|
-| (16) | B-V4 | mycore + DOT4 + REQ + PMAX4 + bộ nhớ hai cổng | 243.641 | 9,0 | 1,27 | **0,970** | 110,8 | **36,89×** |
+Dòng này **đã nằm trong bảng chính ở trên**. Run `pipeline/runs/20261018-214712-kit`:
+CRC 5 tensor × 10 ảnh = golden 10/10 · dự đoán khớp golden 10/10 · chu kỳ kit = Verilator
+**bằng tuyệt đối từng ảnh** (10/10 ảnh đều 243.641) · **2/2 lần đọc độc lập** · chốt `SRC_HASH`
+= `a7dca19c8cec` · 10/10 dòng CSV.
 
 Bộ nhớ hai cổng kiểu Harvard: cổng lệnh riêng nên load/store hết **1 chu kỳ** thay vì 2.
 Không sửa một dòng mã phần mềm, không thêm lệnh — chỉ hạ λ. **IPC = 0,970**, gần một lệnh
@@ -85,10 +107,13 @@ vào 32 khối `RAM16SDP4` (RAM phân tán), thêm cổng thứ hai thì không 
 diện tích: PMAX4 tốn **9,8** LUT4 cho mỗi 1 % tăng tốc, bộ nhớ hai cổng tốn **370** — chênh
 38 lần.
 
-Đã kiểm: ISS = Verilator bằng tuyệt đối · CRC 5 tensor × 10 ảnh = golden · `instret` giống
-hệt bản một cổng · riscv-tests 48/48 · Fmax ĐẠT · firmware 32 KB trên lõi một cổng cho đúng
-317.878 (nên chênh lệch là thuần vi kiến trúc). **Chưa đo trên kit** vì UART của kit chết;
-`bs7dp/top.fs` đã dựng xong, sẵn sàng nạp.
+Đã kiểm: **kit = ISS = Verilator bằng tuyệt đối** · CRC 5 tensor × 10 ảnh = golden ·
+`instret` giống hệt bản một cổng (236.313) · riscv-tests 48/48 · Fmax ĐẠT · firmware 32 KB trên
+lõi một cổng cho đúng 317.878 (nên chênh lệch là thuần vi kiến trúc).
+
+**Một điều cần biết trước khi dùng B-V4 cho mô hình khác**: RAM còn 32 KB, và firmware M1-S đã
+chiếm **31.588/32.768 byte = 96,4 %**, chỉ còn **1.180 byte cho ngăn xếp**. Mô hình lớn hơn
+(M1-L ở bước S8) gần như chắc chắn **không vừa** — nên B-V4 và mô hình giữ lại có thể xung đột.
 
 Chi tiết và log thô: `results/pipeline/S7/README.md`.
 

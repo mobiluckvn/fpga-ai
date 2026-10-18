@@ -63,6 +63,7 @@ golden · chu kỳ kit = Verilator bằng tuyệt đối · **2/2 lần đọc �
 | B-V3 | ĐẠT | **2/2** | **có** (`c3966b0011df`) | **thoả đủ trong một run** |
 | B-V3+PMAX4, run `190740` | ĐẠT | **2/2** | không chốt | thiếu chốt hash |
 | B-V3+PMAX4, run `190840` | ĐẠT ở lần đọc 1 | **1/2** | **có** (`a7dca19c8cec`) | UART chết ở lần đọc 2 |
+| B-V3+PMAX4, run `214915` | ĐẠT ở lần đọc 1 | **1/2** | **có** (`a7dca19c8cec`) | UART chết ở lần đọc 2 (**y hệt**) |
 
 Hai run PMAX4 nạp **cùng một tệp nhị phân, giống từng bit**:
 `firmware.hex sha256 = e477ee612247d892abc3c82cf34f0bb1490acbd3d34c6cfaf2e4bbcca7bfd3f7`
@@ -71,7 +72,36 @@ có `SRC_HASH = a7dca19c8cec` khớp mã nguồn hiện tại. Mọi tiêu chí 
 **rải trên hai run** thay vì một run duy nhất.
 
 Vì vậy **dòng B-V3+PMAX4 chưa được đưa vào bảng chính** của `docs/KET_QUA_TONG_HOP.md`. Nó chỉ vào
-bảng chính sau một run duy nhất đạt 2/2 **và** có chốt hash. Việc đó cần **rút và cắm lại cáp USB**.
+bảng chính sau một run duy nhất đạt 2/2 **và** có chốt hash.
+
+### Lần thử 3 (run `214915`, 2026-10-18 sau khi cắm lại cáp) — và quy luật UART đã thấy được
+
+Sau khi người dùng rút/cắm lại cáp USB, tôi đo **B-V4 trước** (vì đó là mục tiêu của S7) rồi mới đo
+PMAX4. Kết quả: **B-V4 đạt 2/2 trong một run**, còn PMAX4 ngay sau đó lại chết đúng ở lần đọc 2 —
+lần thứ ba cùng một kiểu.
+
+Xếp theo thứ tự thời gian của phiên, quy luật hiện ra rõ:
+
+| thứ tự | việc | độ dài truyền | kết quả |
+|---|---|---|---|
+| 1 | cắm lại cáp, đối chứng `min` | ngắn (~50 byte) | ĐẠT |
+| 2 | B-V4 lần đọc 1 | **dài** (~4,8 KB) | ĐẠT |
+| 3 | B-V4 lần đọc 2 | **dài** | ĐẠT |
+| 4 | đối chứng `min` trước PMAX4 | ngắn | ĐẠT ("MIN" 9 lần) |
+| 5 | PMAX4 lần đọc 1 | **dài** (~9,4 KB tồn) | ĐẠT |
+| 6 | PMAX4 lần đọc 2 | **dài** | **0 byte — chết** |
+
+Kênh UART chịu được khoảng **ba lần truyền dài** sau mỗi lần cắm lại cáp, rồi chết; chuỗi ngắn
+không làm nó chết. Lần trước (run `190740` → `190840`) cũng đúng mẫu này: 2/2 ở run đầu, rồi
+chết ở lần đọc 2 của run sau.
+
+**Hệ quả cho cách làm**: sau mỗi lần cắm lại cáp, chỉ nên chạy **một** cấu hình — cấu hình quan
+trọng nhất — rồi cắm lại cáp trước khi chạy cấu hình tiếp theo. Lần này tôi đã vô tình kiểm chứng
+đúng điều đó: cấu hình đo đầu tiên (B-V4) ĐẠT trọn vẹn, cấu hình thứ hai (PMAX4) chết.
+
+PMAX4 nay có **ba** run với lần đọc 1 đạt đủ nội dung và **hai** run đạt 2/2 (một không chốt hash),
+tất cả trên cùng một tệp nhị phân giống từng bit. Thiếu duy nhất là một run gộp cả hai điều kiện.
+Việc này cần người dùng cắm lại cáp **rồi đo PMAX4 TRƯỚC**, trước mọi cấu hình khác.
 
 ## 5. Phân loại nguyên nhân thất bại — và hai lỗi của tôi
 

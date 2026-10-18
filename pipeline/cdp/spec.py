@@ -81,8 +81,31 @@ def load(path: str | Path) -> Spec:
     warn: list[str] = []
 
     core = raw["core"]["name"]
-    tgt = targets.resolve(core, raw["firmware"].get("flags", []),
-                          raw["core"].get("rtl_params", {}))
+    want_flags = frozenset(f.removeprefix("-D")
+                           for f in (raw["firmware"].get("flags") or []))
+    rtl_params = raw["core"].get("rtl_params") or {}
+    # `expect.target` chốt thẳng tên cấu hình. Cần thế vì tập (lõi, cờ, tham số RTL)
+    # KHÔNG còn phân biệt được mọi cấu hình: B-V3+PMAX4, B-V3+PMAX4@32K và B-V4 chỉ
+    # khác nhau ở DUAL_PORT và ở RAMKB của firmware — mà RAMKB không nằm trong
+    # rtl_params. Thêm ba cấu hình S7 đã làm `s6_pmax4.yaml` hết phân giải được.
+    # Khi có tên thì vẫn kiểm nhất quán, nên đây là chốt chứ không phải đường tránh.
+    want_name = (raw.get("expect") or {}).get("target")
+    if want_name:
+        tgt = targets.get(want_name)
+        if tgt.core != core:
+            raise ValueError(f"{p}: expect.target={want_name!r} dùng lõi "
+                             f"{tgt.core!r} nhưng đặc tả ghi core.name={core!r}")
+        if tgt.fw_flags != want_flags:
+            raise ValueError(
+                f"{p}: expect.target={want_name!r} có tập cờ "
+                f"{sorted(tgt.fw_flags)} nhưng đặc tả ghi {sorted(want_flags)}")
+        lech = {k: (v, tgt.rtl_params.get(k)) for k, v in rtl_params.items()
+                if str(tgt.rtl_params.get(k)) != str(v)}
+        if lech:
+            raise ValueError(f"{p}: expect.target={want_name!r} lệch tham số RTL "
+                             f"(đặc tả, cấu hình): {lech}")
+    else:
+        tgt = targets.resolve(core, raw["firmware"].get("flags", []), rtl_params)
 
     fw_id = raw["firmware"].get("id")
     if fw_id and fw_id != tgt.fw_id:

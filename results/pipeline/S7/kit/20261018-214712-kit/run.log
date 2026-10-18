@@ -1,0 +1,24 @@
+# cdp kit · đặc tả s7_dualport.yaml → cấu hình B-V4 (mycore + DOT4 + REQ + PMAX4 + bộ nhớ hai cổng)
+    cổng UART thấy được: ['/dev/cu.usbserial-20250303170', '/dev/cu.usbserial-20250303171']
+[cây bóng] pipeline/work/s1 (dùng lại)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_s6 fw KERNELS=cand/pmax4.c OUT=cdp32 RAMKB=32   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_s6)
+    make fw → rc=0 · 0.1 s · log logs/make-fw-cdp32.log
+    firmware cdp32: .text 18,772 + .data 0 + .bss 12,816 = 31,588/32,768 byte (96.4 %, còn 1,180 byte cho ngăn xếp)
+    sha256(firmware.hex) = 2c5641d3d800a8c4…
+    [đối chứng] dựng + nạp min/top.fs (thiết kế đã biết chạy)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore build-min   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make build-min → rc=0 · 0.1 s · log logs/make-build-min.log
+    [đối chứng] số lần thấy 'MIN': {'/dev/cu.usbserial-20250303170': 0, '/dev/cu.usbserial-20250303171': 8} → ĐẠT, cổng phát byte: /dev/cu.usbserial-20250303171
+    nạp bs7dp/top.fs (SRAM)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore load-bs7dp FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1 DUAL_PORT=1   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make load-bs7dp → rc=0 · 3.0 s · log logs/make-load-bs7dp.log
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore check-bs7dp FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1 DUAL_PORT=1 UART_PORT=/dev/cu.usbserial-20250303171 CSV_APPEND=--append   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make check-bs7dp → rc=0 · 6.8 s · log logs/make-check-bs7dp.log
+
+    số dòng CSV          : 10 (mong đợi 10)
+    trung vị chu kỳ/ảnh  : 243.641 · bảng 243.641 ✓
+    kit = Verilator từng ảnh: BẰNG TUYỆT ĐỐI
+    m1s_check.py         : M1S_PASS
+
+=> ĐẠT
+[run 20261018-214712-kit] ok · 18.7 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-214712-kit

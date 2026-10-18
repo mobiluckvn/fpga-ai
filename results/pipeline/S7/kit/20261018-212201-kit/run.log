@@ -1,0 +1,32 @@
+# cdp kit · đặc tả s7_dualport.yaml → cấu hình B-V4 (mycore + DOT4 + REQ + PMAX4 + bộ nhớ hai cổng)
+    cổng UART thấy được: ['/dev/cu.usbserial-20250303170', '/dev/cu.usbserial-20250303171']
+[cây bóng] pipeline/work/s1 (dùng lại)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_s6 fw KERNELS=cand/pmax4.c OUT=cdp32 RAMKB=32   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/experiment/m1s_s6)
+    make fw → rc=0 · 0.2 s · log logs/make-fw-cdp32.log
+    firmware cdp32: .text 18,772 + .data 0 + .bss 12,816 = 31,588/65.536 byte (48.2 %)
+    sha256(firmware.hex) = 2c5641d3d800a8c4…
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore build-bs7dp FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1 DUAL_PORT=1   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make build-bs7dp → rc=0 · 1139.6 s · log logs/make-build-bs7dp.log
+    bitstream bs7dp/top.fs = 7,261,470 byte
+    [đối chứng] dựng + nạp min/top.fs (thiết kế đã biết chạy)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore build-min   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make build-min → rc=0 · 0.1 s · log logs/make-build-min.log
+    [đối chứng] số lần thấy 'MIN': {'/dev/cu.usbserial-20250303170': 0, '/dev/cu.usbserial-20250303171': 1342} → ĐẠT, cổng phát byte: /dev/cu.usbserial-20250303171
+    nạp bs7dp/top.fs (SRAM)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore load-bs7dp FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1 DUAL_PORT=1   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make load-bs7dp → rc=0 · 2.9 s · log logs/make-load-bs7dp.log
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore check-bs7dp FAST_ADDR=1 WITH_DOT4=1 WITH_REQ=1 WITH_PMAX4=1 DUAL_PORT=1 UART_PORT=/dev/cu.usbserial-20250303171 CSV_APPEND=--append   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make check-bs7dp → rc=0 · 84.7 s · log logs/make-check-bs7dp.log
+    phép đo KHÔNG ĐẠT — phân loại nguyên nhân bằng đối chứng
+    [đối chứng] dựng + nạp min/top.fs (thiết kế đã biết chạy)
+$ make -C /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore build-min   (cwd=/Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/work/s1/rtl/mycore)
+    make build-min → rc=0 · 0.1 s · log logs/make-build-min.log
+    [đối chứng] số lần thấy 'MIN': {'/dev/cu.usbserial-20250303170': 0, '/dev/cu.usbserial-20250303171': 0} → KHÔNG ĐẠT — đường UART của kit đã chết; cần rút/cắm lại cáp USB
+
+    số dòng CSV          : 0 (mong đợi 10)
+    trung vị chu kỳ/ảnh  : None · bảng 243.641 ✗
+    kit = Verilator từng ảnh: LỆCH
+    m1s_check.py         : KHÔNG ĐẠT
+
+=> KHÔNG ĐẠT
+[run 20261018-212201-kit] fail · 1244.3 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-212201-kit
