@@ -1,0 +1,79 @@
+file,origin,mode,cand_id,level,title,targeted_classes,fraction,max_speedup,method,estimate_method_declared,has_timing_changes,has_full_instr_spec
+blind_catalog_1.json,ai,blind_catalog,C01-ldst-1cycle,L3,Tách lệnh/dữ liệu (BSRAM hai cổng) để load/store còn 1 chu kỳ,"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_timing,True,False
+blind_catalog_1.json,ai,blind_catalog,C02-mul-1cycle,L3,Nhân 32x32 một chu kỳ (λ_mul 2 -> 1),"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,False
+blind_catalog_1.json,ai,blind_catalog,C03-hwloop,L3,Vòng lặp phần cứng không phí tổn (zero-overhead loop),"other,loop_ctrl",0.0279,1.0287,C_amdahl_ceiling,iss_timing,True,False
+blind_catalog_1.json,ai,blind_catalog,C04-mac-fused,L1,Lệnh nhân-cộng dồn vô hướng (mac) với thanh ghi tích luỹ kiến trúc,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_1.json,ai,blind_catalog,C05-requant-fused,L1,Lệnh dịch-làm tròn-kẹp bão hoà int8 một chu kỳ (rqsat),requant,0.0884,1.097,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_1.json,ai,blind_catalog,C06-lb-postinc,L1,Nạp byte có tự tăng địa chỉ (lbpi) và lưu byte có tự tăng (sbpi),"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_1.json,ai,blind_catalog,C07-dot4-int8,L2,Nhân-cộng SIMD 4 làn int8 trên 32 bit (dot4) + nạp 4 byte bằng một lw,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_1.json,ai,blind_catalog,C08-layout-simd-conv2,L2,Đổi bố cục dữ liệu conv2/dense sang kênh-trong-cùng (NHWC + đệm 4) để mở đường cho SIMD,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_firmware,False,False
+blind_catalog_1.json,ai,blind_catalog,C09-reuse-tiling-conv2,L2,Tái sử dụng dữ liệu trong thanh ghi (chia ô 4 kênh đầu ra) để hạ byte/MAC,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_firmware,False,False
+blind_catalog_1.json,ai,blind_catalog,C10-lmac-streaming,L4,Lệnh nạp-nhân-cộng dồn có con trỏ tự tăng (lmac): một lệnh đọc dữ liệu và MAC,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,True,True
+blind_catalog_1.json,ai,blind_catalog,C11-mac-array-4x4,L4,Mảng MAC 4x4 gắn sát CPU với bộ đệm trọng số/activation cục bộ,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,analytic,True,True
+blind_catalog_1.json,ai,blind_catalog,C12-dual-issue,L5,Phát hai lệnh hẹp mỗi chu kỳ: một ALU + một load/store hoặc lệnh tuỳ biến,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,analytic,True,False
+blind_catalog_2.json,ai,blind_catalog,R1-L3-dualport-mem,L3,Tách cổng lệnh / cổng dữ liệu (BSRAM 2 cổng) để load và store hết 1 chu kỳ,"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_timing,True,False
+blind_catalog_2.json,ai,blind_catalog,R1-L2-dot4-int8,L2,"DOT4.ACC: nhân-cộng SIMD 4 làn int8 gói trong 32 bit, cộng dồn vào thanh ghi tích luỹ","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_2.json,ai,blind_catalog,R1-L2-layout-nhwc,L2,Đổi bố cục dữ liệu conv2 (NCHW→NHWC / im2col gói 4 kênh) để DOT4 dùng được,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_firmware,False,False
+blind_catalog_2.json,ai,blind_catalog,R1-L1-requant-fused,L1,REQS: lượng tử hoá lại một lệnh (dịch phải có làm tròn + bão hoà int8),requant,0.0884,1.097,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_2.json,ai,blind_catalog,R1-L1-clamp8,L1,"CLAMP8 / RELU8: kẹp bão hoà int8 (và max-0) một lệnh, không kèm dịch",requant,0.0884,1.097,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_2.json,ai,blind_catalog,R1-L1-postinc-load,L1,LBU.PI / LW.PI: nạp có tự tăng địa chỉ (ghi lại thanh ghi cơ sở),"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,True,True
+blind_catalog_2.json,ai,blind_catalog,R1-L2-pmax4-pool,L2,PMAX4: max SIMD 4 làn byte cho pooling và ReLU,"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_2.json,ai,blind_catalog,R1-L3-fast-mul,L3,Nhân 32×32 một chu kỳ (mul: λ 2 → 1),"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,False
+blind_catalog_2.json,ai,blind_catalog,R1-L3-hw-loop,L3,Vòng lặp phần cứng không phí (zero-overhead loop) cho vòng trong ngắn,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,True
+blind_catalog_2.json,ai,blind_catalog,R1-L1-mac-acc-scalar,L1,MACA: nhân-cộng vô hướng một lệnh vào thanh ghi tích luỹ (không cần đổi bố cục),"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_2.json,ai,blind_catalog,R1-L4-mac-array-4x4,L4,Mảng MAC 4×4 gắn sát CPU với đệm cục bộ cho activation và weight,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,analytic,True,True
+blind_catalog_2.json,ai,blind_catalog,R1-L5-dual-issue,L5,Phát hai lệnh hẹp: một khe ALU/custom + một khe load/store,requant,0.0884,1.097,C_amdahl_ceiling,analytic,True,False
+blind_catalog_3.json,ai,blind_catalog,R1-L3-split-id-mem,L3,Tách bộ nhớ lệnh/dữ liệu (hoặc dùng cổng thứ hai của BSRAM) để load/store còn 1 chu kỳ,"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_timing,True,False
+blind_catalog_3.json,ai,blind_catalog,R1-L3-mul-1cycle,L3,Nhân 32x32 một chu kỳ (mul 2 -> 1 chu kỳ),"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,False
+blind_catalog_3.json,ai,blind_catalog,R1-L3-splitmem-plus-mul1,L3,Kết hợp: tách bộ nhớ lệnh/dữ liệu VÀ nhân một chu kỳ,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,False
+blind_catalog_3.json,ai,blind_catalog,R1-L1-mac-acc,L1,Lệnh MAC vô hướng với thanh ghi cộng dồn trong lõi (custom-0),"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_3.json,ai,blind_catalog,R1-L1-requant-fuse,L1,Lệnh gộp requantize: cộng bias làm tròn + dịch phải số học + kẹp bão hoà int8 (custom-0),requant,0.0884,1.097,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_3.json,ai,blind_catalog,R1-L1-load-postinc,L1,"Nạp từ 32 bit có tự tăng địa chỉ cơ sở (post-increment, custom-1)","load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_3.json,ai,blind_catalog,R1-L2-dot4-int8,L2,Lệnh SIMD tích vô hướng 4 làn int8 cộng dồn vào thanh ghi acc (custom-0),"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_3.json,ai,blind_catalog,R1-L2-layout-nhwc,L2,Đổi bố cục dữ liệu conv2/dense sang kênh liền kề (NHWC) + đệm 4 byte để mở DLP,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_firmware,False,False
+blind_catalog_3.json,ai,blind_catalog,R1-L2-packed-max,L2,Lệnh SIMD max 4 byte cho max-pooling và ReLU (custom-0),"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,False,True
+blind_catalog_3.json,ai,blind_catalog,R1-L3-hw-loop,L3,Vòng lặp phần cứng không phí điều khiển (zero-overhead loop),"other,loop_ctrl",0.0279,1.0287,C_amdahl_ceiling,iss_timing,True,True
+blind_catalog_3.json,ai,blind_catalog,R1-L4-mac-array-4x4,L4,Mảng MAC 4x4 gắn sát CPU với bộ đệm trọng số cục bộ (16 MAC int8 mỗi lệnh),"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,analytic,False,True
+blind_catalog_3.json,ai,blind_catalog,R1-L5-dual-issue,L5,Phát hai lệnh hẹp: một khe ALU/nhánh + một khe load/store/custom,"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,analytic,True,False
+blind_open_1.json,ai,blind_open,L3-LS1,L3,"Tách cổng nạp lệnh khỏi cổng dữ liệu (Harvard / cổng thứ hai của BSRAM): lambda_load 2->1,","load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_timing,True,False
+blind_open_1.json,ai,blind_open,L1-MACC,L1,"Lệnh tùy biến MACC: gộp mul + add vào một lệnh, tích lũy trong thanh ghi acc riêng","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_1.json,ai,blind_open,L2-QMAC4,L2,"Lệnh SIMD QMAC4: tích vô hướng 4 làn int8 cộng vào acc, nạp toán hạng bằng lw 32 bit","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_1.json,ai,blind_open,L2-REPACK,L2,Đổi bố cục dữ liệu conv2 sang kênh-liền-kề (int8 vector liên tục) để tạo ra bước 1 và DLP,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_firmware,False,False
+blind_open_1.json,ai,blind_open,L1-RQCLAMP,L1,Lệnh tùy biến RQCLAMP: gộp chuỗi làm-tròn-dịch-kẹp của requant int8 thành một lệnh 1 chu k,requant,0.0884,1.097,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_1.json,ai,blind_open,L3-MUL1,L3,"Hạ lambda_mul từ 2 xuống 1 chu kỳ, dùng biên Fmax đang dư","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,False
+blind_open_1.json,ai,blind_open,L4-DOTSTREAM,L4,"Khối tăng tốc DOTSTREAM: một lệnh chạy n tap MAC int8, tự sinh địa chỉ, chạy ở đúng trần b","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,True,True
+blind_open_1.json,ai,blind_open,L4-AGENLD,L4,Bộ sinh địa chỉ phần cứng + lệnh LDSW nạp từ con trỏ nội bộ và tự tăng theo stride,"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_1.json,ai,blind_open,L2-PMAX4,L2,Lệnh SIMD PMAX4: lấy max có dấu theo 4 làn int8 cho tầng pooling,"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_1.json,ai,blind_open,L1-BEXT,L1,"Lệnh BEXT: rút một byte theo chỉ số và mở rộng dấu trong 1 chu kỳ, để nạp 32 bit thay cho ","load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_1.json,ai,blind_open,L2-BLOCK,L2,"Chia khối / tái sử dụng toán hạng trong firmware để hạ byte_per_mac của conv2, nâng trần r","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_firmware,False,False
+blind_open_1.json,ai,blind_open,L5-DUALBANK,L5,Tổ chức lại bộ nhớ thành hai bank dữ liệu 32 bit độc lập (activation / weight) cộng cổng n,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,False
+blind_open_2.json,ai,blind_open,C01.L3.MEM1,L3,Tach bo nho lenh/du lieu (Harvard) de load/store ha tu 2 chu ky xuong 1,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,False
+blind_open_2.json,ai,blind_open,C02.L3.MEM1W,L3,Harvard day du: ca load VA store ha xuong 1 chu ky,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,False
+blind_open_2.json,ai,blind_open,C03.L3.MUL1,L3,Ong hoa bo nhan: mul ha tu 2 chu ky xuong 1,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,False
+blind_open_2.json,ai,blind_open,C04.L1.FMAC,L1,"Lenh FMAC custom-0: acc += rs1*rs2 trong 1 chu ky, 4 thanh ghi tich luy noi","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_2.json,ai,blind_open,C05.L1.LMAC,L1,"Lenh LMAC custom-0: nap 1 byte tu bo nho, nhan voi trong so trong thanh ghi, tich luy — ta","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_2.json,ai,blind_open,C06.L2.SDOT4,L2,"Lenh SDOT4 custom-0: tich vo huong 4 lan int8 tren toan hang 32 bit da goi, 1 chu ky","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_2.json,ai,blind_open,C07.L2.CONV2LAYOUT,L2,Doi bo tri du lieu conv2 sang kenh-trong-cung (stride-1) de mo duong cho SIMD va giam byte,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_firmware,False,False
+blind_open_2.json,ai,blind_open,C08.L1.REQUANT,L1,"Lenh REQUANT custom-0: (acc * M + round) >> S roi bao hoa ve int8, trong 1 lenh",requant,0.0884,1.097,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_2.json,ai,blind_open,C09.L4.MACARRAY,L4,"Khoi tang toc MAC 4x4 (custom-1): 4 nhom trong so nap truoc, 16 MAC int8 moi chu ky","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_2.json,ai,blind_open,C10.L3.DIVFAST,L3,Chia co so cao: div ha tu 34 chu ky xuong 9 (4 bit moi buoc),requant,0.0884,1.097,C_amdahl_ceiling,iss_timing,True,False
+blind_open_2.json,ai,blind_open,C11.L5.DUALISSUE,L5,Phat hai lenh tinh (2-way static dual-issue): mot khe bo nho/nhan + mot khe ALU/nhanh,requant,0.0884,1.097,C_amdahl_ceiling,iss_timing,True,False
+blind_open_2.json,ai,blind_open,C12.L5.XREGBANK,L5,Bang thanh ghi mo rong 32 o (custom-1) de xoa spill va giu trong so trong lõi,"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_3.json,ai,blind_open,L1-MACC8,L1,Lenh MAC 8x8->32 gop (nhan + cong don) voi thanh ghi tich luy kien truc acc0,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_3.json,ai,blind_open,L1-RQNT,L1,"Lenh requantize gop: nhan 32x32, dich co lam tron, cong zero-point, kep ve int8",requant,0.0884,1.097,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_3.json,ai,blind_open,L1-LBX,L1,"Nap byte voi dia chi theo thanh ghi (gop add + lbu), cat chu ky tinh dia chi","load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_3.json,ai,blind_open,L2-SDOT4,L2,"SIMD 4 lan int8: tich vo huong 4 phan tu cong don vao acc0, dung voi nap tu 32 bit","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_3.json,ai,blind_open,L2-REPACK2,L2,Doi bo cuc du lieu conv2 (dong goi weight offline + dem dong im2col) de truy cap thanh str,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_firmware,False,False
+blind_open_3.json,ai,blind_open,L2-PMAX4,L2,Lenh max goi 4 lan int8 (PMAX4) cho tang pooling,"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,False,True
+blind_open_3.json,ai,blind_open,L3-HARVARD,L3,Tach duong nap lenh khoi cong du lieu (BSRAM song cong / bank lenh rieng): load/store ve 1,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,False
+blind_open_3.json,ai,blind_open,L3-MUL1,L3,Nhan 32x32 mot chu ky (lambda_mul 2 -> 1) bang cay 4 MULT18X18 to hop,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,True,False
+blind_open_3.json,ai,blind_open,L4-DOTENG,L4,"Khoi tang toc tich vo huong int8 nhieu chu ky, tu sinh dia chi, chiem cong BSRAM lien tuc","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,True,True
+blind_open_3.json,ai,blind_open,L4-GATHER,L4,"Khoi sinh dia chi/gom theo buoc (gather) dong goi 4 byte thanh tu, cho conv2 va dense khon","load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,True,True
+blind_open_3.json,ai,blind_open,L5-DUAL,L5,"Phat hai lenh moi chu ky (in-order, khe A = bo nho/nhanh, khe B = ALU/MAC), tep thanh ghi ","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,analytic,True,False
+blind_open_3.json,ai,blind_open,L5-ACCBANK,L5,"Bank 8 thanh ghi tich luy kien truc + cong doc thu ba, mo duong cho chia o (blocking) tai ","load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,True,True
+rules.json,rules,open,rules.L1_postinc_load,L1,Nạp có tự tăng địa chỉ (post-increment),"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_plugin,False,False
+rules.json,rules,open,rules.L2_packed_mac,L2,Nhân-cộng SIMD trên dữ liệu gói (N làn × W bit trong 32 bit),"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_plugin,False,False
+rules.json,rules,open,rules.L2_layout_for_simd,L2,"Biến đổi bố cục dữ liệu để lệnh SIMD dùng được (đệm, nhân bản pha, đổi NCHW/NHWC)","mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_firmware,False,False
+rules.json,rules,open,rules.L3_dual_port_mem,L3,Bộ nhớ hai cổng / tách lệnh-dữ liệu để load/store không chặn nạp lệnh,"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,iss_timing,False,False
+rules.json,rules,open,rules.L3_fast_mul,L3,Nhân một chu kỳ,"mac,load_data",0.8497,6.6516,C_amdahl_ceiling,iss_timing,False,False
+rules.json,rules,open,rules.L5_multi_issue,L5,Phát hai lệnh hẹp (một ALU + một load/store/custom),"load_data,store_data",0.4676,1.8782,C_amdahl_ceiling,analytic,False,False

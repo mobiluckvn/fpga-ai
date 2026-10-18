@@ -2,6 +2,81 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — S6 phần 1: `cdp estimate` — dự báo GHI TRƯỚC, và PQ1 đã có câu trả lời cho tầng L1/L2
+
+Theo yêu cầu người dùng: làm phần dự báo trước (chưa cần kit), lưu đủ để viết báo cáo.
+Nguyên tắc SPEC 0.3: dự báo ghi vào sổ cái **trước** khi hiện thực, **không sửa lùi**.
+
+### Ba mức dự báo, độ tin cậy khác nhau hẳn — không được trộn
+- **A. Đổi λ** (L3): ΔC = Σ n_c(λ_cũ − λ_mới). **Chính xác theo mô hình** đã khớp tuyệt đối
+  với RTL trên 14 cấu hình (S2) và trên mã mới do AI sinh (S4).
+- **B. Gộp/vector hoá một mẫu lệnh** (L1/L2): ΔC = n_nhóm(Σλ_bị_thay − Σλ_mới). **Chặn dưới.**
+- **C. Chặn trên Amdahl**: ≤ 1/(1−f). Cho mọi ứng viên, nhưng là **chặn trên**, không phải dự báo.
+
+### PQ1 cho tầng L1/L2 — trả lời được NGAY, không cần viết thêm RTL
+Ba ứng viên ưu tiên đã có số đo thật từ giai đoạn trước:
+| | dự báo (mức B) | đo thật | sai số |
+|---|---:|---:|---:|
+| DOT4 | 1,524× | **2,313×** | **−34,1 %** |
+| Bố cục dữ liệu | 1,370× | **1,294×** | **+5,9 %** |
+| REQ | 1,180× | **1,333×** | **−11,5 %** |
+| | | **|sai số| trung bình** | **17,2 %** |
+
+**Dự báo mức B lệch tới 34 %, và lệch CÓ HỆ THỐNG theo hướng thiếu** ở hai ứng viên gộp lệnh.
+Nguyên nhân truy được từ chính dữ liệu S3: mức B chỉ tính các lệnh **bị thay trực tiếp**, còn
+việc biến đổi mã để dùng lệnh mới **còn cắt thêm** chi phí địa chỉ và điều khiển vòng. Ngược
+lại, bố cục dữ liệu **trả giá thêm** (+addr +loop_ctrl +store) nên ở đó dự báo lại **THỪA**.
+
+Hệ quả phương pháp, phải ghi vào luận văn: **mức B dùng để XẾP HẠNG ứng viên thì được, dùng
+để CAM KẾT một con số thì không.** Chỉ mức A mới cam kết được — và chưa ứng viên mức A nào có
+số đo đối chứng, nên đó chính là việc của phần đo kit.
+
+### Dự báo chính xác (mức A) cho các ứng viên L3
+| ứng viên | cơ sở | dự báo |
+|---|---|---:|
+| Bộ nhớ hai cổng (load/store 2→1 ck) | B-V3 | **1,283×** (285.167 chu kỳ) |
+| Bộ nhớ hai cổng | B-V1 | 1,305× |
+| Nhân 1 chu kỳ (λ_mul 2→1) | B-V3 | **1,000×** |
+| Hạ λ lệnh lượng tử hoá lại (2→1) | B-V3 | 1,021× |
+| Bộ nhớ hai cổng + mọi phép nhân 1 ck | B-V3 | **1,317×** → C = 277.823 = đúng N, **IPC = 1,00** |
+
+"Nhân 1 chu kỳ cho 1,000× trên B-V3" **không phải lỗi**: ở B-V3 thì n_mul = 0 (mọi MAC đã là
+lệnh 4 làn, requantize đã là một lệnh). Muốn hạ chi phí số học ở B-V3 phải hạ λ của chính lệnh
+lượng tử hoá lại. Ghi rõ chỗ này vì con số 1,020× ở `S3/summary.md` mục 5 dùng định nghĩa gộp
+cả hai, dễ bị đọc thành mâu thuẫn.
+
+### Dự báo được tới đâu, trên 78 ứng viên của S5
+**32** ứng viên dự báo được chính xác (mức A, hầu hết là L3/L4/L5 có `timing_changes`);
+**32** dự báo được dưới dạng chặn dưới (mức B, hầu hết L1/L2 có đủ mã hoá + ngữ nghĩa + độ trễ);
+**14** chỉ có chặn trên.
+
+Và một kết luận về chính chặn trên Amdahl: **nó KHÔNG phân biệt được các ứng viên** — hầu hết
+đều nhắm `mac`+`load_data` cộng lại 85 % chu kỳ nên chặn trên của chúng gần như bằng nhau
+(trung vị = lớn nhất ≈ 6,65×). Vì vậy **không dùng chặn trên để chọn top-K**.
+
+### Đề nghị top-K (chờ người dùng quyết)
+1. **Bộ nhớ hai cổng** — 1,283× trên B-V3, **mức A nên cam kết được**; không thêm lệnh mới,
+   **không đổi firmware**; 7/7 lần chạy S5 đều đề xuất.
+2. **PMAX4** — chặn trên 1,164×; nhắm đúng 15,0 % chu kỳ **chưa tối ưu nào chạm tới**; 4/6 lần
+   chạy AI đề xuất.
+3. Hạ λ lệnh lượng tử hoá lại — 1,021×, rất nhỏ nhưng gần như miễn phí nếu đã mở khối nhân.
+4. MACC/FMAC có thanh ghi tích luỹ riêng — 5/6 lần chạy đề xuất nhưng **đặc tả chưa đủ** để
+   tính mức B; cần làm rõ trước khi xếp hạng.
+
+**Cảnh báo**: làm cả 1 và 2 thì **không được nhân hai hệ số** rồi coi là dự báo. Hai hướng tác
+động lên các số hạng khác nhau của Σn_cλ_c nên *xấp xỉ* nhân được, nhưng đó là **giả thuyết cần
+đo**, không phải dự báo.
+
+### Lưu cho báo cáo
+`results/pipeline/S6/`: `README_estimate.md` · `estimates_priority.json` (đủ công thức và từng
+số hạng) · `du_bao_vs_do.csv` · `estimates_all_candidates.csv` (78 ứng viên) · `estimates_full.json`
+· `estimate.log` · `so_cai_candidates.csv` (**90 dòng sổ cái** trạng thái `estimated`, có
+`predicted_cycles`/`predicted_speedup`, git commit, run_id).
+
+### Việc tiếp theo
+Hiện thực top-K → `cdp verify` → **đo kit** (lần đầu cần kit; gộp luôn phép kiểm đường đo
+`cdp kit` đã hoãn từ S1).
+
 ## 2026-10-18 — PIPELINE CDP bước S5 ĐẠT: AI mù tái khám phá DOT4, REQ, bố cục và bộ nhớ nhanh — và tìm thêm 34 ứng viên mới
 
 Trả lời PQ3 và PQ4. Điểm xuất phát B-V1 (1.459.993 chu kỳ). Sáu lời gọi AI mù (3 `blind_open`

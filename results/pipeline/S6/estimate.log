@@ -1,0 +1,44 @@
+# cdp estimate · cơ sở B-V1 · 7 tệp ứng viên
+    SPEC 0.3: dự báo ghi vào sổ cái TRƯỚC khi hiện thực, không sửa lùi.
+
+## 1. Dự báo cấu trúc cho các ứng viên ưu tiên
+
+| ứng viên | tầng | cơ sở | phương pháp | dự báo | tăng tốc dự báo | đo thật | sai số |
+|---|---|---|---|---:|---:|---:|---:|
+| DOT4 (nhân-cộng SIMD 4 làn int8) | L2 | B-V1 | B | 958.121 | 1.5238 | 631.130 | -34.1 % |
+| Bố cục dữ liệu cho conv1 dùng được lệnh 4 làn | L2 | B-V1 | B | 460.778 | 1.3697 | 487.865 | +5.9 % |
+| REQ (gộp chuỗi lượng tử hoá lại thành một lệnh) | L1 | B-V1+DOT4+C1 | B2 | 413.468 | 1.1799 | 365.992 | -11.5 % |
+| PMAX4 (lấy max gói 4 làn int8 cho pooling) | L2 | B-V3 | C | — | ≤ 1.1635 | — | — |
+| Bộ nhớ hai cổng (load/store 2 → 1 chu kỳ) | L3 | B-V1 | A | 1.118.656 | 1.3051 | — | — |
+| Bộ nhớ hai cổng (load/store 2 → 1 chu kỳ) | L3 | B-V3 | A | 285.167 | 1.2834 | — | — |
+| Nhân 1 chu kỳ (λ_mul 2 → 1) | L3 | B-V1 | A | 1.253.241 | 1.165 | — | — |
+| Nhân 1 chu kỳ (λ_mul 2 → 1) | L3 | B-V3 | A | 365.992 | 1.0 | — | — |
+| Hạ λ của lệnh lượng tử hoá lại (2 → 1 chu kỳ) | L3 | B-V1 | A | 1.459.993 | 1.0 | — | — |
+| Hạ λ của lệnh lượng tử hoá lại (2 → 1 chu kỳ) | L3 | B-V3 | A | 358.648 | 1.0205 | — | — |
+| Cả hai: bộ nhớ hai cổng + mọi phép nhân 1 chu kỳ | L3 | B-V1 | A | 911.904 | 1.601 | — | — |
+| Cả hai: bộ nhớ hai cổng + mọi phép nhân 1 chu kỳ | L3 | B-V3 | A | 277.823 | 1.3174 | — | — |
+
+## 2. Dự báo được tới đâu? (78 ứng viên)
+
+Chặn trên Amdahl tính được cho **mọi** ứng viên, nhưng nó **không phân biệt**
+được chúng: hầu hết ứng viên đều nhắm `mac`+`load_data`, cộng lại 85 % chu kỳ,
+nên chặn trên của chúng gần như bằng nhau. Vì vậy chọn top-K **không** dùng
+chặn trên, mà dùng dự báo cấu trúc (phương pháp A hoặc B) — và chỉ một phần
+ứng viên đủ đặc tả để làm được việc đó:
+
+| tầng | ứng viên | có `timing_changes` → dự báo A (chính xác) | có mã hoá + ngữ nghĩa + độ trễ → dự báo B | chỉ có chặn trên |
+|---|---:|---:|---:|---:|
+| L1 | 20 | 1 | 18 | 1 |
+| L2 | 20 | 0 | 10 | 10 |
+| L3 | 20 | 18 | 0 | 2 |
+| L4 | 9 | 6 | 3 | 0 |
+| L5 | 9 | 7 | 1 | 1 |
+
+    Tổng: **32** ứng viên dự báo được CHÍNH XÁC (A), **32** dự báo được
+    dưới dạng chặn dưới (B), **14** chỉ có chặn trên.
+
+    đã ghi results/pipeline/S6/estimates_all_candidates.csv và results/pipeline/S6/estimates_priority.json
+    sổ cái: 90 dòng candidates trạng thái `estimated`
+
+=> ĐẠT
+[run 20261018-181420-estimate] ok · 3.7 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-181420-estimate

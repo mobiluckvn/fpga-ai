@@ -1,0 +1,291 @@
+[
+  {
+    "method": "B_pattern_lower_bound",
+    "base_cycles": 1459993,
+    "predicted_cycles": 958121,
+    "predicted_speedup": 1.5238,
+    "formula": "ΔC = n_nhóm · (Σλ_bị_thay − Σλ_mới)",
+    "groups": 35848.0,
+    "layers": [
+      "conv2",
+      "dense"
+    ],
+    "cycles_per_group_before": 20,
+    "cycles_per_group_after": 6,
+    "replaced_per_group": {
+      "load": 4,
+      "mul": 4,
+      "alu": 4
+    },
+    "new_per_group": {
+      "load": 2,
+      "custom_dot4": 1,
+      "alu": 1
+    },
+    "confidence": "CHẶN DƯỚI — không tính phần cắt thêm chi phí địa chỉ/vòng lặp",
+    "note": "Mỗi nhóm 4 MAC: trước = 4 nạp byte + 4 nhân + 4 cộng dồn; sau = 2 nạp từ 32 bit + 1 lệnh 4 làn + 1 cộng dồn. conv1 không áp được: cửa sổ 3×3 không liền 4 byte.",
+    "candidate": "DOT4 (nhân-cộng SIMD 4 làn int8)",
+    "level": "L2",
+    "measured_target": "B-V1+DOT4",
+    "measured_cycles": 631130
+  },
+  {
+    "method": "B_pattern_lower_bound",
+    "base_cycles": 631130,
+    "predicted_cycles": 460778,
+    "predicted_speedup": 1.3697,
+    "formula": "ΔC = n_nhóm · (Σλ_bị_thay − Σλ_mới)",
+    "groups": 12168.0,
+    "layers": [
+      "conv1"
+    ],
+    "cycles_per_group_before": 20,
+    "cycles_per_group_after": 6,
+    "replaced_per_group": {
+      "load": 4,
+      "mul": 4,
+      "alu": 4
+    },
+    "new_per_group": {
+      "load": 2,
+      "custom_dot4": 1,
+      "alu": 1
+    },
+    "confidence": "CHẶN DƯỚI — không tính phần cắt thêm chi phí địa chỉ/vòng lặp",
+    "note": "Áp cùng mô hình nhóm-4 cho conv1 sau khi đổi bố cục. CHƯA trừ chi phí dựng đệm bố cục (ghi thêm ~3,6 KB/ảnh), nên đây là chặn dưới của chi phí và chặn trên của lợi ích.",
+    "candidate": "Bố cục dữ liệu cho conv1 dùng được lệnh 4 làn",
+    "level": "L2",
+    "measured_target": "B-V1+DOT4+C1",
+    "measured_cycles": 487865
+  },
+  {
+    "candidate": "REQ (gộp chuỗi lượng tử hoá lại thành một lệnh)",
+    "level": "L1",
+    "method": "B2_class_replacement_lower_bound",
+    "base_config": "B-V1+DOT4+C1",
+    "base_cycles": 487865,
+    "predicted_cycles": 413468,
+    "predicted_speedup": 1.1799,
+    "formula": "ΔC = (chu kỳ lớp `requant` đo được) − n_lần · λ_lệnh_mới",
+    "terms": [
+      {
+        "requant_cycles_measured": 89085,
+        "n_calls": 7344,
+        "lambda_new": 2,
+        "new_cycles": 14688
+      }
+    ],
+    "confidence": "CHẶN DƯỚI — chỉ tính phần profile đã gán vào lớp `requant`; phần số học của phép nhân 64 bit bị gán vào lớp `mac` không được tính vào đây",
+    "measured_target": "B-V3",
+    "measured_cycles": 365992
+  },
+  {
+    "method": "C_amdahl_ceiling",
+    "base_cycles": 365992,
+    "targeted_cycles": 51426,
+    "fraction": 0.1405,
+    "max_speedup": 1.1635,
+    "formula": "tăng tốc ≤ 1/(1−f)",
+    "classes": [
+      "other",
+      "loop_ctrl",
+      "addr",
+      "load_data"
+    ],
+    "layers": [
+      "pool1",
+      "pool2"
+    ],
+    "confidence": "CHẶN TRÊN, không phải dự báo",
+    "candidate": "PMAX4 (lấy max gói 4 làn int8 cho pooling)",
+    "level": "L2",
+    "base_config": "B-V3",
+    "note": "Hai lớp pooling không có phép nhân nào nên DOT4 vô dụng ở đó. Đây là chặn trên: xoá sạch công việc so sánh/chọn + nạp + điều khiển vòng của hai lớp đó."
+  },
+  {
+    "method": "A_lambda_exact",
+    "base_cycles": 1459993,
+    "predicted_cycles": 1118656,
+    "predicted_speedup": 1.3051,
+    "formula": "ΔC = Σ n_c·(λ_cũ − λ_mới)",
+    "terms": [
+      {
+        "class": "load",
+        "n_c": 324809.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 324809.0
+      },
+      {
+        "class": "store",
+        "n_c": 16528.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 16528.0
+      }
+    ],
+    "confidence": "chính xác theo mô hình đã kiểm khớp tuyệt đối với RTL trên 14 cấu hình (S2) và trên mã mới (S4)",
+    "candidate": "Bộ nhớ hai cổng (load/store 2 → 1 chu kỳ)",
+    "level": "L3",
+    "base_config": "B-V1"
+  },
+  {
+    "method": "A_lambda_exact",
+    "base_cycles": 365992,
+    "predicted_cycles": 285167,
+    "predicted_speedup": 1.2834,
+    "formula": "ΔC = Σ n_c·(λ_cũ − λ_mới)",
+    "terms": [
+      {
+        "class": "load",
+        "n_c": 67742.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 67742.0
+      },
+      {
+        "class": "store",
+        "n_c": 13083.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 13083.0
+      }
+    ],
+    "confidence": "chính xác theo mô hình đã kiểm khớp tuyệt đối với RTL trên 14 cấu hình (S2) và trên mã mới (S4)",
+    "candidate": "Bộ nhớ hai cổng (load/store 2 → 1 chu kỳ)",
+    "level": "L3",
+    "base_config": "B-V3"
+  },
+  {
+    "method": "A_lambda_exact",
+    "base_cycles": 1459993,
+    "predicted_cycles": 1253241,
+    "predicted_speedup": 1.165,
+    "formula": "ΔC = Σ n_c·(λ_cũ − λ_mới)",
+    "terms": [
+      {
+        "class": "mul",
+        "n_c": 206752.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 206752.0
+      }
+    ],
+    "confidence": "chính xác theo mô hình đã kiểm khớp tuyệt đối với RTL trên 14 cấu hình (S2) và trên mã mới (S4)",
+    "candidate": "Nhân 1 chu kỳ (λ_mul 2 → 1)",
+    "level": "L3",
+    "base_config": "B-V1"
+  },
+  {
+    "method": "A_lambda_exact",
+    "base_cycles": 365992,
+    "predicted_cycles": 365992,
+    "predicted_speedup": 1.0,
+    "formula": "ΔC = Σ n_c·(λ_cũ − λ_mới)",
+    "terms": [],
+    "confidence": "chính xác theo mô hình đã kiểm khớp tuyệt đối với RTL trên 14 cấu hình (S2) và trên mã mới (S4)",
+    "candidate": "Nhân 1 chu kỳ (λ_mul 2 → 1)",
+    "level": "L3",
+    "base_config": "B-V3"
+  },
+  {
+    "method": "A_lambda_exact",
+    "base_cycles": 1459993,
+    "predicted_cycles": 1459993,
+    "predicted_speedup": 1.0,
+    "formula": "ΔC = Σ n_c·(λ_cũ − λ_mới)",
+    "terms": [],
+    "confidence": "chính xác theo mô hình đã kiểm khớp tuyệt đối với RTL trên 14 cấu hình (S2) và trên mã mới (S4)",
+    "candidate": "Hạ λ của lệnh lượng tử hoá lại (2 → 1 chu kỳ)",
+    "level": "L3",
+    "base_config": "B-V1"
+  },
+  {
+    "method": "A_lambda_exact",
+    "base_cycles": 365992,
+    "predicted_cycles": 358648,
+    "predicted_speedup": 1.0205,
+    "formula": "ΔC = Σ n_c·(λ_cũ − λ_mới)",
+    "terms": [
+      {
+        "class": "custom_req",
+        "n_c": 7344.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 7344.0
+      }
+    ],
+    "confidence": "chính xác theo mô hình đã kiểm khớp tuyệt đối với RTL trên 14 cấu hình (S2) và trên mã mới (S4)",
+    "candidate": "Hạ λ của lệnh lượng tử hoá lại (2 → 1 chu kỳ)",
+    "level": "L3",
+    "base_config": "B-V3"
+  },
+  {
+    "method": "A_lambda_exact",
+    "base_cycles": 1459993,
+    "predicted_cycles": 911904,
+    "predicted_speedup": 1.601,
+    "formula": "ΔC = Σ n_c·(λ_cũ − λ_mới)",
+    "terms": [
+      {
+        "class": "load",
+        "n_c": 324809.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 324809.0
+      },
+      {
+        "class": "store",
+        "n_c": 16528.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 16528.0
+      },
+      {
+        "class": "mul",
+        "n_c": 206752.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 206752.0
+      }
+    ],
+    "confidence": "chính xác theo mô hình đã kiểm khớp tuyệt đối với RTL trên 14 cấu hình (S2) và trên mã mới (S4)",
+    "candidate": "Cả hai: bộ nhớ hai cổng + mọi phép nhân 1 chu kỳ",
+    "level": "L3",
+    "base_config": "B-V1"
+  },
+  {
+    "method": "A_lambda_exact",
+    "base_cycles": 365992,
+    "predicted_cycles": 277823,
+    "predicted_speedup": 1.3174,
+    "formula": "ΔC = Σ n_c·(λ_cũ − λ_mới)",
+    "terms": [
+      {
+        "class": "load",
+        "n_c": 67742.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 67742.0
+      },
+      {
+        "class": "store",
+        "n_c": 13083.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 13083.0
+      },
+      {
+        "class": "custom_req",
+        "n_c": 7344.0,
+        "lambda_old": 2,
+        "lambda_new": 1,
+        "delta_cycles": 7344.0
+      }
+    ],
+    "confidence": "chính xác theo mô hình đã kiểm khớp tuyệt đối với RTL trên 14 cấu hình (S2) và trên mã mới (S4)",
+    "candidate": "Cả hai: bộ nhớ hai cổng + mọi phép nhân 1 chu kỳ",
+    "level": "L3",
+    "base_config": "B-V3"
+  }
+]

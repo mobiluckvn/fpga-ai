@@ -232,7 +232,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--rules", action="store_true", help="bộ sinh theo luật, không AI")
     p.add_argument("--work", default="s1")
 
-    for name, mod in (("estimate", estimate), ("verify", verify), ("report", report)):
+    p = sub.add_parser("estimate", help="dự báo cho từng ứng viên, ghi TRƯỚC khi hiện thực")
+    p.add_argument("--target", default="B-V1")
+    p.add_argument("--work", default="s1")
+
+    for name, mod in (("verify", verify), ("report", report)):
         p = sub.add_parser(name, help=(mod.__doc__ or "").splitlines()[0])
         p.add_argument("--spec", default=None, help="đặc tả YAML")
         p.add_argument("rest", nargs="*")
