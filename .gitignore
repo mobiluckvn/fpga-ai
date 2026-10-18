@@ -48,10 +48,16 @@ experiment/m1s_s6/v*/
 # theo dõi trong git — mẫu rộng sẽ chặn cả việc `git add` khi chúng thay đổi.
 rtl/mycore/bs6*/
 rtl/mycore/bs7*/
+rtl/mycore/obj_dir100/
+rtl/mycore/obj_dir110/
 rtl/mycore/obj_dir111p/
 rtl/mycore/obj_dir111pd/
 rtl/mycore/rvt111pd/
+rtl/mycore/Vsoc_b100
+rtl/mycore/Vsoc_b110
 rtl/mycore/Vsoc_b111p
 rtl/mycore/Vsoc_b111pd
+rtl/mycore/verilator100.log
+rtl/mycore/verilator110.log
 rtl/mycore/verilator111p.log
 rtl/mycore/verilator111pd.log
