@@ -162,7 +162,19 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--work", default="s1")
     p.add_argument("--fresh", action="store_true")
 
-    for name, mod in (("profile", profile), ("analyze", analyze), ("propose", propose),
+    p = sub.add_parser("profile", help="profile 3 tầng từ trace ISS")
+    p.add_argument("--spec", default=None)
+    p.add_argument("--target", action="append", default=None)
+    p.add_argument("--all", action="store_true")
+    p.add_argument("--work", default="s1")
+
+    p = sub.add_parser("analyze", help="ILP, DLP, byte/MAC, roofline, Amdahl")
+    p.add_argument("--spec", default=None)
+    p.add_argument("--target", action="append", default=None)
+    p.add_argument("--all", action="store_true")
+    p.add_argument("--work", default="s1")
+
+    for name, mod in (("propose", propose),
                       ("estimate", estimate), ("verify", verify), ("report", report)):
         p = sub.add_parser(name, help=(mod.__doc__ or "").splitlines()[0])
         p.add_argument("--spec", default=None, help="đặc tả YAML")

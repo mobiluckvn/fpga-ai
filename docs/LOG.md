@@ -2,6 +2,82 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — PIPELINE CDP bước S3 ĐẠT: profile 3 tầng + phân tích, giải thích bằng số mọi hệ số đã đo
+
+Phân tích firmware ở mức lệnh động cho **cả 14 cấu hình**. Kết quả quan trọng nhất không phải các
+bảng, mà là **hai trần đã đo được**, vì chúng quyết định hướng tối ưu phần cứng tiếp theo.
+
+### Tiêu chí ĐẠT
+| # | Tiêu chí | Kết quả |
+|---|---|---|
+| 1 | profile 3 tầng (SPEC 2.2) | **ĐẠT** — hàm/lớp · vòng lặp · 7 lớp ngữ nghĩa cho từng lệnh động |
+| 2 | ILP, DLP, byte/MAC, roofline | **ĐẠT** — đo trực tiếp, không hệ số tay |
+| 3 | tổng chu kỳ profile = ISS | **ĐẠT khớp tuyệt đối 14/14**, cả tổng và từng lớp mạng |
+| 4 | giải thích định lượng các hệ số đã đo | **ĐẠT** (bảng dưới) |
+| 5 | chạy cho 5 cấu hình | **ĐẠT, vượt** — chạy cả 14 |
+
+### Giải thích bằng số từng hệ số đã đo (chênh lệch chu kỳ TUYỆT ĐỐI)
+| hệ số | nguồn cắt chính | % của tổng cắt |
+|---|---|---:|
+| **1,45×** tối ưu phần mềm | `loop_ctrl` 41,4 % + `addr` 32,8 % | **74,2 %** (+ `load_data` 25,9 %) |
+| **1,36×** cùng tối ưu đó trên mycore | `addr` 35,0 % + `loop_ctrl` 30,0 % | 65,0 % |
+| **4,26×** vi kiến trúc (cùng firmware) | `load_data` 47,8 % + `mac` 33,5 % | 81,3 % — win **đều** trên mọi lớp |
+| **2,31×** DOT4 | `load_data` 54,9 % + `mac` 42,1 % | **97,0 %** |
+| **1,29×** bố cục 4 pha | `mac` 60,4 % + `load_data` 40,0 % + `requant` 18,4 %, **trả giá** +`loop_ctrl` −7,5 % +`addr` −5,4 % +`store` −4,9 % | net |
+| **1,33×** REQ | `requant` 61,0 % + phần `mac` của phép nhân 64 bit 42,2 % | **103,2 %** |
+
+Mọi dự đoán của kế hoạch S3 đều đúng: A-V0→A-V1 cắt chủ yếu `addr`/`loop_ctrl`; DOT4 cắt chủ yếu
+`mac`+`load_data`; REQ cắt chủ yếu `requant`.
+
+### Hai trần đã ĐO ĐƯỢC — đây là đóng góp chính của S3
+1. **Trần của lõi phát một lệnh mỗi chu kỳ.** Dùng mô hình $\Delta C=\sum n_c\Delta\lambda_c$ (không
+   viết dòng RTL nào): bộ nhớ hai cổng cho **1,283×** trên B-V3, nhân 1 chu kỳ cho 1,020×, **cả hai
+   cho 1,317×** (365.992 → 277.823 chu kỳ, 13,6 → 10,3 ms) — và khi đó **IPC = 1,00**, trần tuyệt đối.
+   Muốn đi xa hơn **buộc** phải rời mô hình một lệnh/chu kỳ.
+2. **Trần băng thông bộ nhớ, và nó đã gần.** `conv2` ở B-V1 có **4,52 byte/MAC**, chỉ còn **3,19×** là
+   đụng trần ($B = 4/\lambda_{load} = 2$ byte/chu kỳ); sau DOT4 + bố cục 4 pha còn **2,06×**. Nghĩa là
+   một lệnh tính toán mạnh gấp 4 lần DOT4 sẽ **không** cho 4×. Mọi ứng viên tính toán từ S5 trở đi
+   **phải kèm** giải pháp băng thông.
+
+Thêm một chỗ chưa ai chạm tới: `pool1`+`pool2` chiếm **15,0 %** chu kỳ của B-V3 và **không** được
+DOT4 hay REQ giúp gì (max-pooling không có phép nhân; 34 % chu kỳ của nó là lệnh so sánh/chọn).
+Chặn Amdahl 1,177×.
+
+### ILP: dư thừa, nên không phải rào chắn
+IPC lý tưởng (đường găng RAW đo trực tiếp) là hàng trăm đến hàng nghìn ở mọi lớp, trong khi IPC
+thật 0,59–0,84. Nguyên nhân: GCC dùng con trỏ chạy nên mỗi tầng vòng lặp chỉ chuỗi phụ thuộc trong
+tầng của nó, không nhân lên. Vậy SIMD / phát nhiều lệnh / mảng MAC **có** chỗ để khai thác — cái
+chặn chúng là cổng bộ nhớ, không phải phụ thuộc dữ liệu.
+
+### Công cụ mới
+- `cdp/profile.py`: tầng 1 (bảng ký hiệu ELF, `cdp/iss/elf.py` tự viết), tầng 2 (cạnh nhảy ngược →
+  vòng lặp, số vòng, chu kỳ trong thân), tầng 3 (7 lớp ngữ nghĩa).
+- `cdp/analyze.py`: byte/MAC, trần bộ nhớ theo λ của từng lõi, Amdahl theo lớp, DLP theo khoảng
+  cách địa chỉ, ILP theo đường găng.
+- ISS thêm 6 phép đo khi bật `profile=True`: lược sử theo địa chỉ lệnh, cạnh nhảy, số lần nhảy của
+  từng nhánh, byte nạp/lưu, đường găng RAW, khoảng cách địa chỉ từng load, và **hai vết lan truyền**
+  (sau `mulh` → chuỗi requantize; sau `mul`/`DOT4` → chuỗi cộng dồn MAC). Chậm hơn ~30 %.
+
+### Bốn lỗi đã gặp và sửa (đều là bẫy phương pháp, đáng ghi vào luận văn)
+1. **Trường `rd` của lệnh `store` không phải thanh ghi đích** (bit đó là phần immediate). Ghi chiều
+   cao phụ thuộc vào một thanh ghi ngẫu nhiên → đường găng bị đứt, IPC lý tưởng sai.
+2. **Gộp `add` cộng dồn ra khỏi `mac`** làm tỷ trọng MAC bị báo thiếu (`other` phình lên 17,1 %).
+   Nhân-cộng là một phép toán; đã gộp bằng vết "sau mul". `other` còn 1,4 %.
+3. **Lệnh bộ nhớ bị gán vào `requant`** ở biến thể này nhưng `store_data` ở biến thể kia → sinh
+   chênh lệch GIẢ +14.518 chu kỳ. Quy tắc đã chốt: **lệnh bộ nhớ luôn thuộc lớp bộ nhớ**, vì nó
+   tiêu thụ băng thông và đó là thứ roofline quan tâm.
+4. **Trộn phạm vi đo** (tử số 10 ảnh, mẫu số 1 ảnh) và **giải mã tĩnh gán mọi nhánh là "nhảy"**
+   (λ=9 thay vì 5 trên PicoRV32) → đẳng thức kiểm tra lệch 287 và 123.093 chu kỳ. Lỗi thứ hai
+   **không lộ ra trên mycore** vì ở đó cả hai λ đều bằng 1 — đúng kiểu lỗi chỉ hiện khi đổi lõi.
+
+### Còn thiếu: ba việc phân tích TĨNH, cần trước S5
+Phân tích hiện tại chủ yếu là động. Ba thứ tĩnh thực sự cần cho việc đề xuất phần cứng còn thiếu:
+(1) **áp lực thanh ghi** trong vòng nóng — lệnh mới cần 2 nguồn + 1 đích, nếu vòng đã dùng hết thì
+lợi ích bị tràn thanh ghi ăn mất (đây là lý do `REQ_BENCH` đo 9,56 chu kỳ nhưng thực tế tiết kiệm
+16,6); (2) **phụ thuộc mang theo vòng lặp** — quyết định một vòng có vector hoá được hợp lệ hay
+không; (3) **chỗ trống trong không gian mã lệnh** (`custom-0` đã dùng `funct3` 000 và 001).
+Đã hỏi người dùng có thêm bước `cdp static` trước S5 hay không — **đang chờ trả lời**.
+
 ## 2026-10-18 — PIPELINE CDP bước S2 ĐẠT: ISS RV32IM + mô hình chu kỳ khớp TUYỆT ĐỐI cả 14 cấu hình
 
 Dựng bộ mô phỏng tập lệnh và mô hình chu kỳ — dụng cụ đo $n_c$ cho lý thuyết

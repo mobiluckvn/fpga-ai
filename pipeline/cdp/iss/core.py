@@ -59,12 +59,13 @@ def load_hex(path: Path) -> bytearray:
 
 class Window:
     """Một cửa sổ đo giữa hai lần đọc rdcycle — khớp đúng cách firmware tự đo."""
-    __slots__ = ("idx", "cyc0", "cyc1", "ins0", "ins1", "classes", "pc_count")
+    __slots__ = ("idx", "cyc0", "cyc1", "ins0", "ins1", "classes", "pc_count", "prof")
 
     def __init__(self, idx, cyc0, ins0, pc_hist):
         self.idx, self.cyc0, self.ins0 = idx, cyc0, ins0
         self.cyc1 = self.ins1 = None
         self.classes = [0] * len(CLASSES)
+        self.prof = None
         self.pc_count = {} if pc_hist else None
 
     @property
@@ -81,9 +82,70 @@ class Window:
         return d
 
 
+class Prof:
+    """Dữ liệu profile của MỘT cửa sổ đo (bật bằng Iss(profile=True)).
+
+    Bốn phép đo mà profile 3 tầng và phân tích ILP/DLP/roofline cần
+    (docs/PIPELINE_SPEC.md 2.2, docs/MO_HINH_CHI_PHI.md mục 3):
+
+    - `pc`            số lần thực thi theo từng địa chỉ lệnh (tầng 3)
+    - `edge`          số lần đi theo từng cạnh nhảy; cạnh có đích <= nguồn là
+                      **cạnh nhảy ngược** -> nhận ra vòng lặp (tầng 2)
+    - `as_addr`       kết quả của lệnh tại pc này bị dùng làm **địa chỉ** bao nhiêu lần
+    - `to_branch`     ... bị dùng làm toán hạng **rẽ nhánh** bao nhiêu lần
+    - `ld_bytes`/`st_bytes`  byte dữ liệu thực sự nạp/lưu -> byte trên mỗi MAC, roofline
+    - `crit`          đường găng RAW qua thanh ghi (chiều cao đồ thị phụ thuộc)
+                      -> IPC lý tưởng = số lệnh / đường găng
+    - `stride`        với mỗi lệnh load: biểu đồ khoảng cách địa chỉ giữa hai lần
+                      liên tiếp -> biết truy cập có liên tục không (DLP)
+    """
+    __slots__ = ("pc", "edge", "as_addr", "to_branch", "ld_bytes", "st_bytes",
+                 "crit", "stride", "mulh", "n", "tainted", "to_mulh", "macchain",
+                 "taken")
+
+    def __init__(self):
+        self.pc = {}
+        self.edge = {}
+        self.as_addr = {}
+        self.to_branch = {}
+        self.ld_bytes = 0
+        self.st_bytes = 0
+        self.crit = 0
+        self.stride = {}
+        self.mulh = {}
+        self.n = 0
+        self.tainted = {}      # pc -> số lần chạy mà toán hạng đến TỪ một mulh
+        self.to_mulh = {}      # pc -> số lần kết quả bị một mulh dùng làm toán hạng
+        self.macchain = {}     # pc -> số lần toán hạng đến TỪ một mul/DOT4 (cộng dồn)
+        self.taken = {}        # pc -> số lần lệnh nhánh này NHẢY (để tách lambda)
+
+    def as_dict(self, top=40):
+        hot = sorted(self.pc.items(), key=lambda kv: -kv[1])[:top]
+        back = {f"{a:#x}->{b:#x}": c for (a, b), c in self.edge.items() if b <= a}
+        return {"n_instr": self.n, "crit_path": self.crit,
+                "ipc_ideal": round(self.n / self.crit, 3) if self.crit else None,
+                "ld_bytes": self.ld_bytes, "st_bytes": self.st_bytes,
+                "hot_pc": [{"pc": f"{k:#x}", "n": v} for k, v in hot],
+                "backedges": dict(sorted(back.items(), key=lambda kv: -kv[1])[:20]),
+                "n_mulh": sum(self.mulh.values()),
+                "n_tainted": sum(self.tainted.values()),
+                "tainted": {f"{k:#x}": v for k, v in self.tainted.items()},
+                "macchain": {f"{k:#x}": v for k, v in self.macchain.items()},
+                "taken": {f"{k:#x}": v for k, v in self.taken.items()},
+                "to_mulh": {f"{k:#x}": v for k, v in self.to_mulh.items()},
+                "as_addr": {f"{k:#x}": v for k, v in
+                            sorted(self.as_addr.items(), key=lambda kv: -kv[1])[:40]},
+                "to_branch": {f"{k:#x}": v for k, v in
+                              sorted(self.to_branch.items(), key=lambda kv: -kv[1])[:40]},
+                "stride": {f"{k:#x}": dict(sorted(v.items(), key=lambda kv: -kv[1])[:4])
+                           for k, v in sorted(self.stride.items(),
+                                              key=lambda kv: -sum(kv[1].values()))[:20]},
+                }
+
+
 class Iss:
     def __init__(self, hexfile, timing: dict, with_dot4=False, with_req=False,
-                 pc_hist=False):
+                 pc_hist=False, profile=False):
         self.mem = load_hex(hexfile)
         self.regs = [0] * 32
         self.pc = 0
@@ -93,6 +155,7 @@ class Iss:
         self.with_dot4 = with_dot4
         self.with_req = with_req
         self.pc_hist = pc_hist
+        self.profile = profile
         self.classes = [0] * len(CLASSES)
         self.pc_count = {} if pc_hist else None
         self.uart = bytearray()
@@ -139,6 +202,14 @@ class Iss:
         instret = self.instret
         pch = self.pc_count
         n_stop = len(stop_on)
+        # trạng thái cho profile: ai ghi thanh ghi lần cuối, chiều cao phụ thuộc,
+        # địa chỉ lần trước của mỗi lệnh load
+        do_prof = self.profile
+        lw = [0] * 32          # pc của lệnh ghi thanh ghi lần cuối
+        ht = [0] * 32          # chiều cao đồ thị phụ thuộc của giá trị trong thanh ghi
+        tn = [0] * 32          # "vết": giá trị này nằm trong chuỗi phụ thuộc sau một mulh
+        last_addr = {}
+        prof = None
         try:
             while instret < max_instr:
                 instr = (mem[pc] | (mem[pc + 1] << 8) | (mem[pc + 2] << 16)
@@ -274,6 +345,7 @@ class Iss:
                         raise Trap(pc, instr, "funct3 load không hợp lệ")
                 elif op == 0x23:                                # STORE
                     k = C_ST
+                    rd = 0          # trường rd ở đây là phần immediate, KHÔNG phải đích
                     imm = ((instr >> 25) << 5) | ((instr >> 7) & 0x1F)
                     if imm & 0x800:
                         imm -= 0x1000
@@ -377,6 +449,100 @@ class Iss:
                 else:
                     raise Trap(pc, instr, f"opcode 0x{op:02x} không hợp lệ")
 
+                if do_prof and prof is not None:
+                    prof.n += 1
+                    prof.pc[pc] = prof.pc.get(pc, 0) + 1
+                    if npc != pc + 4:
+                        e = (pc, npc)
+                        prof.edge[e] = prof.edge.get(e, 0) + 1
+                    if k == C_LD or k == C_ST:
+                        w = lw[rs1]
+                        prof.as_addr[w] = prof.as_addr.get(w, 0) + 1
+                        nb = 1 if (f3 & 3) == 0 else (2 if (f3 & 3) == 1 else 4)
+                        if addr < 0x10000000:
+                            if k == C_LD:
+                                prof.ld_bytes += nb
+                            else:
+                                prof.st_bytes += nb
+                            d = prof.stride.setdefault(pc, {})
+                            pa = last_addr.get(pc)
+                            if pa is not None:
+                                st_ = addr - pa
+                                d[st_] = d.get(st_, 0) + 1
+                            last_addr[pc] = addr
+                    elif k == C_BRT or k == C_BRN:
+                        if k == C_BRT:
+                            prof.taken[pc] = prof.taken.get(pc, 0) + 1
+                        w = lw[rs1]
+                        prof.to_branch[w] = prof.to_branch.get(w, 0) + 1
+                        w = lw[rs2]
+                        prof.to_branch[w] = prof.to_branch.get(w, 0) + 1
+                    elif k == C_MUL and f3 != 0:
+                        prof.mulh[pc] = prof.mulh.get(pc, 0) + 1
+                        for r in (rs1, rs2):
+                            w = lw[r]
+                            prof.to_mulh[w] = prof.to_mulh.get(w, 0) + 1
+                    # Chỉ các lệnh dạng R / nhánh / store / custom mới đọc rs2;
+                    # với các lệnh khác, bit [24:20] là phần immediate.
+                    h = ht[rs1]
+                    t = tn[rs1]
+                    if op == 0x33 or op == 0x63 or op == 0x23 or op == 0x0B:
+                        if ht[rs2] > h:
+                            h = ht[rs2]
+                        t |= tn[rs2]
+                    if op == 0x37 or op == 0x6F or op == 0x17:   # lui/jal/auipc
+                        h = 0
+                        t = 0
+                    h += lat[k]
+                    if h > prof.crit:
+                        prof.crit = h
+                    if t & 1:
+                        prof.tainted[pc] = prof.tainted.get(pc, 0) + 1
+                        # Lệnh đã có vết mà đọc toán hạng từ một lệnh CHƯA có vết thì
+                        # lệnh kia là ĐẦU VÀO của chuỗi requantize — cách này bắt được
+                        # `mul` song sinh của `mulh` (hai lệnh đọc cùng toán hạng nên
+                        # không có quan hệ sản xuất-tiêu thụ giữa chúng).
+                        if tn[rs1] == 0:
+                            ww = lw[rs1]
+                            prof.to_mulh[ww] = prof.to_mulh.get(ww, 0) + 1
+                        if (op == 0x33 or op == 0x63 or op == 0x23) and tn[rs2] == 0:
+                            ww = lw[rs2]
+                            prof.to_mulh[ww] = prof.to_mulh.get(ww, 0) + 1
+                    elif t & 2:
+                        prof.macchain[pc] = prof.macchain.get(pc, 0) + 1
+                    if rd:
+                        ht[rd] = h
+                        lw[rd] = pc
+                        # vết: bit0 = sau một `mulh` (chuỗi requantize),
+                        #      bit1 = sau một `mul`/DOT4 (chuỗi cộng dồn MAC)
+                        if k == C_MUL:
+                            if f3 != 0:
+                                tn[rd] = 1
+                            else:
+                                # Phép nhân 64 bit (sat_rdhmul của requantize) sinh một
+                                # `mul` và một `mulh` SONG SINH, đọc cùng toán hạng.
+                                # `mul` không phải đầu vào của `mulh` nên vết không bắt
+                                # được -> xem trước 2 lệnh kế để nhận ra cặp này.
+                                sib = 0
+                                for off in (4, 8):
+                                    i2 = (mem[pc + off] | (mem[pc + off + 1] << 8)
+                                          | (mem[pc + off + 2] << 16)
+                                          | (mem[pc + off + 3] << 24))
+                                    if ((i2 & 0x7F) == 0x33 and (i2 >> 25) == 1
+                                            and 1 <= ((i2 >> 12) & 7) <= 3
+                                            and ((i2 >> 15) & 0x1F) == rs1
+                                            and ((i2 >> 20) & 0x1F) == rs2):
+                                        sib = 1
+                                        break
+                                tn[rd] = 1 if sib else 2
+                                if sib:
+                                    prof.to_mulh[pc] = prof.to_mulh.get(pc, 0) + 1
+                        elif k == C_DOT4:
+                            tn[rd] = 2
+                        elif k == C_LD:
+                            tn[rd] = 0
+                        else:
+                            tn[rd] = t
                 if rd and val is not None:
                     regs[rd] = val
                 cls[k] += 1
@@ -387,6 +553,10 @@ class Iss:
                 cur = self._cur
                 if cur is not None:
                     cur.classes[k] += 1
+                    if do_prof:
+                        prof = cur.prof
+                elif do_prof:
+                    prof = None
                 pc = npc
 
                 if k == C_ST and self.uart and self.uart[-1] == 0x0A:
@@ -406,6 +576,8 @@ class Iss:
         self._n_rdcycle += 1
         if self._n_rdcycle % 2 == 1:
             self._cur = Window(len(self.windows), cycle, instret, self.pc_hist)
+            if self.profile:
+                self._cur.prof = Prof()
         else:
             w = self._cur
             if w is not None:
@@ -441,3 +613,27 @@ class Iss:
             if len(sl) == per_img:
                 out.append(sl)
         return out
+
+
+def merge_profs(profs):
+    """Cộng dồn Prof của nhiều ảnh thành một — để tổng chu kỳ phân loại so được
+    với tổng chu kỳ của ĐÚNG những ảnh đó (không trộn trung vị với một ảnh)."""
+    out = Prof()
+    for q in profs:
+        if q is None:
+            continue
+        out.n += q.n
+        out.ld_bytes += q.ld_bytes
+        out.st_bytes += q.st_bytes
+        if q.crit > out.crit:
+            out.crit = q.crit
+        for name in ("pc", "as_addr", "to_branch", "mulh", "tainted", "to_mulh",
+                     "macchain", "taken", "edge"):
+            dst = getattr(out, name)
+            for k, v in getattr(q, name).items():
+                dst[k] = dst.get(k, 0) + v
+        for k, h in q.stride.items():
+            d = out.stride.setdefault(k, {})
+            for kk, vv in h.items():
+                d[kk] = d.get(kk, 0) + vv
+    return out

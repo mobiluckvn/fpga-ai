@@ -51,7 +51,7 @@ def load_timing(t: targets.Target) -> tuple[dict, dict]:
 
 
 def run_one(w: Path, t: targets.Target, run, pc_hist: bool = False,
-            max_instr: int = 400_000_000) -> Iss:
+            profile: bool = False, max_instr: int = 400_000_000) -> Iss:
     fw = build_mod.fw_paths(w, t)["hex"]
     prof, meta = load_timing(t)
     run.say(f"    mô hình chu kỳ: {meta['file']} · hồ sơ {meta['profile']} "
@@ -59,7 +59,7 @@ def run_one(w: Path, t: targets.Target, run, pc_hist: bool = False,
     iss = Iss(fw, prof,
               with_dot4=bool(t.rtl_params.get("WITH_DOT4", 0)),
               with_req=bool(t.rtl_params.get("WITH_REQ", 0)),
-              pc_hist=pc_hist).run(max_instr=max_instr)
+              pc_hist=pc_hist, profile=profile).run(max_instr=max_instr)
     run.say(f"    ISS: {fmt_int(iss.instret)} lệnh · {iss.seconds:.1f} s "
             f"({iss.instret/max(iss.seconds,1e-9)/1000:.0f}k lệnh/s)")
     iss.timing_meta = meta

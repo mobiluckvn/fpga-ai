@@ -1,0 +1,242 @@
+[cây bóng] pipeline/work/s1 (dùng lại)
+
+## A-V0 (PicoRV32)
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 19.279.680 lệnh · 55.9 s (345k lệnh/s)
+    tổng 8.987.660 chu kỳ · 332.9 ms · 46.795 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 89.875.947 chu kỳ)
+    tỷ trọng chu kỳ: mac 24.3 % · load_data 40.5 % · store_data 0.9 % · addr 11.0 % · loop_ctrl 13.1 % · requant 6.7 % · other 3.5 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 79.4 % · pool1 89.9 % · conv2 0.7 % · pool2 94.6 % · dense 99.6 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 3.491.721 | 0.0139 | 2.558 | 0.1738 | 12.47x | compute/issue | 0.159 | 8643.307 |
+    | pool1 | 225.600 | — | — | — | — | — | 0.158 | 929.083 |
+    | conv2 | 5.011.844 | 0.0278 | 2.244 | 0.198 | 7.12x | compute/issue | 0.145 | 12894.078 |
+    | pool2 | 65.921 | — | — | — | — | — | 0.159 | 259.725 |
+    | dense | 192.552 | 0.0208 | 2.02 | 0.22 | 10.59x | compute/issue | 0.146 | 134.808 |
+
+## A-V1 (PicoRV32)
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 14.816.680 lệnh · 52.9 s (280k lệnh/s)
+    tổng 6.217.634 chu kỳ · 230.3 ms · 32.373 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 62.175.687 chu kỳ)
+    tỷ trọng chu kỳ: mac 35.2 % · load_data 47.0 % · store_data 2.4 % · addr 1.3 % · loop_ctrl 2.4 % · requant 9.9 % · other 1.8 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 85.8 % · pool1 89.9 % · conv2 0.0 % · pool2 94.6 % · dense 0.0 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 1.600.258 | 0.0304 | 1.149 | 0.3866 | 12.71x | compute/issue | 0.16 | 605.634 |
+    | pool1 | 225.600 | — | — | — | — | — | 0.158 | 752.675 |
+    | conv2 | 4.199.609 | 0.0332 | 4.516 | 0.0984 | 2.96x | compute/issue | 0.141 | 9253.672 |
+    | pool2 | 65.921 | — | — | — | — | — | 0.159 | 212.407 |
+    | dense | 126.224 | 0.0317 | 2.038 | 0.2181 | 6.88x | compute/issue | 0.14 | 349.484 |
+
+## A-V2 (PicoRV32 + DOT4)
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 14.828.330 lệnh · 75.4 s (197k lệnh/s)
+    tổng 5.758.001 chu kỳ · 213.3 ms · 29.98 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 57.579.357 chu kỳ)
+    tỷ trọng chu kỳ: mac 17.4 % · load_data 28.7 % · store_data 1.4 % · addr 16.7 % · loop_ctrl 19.9 % · requant 10.4 % · other 5.5 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 79.4 % · pool1 89.9 % · conv2 2.6 % · pool2 94.6 % · dense 0.0 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 3.491.721 | 0.0139 | 2.558 | 0.1738 | 12.47x | compute/issue | 0.159 | 8643.307 |
+    | pool1 | 225.600 | — | — | — | — | — | 0.158 | 929.083 |
+    | conv2 | 1.926.185 | 0.0724 | 2.07 | 0.2147 | 2.97x | compute/issue | 0.157 | 2377.498 |
+    | pool2 | 65.921 | — | — | — | — | — | 0.159 | 259.725 |
+    | dense | 48.552 | 0.0824 | 2.02 | 0.22 | 2.67x | compute/issue | 0.146 | 121.473 |
+
+## A-V1+DOT4 (PicoRV32 + DOT4)
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 10.305.050 lệnh · 31.9 s (323k lệnh/s)
+    tổng 2.917.079 chu kỳ · 108.0 ms · 15.188 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 29.170.137 chu kỳ)
+    tỷ trọng chu kỳ: mac 35.8 % · load_data 30.0 % · store_data 3.0 % · addr 2.8 % · loop_ctrl 5.0 % · requant 19.1 % · other 4.3 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 85.8 % · pool1 89.9 % · conv2 5.0 % · pool2 94.6 % · dense 0.0 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 1.600.258 | 0.0304 | 1.149 | 0.3866 | 12.71x | compute/issue | 0.16 | 618.82 |
+    | pool1 | 225.600 | — | — | — | — | — | 0.158 | 929.083 |
+    | conv2 | 986.226 | 0.1413 | 1.152 | 0.3858 | 2.73x | compute/issue | 0.155 | 2867.566 |
+    | pool2 | 65.921 | — | — | — | — | — | 0.159 | 259.725 |
+    | dense | 39.052 | 0.1024 | 2.02 | 0.22 | 2.15x | compute/issue | 0.143 | 165.015 |
+
+## A-V1+DOT4+C1 (PicoRV32 + DOT4)
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 10.072.218 lệnh · 23.9 s (421k lệnh/s)
+    tổng 2.450.494 chu kỳ · 90.8 ms · 12.759 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 24.504.287 chu kỳ)
+    tỷ trọng chu kỳ: mac 32.7 % · load_data 25.2 % · store_data 4.8 % · addr 5.0 % · loop_ctrl 8.7 % · requant 18.2 % · other 5.4 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 21.8 % · pool1 89.9 % · conv2 5.0 % · pool2 94.6 % · dense 0.0 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 1.133.668 | 0.0429 | 1.668 | 0.2664 | 6.2x | compute/issue | 0.164 | 2793.163 |
+    | pool1 | 225.600 | — | — | — | — | — | 0.158 | 929.083 |
+    | conv2 | 986.226 | 0.1413 | 1.152 | 0.3858 | 2.73x | compute/issue | 0.155 | 2867.566 |
+    | pool2 | 65.921 | — | — | — | — | — | 0.159 | 259.725 |
+    | dense | 39.057 | 0.1024 | 2.02 | 0.22 | 2.15x | compute/issue | 0.143 | 165.044 |
+
+## A-V3 (PicoRV32 + DOT4 + REQ)
+    mô hình chu kỳ: timing/picorv32.yaml · hồ sơ default · hiệu chuẩn
+    ISS: 8.486.861 lệnh · 19.1 s (445k lệnh/s)
+    tổng 1.842.219 chu kỳ · 68.2 ms · 9.592 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 18.421.537 chu kỳ)
+    tỷ trọng chu kỳ: mac 31.1 % · load_data 33.1 % · store_data 6.4 % · addr 8.8 % · loop_ctrl 11.6 % · requant 2.4 % · other 6.6 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 22.5 % · pool1 89.9 % · conv2 5.0 % · pool2 94.6 % · dense 0.0 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 692.464 | 0.0703 | 1.591 | 0.2794 | 3.98x | compute/issue | 0.151 | 1562.639 |
+    | pool1 | 225.600 | — | — | — | — | — | 0.158 | 929.083 |
+    | conv2 | 819.160 | 0.1702 | 1.148 | 0.3872 | 2.28x | compute/issue | 0.149 | 2469.899 |
+    | pool2 | 65.921 | — | — | — | — | — | 0.159 | 259.725 |
+    | dense | 39.052 | 0.1024 | 2.02 | 0.22 | 2.15x | compute/issue | 0.143 | 165.015 |
+
+## B-V0r (mycore (địa chỉ ghi thanh ghi))
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_0 · tất định (đọc từ RTL)
+    ISS: 19.279.280 lệnh · 56.0 s (344k lệnh/s)
+    tổng 3.750.617 chu kỳ · 138.9 ms · 19.528 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 37.504.854 chu kỳ)
+    tỷ trọng chu kỳ: mac 26.4 % · load_data 43.1 % · store_data 1.0 % · addr 10.6 % · loop_ctrl 9.4 % · requant 6.3 % · other 3.2 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 79.4 % · pool1 89.9 % · conv2 0.7 % · pool2 94.6 % · dense 99.6 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 1.389.142 | 0.035 | 2.558 | 0.391 | 11.16x | compute/issue | 0.401 | 21408.808 |
+    | pool1 | 84.945 | — | — | — | — | — | 0.42 | 2316.675 |
+    | conv2 | 2.175.220 | 0.0641 | 2.244 | 0.4456 | 6.95x | compute/issue | 0.334 | 31895.877 |
+    | pool2 | 25.038 | — | — | — | — | — | 0.42 | 647.71 |
+    | dense | 76.228 | 0.0525 | 2.02 | 0.495 | 9.43x | compute/issue | 0.369 | 336.455 |
+
+## B-V1r (mycore (địa chỉ ghi thanh ghi))
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_0 · tất định (đọc từ RTL)
+    ISS: 14.816.080 lệnh · 41.2 s (359k lệnh/s)
+    tổng 2.713.235 chu kỳ · 100.5 ms · 14.127 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 27.131.034 chu kỳ)
+    tỷ trọng chu kỳ: mac 36.5 % · load_data 47.9 % · store_data 2.4 % · addr 1.2 % · loop_ctrl 1.6 % · requant 9.0 % · other 1.4 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 85.8 % · pool1 89.9 % · conv2 0.0 % · pool2 94.6 % · dense 0.0 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 680.330 | 0.0715 | 1.149 | 0.87 | 12.16x | compute/issue | 0.376 | 1511.939 |
+    | pool1 | 84.945 | — | — | — | — | — | 0.42 | 1877.726 |
+    | conv2 | 1.867.574 | 0.0746 | 4.516 | 0.2214 | 2.97x | compute/issue | 0.317 | 22954.845 |
+    | pool2 | 25.038 | — | — | — | — | — | 0.42 | 529.944 |
+    | dense | 55.304 | 0.0723 | 2.038 | 0.4907 | 6.78x | compute/issue | 0.318 | 871.98 |
+
+## B-V0 (mycore)
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 19.279.080 lệnh · 53.9 s (358k lệnh/s)
+    tổng 1.978.697 chu kỳ · 73.3 ms · 10.302 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 19.786.317 chu kỳ)
+    tỷ trọng chu kỳ: mac 29.9 % · load_data 40.9 % · store_data 0.9 % · addr 10.0 % · loop_ctrl 9.0 % · requant 6.3 % · other 3.0 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 79.4 % · pool1 89.9 % · conv2 0.7 % · pool2 94.6 % · dense 99.6 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 724.328 | 0.0672 | 2.558 | 0.782 | 11.64x | compute/issue | 0.768 | 42490.763 |
+    | pool1 | 42.472 | — | — | — | — | — | 0.841 | 4633.351 |
+    | conv2 | 1.159.242 | 0.1202 | 2.244 | 0.8911 | 7.41x | compute/issue | 0.627 | 63237.043 |
+    | pool2 | 12.519 | — | — | — | — | — | 0.84 | 1295.42 |
+    | dense | 40.114 | 0.0997 | 2.02 | 0.9901 | 9.93x | compute/issue | 0.7 | 672.105 |
+
+## B-V1 (mycore)
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 14.816.080 lệnh · 39.8 s (372k lệnh/s)
+    tổng 1.459.993 chu kỳ · 54.1 ms · 7.602 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 14.599.277 chu kỳ)
+    tỷ trọng chu kỳ: mac 40.5 % · load_data 44.5 % · store_data 2.3 % · addr 1.1 % · loop_ctrl 1.5 % · requant 8.8 % · other 1.3 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 85.8 % · pool1 89.9 % · conv2 0.0 % · pool2 94.6 % · dense 0.0 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 369.909 | 0.1316 | 1.149 | 1.7399 | 13.22x | compute/issue | 0.692 | 3020.307 |
+    | pool1 | 42.472 | — | — | — | — | — | 0.841 | 3755.453 |
+    | conv2 | 1.005.419 | 0.1386 | 4.516 | 0.4428 | 3.19x | compute/issue | 0.589 | 45556.538 |
+    | pool2 | 12.519 | — | — | — | — | — | 0.84 | 1059.889 |
+    | dense | 29.652 | 0.1349 | 2.038 | 0.9814 | 7.27x | compute/issue | 0.594 | 1743.96 |
+
+## B-V2 (mycore + DOT4)
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 14.827.530 lệnh · 38.8 s (382k lệnh/s)
+    tổng 1.169.050 chu kỳ · 43.3 ms · 6.087 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 11.689.847 chu kỳ)
+    tỷ trọng chu kỳ: mac 19.9 % · load_data 31.4 % · store_data 1.6 % · addr 16.4 % · loop_ctrl 14.9 % · requant 10.8 % · other 5.1 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 79.4 % · pool1 89.9 % · conv2 2.6 % · pool2 94.6 % · dense 0.0 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 724.328 | 0.0672 | 2.558 | 0.782 | 11.64x | compute/issue | 0.768 | 42490.763 |
+    | pool1 | 42.472 | — | — | — | — | — | 0.841 | 4633.351 |
+    | conv2 | 380.595 | 0.3662 | 2.07 | 0.9661 | 2.64x | compute/issue | 0.796 | 11887.49 |
+    | pool2 | 12.519 | — | — | — | — | — | 0.84 | 1295.42 |
+    | dense | 9.114 | 0.4389 | 2.02 | 0.9901 | 2.26x | compute/issue | 0.778 | 606.325 |
+
+## B-V1+DOT4 (mycore + DOT4)
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 10.304.250 lệnh · 25.3 s (408k lệnh/s)
+    tổng 631.130 chu kỳ · 23.4 ms · 3.286 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 6.310.647 chu kỳ)
+    tỷ trọng chu kỳ: mac 38.4 % · load_data 30.9 % · store_data 3.0 % · addr 2.6 % · loop_ctrl 3.4 % · requant 18.3 % · other 3.4 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 85.8 % · pool1 89.9 % · conv2 5.0 % · pool2 94.6 % · dense 0.0 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 369.909 | 0.1316 | 1.149 | 1.7399 | 13.22x | compute/issue | 0.692 | 3085.887 |
+    | pool1 | 42.472 | — | — | — | — | — | 0.841 | 4633.351 |
+    | conv2 | 198.594 | 0.7019 | 1.152 | 1.7362 | 2.47x | compute/issue | 0.771 | 14178.519 |
+    | pool2 | 12.519 | — | — | — | — | — | 0.84 | 1295.42 |
+    | dense | 7.614 | 0.5253 | 2.02 | 0.9901 | 1.88x | compute/issue | 0.735 | 822.647 |
+
+## B-V1+DOT4+C1 (mycore + DOT4)
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 10.071.398 lệnh · 24.5 s (410k lệnh/s)
+    tổng 487.865 chu kỳ · 18.1 ms · 2.54 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 4.877.997 chu kỳ)
+    tỷ trọng chu kỳ: mac 31.9 % · load_data 28.2 % · store_data 5.4 % · addr 5.0 % · loop_ctrl 6.6 % · requant 18.3 % · other 4.7 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 21.8 % · pool1 89.9 % · conv2 5.0 % · pool2 94.6 % · dense 0.0 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 226.643 | 0.2148 | 1.668 | 1.1988 | 5.58x | compute/issue | 0.822 | 13903.284 |
+    | pool1 | 42.472 | — | — | — | — | — | 0.841 | 4633.351 |
+    | conv2 | 198.594 | 0.7019 | 1.152 | 1.7362 | 2.47x | compute/issue | 0.771 | 14178.519 |
+    | pool2 | 12.519 | — | — | — | — | — | 0.84 | 1295.42 |
+    | dense | 7.615 | 0.5253 | 2.02 | 0.9901 | 1.88x | compute/issue | 0.735 | 822.794 |
+
+## B-V3 (mycore + DOT4 + REQ)
+    mô hình chu kỳ: timing/mycore.yaml · hồ sơ fast_addr_1 · tất định (đọc từ RTL)
+    ISS: 8.486.261 lệnh · 19.6 s (432k lệnh/s)
+    tổng 365.992 chu kỳ · 13.6 ms · 1.906 chu kỳ/MAC
+    đẳng thức phân loại = ISS: KHỚP  (tổng 10 ảnh: 3.659.267 chu kỳ)
+    tỷ trọng chu kỳ: mac 28.5 % · load_data 37.0 % · store_data 7.2 % · addr 8.9 % · loop_ctrl 8.8 % · requant 4.0 % · other 5.6 %
+
+    DLP — tỷ lệ lệnh nạp có khoảng cách địa chỉ 1 byte (liên tục): conv1 22.5 % · pool1 89.9 % · conv2 5.0 % · pool2 94.6 % · dense 0.0 %
+
+    | lớp | chu kỳ | MAC/ck | byte/MAC | trần bộ nhớ | cách trần | giới hạn bởi | IPC thật | IPC lý tưởng |
+    |---|---:|---:|---:|---:|---:|---|---:|---:|
+    | conv1 | 138.213 | 0.3522 | 1.591 | 1.2573 | 3.57x | compute/issue | 0.754 | 7778.209 |
+    | pool1 | 42.472 | — | — | — | — | — | 0.841 | 4633.351 |
+    | conv2 | 165.152 | 0.844 | 1.148 | 1.7425 | 2.06x | compute/issue | 0.737 | 12299.596 |
+    | pool2 | 12.519 | — | — | — | — | — | 0.84 | 1295.42 |
+    | dense | 7.614 | 0.5253 | 2.02 | 0.9901 | 1.88x | compute/issue | 0.735 | 822.647 |
+
+=> ĐẠT · 14 cấu hình · analysis.json + profile.json
+[run 20261018-150609-analyze] ok · 560.8 s · /Users/v/Documents/NCS/tinyml-riscv-tn20k/pipeline/runs/20261018-150609-analyze

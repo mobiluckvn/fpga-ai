@@ -1,0 +1,6428 @@
+{
+  "A-V0": {
+    "target": "A-V0",
+    "core": "picorv32",
+    "total_cycles": 8987660,
+    "ms_27mhz": 332.9,
+    "cycles_per_mac_total": 46.795,
+    "mem_bytes_per_cycle_available": 0.444,
+    "lambda_load": 9,
+    "share_by_sem_total": {
+      "mac": 24.33,
+      "load_data": 40.5,
+      "store_data": 0.93,
+      "addr": 11.02,
+      "loop_ctrl": 13.06,
+      "requant": 6.66,
+      "other": 3.5
+    },
+    "cycles_by_sem_total": {
+      "mac": 2186300.0,
+      "load_data": 3640176.0,
+      "store_data": 83439.0,
+      "addr": 990435.0,
+      "loop_ctrl": 1173542.0,
+      "requant": 598879.0,
+      "other": 314823.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 21863000,
+      "load_data": 36401760,
+      "store_data": 834390,
+      "addr": 9904350,
+      "loop_ctrl": 11735420.0,
+      "requant": 5988790.0,
+      "other": 3148237.0
+    },
+    "cycles_sum10": 89875947,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.32,
+      "load_data": 1.68,
+      "store_data": 1.01,
+      "addr": 1.12,
+      "loop_ctrl": 1.15,
+      "requant": 1.07,
+      "other": 1.04
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 3491721,
+        "instret": 556629,
+        "mac": 48672,
+        "cycles_per_mac": 71.74,
+        "mac_per_cycle": 0.0139,
+        "bytes_per_image": 124484.0,
+        "byte_per_mac": 2.558,
+        "cycles_sum10": 34917210,
+        "cycles_by_sem_sum10": {
+          "mac": 5896280,
+          "load_data": 9248850,
+          "store_data": 487800,
+          "addr": 6793850,
+          "loop_ctrl": 7425270.0,
+          "requant": 4414430.0,
+          "other": 650730
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.1738,
+        "dist_to_roof_x": 12.47,
+        "bound": "compute/issue",
+        "crit_path": 644,
+        "ipc_ideal": 8643.307,
+        "ipc_real": 0.159,
+        "cycles_by_sem": {
+          "mac": 5896280,
+          "load_data": 9248850,
+          "store_data": 487800,
+          "addr": 6793850,
+          "loop_ctrl": 7425270.0,
+          "requant": 4414430.0,
+          "other": 650730
+        },
+        "share_by_sem": {
+          "mac": 16.89,
+          "load_data": 26.49,
+          "store_data": 1.4,
+          "addr": 19.46,
+          "loop_ctrl": 21.27,
+          "requant": 12.64,
+          "other": 1.86
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.2,
+          "load_data": 1.36,
+          "store_data": 1.01,
+          "addr": 1.24,
+          "loop_ctrl": 1.27,
+          "requant": 1.14,
+          "other": 1.02
+        },
+        "loops": [
+          {
+            "backedge": "0xa18->0x568",
+            "trips": 10,
+            "body_instr_static": 98,
+            "body_instr_dynamic": 5566280,
+            "cycles_in_body": 35810560
+          },
+          {
+            "backedge": "0x6ac->0x5dc",
+            "trips": 250,
+            "body_instr_static": 52,
+            "body_instr_dynamic": 5565820,
+            "cycles_in_body": 35807200
+          },
+          {
+            "backedge": "0x69c->0x5f0",
+            "trips": 6500,
+            "body_instr_static": 43,
+            "body_instr_dynamic": 5563480,
+            "cycles_in_body": 35794200
+          }
+        ],
+        "dlp": {
+          "n_strided": 1081490,
+          "share_stride_1_pct": 79.4,
+          "share_stride_4_pct": 4.4,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "pool1": {
+        "cycles": 225600,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 2255748,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 384,
+        "ipc_ideal": 929.083,
+        "ipc_real": 0.158,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.6,
+          "store_data": 5.41,
+          "addr": 9.74,
+          "loop_ctrl": 24.62,
+          "requant": 0.0,
+          "other": 38.63
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.11,
+          "loop_ctrl": 1.33,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0xa30->0x30",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 2278250
+          },
+          {
+            "backedge": "0x124->0x74",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 2276490
+          },
+          {
+            "backedge": "0x114->0x88",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 2270120
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 5011844,
+        "instret": 727226,
+        "mac": 139392,
+        "cycles_per_mac": 35.955,
+        "mac_per_cycle": 0.0278,
+        "bytes_per_image": 312848.0,
+        "byte_per_mac": 2.244,
+        "cycles_sum10": 50118440,
+        "cycles_by_sem_sum10": {
+          "mac": 15526720,
+          "load_data": 25800480,
+          "store_data": 187200,
+          "addr": 2426100,
+          "loop_ctrl": 3233250.0,
+          "requant": 1574360.0,
+          "other": 1370330
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.198,
+        "dist_to_roof_x": 7.12,
+        "bound": "compute/issue",
+        "crit_path": 564,
+        "ipc_ideal": 12894.078,
+        "ipc_real": 0.145,
+        "cycles_by_sem": {
+          "mac": 15526720,
+          "load_data": 25800480,
+          "store_data": 187200,
+          "addr": 2426100,
+          "loop_ctrl": 3233250.0,
+          "requant": 1574360.0,
+          "other": 1370330
+        },
+        "share_by_sem": {
+          "mac": 30.98,
+          "load_data": 51.48,
+          "store_data": 0.37,
+          "addr": 4.84,
+          "loop_ctrl": 6.45,
+          "requant": 3.14,
+          "other": 2.73
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.45,
+          "load_data": 2.06,
+          "store_data": 1.0,
+          "addr": 1.05,
+          "loop_ctrl": 1.07,
+          "requant": 1.03,
+          "other": 1.03
+        },
+        "loops": [
+          {
+            "backedge": "0xa48->0x354",
+            "trips": 10,
+            "body_instr_static": 134,
+            "body_instr_dynamic": 7272250,
+            "cycles_in_body": 50433470
+          },
+          {
+            "backedge": "0x52c->0x3d4",
+            "trips": 100,
+            "body_instr_static": 86,
+            "body_instr_dynamic": 7271770,
+            "cycles_in_body": 50430050
+          },
+          {
+            "backedge": "0x518->0x3e0",
+            "trips": 1100,
+            "body_instr_static": 78,
+            "body_instr_dynamic": 7270890,
+            "cycles_in_body": 50424330
+          }
+        ],
+        "dlp": {
+          "n_strided": 2884958,
+          "share_stride_1_pct": 0.7,
+          "share_stride_4_pct": 0.6,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 65921,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 659029,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 404,
+        "ipc_ideal": 259.725,
+        "ipc_real": 0.159,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.9,
+          "store_data": 5.52,
+          "addr": 9.49,
+          "loop_ctrl": 24.41,
+          "requant": 0.0,
+          "other": 38.67
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.1,
+          "loop_ctrl": 1.32,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0xa60->0x144",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 670175
+          },
+          {
+            "backedge": "0x22c->0x180",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 668645
+          },
+          {
+            "backedge": "0x218->0x190",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 666195
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 192552,
+        "instret": 28094,
+        "mac": 4000,
+        "cycles_per_mac": 48.138,
+        "mac_per_cycle": 0.0208,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 1925520,
+        "cycles_by_sem_sum10": {
+          "mac": 440000,
+          "load_data": 720900,
+          "store_data": 900,
+          "addr": 402100,
+          "loop_ctrl": 360640.0,
+          "requant": 0,
+          "other": 980
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.22,
+        "dist_to_roof_x": 10.59,
+        "bound": "compute/issue",
+        "crit_path": 2084,
+        "ipc_ideal": 134.808,
+        "ipc_real": 0.146,
+        "cycles_by_sem": {
+          "mac": 440000,
+          "load_data": 720900,
+          "store_data": 900,
+          "addr": 402100,
+          "loop_ctrl": 360640.0,
+          "requant": 0,
+          "other": 980
+        },
+        "share_by_sem": {
+          "mac": 22.85,
+          "load_data": 37.44,
+          "store_data": 0.05,
+          "addr": 20.88,
+          "loop_ctrl": 18.73,
+          "requant": 0.0,
+          "other": 0.05
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.3,
+          "load_data": 1.6,
+          "store_data": 1.0,
+          "addr": 1.26,
+          "loop_ctrl": 1.23,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xa78->0x248",
+            "trips": 10,
+            "body_instr_static": 28,
+            "body_instr_dynamic": 280930,
+            "cycles_in_body": 1925910
+          },
+          {
+            "backedge": "0x2a8->0x270",
+            "trips": 90,
+            "body_instr_static": 15,
+            "body_instr_dynamic": 280800,
+            "cycles_in_body": 1925200
+          },
+          {
+            "backedge": "0x294->0x27c",
+            "trips": 39900,
+            "body_instr_static": 7,
+            "body_instr_dynamic": 280000,
+            "cycles_in_body": 1920000
+          }
+        ],
+        "dlp": {
+          "n_strided": 80196,
+          "share_stride_1_pct": 99.6,
+          "share_stride_4_pct": 0.2,
+          "lanes_possible_8bit": 4
+        }
+      }
+    }
+  },
+  "A-V1": {
+    "target": "A-V1",
+    "core": "picorv32",
+    "total_cycles": 6217634,
+    "ms_27mhz": 230.3,
+    "cycles_per_mac_total": 32.373,
+    "mem_bytes_per_cycle_available": 0.444,
+    "lambda_load": 9,
+    "share_by_sem_total": {
+      "mac": 35.16,
+      "load_data": 47.02,
+      "store_data": 2.39,
+      "addr": 1.33,
+      "loop_ctrl": 2.35,
+      "requant": 9.91,
+      "other": 1.84
+    },
+    "cycles_by_sem_total": {
+      "mac": 2186144.0,
+      "load_data": 2923281.0,
+      "store_data": 148752.0,
+      "addr": 82855.0,
+      "loop_ctrl": 146314.0,
+      "requant": 615889.0,
+      "other": 114333.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 21861440,
+      "load_data": 29232810,
+      "store_data": 1487520,
+      "addr": 828550,
+      "loop_ctrl": 1463140.0,
+      "requant": 6158890.0,
+      "other": 1143337.0
+    },
+    "cycles_sum10": 62175687,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.54,
+      "load_data": 1.89,
+      "store_data": 1.02,
+      "addr": 1.01,
+      "loop_ctrl": 1.02,
+      "requant": 1.11,
+      "other": 1.02
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 1600258,
+        "instret": 255820,
+        "mac": 48672,
+        "cycles_per_mac": 32.878,
+        "mac_per_cycle": 0.0304,
+        "bytes_per_image": 55948.0,
+        "byte_per_mac": 1.149,
+        "cycles_sum10": 16002580,
+        "cycles_by_sem_sum10": {
+          "mac": 5894720,
+          "load_data": 4407570,
+          "store_data": 506520,
+          "addr": 281750,
+          "loop_ctrl": 519210.00000000006,
+          "requant": 4391030.0,
+          "other": 1780
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.3866,
+        "dist_to_roof_x": 12.71,
+        "bound": "compute/issue",
+        "crit_path": 4224,
+        "ipc_ideal": 605.634,
+        "ipc_real": 0.16,
+        "cycles_by_sem": {
+          "mac": 5894720,
+          "load_data": 4407570,
+          "store_data": 506520,
+          "addr": 281750,
+          "loop_ctrl": 519210.00000000006,
+          "requant": 4391030.0,
+          "other": 1780
+        },
+        "share_by_sem": {
+          "mac": 36.84,
+          "load_data": 27.54,
+          "store_data": 3.17,
+          "addr": 1.76,
+          "loop_ctrl": 3.24,
+          "requant": 27.44,
+          "other": 0.01
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.58,
+          "load_data": 1.38,
+          "store_data": 1.03,
+          "addr": 1.02,
+          "loop_ctrl": 1.03,
+          "requant": 1.38,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0x10a8->0xbb4",
+            "trips": 10,
+            "body_instr_static": 115,
+            "body_instr_dynamic": 2558190,
+            "cycles_in_body": 16011210
+          },
+          {
+            "backedge": "0xd3c->0xc1c",
+            "trips": 70,
+            "body_instr_static": 72,
+            "body_instr_dynamic": 2557760,
+            "cycles_in_body": 16008000
+          },
+          {
+            "backedge": "0xd2c->0xc54",
+            "trips": 2000,
+            "body_instr_static": 54,
+            "body_instr_dynamic": 2556320,
+            "cycles_in_body": 15997280
+          }
+        ],
+        "dlp": {
+          "n_strided": 545580,
+          "share_stride_1_pct": 85.8,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "pool1": {
+        "cycles": 225600,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 2255748,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 474,
+        "ipc_ideal": 752.675,
+        "ipc_real": 0.158,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.6,
+          "store_data": 5.41,
+          "addr": 9.74,
+          "loop_ctrl": 24.62,
+          "requant": 0.0,
+          "other": 38.63
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.11,
+          "loop_ctrl": 1.33,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0x10c0->0x30",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 2278250
+          },
+          {
+            "backedge": "0x124->0x74",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 2276490
+          },
+          {
+            "backedge": "0x114->0x88",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 2270120
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 4199609,
+        "instret": 592235,
+        "mac": 139392,
+        "cycles_per_mac": 30.128,
+        "mac_per_cycle": 0.0332,
+        "bytes_per_image": 629560.0,
+        "byte_per_mac": 4.516,
+        "cycles_sum10": 41996090,
+        "cycles_by_sem_sum10": {
+          "mac": 15526720,
+          "load_data": 23472000,
+          "store_data": 820800,
+          "addr": 212350,
+          "loop_ctrl": 182030.0,
+          "requant": 1767860.0,
+          "other": 14330
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.0984,
+        "dist_to_roof_x": 2.96,
+        "bound": "compute/issue",
+        "crit_path": 640,
+        "ipc_ideal": 9253.672,
+        "ipc_real": 0.141,
+        "cycles_by_sem": {
+          "mac": 15526720,
+          "load_data": 23472000,
+          "store_data": 820800,
+          "addr": 212350,
+          "loop_ctrl": 182030.0,
+          "requant": 1767860.0,
+          "other": 14330
+        },
+        "share_by_sem": {
+          "mac": 36.97,
+          "load_data": 55.89,
+          "store_data": 1.95,
+          "addr": 0.51,
+          "loop_ctrl": 0.43,
+          "requant": 4.21,
+          "other": 0.03
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.59,
+          "load_data": 2.27,
+          "store_data": 1.02,
+          "addr": 1.01,
+          "loop_ctrl": 1.0,
+          "requant": 1.04,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0x10d8->0x414",
+            "trips": 10,
+            "body_instr_static": 489,
+            "body_instr_dynamic": 5922340,
+            "cycles_in_body": 42001360
+          },
+          {
+            "backedge": "0xb78->0x46c",
+            "trips": 100,
+            "body_instr_static": 451,
+            "body_instr_dynamic": 5921960,
+            "cycles_in_body": 41998440
+          },
+          {
+            "backedge": "0xb58->0x480",
+            "trips": 1100,
+            "body_instr_static": 438,
+            "body_instr_dynamic": 5920530,
+            "cycles_in_body": 41988210
+          }
+        ],
+        "dlp": {
+          "n_strided": 387180,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 65921,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 659029,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 494,
+        "ipc_ideal": 212.407,
+        "ipc_real": 0.159,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.9,
+          "store_data": 5.52,
+          "addr": 9.49,
+          "loop_ctrl": 24.41,
+          "requant": 0.0,
+          "other": 38.67
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.1,
+          "loop_ctrl": 1.32,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0x10f0->0x144",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 670175
+          },
+          {
+            "backedge": "0x22c->0x180",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 668645
+          },
+          {
+            "backedge": "0x218->0x190",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 666195
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 126224,
+        "instret": 17614,
+        "mac": 4000,
+        "cycles_per_mac": 31.556,
+        "mac_per_cycle": 0.0317,
+        "bytes_per_image": 8152.0,
+        "byte_per_mac": 2.038,
+        "cycles_sum10": 1262240,
+        "cycles_by_sem_sum10": {
+          "mac": 440000,
+          "load_data": 721710,
+          "store_data": 1710,
+          "addr": 52150,
+          "loop_ctrl": 45640.0,
+          "requant": 0,
+          "other": 1030
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.2181,
+        "dist_to_roof_x": 6.88,
+        "bound": "compute/issue",
+        "crit_path": 504,
+        "ipc_ideal": 349.484,
+        "ipc_real": 0.14,
+        "cycles_by_sem": {
+          "mac": 440000,
+          "load_data": 721710,
+          "store_data": 1710,
+          "addr": 52150,
+          "loop_ctrl": 45640.0,
+          "requant": 0,
+          "other": 1030
+        },
+        "share_by_sem": {
+          "mac": 34.86,
+          "load_data": 57.18,
+          "store_data": 0.14,
+          "addr": 4.13,
+          "loop_ctrl": 3.62,
+          "requant": 0.0,
+          "other": 0.08
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.54,
+          "load_data": 2.34,
+          "store_data": 1.0,
+          "addr": 1.04,
+          "loop_ctrl": 1.04,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0x1108->0x248",
+            "trips": 10,
+            "body_instr_static": 76,
+            "body_instr_dynamic": 176130,
+            "cycles_in_body": 1262630
+          },
+          {
+            "backedge": "0x340->0x298",
+            "trips": 90,
+            "body_instr_static": 43,
+            "body_instr_dynamic": 175800,
+            "cycles_in_body": 1260200
+          },
+          {
+            "backedge": "0x32c->0x2a4",
+            "trips": 4900,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 175000,
+            "cycles_in_body": 1255000
+          }
+        ],
+        "dlp": {
+          "n_strided": 80200,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.2,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  },
+  "A-V2": {
+    "target": "A-V2",
+    "core": "picorv32",
+    "total_cycles": 5758001,
+    "ms_27mhz": 213.3,
+    "cycles_per_mac_total": 29.98,
+    "mem_bytes_per_cycle_available": 0.444,
+    "lambda_load": 9,
+    "share_by_sem_total": {
+      "mac": 17.42,
+      "load_data": 28.67,
+      "store_data": 1.43,
+      "addr": 16.68,
+      "loop_ctrl": 19.91,
+      "requant": 10.4,
+      "other": 5.48
+    },
+    "cycles_by_sem_total": {
+      "mac": 1003316.0,
+      "load_data": 1650924.0,
+      "store_data": 82251.0,
+      "addr": 960435.0,
+      "loop_ctrl": 1146542.0,
+      "requant": 598879.0,
+      "other": 315588.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 10033160,
+      "load_data": 16509240,
+      "store_data": 822510,
+      "addr": 9604350,
+      "loop_ctrl": 11465420.0,
+      "requant": 5988790.0,
+      "other": 3155887.0
+    },
+    "cycles_sum10": 57579357,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.21,
+      "load_data": 1.4,
+      "store_data": 1.01,
+      "addr": 1.2,
+      "loop_ctrl": 1.25,
+      "requant": 1.12,
+      "other": 1.06
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 3491721,
+        "instret": 556629,
+        "mac": 48672,
+        "cycles_per_mac": 71.74,
+        "mac_per_cycle": 0.0139,
+        "bytes_per_image": 124484.0,
+        "byte_per_mac": 2.558,
+        "cycles_sum10": 34917210,
+        "cycles_by_sem_sum10": {
+          "mac": 5896280,
+          "load_data": 9248850,
+          "store_data": 487800,
+          "addr": 6793850,
+          "loop_ctrl": 7425270.0,
+          "requant": 4414430.0,
+          "other": 650730
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.1738,
+        "dist_to_roof_x": 12.47,
+        "bound": "compute/issue",
+        "crit_path": 644,
+        "ipc_ideal": 8643.307,
+        "ipc_real": 0.159,
+        "cycles_by_sem": {
+          "mac": 5896280,
+          "load_data": 9248850,
+          "store_data": 487800,
+          "addr": 6793850,
+          "loop_ctrl": 7425270.0,
+          "requant": 4414430.0,
+          "other": 650730
+        },
+        "share_by_sem": {
+          "mac": 16.89,
+          "load_data": 26.49,
+          "store_data": 1.4,
+          "addr": 19.46,
+          "loop_ctrl": 21.27,
+          "requant": 12.64,
+          "other": 1.86
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.2,
+          "load_data": 1.36,
+          "store_data": 1.01,
+          "addr": 1.24,
+          "loop_ctrl": 1.27,
+          "requant": 1.14,
+          "other": 1.02
+        },
+        "loops": [
+          {
+            "backedge": "0x9b0->0x500",
+            "trips": 10,
+            "body_instr_static": 98,
+            "body_instr_dynamic": 5566280,
+            "cycles_in_body": 35810560
+          },
+          {
+            "backedge": "0x644->0x574",
+            "trips": 250,
+            "body_instr_static": 52,
+            "body_instr_dynamic": 5565820,
+            "cycles_in_body": 35807200
+          },
+          {
+            "backedge": "0x634->0x588",
+            "trips": 6500,
+            "body_instr_static": 43,
+            "body_instr_dynamic": 5563480,
+            "cycles_in_body": 35794200
+          }
+        ],
+        "dlp": {
+          "n_strided": 1081490,
+          "share_stride_1_pct": 79.4,
+          "share_stride_4_pct": 4.4,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "pool1": {
+        "cycles": 225600,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 2255748,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 384,
+        "ipc_ideal": 929.083,
+        "ipc_real": 0.158,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.6,
+          "store_data": 5.41,
+          "addr": 9.74,
+          "loop_ctrl": 24.62,
+          "requant": 0.0,
+          "other": 38.63
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.11,
+          "loop_ctrl": 1.33,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0x9c8->0x30",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 2278250
+          },
+          {
+            "backedge": "0x124->0x74",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 2276490
+          },
+          {
+            "backedge": "0x114->0x88",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 2270120
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 1926185,
+        "instret": 303131,
+        "mac": 139392,
+        "cycles_per_mac": 13.818,
+        "mac_per_cycle": 0.0724,
+        "bytes_per_image": 288560.0,
+        "byte_per_mac": 2.07,
+        "cycles_sum10": 19261850,
+        "cycles_by_sem_sum10": {
+          "mac": 4026880,
+          "load_data": 6447960,
+          "store_data": 175320,
+          "addr": 2426100,
+          "loop_ctrl": 3233250.0,
+          "requant": 1574360.0,
+          "other": 1377980
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.2147,
+        "dist_to_roof_x": 2.97,
+        "bound": "compute/issue",
+        "crit_path": 1275,
+        "ipc_ideal": 2377.498,
+        "ipc_real": 0.157,
+        "cycles_by_sem": {
+          "mac": 4026880,
+          "load_data": 6447960,
+          "store_data": 175320,
+          "addr": 2426100,
+          "loop_ctrl": 3233250.0,
+          "requant": 1574360.0,
+          "other": 1377980
+        },
+        "share_by_sem": {
+          "mac": 20.91,
+          "load_data": 33.48,
+          "store_data": 0.91,
+          "addr": 12.6,
+          "loop_ctrl": 16.79,
+          "requant": 8.17,
+          "other": 7.15
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.26,
+          "load_data": 1.5,
+          "store_data": 1.01,
+          "addr": 1.14,
+          "loop_ctrl": 1.2,
+          "requant": 1.09,
+          "other": 1.08
+        },
+        "loops": [
+          {
+            "backedge": "0x9e0->0x354",
+            "trips": 10,
+            "body_instr_static": 108,
+            "body_instr_dynamic": 3031300,
+            "cycles_in_body": 19576880
+          },
+          {
+            "backedge": "0x4c4->0x3d0",
+            "trips": 100,
+            "body_instr_static": 61,
+            "body_instr_dynamic": 3030830,
+            "cycles_in_body": 19573510
+          },
+          {
+            "backedge": "0x4b4->0x3e4",
+            "trips": 1100,
+            "body_instr_static": 52,
+            "body_instr_dynamic": 3029840,
+            "cycles_in_body": 19568120
+          }
+        ],
+        "dlp": {
+          "n_strided": 735582,
+          "share_stride_1_pct": 2.6,
+          "share_stride_4_pct": 2.5,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 65921,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 659029,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 404,
+        "ipc_ideal": 259.725,
+        "ipc_real": 0.159,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.9,
+          "store_data": 5.52,
+          "addr": 9.49,
+          "loop_ctrl": 24.41,
+          "requant": 0.0,
+          "other": 38.67
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.1,
+          "loop_ctrl": 1.32,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0x9f8->0x144",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 670175
+          },
+          {
+            "backedge": "0x22c->0x180",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 668645
+          },
+          {
+            "backedge": "0x218->0x190",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 666195
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 48552,
+        "instret": 7094,
+        "mac": 4000,
+        "cycles_per_mac": 12.138,
+        "mac_per_cycle": 0.0824,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 485520,
+        "cycles_by_sem_sum10": {
+          "mac": 110000,
+          "load_data": 180900,
+          "store_data": 900,
+          "addr": 102100,
+          "loop_ctrl": 90640.00000000001,
+          "requant": 0,
+          "other": 980
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.22,
+        "dist_to_roof_x": 2.67,
+        "bound": "compute/issue",
+        "crit_path": 584,
+        "ipc_ideal": 121.473,
+        "ipc_real": 0.146,
+        "cycles_by_sem": {
+          "mac": 110000,
+          "load_data": 180900,
+          "store_data": 900,
+          "addr": 102100,
+          "loop_ctrl": 90640.00000000001,
+          "requant": 0,
+          "other": 980
+        },
+        "share_by_sem": {
+          "mac": 22.66,
+          "load_data": 37.26,
+          "store_data": 0.19,
+          "addr": 21.03,
+          "loop_ctrl": 18.67,
+          "requant": 0.0,
+          "other": 0.2
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.29,
+          "load_data": 1.59,
+          "store_data": 1.0,
+          "addr": 1.27,
+          "loop_ctrl": 1.23,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xa10->0x248",
+            "trips": 10,
+            "body_instr_static": 28,
+            "body_instr_dynamic": 70930,
+            "cycles_in_body": 485910
+          },
+          {
+            "backedge": "0x2a8->0x270",
+            "trips": 90,
+            "body_instr_static": 15,
+            "body_instr_dynamic": 70800,
+            "cycles_in_body": 485200
+          },
+          {
+            "backedge": "0x294->0x27c",
+            "trips": 9900,
+            "body_instr_static": 7,
+            "body_instr_dynamic": 70000,
+            "cycles_in_body": 480000
+          }
+        ],
+        "dlp": {
+          "n_strided": 20196,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 99.4,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  },
+  "A-V1+DOT4": {
+    "target": "A-V1+DOT4",
+    "core": "picorv32",
+    "total_cycles": 2917079,
+    "ms_27mhz": 108.0,
+    "cycles_per_mac_total": 15.188,
+    "mem_bytes_per_cycle_available": 0.444,
+    "lambda_load": 9,
+    "share_by_sem_total": {
+      "mac": 35.78,
+      "load_data": 30.04,
+      "store_data": 2.97,
+      "addr": 2.84,
+      "loop_ctrl": 5.02,
+      "requant": 19.06,
+      "other": 4.29
+    },
+    "cycles_by_sem_total": {
+      "mac": 1043816.0,
+      "load_data": 876330.0,
+      "store_data": 86607.0,
+      "addr": 82850.0,
+      "loop_ctrl": 146314.0,
+      "requant": 555878.0,
+      "other": 125218.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 10438160,
+      "load_data": 8763300,
+      "store_data": 866070,
+      "addr": 828500,
+      "loop_ctrl": 1463140.0,
+      "requant": 5558780.0,
+      "other": 1252187.0
+    },
+    "cycles_sum10": 29170137,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.56,
+      "load_data": 1.43,
+      "store_data": 1.03,
+      "addr": 1.03,
+      "loop_ctrl": 1.05,
+      "requant": 1.24,
+      "other": 1.04
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 1600258,
+        "instret": 255820,
+        "mac": 48672,
+        "cycles_per_mac": 32.878,
+        "mac_per_cycle": 0.0304,
+        "bytes_per_image": 55948.0,
+        "byte_per_mac": 1.149,
+        "cycles_sum10": 16002580,
+        "cycles_by_sem_sum10": {
+          "mac": 5894720,
+          "load_data": 4407570,
+          "store_data": 506520,
+          "addr": 281750,
+          "loop_ctrl": 519210.00000000006,
+          "requant": 4391030.0,
+          "other": 1780
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.3866,
+        "dist_to_roof_x": 12.71,
+        "bound": "compute/issue",
+        "crit_path": 4134,
+        "ipc_ideal": 618.82,
+        "ipc_real": 0.16,
+        "cycles_by_sem": {
+          "mac": 5894720,
+          "load_data": 4407570,
+          "store_data": 506520,
+          "addr": 281750,
+          "loop_ctrl": 519210.00000000006,
+          "requant": 4391030.0,
+          "other": 1780
+        },
+        "share_by_sem": {
+          "mac": 36.84,
+          "load_data": 27.54,
+          "store_data": 3.17,
+          "addr": 1.76,
+          "loop_ctrl": 3.24,
+          "requant": 27.44,
+          "other": 0.01
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.58,
+          "load_data": 1.38,
+          "store_data": 1.03,
+          "addr": 1.02,
+          "loop_ctrl": 1.03,
+          "requant": 1.38,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xadc->0x5e8",
+            "trips": 10,
+            "body_instr_static": 115,
+            "body_instr_dynamic": 2558190,
+            "cycles_in_body": 16011210
+          },
+          {
+            "backedge": "0x770->0x650",
+            "trips": 70,
+            "body_instr_static": 72,
+            "body_instr_dynamic": 2557760,
+            "cycles_in_body": 16008000
+          },
+          {
+            "backedge": "0x760->0x688",
+            "trips": 2000,
+            "body_instr_static": 54,
+            "body_instr_dynamic": 2556320,
+            "cycles_in_body": 15997280
+          }
+        ],
+        "dlp": {
+          "n_strided": 545580,
+          "share_stride_1_pct": 85.8,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "pool1": {
+        "cycles": 225600,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 2255748,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 384,
+        "ipc_ideal": 929.083,
+        "ipc_real": 0.158,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.6,
+          "store_data": 5.41,
+          "addr": 9.74,
+          "loop_ctrl": 24.62,
+          "requant": 0.0,
+          "other": 38.63
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.11,
+          "loop_ctrl": 1.33,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0xaf4->0x30",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 2278250
+          },
+          {
+            "backedge": "0x124->0x74",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 2276490
+          },
+          {
+            "backedge": "0x114->0x88",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 2270120
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 986226,
+        "instret": 153128,
+        "mac": 139392,
+        "cycles_per_mac": 7.075,
+        "mac_per_cycle": 0.1413,
+        "bytes_per_image": 160568.0,
+        "byte_per_mac": 1.152,
+        "cycles_sum10": 9862260,
+        "cycles_by_sem_sum10": {
+          "mac": 4433440,
+          "load_data": 3543300,
+          "store_data": 200160,
+          "addr": 212350,
+          "loop_ctrl": 182030.0,
+          "requant": 1167750.0,
+          "other": 123230
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.3858,
+        "dist_to_roof_x": 2.73,
+        "bound": "compute/issue",
+        "crit_path": 534,
+        "ipc_ideal": 2867.566,
+        "ipc_real": 0.155,
+        "cycles_by_sem": {
+          "mac": 4433440,
+          "load_data": 3543300,
+          "store_data": 200160,
+          "addr": 212350,
+          "loop_ctrl": 182030.0,
+          "requant": 1167750.0,
+          "other": 123230
+        },
+        "share_by_sem": {
+          "mac": 44.95,
+          "load_data": 35.93,
+          "store_data": 2.03,
+          "addr": 2.15,
+          "loop_ctrl": 1.85,
+          "requant": 11.84,
+          "other": 1.25
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.82,
+          "load_data": 1.56,
+          "store_data": 1.02,
+          "addr": 1.02,
+          "loop_ctrl": 1.02,
+          "requant": 1.13,
+          "other": 1.01
+        },
+        "loops": [
+          {
+            "backedge": "0xb0c->0x364",
+            "trips": 10,
+            "body_instr_static": 162,
+            "body_instr_dynamic": 1531270,
+            "cycles_in_body": 9867530
+          },
+          {
+            "backedge": "0x5ac->0x3c4",
+            "trips": 100,
+            "body_instr_static": 122,
+            "body_instr_dynamic": 1530870,
+            "cycles_in_body": 9864470
+          },
+          {
+            "backedge": "0x58c->0x3d8",
+            "trips": 1100,
+            "body_instr_static": 109,
+            "body_instr_dynamic": 1529440,
+            "cycles_in_body": 9854240
+          }
+        ],
+        "dlp": {
+          "n_strided": 387180,
+          "share_stride_1_pct": 5.0,
+          "share_stride_4_pct": 4.7,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 65921,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 659029,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 404,
+        "ipc_ideal": 259.725,
+        "ipc_real": 0.159,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.9,
+          "store_data": 5.52,
+          "addr": 9.49,
+          "loop_ctrl": 24.41,
+          "requant": 0.0,
+          "other": 38.67
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.1,
+          "loop_ctrl": 1.32,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0xb24->0x144",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 670175
+          },
+          {
+            "backedge": "0x22c->0x180",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 668645
+          },
+          {
+            "backedge": "0x218->0x190",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 666195
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 39052,
+        "instret": 5594,
+        "mac": 4000,
+        "cycles_per_mac": 9.763,
+        "mac_per_cycle": 0.1024,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 390520,
+        "cycles_by_sem_sum10": {
+          "mac": 110000,
+          "load_data": 180900,
+          "store_data": 900,
+          "addr": 52100,
+          "loop_ctrl": 45640.0,
+          "requant": 0,
+          "other": 980
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.22,
+        "dist_to_roof_x": 2.15,
+        "bound": "compute/issue",
+        "crit_path": 339,
+        "ipc_ideal": 165.015,
+        "ipc_real": 0.143,
+        "cycles_by_sem": {
+          "mac": 110000,
+          "load_data": 180900,
+          "store_data": 900,
+          "addr": 52100,
+          "loop_ctrl": 45640.0,
+          "requant": 0,
+          "other": 980
+        },
+        "share_by_sem": {
+          "mac": 28.17,
+          "load_data": 46.32,
+          "store_data": 0.23,
+          "addr": 13.34,
+          "loop_ctrl": 11.69,
+          "requant": 0.0,
+          "other": 0.25
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.39,
+          "load_data": 1.86,
+          "store_data": 1.0,
+          "addr": 1.15,
+          "loop_ctrl": 1.13,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xb3c->0x248",
+            "trips": 10,
+            "body_instr_static": 32,
+            "body_instr_dynamic": 55930,
+            "cycles_in_body": 390910
+          },
+          {
+            "backedge": "0x2b8->0x270",
+            "trips": 90,
+            "body_instr_static": 19,
+            "body_instr_dynamic": 55800,
+            "cycles_in_body": 390200
+          },
+          {
+            "backedge": "0x2a4->0x27c",
+            "trips": 4900,
+            "body_instr_static": 11,
+            "body_instr_dynamic": 55000,
+            "cycles_in_body": 385000
+          }
+        ],
+        "dlp": {
+          "n_strided": 20194,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.9,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  },
+  "A-V1+DOT4+C1": {
+    "target": "A-V1+DOT4+C1",
+    "core": "picorv32",
+    "total_cycles": 2450494,
+    "ms_27mhz": 90.8,
+    "cycles_per_mac_total": 12.759,
+    "mem_bytes_per_cycle_available": 0.444,
+    "lambda_load": 9,
+    "share_by_sem_total": {
+      "mac": 32.67,
+      "load_data": 25.25,
+      "store_data": 4.84,
+      "addr": 4.96,
+      "loop_ctrl": 8.72,
+      "requant": 18.18,
+      "other": 5.39
+    },
+    "cycles_by_sem_total": {
+      "mac": 800456.0,
+      "load_data": 618723.0,
+      "store_data": 118512.0,
+      "addr": 121570.0,
+      "loop_ctrl": 213655.0,
+      "requant": 445425.0,
+      "other": 132087.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 8004560,
+      "load_data": 6187230,
+      "store_data": 1185120,
+      "addr": 1215700,
+      "loop_ctrl": 2136550.0,
+      "requant": 4454250.0,
+      "other": 1320877.0
+    },
+    "cycles_sum10": 24504287,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.49,
+      "load_data": 1.34,
+      "store_data": 1.05,
+      "addr": 1.05,
+      "loop_ctrl": 1.1,
+      "requant": 1.22,
+      "other": 1.06
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 1133668,
+        "instret": 186304,
+        "mac": 48672,
+        "cycles_per_mac": 23.292,
+        "mac_per_cycle": 0.0429,
+        "bytes_per_image": 81204.0,
+        "byte_per_mac": 1.668,
+        "cycles_sum10": 11336680,
+        "cycles_by_sem_sum10": {
+          "mac": 3461120,
+          "load_data": 1831500,
+          "store_data": 825570,
+          "addr": 668950,
+          "loop_ctrl": 1192620.0,
+          "requant": 3286500.0,
+          "other": 70420.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.2664,
+        "dist_to_roof_x": 6.2,
+        "bound": "compute/issue",
+        "crit_path": 667,
+        "ipc_ideal": 2793.163,
+        "ipc_real": 0.164,
+        "cycles_by_sem": {
+          "mac": 3461120,
+          "load_data": 1831500,
+          "store_data": 825570,
+          "addr": 668950,
+          "loop_ctrl": 1192620.0,
+          "requant": 3286500.0,
+          "other": 70420.0
+        },
+        "share_by_sem": {
+          "mac": 30.53,
+          "load_data": 16.16,
+          "store_data": 7.28,
+          "addr": 5.9,
+          "loop_ctrl": 10.52,
+          "requant": 28.99,
+          "other": 0.62
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.44,
+          "load_data": 1.19,
+          "store_data": 1.08,
+          "addr": 1.06,
+          "loop_ctrl": 1.12,
+          "requant": 1.41,
+          "other": 1.01
+        },
+        "loops": [
+          {
+            "backedge": "0xcb4->0x52c",
+            "trips": 10,
+            "body_instr_static": 115,
+            "body_instr_dynamic": 1677880,
+            "cycles_in_body": 10032810
+          },
+          {
+            "backedge": "0x6b0->0x5b4",
+            "trips": 70,
+            "body_instr_static": 63,
+            "body_instr_dynamic": 1677360,
+            "cycles_in_body": 10029040
+          },
+          {
+            "backedge": "0x69c->0x5dc",
+            "trips": 240,
+            "body_instr_static": 48,
+            "body_instr_dynamic": 1676160,
+            "cycles_in_body": 10020800
+          }
+        ],
+        "dlp": {
+          "n_strided": 293936,
+          "share_stride_1_pct": 21.8,
+          "share_stride_4_pct": 47.0,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool1": {
+        "cycles": 225600,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 2255748,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 384,
+        "ipc_ideal": 929.083,
+        "ipc_real": 0.158,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.6,
+          "store_data": 5.41,
+          "addr": 9.74,
+          "loop_ctrl": 24.62,
+          "requant": 0.0,
+          "other": 38.63
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.11,
+          "loop_ctrl": 1.33,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0xccc->0x128",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 2278250
+          },
+          {
+            "backedge": "0x21c->0x16c",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 2276490
+          },
+          {
+            "backedge": "0x20c->0x180",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 2270120
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 986226,
+        "instret": 153128,
+        "mac": 139392,
+        "cycles_per_mac": 7.075,
+        "mac_per_cycle": 0.1413,
+        "bytes_per_image": 160568.0,
+        "byte_per_mac": 1.152,
+        "cycles_sum10": 9862260,
+        "cycles_by_sem_sum10": {
+          "mac": 4433440,
+          "load_data": 3543300,
+          "store_data": 200160,
+          "addr": 212350,
+          "loop_ctrl": 182030.0,
+          "requant": 1167750.0,
+          "other": 123230
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.3858,
+        "dist_to_roof_x": 2.73,
+        "bound": "compute/issue",
+        "crit_path": 534,
+        "ipc_ideal": 2867.566,
+        "ipc_real": 0.155,
+        "cycles_by_sem": {
+          "mac": 4433440,
+          "load_data": 3543300,
+          "store_data": 200160,
+          "addr": 212350,
+          "loop_ctrl": 182030.0,
+          "requant": 1167750.0,
+          "other": 123230
+        },
+        "share_by_sem": {
+          "mac": 44.95,
+          "load_data": 35.93,
+          "store_data": 2.03,
+          "addr": 2.15,
+          "loop_ctrl": 1.85,
+          "requant": 11.84,
+          "other": 1.25
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.82,
+          "load_data": 1.56,
+          "store_data": 1.02,
+          "addr": 1.02,
+          "loop_ctrl": 1.02,
+          "requant": 1.13,
+          "other": 1.01
+        },
+        "loops": [
+          {
+            "backedge": "0xce4->0x6f0",
+            "trips": 10,
+            "body_instr_static": 162,
+            "body_instr_dynamic": 1531270,
+            "cycles_in_body": 9867530
+          },
+          {
+            "backedge": "0x938->0x750",
+            "trips": 100,
+            "body_instr_static": 122,
+            "body_instr_dynamic": 1530870,
+            "cycles_in_body": 9864470
+          },
+          {
+            "backedge": "0x918->0x764",
+            "trips": 1100,
+            "body_instr_static": 109,
+            "body_instr_dynamic": 1529440,
+            "cycles_in_body": 9854240
+          }
+        ],
+        "dlp": {
+          "n_strided": 387180,
+          "share_stride_1_pct": 5.0,
+          "share_stride_4_pct": 4.7,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 65921,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 659029,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 404,
+        "ipc_ideal": 259.725,
+        "ipc_real": 0.159,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.9,
+          "store_data": 5.52,
+          "addr": 9.49,
+          "loop_ctrl": 24.41,
+          "requant": 0.0,
+          "other": 38.67
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.1,
+          "loop_ctrl": 1.32,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0xcfc->0x23c",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 670175
+          },
+          {
+            "backedge": "0x324->0x278",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 668645
+          },
+          {
+            "backedge": "0x310->0x288",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 666195
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 39057,
+        "instret": 5595,
+        "mac": 4000,
+        "cycles_per_mac": 9.764,
+        "mac_per_cycle": 0.1024,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 390570,
+        "cycles_by_sem_sum10": {
+          "mac": 110000,
+          "load_data": 180900,
+          "store_data": 900,
+          "addr": 52100,
+          "loop_ctrl": 45640.0,
+          "requant": 0,
+          "other": 1030
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.22,
+        "dist_to_roof_x": 2.15,
+        "bound": "compute/issue",
+        "crit_path": 339,
+        "ipc_ideal": 165.044,
+        "ipc_real": 0.143,
+        "cycles_by_sem": {
+          "mac": 110000,
+          "load_data": 180900,
+          "store_data": 900,
+          "addr": 52100,
+          "loop_ctrl": 45640.0,
+          "requant": 0,
+          "other": 1030
+        },
+        "share_by_sem": {
+          "mac": 28.16,
+          "load_data": 46.32,
+          "store_data": 0.23,
+          "addr": 13.34,
+          "loop_ctrl": 11.69,
+          "requant": 0.0,
+          "other": 0.26
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.39,
+          "load_data": 1.86,
+          "store_data": 1.0,
+          "addr": 1.15,
+          "loop_ctrl": 1.13,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xd14->0x340",
+            "trips": 10,
+            "body_instr_static": 33,
+            "body_instr_dynamic": 55940,
+            "cycles_in_body": 390960
+          },
+          {
+            "backedge": "0x3b4->0x36c",
+            "trips": 90,
+            "body_instr_static": 19,
+            "body_instr_dynamic": 55800,
+            "cycles_in_body": 390200
+          },
+          {
+            "backedge": "0x3a0->0x378",
+            "trips": 4900,
+            "body_instr_static": 11,
+            "body_instr_dynamic": 55000,
+            "cycles_in_body": 385000
+          }
+        ],
+        "dlp": {
+          "n_strided": 20194,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.9,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  },
+  "A-V3": {
+    "target": "A-V3",
+    "core": "picorv32",
+    "total_cycles": 1842219,
+    "ms_27mhz": 68.2,
+    "cycles_per_mac_total": 9.592,
+    "mem_bytes_per_cycle_available": 0.444,
+    "lambda_load": 9,
+    "share_by_sem_total": {
+      "mac": 31.09,
+      "load_data": 33.1,
+      "store_data": 6.39,
+      "addr": 8.85,
+      "loop_ctrl": 11.61,
+      "requant": 2.39,
+      "other": 6.57
+    },
+    "cycles_by_sem_total": {
+      "mac": 572792.0,
+      "load_data": 609678.0,
+      "store_data": 117747.0,
+      "addr": 163055.0,
+      "loop_ctrl": 213875.0,
+      "requant": 44064.0,
+      "other": 120942.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 5727920,
+      "load_data": 6096780,
+      "store_data": 1177470,
+      "addr": 1630550,
+      "loop_ctrl": 2138750.0,
+      "requant": 440640,
+      "other": 1209427.0
+    },
+    "cycles_sum10": 18421537,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.45,
+      "load_data": 1.49,
+      "store_data": 1.07,
+      "addr": 1.1,
+      "loop_ctrl": 1.13,
+      "requant": 1.02,
+      "other": 1.07
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 692464,
+        "instret": 104228,
+        "mac": 48672,
+        "cycles_per_mac": 14.227,
+        "mac_per_cycle": 0.0703,
+        "bytes_per_image": 77420.0,
+        "byte_per_mac": 1.591,
+        "cycles_sum10": 6924640,
+        "cycles_by_sem_sum10": {
+          "mac": 1784640,
+          "load_data": 1752930,
+          "store_data": 819000,
+          "addr": 980950,
+          "loop_ctrl": 1194220.0,
+          "requant": 324480,
+          "other": 68420.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.2794,
+        "dist_to_roof_x": 3.98,
+        "bound": "compute/issue",
+        "crit_path": 667,
+        "ipc_ideal": 1562.639,
+        "ipc_real": 0.151,
+        "cycles_by_sem": {
+          "mac": 1784640,
+          "load_data": 1752930,
+          "store_data": 819000,
+          "addr": 980950,
+          "loop_ctrl": 1194220.0,
+          "requant": 324480,
+          "other": 68420.0
+        },
+        "share_by_sem": {
+          "mac": 25.77,
+          "load_data": 25.31,
+          "store_data": 11.83,
+          "addr": 14.17,
+          "loop_ctrl": 17.25,
+          "requant": 4.69,
+          "other": 0.99
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.35,
+          "load_data": 1.34,
+          "store_data": 1.13,
+          "addr": 1.17,
+          "loop_ctrl": 1.21,
+          "requant": 1.05,
+          "other": 1.01
+        },
+        "loops": [
+          {
+            "backedge": "0xaf8->0x128",
+            "trips": 10,
+            "body_instr_static": 89,
+            "body_instr_dynamic": 857120,
+            "cycles_in_body": 5620770
+          },
+          {
+            "backedge": "0x244->0x1a4",
+            "trips": 70,
+            "body_instr_static": 41,
+            "body_instr_dynamic": 856640,
+            "cycles_in_body": 5617280
+          },
+          {
+            "backedge": "0x234->0x1c4",
+            "trips": 240,
+            "body_instr_static": 29,
+            "body_instr_dynamic": 855680,
+            "cycles_in_body": 5610880
+          }
+        ],
+        "dlp": {
+          "n_strided": 284906,
+          "share_stride_1_pct": 22.5,
+          "share_stride_4_pct": 48.5,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool1": {
+        "cycles": 225600,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 2255748,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 384,
+        "ipc_ideal": 929.083,
+        "ipc_real": 0.158,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 487170,
+          "store_data": 122130,
+          "addr": 219750,
+          "loop_ctrl": 555370.0,
+          "requant": 0,
+          "other": 871328.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.6,
+          "store_data": 5.41,
+          "addr": 9.74,
+          "loop_ctrl": 24.62,
+          "requant": 0.0,
+          "other": 38.63
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.11,
+          "loop_ctrl": 1.33,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0xb10->0x280",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 2278250
+          },
+          {
+            "backedge": "0x374->0x2c4",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 2276490
+          },
+          {
+            "backedge": "0x364->0x2d8",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 2270120
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 819160,
+        "instret": 121766,
+        "mac": 139392,
+        "cycles_per_mac": 5.877,
+        "mac_per_cycle": 0.1702,
+        "bytes_per_image": 159992.0,
+        "byte_per_mac": 1.148,
+        "cycles_sum10": 8191600,
+        "cycles_by_sem_sum10": {
+          "mac": 3833280,
+          "load_data": 3531420,
+          "store_data": 199080,
+          "addr": 315200,
+          "loop_ctrl": 182630.0,
+          "requant": 116160,
+          "other": 13830
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.3872,
+        "dist_to_roof_x": 2.28,
+        "bound": "compute/issue",
+        "crit_path": 493,
+        "ipc_ideal": 2469.899,
+        "ipc_real": 0.149,
+        "cycles_by_sem": {
+          "mac": 3833280,
+          "load_data": 3531420,
+          "store_data": 199080,
+          "addr": 315200,
+          "loop_ctrl": 182630.0,
+          "requant": 116160,
+          "other": 13830
+        },
+        "share_by_sem": {
+          "mac": 46.8,
+          "load_data": 43.11,
+          "store_data": 2.43,
+          "addr": 3.85,
+          "loop_ctrl": 2.23,
+          "requant": 1.42,
+          "other": 0.17
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.88,
+          "load_data": 1.76,
+          "store_data": 1.02,
+          "addr": 1.04,
+          "loop_ctrl": 1.02,
+          "requant": 1.01,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xb28->0x394",
+            "trips": 10,
+            "body_instr_static": 140,
+            "body_instr_dynamic": 1217650,
+            "cycles_in_body": 8196870
+          },
+          {
+            "backedge": "0x580->0x3f0",
+            "trips": 100,
+            "body_instr_static": 101,
+            "body_instr_dynamic": 1217260,
+            "cycles_in_body": 8193900
+          },
+          {
+            "backedge": "0x564->0x400",
+            "trips": 1100,
+            "body_instr_static": 90,
+            "body_instr_dynamic": 1216050,
+            "cycles_in_body": 8185650
+          }
+        ],
+        "dlp": {
+          "n_strided": 387180,
+          "share_stride_1_pct": 5.0,
+          "share_stride_4_pct": 4.7,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 65921,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 659029,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 404,
+        "ipc_ideal": 259.725,
+        "ipc_real": 0.159,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 144360,
+          "store_data": 36360,
+          "addr": 62550,
+          "loop_ctrl": 160890.0,
+          "requant": 0,
+          "other": 254869.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 21.9,
+          "store_data": 5.52,
+          "addr": 9.49,
+          "loop_ctrl": 24.41,
+          "requant": 0.0,
+          "other": 38.67
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.28,
+          "store_data": 1.06,
+          "addr": 1.1,
+          "loop_ctrl": 1.32,
+          "requant": 1.0,
+          "other": 1.63
+        },
+        "loops": [
+          {
+            "backedge": "0xb40->0x5bc",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 670175
+          },
+          {
+            "backedge": "0x6a4->0x5f8",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 668645
+          },
+          {
+            "backedge": "0x690->0x608",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 666195
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 39052,
+        "instret": 5594,
+        "mac": 4000,
+        "cycles_per_mac": 9.763,
+        "mac_per_cycle": 0.1024,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 390520,
+        "cycles_by_sem_sum10": {
+          "mac": 110000,
+          "load_data": 180900,
+          "store_data": 900,
+          "addr": 52100,
+          "loop_ctrl": 45640.0,
+          "requant": 0,
+          "other": 980
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.22,
+        "dist_to_roof_x": 2.15,
+        "bound": "compute/issue",
+        "crit_path": 339,
+        "ipc_ideal": 165.015,
+        "ipc_real": 0.143,
+        "cycles_by_sem": {
+          "mac": 110000,
+          "load_data": 180900,
+          "store_data": 900,
+          "addr": 52100,
+          "loop_ctrl": 45640.0,
+          "requant": 0,
+          "other": 980
+        },
+        "share_by_sem": {
+          "mac": 28.17,
+          "load_data": 46.32,
+          "store_data": 0.23,
+          "addr": 13.34,
+          "loop_ctrl": 11.69,
+          "requant": 0.0,
+          "other": 0.25
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.39,
+          "load_data": 1.86,
+          "store_data": 1.0,
+          "addr": 1.15,
+          "loop_ctrl": 1.13,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xb58->0x6c0",
+            "trips": 10,
+            "body_instr_static": 32,
+            "body_instr_dynamic": 55930,
+            "cycles_in_body": 390910
+          },
+          {
+            "backedge": "0x730->0x6e8",
+            "trips": 90,
+            "body_instr_static": 19,
+            "body_instr_dynamic": 55800,
+            "cycles_in_body": 390200
+          },
+          {
+            "backedge": "0x71c->0x6f4",
+            "trips": 4900,
+            "body_instr_static": 11,
+            "body_instr_dynamic": 55000,
+            "cycles_in_body": 385000
+          }
+        ],
+        "dlp": {
+          "n_strided": 20194,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.9,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  },
+  "B-V0r": {
+    "target": "B-V0r",
+    "core": "mycore",
+    "total_cycles": 3750617,
+    "ms_27mhz": 138.9,
+    "cycles_per_mac_total": 19.528,
+    "mem_bytes_per_cycle_available": 1.0,
+    "lambda_load": 4,
+    "share_by_sem_total": {
+      "mac": 26.39,
+      "load_data": 43.14,
+      "store_data": 0.99,
+      "addr": 10.56,
+      "loop_ctrl": 9.45,
+      "requant": 6.31,
+      "other": 3.16
+    },
+    "cycles_by_sem_total": {
+      "mac": 989774.0,
+      "load_data": 1617856.0,
+      "store_data": 37084.0,
+      "addr": 396174.0,
+      "loop_ctrl": 354462.0,
+      "requant": 236614.0,
+      "other": 118521.4
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 9897740,
+      "load_data": 16178560,
+      "store_data": 370840,
+      "addr": 3961740,
+      "loop_ctrl": 3544620.0,
+      "requant": 2366140.0,
+      "other": 1185214.0
+    },
+    "cycles_sum10": 37504854,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.36,
+      "load_data": 1.76,
+      "store_data": 1.01,
+      "addr": 1.12,
+      "loop_ctrl": 1.1,
+      "requant": 1.07,
+      "other": 1.03
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 1389142,
+        "instret": 556629,
+        "mac": 48672,
+        "cycles_per_mac": 28.541,
+        "mac_per_cycle": 0.035,
+        "bytes_per_image": 124484.0,
+        "byte_per_mac": 2.558,
+        "cycles_sum10": 13891420,
+        "cycles_by_sem_sum10": {
+          "mac": 2650700,
+          "load_data": 4110600,
+          "store_data": 216800,
+          "addr": 2717540,
+          "loop_ctrl": 2191360.0,
+          "requant": 1744140.0,
+          "other": 260280
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.391,
+        "dist_to_roof_x": 11.16,
+        "bound": "compute/issue",
+        "crit_path": 260,
+        "ipc_ideal": 21408.808,
+        "ipc_real": 0.401,
+        "cycles_by_sem": {
+          "mac": 2650700,
+          "load_data": 4110600,
+          "store_data": 216800,
+          "addr": 2717540,
+          "loop_ctrl": 2191360.0,
+          "requant": 1744140.0,
+          "other": 260280
+        },
+        "share_by_sem": {
+          "mac": 19.08,
+          "load_data": 29.59,
+          "store_data": 1.56,
+          "addr": 19.56,
+          "loop_ctrl": 15.77,
+          "requant": 12.56,
+          "other": 1.87
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.24,
+          "load_data": 1.42,
+          "store_data": 1.02,
+          "addr": 1.24,
+          "loop_ctrl": 1.19,
+          "requant": 1.14,
+          "other": 1.02
+        },
+        "loops": [
+          {
+            "backedge": "0xa18->0x568",
+            "trips": 10,
+            "body_instr_static": 98,
+            "body_instr_dynamic": 5566280,
+            "cycles_in_body": 13891400
+          },
+          {
+            "backedge": "0x6ac->0x5dc",
+            "trips": 250,
+            "body_instr_static": 52,
+            "body_instr_dynamic": 5565820,
+            "cycles_in_body": 13889980
+          },
+          {
+            "backedge": "0x69c->0x5f0",
+            "trips": 6500,
+            "body_instr_static": 43,
+            "body_instr_dynamic": 5563480,
+            "cycles_in_body": 13885040
+          }
+        ],
+        "dlp": {
+          "n_strided": 1081490,
+          "share_stride_1_pct": 79.4,
+          "share_stride_4_pct": 4.4,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "pool1": {
+        "cycles": 84945,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 848936,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 216520,
+          "store_data": 54280,
+          "addr": 87900,
+          "loop_ctrl": 200520.0,
+          "requant": 0,
+          "other": 289716.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 154,
+        "ipc_ideal": 2316.675,
+        "ipc_real": 0.42,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 216520,
+          "store_data": 54280,
+          "addr": 87900,
+          "loop_ctrl": 200520.0,
+          "requant": 0,
+          "other": 289716.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.5,
+          "store_data": 6.39,
+          "addr": 10.35,
+          "loop_ctrl": 23.62,
+          "requant": 0.0,
+          "other": 34.13
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.34,
+          "store_data": 1.07,
+          "addr": 1.12,
+          "loop_ctrl": 1.31,
+          "requant": 1.0,
+          "other": 1.52
+        },
+        "loops": [
+          {
+            "backedge": "0xa30->0x30",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 848916
+          },
+          {
+            "backedge": "0x124->0x74",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 848196
+          },
+          {
+            "backedge": "0x114->0x88",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 845856
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 2175220,
+        "instret": 727226,
+        "mac": 139392,
+        "cycles_per_mac": 15.605,
+        "mac_per_cycle": 0.0641,
+        "bytes_per_image": 312848.0,
+        "byte_per_mac": 2.244,
+        "cycles_sum10": 21752200,
+        "cycles_by_sem_sum10": {
+          "mac": 7047040,
+          "load_data": 11466880,
+          "store_data": 83200,
+          "addr": 970440,
+          "loop_ctrl": 1014520.0,
+          "requant": 622000.0,
+          "other": 548120
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.4456,
+        "dist_to_roof_x": 6.95,
+        "bound": "compute/issue",
+        "crit_path": 228,
+        "ipc_ideal": 31895.877,
+        "ipc_real": 0.334,
+        "cycles_by_sem": {
+          "mac": 7047040,
+          "load_data": 11466880,
+          "store_data": 83200,
+          "addr": 970440,
+          "loop_ctrl": 1014520.0,
+          "requant": 622000.0,
+          "other": 548120
+        },
+        "share_by_sem": {
+          "mac": 32.4,
+          "load_data": 52.72,
+          "store_data": 0.38,
+          "addr": 4.46,
+          "loop_ctrl": 4.66,
+          "requant": 2.86,
+          "other": 2.52
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.48,
+          "load_data": 2.11,
+          "store_data": 1.0,
+          "addr": 1.05,
+          "loop_ctrl": 1.05,
+          "requant": 1.03,
+          "other": 1.03
+        },
+        "loops": [
+          {
+            "backedge": "0xa48->0x354",
+            "trips": 10,
+            "body_instr_static": 134,
+            "body_instr_dynamic": 7272250,
+            "cycles_in_body": 21752180
+          },
+          {
+            "backedge": "0x52c->0x3d4",
+            "trips": 100,
+            "body_instr_static": 86,
+            "body_instr_dynamic": 7271770,
+            "cycles_in_body": 21750740
+          },
+          {
+            "backedge": "0x518->0x3e0",
+            "trips": 1100,
+            "body_instr_static": 78,
+            "body_instr_dynamic": 7270890,
+            "cycles_in_body": 21748540
+          }
+        ],
+        "dlp": {
+          "n_strided": 2884958,
+          "share_stride_1_pct": 0.7,
+          "share_stride_4_pct": 0.6,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 25038,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 250018,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 64160,
+          "store_data": 16160,
+          "addr": 25020,
+          "loop_ctrl": 57960.0,
+          "requant": 0,
+          "other": 86718.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 162,
+        "ipc_ideal": 647.71,
+        "ipc_real": 0.42,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 64160,
+          "store_data": 16160,
+          "addr": 25020,
+          "loop_ctrl": 57960.0,
+          "requant": 0,
+          "other": 86718.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.66,
+          "store_data": 6.46,
+          "addr": 10.01,
+          "loop_ctrl": 23.18,
+          "requant": 0.0,
+          "other": 34.68
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.35,
+          "store_data": 1.07,
+          "addr": 1.11,
+          "loop_ctrl": 1.3,
+          "requant": 1.0,
+          "other": 1.53
+        },
+        "loops": [
+          {
+            "backedge": "0xa60->0x144",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 249998
+          },
+          {
+            "backedge": "0x22c->0x180",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 249378
+          },
+          {
+            "backedge": "0x218->0x190",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 248478
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 76228,
+        "instret": 28094,
+        "mac": 4000,
+        "cycles_per_mac": 19.057,
+        "mac_per_cycle": 0.0525,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 762280,
+        "cycles_by_sem_sum10": {
+          "mac": 200000,
+          "load_data": 320400,
+          "store_data": 400,
+          "addr": 160840,
+          "loop_ctrl": 80260.0,
+          "requant": 0,
+          "other": 380
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.495,
+        "dist_to_roof_x": 9.43,
+        "bound": "compute/issue",
+        "crit_path": 835,
+        "ipc_ideal": 336.455,
+        "ipc_real": 0.369,
+        "cycles_by_sem": {
+          "mac": 200000,
+          "load_data": 320400,
+          "store_data": 400,
+          "addr": 160840,
+          "loop_ctrl": 80260.0,
+          "requant": 0,
+          "other": 380
+        },
+        "share_by_sem": {
+          "mac": 26.24,
+          "load_data": 42.03,
+          "store_data": 0.05,
+          "addr": 21.1,
+          "loop_ctrl": 10.53,
+          "requant": 0.0,
+          "other": 0.05
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.36,
+          "load_data": 1.73,
+          "store_data": 1.0,
+          "addr": 1.27,
+          "loop_ctrl": 1.12,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xa78->0x248",
+            "trips": 10,
+            "body_instr_static": 28,
+            "body_instr_dynamic": 280930,
+            "cycles_in_body": 762260
+          },
+          {
+            "backedge": "0x2a8->0x270",
+            "trips": 90,
+            "body_instr_static": 15,
+            "body_instr_dynamic": 280800,
+            "cycles_in_body": 762000
+          },
+          {
+            "backedge": "0x294->0x27c",
+            "trips": 39900,
+            "body_instr_static": 7,
+            "body_instr_dynamic": 280000,
+            "cycles_in_body": 760000
+          }
+        ],
+        "dlp": {
+          "n_strided": 80196,
+          "share_stride_1_pct": 99.6,
+          "share_stride_4_pct": 0.2,
+          "lanes_possible_8bit": 4
+        }
+      }
+    }
+  },
+  "B-V1r": {
+    "target": "B-V1r",
+    "core": "mycore",
+    "total_cycles": 2713235,
+    "ms_27mhz": 100.5,
+    "cycles_per_mac_total": 14.127,
+    "mem_bytes_per_cycle_available": 1.0,
+    "lambda_load": 4,
+    "share_by_sem_total": {
+      "mac": 36.48,
+      "load_data": 47.89,
+      "store_data": 2.44,
+      "addr": 1.22,
+      "loop_ctrl": 1.59,
+      "requant": 8.97,
+      "other": 1.41
+    },
+    "cycles_by_sem_total": {
+      "mac": 989696.0,
+      "load_data": 1299236.0,
+      "store_data": 66112.0,
+      "addr": 33142.0,
+      "loop_ctrl": 43174.0,
+      "requant": 243418.0,
+      "other": 38325.4
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 9896960,
+      "load_data": 12992360,
+      "store_data": 661120,
+      "addr": 331420,
+      "loop_ctrl": 431740.0,
+      "requant": 2434180.0,
+      "other": 383254.0
+    },
+    "cycles_sum10": 27131034,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.57,
+      "load_data": 1.92,
+      "store_data": 1.02,
+      "addr": 1.01,
+      "loop_ctrl": 1.02,
+      "requant": 1.1,
+      "other": 1.01
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 680330,
+        "instret": 255820,
+        "mac": 48672,
+        "cycles_per_mac": 13.978,
+        "mac_per_cycle": 0.0715,
+        "bytes_per_image": 55948.0,
+        "byte_per_mac": 1.149,
+        "cycles_sum10": 6803300,
+        "cycles_by_sem_sum10": {
+          "mac": 2649920,
+          "load_data": 1958920,
+          "store_data": 225120,
+          "addr": 112700,
+          "loop_ctrl": 121160.0,
+          "requant": 1734780.0,
+          "other": 700
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.87,
+        "dist_to_roof_x": 12.16,
+        "bound": "compute/issue",
+        "crit_path": 1692,
+        "ipc_ideal": 1511.939,
+        "ipc_real": 0.376,
+        "cycles_by_sem": {
+          "mac": 2649920,
+          "load_data": 1958920,
+          "store_data": 225120,
+          "addr": 112700,
+          "loop_ctrl": 121160.0,
+          "requant": 1734780.0,
+          "other": 700
+        },
+        "share_by_sem": {
+          "mac": 38.95,
+          "load_data": 28.79,
+          "store_data": 3.31,
+          "addr": 1.66,
+          "loop_ctrl": 1.78,
+          "requant": 25.5,
+          "other": 0.01
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.64,
+          "load_data": 1.4,
+          "store_data": 1.03,
+          "addr": 1.02,
+          "loop_ctrl": 1.02,
+          "requant": 1.34,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0x10a8->0xbb4",
+            "trips": 10,
+            "body_instr_static": 115,
+            "body_instr_dynamic": 2558190,
+            "cycles_in_body": 6803280
+          },
+          {
+            "backedge": "0xd3c->0xc1c",
+            "trips": 70,
+            "body_instr_static": 72,
+            "body_instr_dynamic": 2557760,
+            "cycles_in_body": 6801920
+          },
+          {
+            "backedge": "0xd2c->0xc54",
+            "trips": 2000,
+            "body_instr_static": 54,
+            "body_instr_dynamic": 2556320,
+            "cycles_in_body": 6797440
+          }
+        ],
+        "dlp": {
+          "n_strided": 545580,
+          "share_stride_1_pct": 85.8,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "pool1": {
+        "cycles": 84945,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 848936,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 216520,
+          "store_data": 54280,
+          "addr": 87900,
+          "loop_ctrl": 200520.0,
+          "requant": 0,
+          "other": 289716.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 190,
+        "ipc_ideal": 1877.726,
+        "ipc_real": 0.42,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 216520,
+          "store_data": 54280,
+          "addr": 87900,
+          "loop_ctrl": 200520.0,
+          "requant": 0,
+          "other": 289716.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.5,
+          "store_data": 6.39,
+          "addr": 10.35,
+          "loop_ctrl": 23.62,
+          "requant": 0.0,
+          "other": 34.13
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.34,
+          "store_data": 1.07,
+          "addr": 1.12,
+          "loop_ctrl": 1.31,
+          "requant": 1.0,
+          "other": 1.52
+        },
+        "loops": [
+          {
+            "backedge": "0x10c0->0x30",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 848916
+          },
+          {
+            "backedge": "0x124->0x74",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 848196
+          },
+          {
+            "backedge": "0x114->0x88",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 845856
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 1867574,
+        "instret": 592235,
+        "mac": 139392,
+        "cycles_per_mac": 13.398,
+        "mac_per_cycle": 0.0746,
+        "bytes_per_image": 629560.0,
+        "byte_per_mac": 4.516,
+        "cycles_sum10": 18675740,
+        "cycles_by_sem_sum10": {
+          "mac": 7047040,
+          "load_data": 10432000,
+          "store_data": 364800,
+          "addr": 84940,
+          "loop_ctrl": 41840.0,
+          "requant": 699400.0,
+          "other": 5720
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.2214,
+        "dist_to_roof_x": 2.97,
+        "bound": "compute/issue",
+        "crit_path": 258,
+        "ipc_ideal": 22954.845,
+        "ipc_real": 0.317,
+        "cycles_by_sem": {
+          "mac": 7047040,
+          "load_data": 10432000,
+          "store_data": 364800,
+          "addr": 84940,
+          "loop_ctrl": 41840.0,
+          "requant": 699400.0,
+          "other": 5720
+        },
+        "share_by_sem": {
+          "mac": 37.73,
+          "load_data": 55.86,
+          "store_data": 1.95,
+          "addr": 0.45,
+          "loop_ctrl": 0.22,
+          "requant": 3.74,
+          "other": 0.03
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.61,
+          "load_data": 2.27,
+          "store_data": 1.02,
+          "addr": 1.0,
+          "loop_ctrl": 1.0,
+          "requant": 1.04,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0x10d8->0x414",
+            "trips": 10,
+            "body_instr_static": 489,
+            "body_instr_dynamic": 5922340,
+            "cycles_in_body": 18675720
+          },
+          {
+            "backedge": "0xb78->0x46c",
+            "trips": 100,
+            "body_instr_static": 451,
+            "body_instr_dynamic": 5921960,
+            "cycles_in_body": 18674480
+          },
+          {
+            "backedge": "0xb58->0x480",
+            "trips": 1100,
+            "body_instr_static": 438,
+            "body_instr_dynamic": 5920530,
+            "cycles_in_body": 18670300
+          }
+        ],
+        "dlp": {
+          "n_strided": 387180,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 25038,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 250018,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 64160,
+          "store_data": 16160,
+          "addr": 25020,
+          "loop_ctrl": 57960.0,
+          "requant": 0,
+          "other": 86718.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 198,
+        "ipc_ideal": 529.944,
+        "ipc_real": 0.42,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 64160,
+          "store_data": 16160,
+          "addr": 25020,
+          "loop_ctrl": 57960.0,
+          "requant": 0,
+          "other": 86718.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.66,
+          "store_data": 6.46,
+          "addr": 10.01,
+          "loop_ctrl": 23.18,
+          "requant": 0.0,
+          "other": 34.68
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.35,
+          "store_data": 1.07,
+          "addr": 1.11,
+          "loop_ctrl": 1.3,
+          "requant": 1.0,
+          "other": 1.53
+        },
+        "loops": [
+          {
+            "backedge": "0x10f0->0x144",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 249998
+          },
+          {
+            "backedge": "0x22c->0x180",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 249378
+          },
+          {
+            "backedge": "0x218->0x190",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 248478
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 55304,
+        "instret": 17614,
+        "mac": 4000,
+        "cycles_per_mac": 13.826,
+        "mac_per_cycle": 0.0723,
+        "bytes_per_image": 8152.0,
+        "byte_per_mac": 2.038,
+        "cycles_sum10": 553040,
+        "cycles_by_sem_sum10": {
+          "mac": 200000,
+          "load_data": 320760,
+          "store_data": 760,
+          "addr": 20860,
+          "loop_ctrl": 10260.0,
+          "requant": 0,
+          "other": 400
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.4907,
+        "dist_to_roof_x": 6.78,
+        "bound": "compute/issue",
+        "crit_path": 202,
+        "ipc_ideal": 871.98,
+        "ipc_real": 0.318,
+        "cycles_by_sem": {
+          "mac": 200000,
+          "load_data": 320760,
+          "store_data": 760,
+          "addr": 20860,
+          "loop_ctrl": 10260.0,
+          "requant": 0,
+          "other": 400
+        },
+        "share_by_sem": {
+          "mac": 36.16,
+          "load_data": 58.0,
+          "store_data": 0.14,
+          "addr": 3.77,
+          "loop_ctrl": 1.86,
+          "requant": 0.0,
+          "other": 0.07
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.57,
+          "load_data": 2.38,
+          "store_data": 1.0,
+          "addr": 1.04,
+          "loop_ctrl": 1.02,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0x1108->0x248",
+            "trips": 10,
+            "body_instr_static": 76,
+            "body_instr_dynamic": 176130,
+            "cycles_in_body": 553020
+          },
+          {
+            "backedge": "0x340->0x298",
+            "trips": 90,
+            "body_instr_static": 43,
+            "body_instr_dynamic": 175800,
+            "cycles_in_body": 552000
+          },
+          {
+            "backedge": "0x32c->0x2a4",
+            "trips": 4900,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 175000,
+            "cycles_in_body": 550000
+          }
+        ],
+        "dlp": {
+          "n_strided": 80200,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.2,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  },
+  "B-V0": {
+    "target": "B-V0",
+    "core": "mycore",
+    "total_cycles": 1978697,
+    "ms_27mhz": 73.3,
+    "cycles_per_mac_total": 10.302,
+    "mem_bytes_per_cycle_available": 2.0,
+    "lambda_load": 2,
+    "share_by_sem_total": {
+      "mac": 29.87,
+      "load_data": 40.88,
+      "store_data": 0.94,
+      "addr": 10.01,
+      "loop_ctrl": 8.96,
+      "requant": 6.35,
+      "other": 3.0
+    },
+    "cycles_by_sem_total": {
+      "mac": 590932.0,
+      "load_data": 808928.0,
+      "store_data": 18542.0,
+      "addr": 198087.0,
+      "loop_ctrl": 177231.0,
+      "requant": 125651.0,
+      "other": 59260.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 5909320,
+      "load_data": 8089280,
+      "store_data": 185420,
+      "addr": 1980870,
+      "loop_ctrl": 1772310.0,
+      "requant": 1256510.0,
+      "other": 592607.0
+    },
+    "cycles_sum10": 19786317,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.43,
+      "load_data": 1.69,
+      "store_data": 1.01,
+      "addr": 1.11,
+      "loop_ctrl": 1.1,
+      "requant": 1.07,
+      "other": 1.03
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 724328,
+        "instret": 556629,
+        "mac": 48672,
+        "cycles_per_mac": 14.882,
+        "mac_per_cycle": 0.0672,
+        "bytes_per_image": 124484.0,
+        "byte_per_mac": 2.558,
+        "cycles_sum10": 7243280,
+        "cycles_by_sem_sum10": {
+          "mac": 1568840,
+          "load_data": 2055300,
+          "store_data": 108400,
+          "addr": 1358770,
+          "loop_ctrl": 1095680.0,
+          "requant": 926150.0,
+          "other": 130140
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.782,
+        "dist_to_roof_x": 11.64,
+        "bound": "compute/issue",
+        "crit_path": 131,
+        "ipc_ideal": 42490.763,
+        "ipc_real": 0.768,
+        "cycles_by_sem": {
+          "mac": 1568840,
+          "load_data": 2055300,
+          "store_data": 108400,
+          "addr": 1358770,
+          "loop_ctrl": 1095680.0,
+          "requant": 926150.0,
+          "other": 130140
+        },
+        "share_by_sem": {
+          "mac": 21.66,
+          "load_data": 28.38,
+          "store_data": 1.5,
+          "addr": 18.76,
+          "loop_ctrl": 15.13,
+          "requant": 12.79,
+          "other": 1.8
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.28,
+          "load_data": 1.4,
+          "store_data": 1.02,
+          "addr": 1.23,
+          "loop_ctrl": 1.18,
+          "requant": 1.15,
+          "other": 1.02
+        },
+        "loops": [
+          {
+            "backedge": "0xa18->0x568",
+            "trips": 10,
+            "body_instr_static": 98,
+            "body_instr_dynamic": 5566280,
+            "cycles_in_body": 7243270
+          },
+          {
+            "backedge": "0x6ac->0x5dc",
+            "trips": 250,
+            "body_instr_static": 52,
+            "body_instr_dynamic": 5565820,
+            "cycles_in_body": 7242560
+          },
+          {
+            "backedge": "0x69c->0x5f0",
+            "trips": 6500,
+            "body_instr_static": 43,
+            "body_instr_dynamic": 5563480,
+            "cycles_in_body": 7239960
+          }
+        ],
+        "dlp": {
+          "n_strided": 1081490,
+          "share_stride_1_pct": 79.4,
+          "share_stride_4_pct": 4.4,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "pool1": {
+        "cycles": 42472,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 424468,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 77,
+        "ipc_ideal": 4633.351,
+        "ipc_real": 0.841,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.5,
+          "store_data": 6.39,
+          "addr": 10.35,
+          "loop_ctrl": 23.62,
+          "requant": 0.0,
+          "other": 34.13
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.34,
+          "store_data": 1.07,
+          "addr": 1.12,
+          "loop_ctrl": 1.31,
+          "requant": 1.0,
+          "other": 1.52
+        },
+        "loops": [
+          {
+            "backedge": "0xa30->0x30",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 424458
+          },
+          {
+            "backedge": "0x124->0x74",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 424098
+          },
+          {
+            "backedge": "0x114->0x88",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 422928
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 1159242,
+        "instret": 727226,
+        "mac": 139392,
+        "cycles_per_mac": 8.316,
+        "mac_per_cycle": 0.1202,
+        "bytes_per_image": 312848.0,
+        "byte_per_mac": 2.244,
+        "cycles_sum10": 11592420,
+        "cycles_by_sem_sum10": {
+          "mac": 4220480,
+          "load_data": 5733440,
+          "store_data": 41600,
+          "addr": 485220,
+          "loop_ctrl": 507260.0,
+          "requant": 330360.0,
+          "other": 274060
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.8911,
+        "dist_to_roof_x": 7.41,
+        "bound": "compute/issue",
+        "crit_path": 115,
+        "ipc_ideal": 63237.043,
+        "ipc_real": 0.627,
+        "cycles_by_sem": {
+          "mac": 4220480,
+          "load_data": 5733440,
+          "store_data": 41600,
+          "addr": 485220,
+          "loop_ctrl": 507260.0,
+          "requant": 330360.0,
+          "other": 274060
+        },
+        "share_by_sem": {
+          "mac": 36.41,
+          "load_data": 49.46,
+          "store_data": 0.36,
+          "addr": 4.19,
+          "loop_ctrl": 4.38,
+          "requant": 2.85,
+          "other": 2.36
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.57,
+          "load_data": 1.98,
+          "store_data": 1.0,
+          "addr": 1.04,
+          "loop_ctrl": 1.05,
+          "requant": 1.03,
+          "other": 1.02
+        },
+        "loops": [
+          {
+            "backedge": "0xa48->0x354",
+            "trips": 10,
+            "body_instr_static": 134,
+            "body_instr_dynamic": 7272250,
+            "cycles_in_body": 11592410
+          },
+          {
+            "backedge": "0x52c->0x3d4",
+            "trips": 100,
+            "body_instr_static": 86,
+            "body_instr_dynamic": 7271770,
+            "cycles_in_body": 11591690
+          },
+          {
+            "backedge": "0x518->0x3e0",
+            "trips": 1100,
+            "body_instr_static": 78,
+            "body_instr_dynamic": 7270890,
+            "cycles_in_body": 11590590
+          }
+        ],
+        "dlp": {
+          "n_strided": 2884958,
+          "share_stride_1_pct": 0.7,
+          "share_stride_4_pct": 0.6,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 12519,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 125009,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 81,
+        "ipc_ideal": 1295.42,
+        "ipc_real": 0.84,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.66,
+          "store_data": 6.46,
+          "addr": 10.01,
+          "loop_ctrl": 23.18,
+          "requant": 0.0,
+          "other": 34.68
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.35,
+          "store_data": 1.07,
+          "addr": 1.11,
+          "loop_ctrl": 1.3,
+          "requant": 1.0,
+          "other": 1.53
+        },
+        "loops": [
+          {
+            "backedge": "0xa60->0x144",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 124999
+          },
+          {
+            "backedge": "0x22c->0x180",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 124689
+          },
+          {
+            "backedge": "0x218->0x190",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 124239
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 40114,
+        "instret": 28094,
+        "mac": 4000,
+        "cycles_per_mac": 10.028,
+        "mac_per_cycle": 0.0997,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 401140,
+        "cycles_by_sem_sum10": {
+          "mac": 120000,
+          "load_data": 160200,
+          "store_data": 200,
+          "addr": 80420,
+          "loop_ctrl": 40130.0,
+          "requant": 0,
+          "other": 190
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.9901,
+        "dist_to_roof_x": 9.93,
+        "bound": "compute/issue",
+        "crit_path": 418,
+        "ipc_ideal": 672.105,
+        "ipc_real": 0.7,
+        "cycles_by_sem": {
+          "mac": 120000,
+          "load_data": 160200,
+          "store_data": 200,
+          "addr": 80420,
+          "loop_ctrl": 40130.0,
+          "requant": 0,
+          "other": 190
+        },
+        "share_by_sem": {
+          "mac": 29.91,
+          "load_data": 39.94,
+          "store_data": 0.05,
+          "addr": 20.05,
+          "loop_ctrl": 10.0,
+          "requant": 0.0,
+          "other": 0.05
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.43,
+          "load_data": 1.66,
+          "store_data": 1.0,
+          "addr": 1.25,
+          "loop_ctrl": 1.11,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xa78->0x248",
+            "trips": 10,
+            "body_instr_static": 28,
+            "body_instr_dynamic": 280930,
+            "cycles_in_body": 401130
+          },
+          {
+            "backedge": "0x2a8->0x270",
+            "trips": 90,
+            "body_instr_static": 15,
+            "body_instr_dynamic": 280800,
+            "cycles_in_body": 401000
+          },
+          {
+            "backedge": "0x294->0x27c",
+            "trips": 39900,
+            "body_instr_static": 7,
+            "body_instr_dynamic": 280000,
+            "cycles_in_body": 400000
+          }
+        ],
+        "dlp": {
+          "n_strided": 80196,
+          "share_stride_1_pct": 99.6,
+          "share_stride_4_pct": 0.2,
+          "lanes_possible_8bit": 4
+        }
+      }
+    }
+  },
+  "B-V1": {
+    "target": "B-V1",
+    "core": "mycore",
+    "total_cycles": 1459993,
+    "ms_27mhz": 54.1,
+    "cycles_per_mac_total": 7.602,
+    "mem_bytes_per_cycle_available": 2.0,
+    "lambda_load": 2,
+    "share_by_sem_total": {
+      "mac": 40.47,
+      "load_data": 44.5,
+      "store_data": 2.26,
+      "addr": 1.14,
+      "loop_ctrl": 1.48,
+      "requant": 8.84,
+      "other": 1.31
+    },
+    "cycles_by_sem_total": {
+      "mac": 590880.0,
+      "load_data": 649618.0,
+      "store_data": 33056.0,
+      "addr": 16571.0,
+      "loop_ctrl": 21587.0,
+      "requant": 129053.0,
+      "other": 19162.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 5908800,
+      "load_data": 6496180,
+      "store_data": 330560,
+      "addr": 165710,
+      "loop_ctrl": 215870.0,
+      "requant": 1290530.0,
+      "other": 191627.0
+    },
+    "cycles_sum10": 14599277,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.68,
+      "load_data": 1.8,
+      "store_data": 1.02,
+      "addr": 1.01,
+      "loop_ctrl": 1.02,
+      "requant": 1.1,
+      "other": 1.01
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 369909,
+        "instret": 255820,
+        "mac": 48672,
+        "cycles_per_mac": 7.6,
+        "mac_per_cycle": 0.1316,
+        "bytes_per_image": 55948.0,
+        "byte_per_mac": 1.149,
+        "cycles_sum10": 3699090,
+        "cycles_by_sem_sum10": {
+          "mac": 1568320,
+          "load_data": 979460,
+          "store_data": 112560,
+          "addr": 56350,
+          "loop_ctrl": 60580.0,
+          "requant": 921470.0,
+          "other": 350
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 1.7399,
+        "dist_to_roof_x": 13.22,
+        "bound": "compute/issue",
+        "crit_path": 847,
+        "ipc_ideal": 3020.307,
+        "ipc_real": 0.692,
+        "cycles_by_sem": {
+          "mac": 1568320,
+          "load_data": 979460,
+          "store_data": 112560,
+          "addr": 56350,
+          "loop_ctrl": 60580.0,
+          "requant": 921470.0,
+          "other": 350
+        },
+        "share_by_sem": {
+          "mac": 42.4,
+          "load_data": 26.48,
+          "store_data": 3.04,
+          "addr": 1.52,
+          "loop_ctrl": 1.64,
+          "requant": 24.91,
+          "other": 0.01
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.74,
+          "load_data": 1.36,
+          "store_data": 1.03,
+          "addr": 1.02,
+          "loop_ctrl": 1.02,
+          "requant": 1.33,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0x10a8->0xbb4",
+            "trips": 10,
+            "body_instr_static": 115,
+            "body_instr_dynamic": 2558190,
+            "cycles_in_body": 3699080
+          },
+          {
+            "backedge": "0xd3c->0xc1c",
+            "trips": 70,
+            "body_instr_static": 72,
+            "body_instr_dynamic": 2557760,
+            "cycles_in_body": 3698400
+          },
+          {
+            "backedge": "0xd2c->0xc54",
+            "trips": 2000,
+            "body_instr_static": 54,
+            "body_instr_dynamic": 2556320,
+            "cycles_in_body": 3696160
+          }
+        ],
+        "dlp": {
+          "n_strided": 545580,
+          "share_stride_1_pct": 85.8,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "pool1": {
+        "cycles": 42472,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 424468,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 95,
+        "ipc_ideal": 3755.453,
+        "ipc_real": 0.841,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.5,
+          "store_data": 6.39,
+          "addr": 10.35,
+          "loop_ctrl": 23.62,
+          "requant": 0.0,
+          "other": 34.13
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.34,
+          "store_data": 1.07,
+          "addr": 1.12,
+          "loop_ctrl": 1.31,
+          "requant": 1.0,
+          "other": 1.52
+        },
+        "loops": [
+          {
+            "backedge": "0x10c0->0x30",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 424458
+          },
+          {
+            "backedge": "0x124->0x74",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 424098
+          },
+          {
+            "backedge": "0x114->0x88",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 422928
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 1005419,
+        "instret": 592235,
+        "mac": 139392,
+        "cycles_per_mac": 7.213,
+        "mac_per_cycle": 0.1386,
+        "bytes_per_image": 629560.0,
+        "byte_per_mac": 4.516,
+        "cycles_sum10": 10054190,
+        "cycles_by_sem_sum10": {
+          "mac": 4220480,
+          "load_data": 5216000,
+          "store_data": 182400,
+          "addr": 42470,
+          "loop_ctrl": 20920.0,
+          "requant": 369060.0,
+          "other": 2860
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.4428,
+        "dist_to_roof_x": 3.19,
+        "bound": "compute/issue",
+        "crit_path": 130,
+        "ipc_ideal": 45556.538,
+        "ipc_real": 0.589,
+        "cycles_by_sem": {
+          "mac": 4220480,
+          "load_data": 5216000,
+          "store_data": 182400,
+          "addr": 42470,
+          "loop_ctrl": 20920.0,
+          "requant": 369060.0,
+          "other": 2860
+        },
+        "share_by_sem": {
+          "mac": 41.98,
+          "load_data": 51.88,
+          "store_data": 1.81,
+          "addr": 0.42,
+          "loop_ctrl": 0.21,
+          "requant": 3.67,
+          "other": 0.03
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.72,
+          "load_data": 2.08,
+          "store_data": 1.02,
+          "addr": 1.0,
+          "loop_ctrl": 1.0,
+          "requant": 1.04,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0x10d8->0x414",
+            "trips": 10,
+            "body_instr_static": 489,
+            "body_instr_dynamic": 5922340,
+            "cycles_in_body": 10054180
+          },
+          {
+            "backedge": "0xb78->0x46c",
+            "trips": 100,
+            "body_instr_static": 451,
+            "body_instr_dynamic": 5921960,
+            "cycles_in_body": 10053560
+          },
+          {
+            "backedge": "0xb58->0x480",
+            "trips": 1100,
+            "body_instr_static": 438,
+            "body_instr_dynamic": 5920530,
+            "cycles_in_body": 10051470
+          }
+        ],
+        "dlp": {
+          "n_strided": 387180,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 12519,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 125009,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 99,
+        "ipc_ideal": 1059.889,
+        "ipc_real": 0.84,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.66,
+          "store_data": 6.46,
+          "addr": 10.01,
+          "loop_ctrl": 23.18,
+          "requant": 0.0,
+          "other": 34.68
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.35,
+          "store_data": 1.07,
+          "addr": 1.11,
+          "loop_ctrl": 1.3,
+          "requant": 1.0,
+          "other": 1.53
+        },
+        "loops": [
+          {
+            "backedge": "0x10f0->0x144",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 124999
+          },
+          {
+            "backedge": "0x22c->0x180",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 124689
+          },
+          {
+            "backedge": "0x218->0x190",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 124239
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 29652,
+        "instret": 17614,
+        "mac": 4000,
+        "cycles_per_mac": 7.413,
+        "mac_per_cycle": 0.1349,
+        "bytes_per_image": 8152.0,
+        "byte_per_mac": 2.038,
+        "cycles_sum10": 296520,
+        "cycles_by_sem_sum10": {
+          "mac": 120000,
+          "load_data": 160380,
+          "store_data": 380,
+          "addr": 10430,
+          "loop_ctrl": 5130.0,
+          "requant": 0,
+          "other": 200
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.9814,
+        "dist_to_roof_x": 7.27,
+        "bound": "compute/issue",
+        "crit_path": 101,
+        "ipc_ideal": 1743.96,
+        "ipc_real": 0.594,
+        "cycles_by_sem": {
+          "mac": 120000,
+          "load_data": 160380,
+          "store_data": 380,
+          "addr": 10430,
+          "loop_ctrl": 5130.0,
+          "requant": 0,
+          "other": 200
+        },
+        "share_by_sem": {
+          "mac": 40.47,
+          "load_data": 54.09,
+          "store_data": 0.13,
+          "addr": 3.52,
+          "loop_ctrl": 1.73,
+          "requant": 0.0,
+          "other": 0.07
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.68,
+          "load_data": 2.18,
+          "store_data": 1.0,
+          "addr": 1.04,
+          "loop_ctrl": 1.02,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0x1108->0x248",
+            "trips": 10,
+            "body_instr_static": 76,
+            "body_instr_dynamic": 176130,
+            "cycles_in_body": 296510
+          },
+          {
+            "backedge": "0x340->0x298",
+            "trips": 90,
+            "body_instr_static": 43,
+            "body_instr_dynamic": 175800,
+            "cycles_in_body": 296000
+          },
+          {
+            "backedge": "0x32c->0x2a4",
+            "trips": 4900,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 175000,
+            "cycles_in_body": 295000
+          }
+        ],
+        "dlp": {
+          "n_strided": 80200,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.2,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  },
+  "B-V2": {
+    "target": "B-V2",
+    "core": "mycore",
+    "total_cycles": 1169050,
+    "ms_27mhz": 43.3,
+    "cycles_per_mac_total": 6.087,
+    "mem_bytes_per_cycle_available": 2.0,
+    "lambda_load": 2,
+    "share_by_sem_total": {
+      "mac": 19.88,
+      "load_data": 31.38,
+      "store_data": 1.56,
+      "addr": 16.43,
+      "loop_ctrl": 14.9,
+      "requant": 10.75,
+      "other": 5.08
+    },
+    "cycles_by_sem_total": {
+      "mac": 232452.0,
+      "load_data": 366872.0,
+      "store_data": 18278.0,
+      "addr": 192087.0,
+      "loop_ctrl": 174231.0,
+      "requant": 125651.0,
+      "other": 59413.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 2324520,
+      "load_data": 3668720,
+      "store_data": 182780,
+      "addr": 1920870,
+      "loop_ctrl": 1742310.0,
+      "requant": 1256510.0,
+      "other": 594137.0
+    },
+    "cycles_sum10": 11689847,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.25,
+      "load_data": 1.46,
+      "store_data": 1.02,
+      "addr": 1.2,
+      "loop_ctrl": 1.18,
+      "requant": 1.12,
+      "other": 1.05
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 724328,
+        "instret": 556629,
+        "mac": 48672,
+        "cycles_per_mac": 14.882,
+        "mac_per_cycle": 0.0672,
+        "bytes_per_image": 124484.0,
+        "byte_per_mac": 2.558,
+        "cycles_sum10": 7243280,
+        "cycles_by_sem_sum10": {
+          "mac": 1568840,
+          "load_data": 2055300,
+          "store_data": 108400,
+          "addr": 1358770,
+          "loop_ctrl": 1095680.0,
+          "requant": 926150.0,
+          "other": 130140
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.782,
+        "dist_to_roof_x": 11.64,
+        "bound": "compute/issue",
+        "crit_path": 131,
+        "ipc_ideal": 42490.763,
+        "ipc_real": 0.768,
+        "cycles_by_sem": {
+          "mac": 1568840,
+          "load_data": 2055300,
+          "store_data": 108400,
+          "addr": 1358770,
+          "loop_ctrl": 1095680.0,
+          "requant": 926150.0,
+          "other": 130140
+        },
+        "share_by_sem": {
+          "mac": 21.66,
+          "load_data": 28.38,
+          "store_data": 1.5,
+          "addr": 18.76,
+          "loop_ctrl": 15.13,
+          "requant": 12.79,
+          "other": 1.8
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.28,
+          "load_data": 1.4,
+          "store_data": 1.02,
+          "addr": 1.23,
+          "loop_ctrl": 1.18,
+          "requant": 1.15,
+          "other": 1.02
+        },
+        "loops": [
+          {
+            "backedge": "0x9b0->0x500",
+            "trips": 10,
+            "body_instr_static": 98,
+            "body_instr_dynamic": 5566280,
+            "cycles_in_body": 7243270
+          },
+          {
+            "backedge": "0x644->0x574",
+            "trips": 250,
+            "body_instr_static": 52,
+            "body_instr_dynamic": 5565820,
+            "cycles_in_body": 7242560
+          },
+          {
+            "backedge": "0x634->0x588",
+            "trips": 6500,
+            "body_instr_static": 43,
+            "body_instr_dynamic": 5563480,
+            "cycles_in_body": 7239960
+          }
+        ],
+        "dlp": {
+          "n_strided": 1081490,
+          "share_stride_1_pct": 79.4,
+          "share_stride_4_pct": 4.4,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "pool1": {
+        "cycles": 42472,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 424468,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 77,
+        "ipc_ideal": 4633.351,
+        "ipc_real": 0.841,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.5,
+          "store_data": 6.39,
+          "addr": 10.35,
+          "loop_ctrl": 23.62,
+          "requant": 0.0,
+          "other": 34.13
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.34,
+          "store_data": 1.07,
+          "addr": 1.12,
+          "loop_ctrl": 1.31,
+          "requant": 1.0,
+          "other": 1.52
+        },
+        "loops": [
+          {
+            "backedge": "0x9c8->0x30",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 424458
+          },
+          {
+            "backedge": "0x124->0x74",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 424098
+          },
+          {
+            "backedge": "0x114->0x88",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 422928
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 380595,
+        "instret": 303131,
+        "mac": 139392,
+        "cycles_per_mac": 2.73,
+        "mac_per_cycle": 0.3662,
+        "bytes_per_image": 288560.0,
+        "byte_per_mac": 2.07,
+        "cycles_sum10": 3805950,
+        "cycles_by_sem_sum10": {
+          "mac": 735680,
+          "load_data": 1432880,
+          "store_data": 38960,
+          "addr": 485220,
+          "loop_ctrl": 507260.0,
+          "requant": 330360.0,
+          "other": 275590
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.9661,
+        "dist_to_roof_x": 2.64,
+        "bound": "compute/issue",
+        "crit_path": 255,
+        "ipc_ideal": 11887.49,
+        "ipc_real": 0.796,
+        "cycles_by_sem": {
+          "mac": 735680,
+          "load_data": 1432880,
+          "store_data": 38960,
+          "addr": 485220,
+          "loop_ctrl": 507260.0,
+          "requant": 330360.0,
+          "other": 275590
+        },
+        "share_by_sem": {
+          "mac": 19.33,
+          "load_data": 37.65,
+          "store_data": 1.02,
+          "addr": 12.75,
+          "loop_ctrl": 13.33,
+          "requant": 8.68,
+          "other": 7.24
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.24,
+          "load_data": 1.6,
+          "store_data": 1.01,
+          "addr": 1.15,
+          "loop_ctrl": 1.15,
+          "requant": 1.1,
+          "other": 1.08
+        },
+        "loops": [
+          {
+            "backedge": "0x9e0->0x354",
+            "trips": 10,
+            "body_instr_static": 108,
+            "body_instr_dynamic": 3031300,
+            "cycles_in_body": 3805940
+          },
+          {
+            "backedge": "0x4c4->0x3d0",
+            "trips": 100,
+            "body_instr_static": 61,
+            "body_instr_dynamic": 3030830,
+            "cycles_in_body": 3805230
+          },
+          {
+            "backedge": "0x4b4->0x3e4",
+            "trips": 1100,
+            "body_instr_static": 52,
+            "body_instr_dynamic": 3029840,
+            "cycles_in_body": 3804240
+          }
+        ],
+        "dlp": {
+          "n_strided": 735582,
+          "share_stride_1_pct": 2.6,
+          "share_stride_4_pct": 2.5,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 12519,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 125009,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 81,
+        "ipc_ideal": 1295.42,
+        "ipc_real": 0.84,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.66,
+          "store_data": 6.46,
+          "addr": 10.01,
+          "loop_ctrl": 23.18,
+          "requant": 0.0,
+          "other": 34.68
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.35,
+          "store_data": 1.07,
+          "addr": 1.11,
+          "loop_ctrl": 1.3,
+          "requant": 1.0,
+          "other": 1.53
+        },
+        "loops": [
+          {
+            "backedge": "0x9f8->0x144",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 124999
+          },
+          {
+            "backedge": "0x22c->0x180",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 124689
+          },
+          {
+            "backedge": "0x218->0x190",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 124239
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 9114,
+        "instret": 7094,
+        "mac": 4000,
+        "cycles_per_mac": 2.279,
+        "mac_per_cycle": 0.4389,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 91140,
+        "cycles_by_sem_sum10": {
+          "mac": 20000,
+          "load_data": 40200,
+          "store_data": 200,
+          "addr": 20420,
+          "loop_ctrl": 10130.0,
+          "requant": 0,
+          "other": 190
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.9901,
+        "dist_to_roof_x": 2.26,
+        "bound": "compute/issue",
+        "crit_path": 117,
+        "ipc_ideal": 606.325,
+        "ipc_real": 0.778,
+        "cycles_by_sem": {
+          "mac": 20000,
+          "load_data": 40200,
+          "store_data": 200,
+          "addr": 20420,
+          "loop_ctrl": 10130.0,
+          "requant": 0,
+          "other": 190
+        },
+        "share_by_sem": {
+          "mac": 21.94,
+          "load_data": 44.11,
+          "store_data": 0.22,
+          "addr": 22.41,
+          "loop_ctrl": 11.11,
+          "requant": 0.0,
+          "other": 0.21
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.28,
+          "load_data": 1.79,
+          "store_data": 1.0,
+          "addr": 1.29,
+          "loop_ctrl": 1.13,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xa10->0x248",
+            "trips": 10,
+            "body_instr_static": 28,
+            "body_instr_dynamic": 70930,
+            "cycles_in_body": 91130
+          },
+          {
+            "backedge": "0x2a8->0x270",
+            "trips": 90,
+            "body_instr_static": 15,
+            "body_instr_dynamic": 70800,
+            "cycles_in_body": 91000
+          },
+          {
+            "backedge": "0x294->0x27c",
+            "trips": 9900,
+            "body_instr_static": 7,
+            "body_instr_dynamic": 70000,
+            "cycles_in_body": 90000
+          }
+        ],
+        "dlp": {
+          "n_strided": 20196,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 99.4,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  },
+  "B-V1+DOT4": {
+    "target": "B-V1+DOT4",
+    "core": "mycore",
+    "total_cycles": 631130,
+    "ms_27mhz": 23.4,
+    "cycles_per_mac_total": 3.286,
+    "mem_bytes_per_cycle_available": 2.0,
+    "lambda_load": 2,
+    "share_by_sem_total": {
+      "mac": 38.36,
+      "load_data": 30.86,
+      "store_data": 3.05,
+      "addr": 2.63,
+      "loop_ctrl": 3.42,
+      "requant": 18.3,
+      "other": 3.38
+    },
+    "cycles_by_sem_total": {
+      "mac": 242080.0,
+      "load_data": 194740.0,
+      "store_data": 19246.0,
+      "addr": 16570.0,
+      "loop_ctrl": 21587.0,
+      "requant": 115502.0,
+      "other": 21339.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 2420800,
+      "load_data": 1947400,
+      "store_data": 192460,
+      "addr": 165700,
+      "loop_ctrl": 215870.0,
+      "requant": 1155020.0,
+      "other": 213397.0
+    },
+    "cycles_sum10": 6310647,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.62,
+      "load_data": 1.45,
+      "store_data": 1.03,
+      "addr": 1.03,
+      "loop_ctrl": 1.04,
+      "requant": 1.22,
+      "other": 1.03
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 369909,
+        "instret": 255820,
+        "mac": 48672,
+        "cycles_per_mac": 7.6,
+        "mac_per_cycle": 0.1316,
+        "bytes_per_image": 55948.0,
+        "byte_per_mac": 1.149,
+        "cycles_sum10": 3699090,
+        "cycles_by_sem_sum10": {
+          "mac": 1568320,
+          "load_data": 979460,
+          "store_data": 112560,
+          "addr": 56350,
+          "loop_ctrl": 60580.0,
+          "requant": 921470.0,
+          "other": 350
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 1.7399,
+        "dist_to_roof_x": 13.22,
+        "bound": "compute/issue",
+        "crit_path": 829,
+        "ipc_ideal": 3085.887,
+        "ipc_real": 0.692,
+        "cycles_by_sem": {
+          "mac": 1568320,
+          "load_data": 979460,
+          "store_data": 112560,
+          "addr": 56350,
+          "loop_ctrl": 60580.0,
+          "requant": 921470.0,
+          "other": 350
+        },
+        "share_by_sem": {
+          "mac": 42.4,
+          "load_data": 26.48,
+          "store_data": 3.04,
+          "addr": 1.52,
+          "loop_ctrl": 1.64,
+          "requant": 24.91,
+          "other": 0.01
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.74,
+          "load_data": 1.36,
+          "store_data": 1.03,
+          "addr": 1.02,
+          "loop_ctrl": 1.02,
+          "requant": 1.33,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xadc->0x5e8",
+            "trips": 10,
+            "body_instr_static": 115,
+            "body_instr_dynamic": 2558190,
+            "cycles_in_body": 3699080
+          },
+          {
+            "backedge": "0x770->0x650",
+            "trips": 70,
+            "body_instr_static": 72,
+            "body_instr_dynamic": 2557760,
+            "cycles_in_body": 3698400
+          },
+          {
+            "backedge": "0x760->0x688",
+            "trips": 2000,
+            "body_instr_static": 54,
+            "body_instr_dynamic": 2556320,
+            "cycles_in_body": 3696160
+          }
+        ],
+        "dlp": {
+          "n_strided": 545580,
+          "share_stride_1_pct": 85.8,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "pool1": {
+        "cycles": 42472,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 424468,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 77,
+        "ipc_ideal": 4633.351,
+        "ipc_real": 0.841,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.5,
+          "store_data": 6.39,
+          "addr": 10.35,
+          "loop_ctrl": 23.62,
+          "requant": 0.0,
+          "other": 34.13
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.34,
+          "store_data": 1.07,
+          "addr": 1.12,
+          "loop_ctrl": 1.31,
+          "requant": 1.0,
+          "other": 1.52
+        },
+        "loops": [
+          {
+            "backedge": "0xaf4->0x30",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 424458
+          },
+          {
+            "backedge": "0x124->0x74",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 424098
+          },
+          {
+            "backedge": "0x114->0x88",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 422928
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 198594,
+        "instret": 153128,
+        "mac": 139392,
+        "cycles_per_mac": 1.425,
+        "mac_per_cycle": 0.7019,
+        "bytes_per_image": 160568.0,
+        "byte_per_mac": 1.152,
+        "cycles_sum10": 1985940,
+        "cycles_by_sem_sum10": {
+          "mac": 832480,
+          "load_data": 787400,
+          "store_data": 44480,
+          "addr": 42470,
+          "loop_ctrl": 20920.0,
+          "requant": 233550.0,
+          "other": 24640
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 1.7362,
+        "dist_to_roof_x": 2.47,
+        "bound": "compute/issue",
+        "crit_path": 108,
+        "ipc_ideal": 14178.519,
+        "ipc_real": 0.771,
+        "cycles_by_sem": {
+          "mac": 832480,
+          "load_data": 787400,
+          "store_data": 44480,
+          "addr": 42470,
+          "loop_ctrl": 20920.0,
+          "requant": 233550.0,
+          "other": 24640
+        },
+        "share_by_sem": {
+          "mac": 41.92,
+          "load_data": 39.65,
+          "store_data": 2.24,
+          "addr": 2.14,
+          "loop_ctrl": 1.05,
+          "requant": 11.76,
+          "other": 1.24
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.72,
+          "load_data": 1.66,
+          "store_data": 1.02,
+          "addr": 1.02,
+          "loop_ctrl": 1.01,
+          "requant": 1.13,
+          "other": 1.01
+        },
+        "loops": [
+          {
+            "backedge": "0xb0c->0x364",
+            "trips": 10,
+            "body_instr_static": 162,
+            "body_instr_dynamic": 1531270,
+            "cycles_in_body": 1985930
+          },
+          {
+            "backedge": "0x5ac->0x3c4",
+            "trips": 100,
+            "body_instr_static": 122,
+            "body_instr_dynamic": 1530870,
+            "cycles_in_body": 1985280
+          },
+          {
+            "backedge": "0x58c->0x3d8",
+            "trips": 1100,
+            "body_instr_static": 109,
+            "body_instr_dynamic": 1529440,
+            "cycles_in_body": 1983190
+          }
+        ],
+        "dlp": {
+          "n_strided": 387180,
+          "share_stride_1_pct": 5.0,
+          "share_stride_4_pct": 4.7,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 12519,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 125009,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 81,
+        "ipc_ideal": 1295.42,
+        "ipc_real": 0.84,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.66,
+          "store_data": 6.46,
+          "addr": 10.01,
+          "loop_ctrl": 23.18,
+          "requant": 0.0,
+          "other": 34.68
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.35,
+          "store_data": 1.07,
+          "addr": 1.11,
+          "loop_ctrl": 1.3,
+          "requant": 1.0,
+          "other": 1.53
+        },
+        "loops": [
+          {
+            "backedge": "0xb24->0x144",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 124999
+          },
+          {
+            "backedge": "0x22c->0x180",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 124689
+          },
+          {
+            "backedge": "0x218->0x190",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 124239
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 7614,
+        "instret": 5594,
+        "mac": 4000,
+        "cycles_per_mac": 1.903,
+        "mac_per_cycle": 0.5253,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 76140,
+        "cycles_by_sem_sum10": {
+          "mac": 20000,
+          "load_data": 40200,
+          "store_data": 200,
+          "addr": 10420,
+          "loop_ctrl": 5130.0,
+          "requant": 0,
+          "other": 190
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.9901,
+        "dist_to_roof_x": 1.88,
+        "bound": "compute/issue",
+        "crit_path": 68,
+        "ipc_ideal": 822.647,
+        "ipc_real": 0.735,
+        "cycles_by_sem": {
+          "mac": 20000,
+          "load_data": 40200,
+          "store_data": 200,
+          "addr": 10420,
+          "loop_ctrl": 5130.0,
+          "requant": 0,
+          "other": 190
+        },
+        "share_by_sem": {
+          "mac": 26.27,
+          "load_data": 52.8,
+          "store_data": 0.26,
+          "addr": 13.69,
+          "loop_ctrl": 6.74,
+          "requant": 0.0,
+          "other": 0.25
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.36,
+          "load_data": 2.12,
+          "store_data": 1.0,
+          "addr": 1.16,
+          "loop_ctrl": 1.07,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xb3c->0x248",
+            "trips": 10,
+            "body_instr_static": 32,
+            "body_instr_dynamic": 55930,
+            "cycles_in_body": 76130
+          },
+          {
+            "backedge": "0x2b8->0x270",
+            "trips": 90,
+            "body_instr_static": 19,
+            "body_instr_dynamic": 55800,
+            "cycles_in_body": 76000
+          },
+          {
+            "backedge": "0x2a4->0x27c",
+            "trips": 4900,
+            "body_instr_static": 11,
+            "body_instr_dynamic": 55000,
+            "cycles_in_body": 75000
+          }
+        ],
+        "dlp": {
+          "n_strided": 20194,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.9,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  },
+  "B-V1+DOT4+C1": {
+    "target": "B-V1+DOT4+C1",
+    "core": "mycore",
+    "total_cycles": 487865,
+    "ms_27mhz": 18.1,
+    "cycles_per_mac_total": 2.54,
+    "mem_bytes_per_cycle_available": 2.0,
+    "lambda_load": 2,
+    "share_by_sem_total": {
+      "mac": 31.89,
+      "load_data": 28.19,
+      "store_data": 5.4,
+      "addr": 4.98,
+      "loop_ctrl": 6.63,
+      "requant": 18.26,
+      "other": 4.65
+    },
+    "cycles_by_sem_total": {
+      "mac": 155552.0,
+      "load_data": 137494.0,
+      "store_data": 26336.0,
+      "addr": 24314.0,
+      "loop_ctrl": 32329.0,
+      "requant": 89085.0,
+      "other": 22689.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 1555520,
+      "load_data": 1374940,
+      "store_data": 263360,
+      "addr": 243140,
+      "loop_ctrl": 323290.0,
+      "requant": 890850.0,
+      "other": 226897.0
+    },
+    "cycles_sum10": 4877997,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.47,
+      "load_data": 1.39,
+      "store_data": 1.06,
+      "addr": 1.05,
+      "loop_ctrl": 1.07,
+      "requant": 1.22,
+      "other": 1.05
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 226643,
+        "instret": 186304,
+        "mac": 48672,
+        "cycles_per_mac": 4.657,
+        "mac_per_cycle": 0.2148,
+        "bytes_per_image": 81204.0,
+        "byte_per_mac": 1.668,
+        "cycles_sum10": 2266430,
+        "cycles_by_sem_sum10": {
+          "mac": 703040,
+          "load_data": 407000,
+          "store_data": 183460,
+          "addr": 133790,
+          "loop_ctrl": 168000.0,
+          "requant": 657300.0,
+          "other": 13840.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 1.1988,
+        "dist_to_roof_x": 5.58,
+        "bound": "compute/issue",
+        "crit_path": 134,
+        "ipc_ideal": 13903.284,
+        "ipc_real": 0.822,
+        "cycles_by_sem": {
+          "mac": 703040,
+          "load_data": 407000,
+          "store_data": 183460,
+          "addr": 133790,
+          "loop_ctrl": 168000.0,
+          "requant": 657300.0,
+          "other": 13840.0
+        },
+        "share_by_sem": {
+          "mac": 31.02,
+          "load_data": 17.96,
+          "store_data": 8.09,
+          "addr": 5.9,
+          "loop_ctrl": 7.41,
+          "requant": 29.0,
+          "other": 0.61
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.45,
+          "load_data": 1.22,
+          "store_data": 1.09,
+          "addr": 1.06,
+          "loop_ctrl": 1.08,
+          "requant": 1.41,
+          "other": 1.01
+        },
+        "loops": [
+          {
+            "backedge": "0xcb4->0x52c",
+            "trips": 10,
+            "body_instr_static": 115,
+            "body_instr_dynamic": 1677880,
+            "cycles_in_body": 2012390
+          },
+          {
+            "backedge": "0x6b0->0x5b4",
+            "trips": 70,
+            "body_instr_static": 63,
+            "body_instr_dynamic": 1677360,
+            "cycles_in_body": 2011600
+          },
+          {
+            "backedge": "0x69c->0x5dc",
+            "trips": 240,
+            "body_instr_static": 48,
+            "body_instr_dynamic": 1676160,
+            "cycles_in_body": 2009920
+          }
+        ],
+        "dlp": {
+          "n_strided": 293936,
+          "share_stride_1_pct": 21.8,
+          "share_stride_4_pct": 47.0,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool1": {
+        "cycles": 42472,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 424468,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 77,
+        "ipc_ideal": 4633.351,
+        "ipc_real": 0.841,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.5,
+          "store_data": 6.39,
+          "addr": 10.35,
+          "loop_ctrl": 23.62,
+          "requant": 0.0,
+          "other": 34.13
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.34,
+          "store_data": 1.07,
+          "addr": 1.12,
+          "loop_ctrl": 1.31,
+          "requant": 1.0,
+          "other": 1.52
+        },
+        "loops": [
+          {
+            "backedge": "0xccc->0x128",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 424458
+          },
+          {
+            "backedge": "0x21c->0x16c",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 424098
+          },
+          {
+            "backedge": "0x20c->0x180",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 422928
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 198594,
+        "instret": 153128,
+        "mac": 139392,
+        "cycles_per_mac": 1.425,
+        "mac_per_cycle": 0.7019,
+        "bytes_per_image": 160568.0,
+        "byte_per_mac": 1.152,
+        "cycles_sum10": 1985940,
+        "cycles_by_sem_sum10": {
+          "mac": 832480,
+          "load_data": 787400,
+          "store_data": 44480,
+          "addr": 42470,
+          "loop_ctrl": 20920.0,
+          "requant": 233550.0,
+          "other": 24640
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 1.7362,
+        "dist_to_roof_x": 2.47,
+        "bound": "compute/issue",
+        "crit_path": 108,
+        "ipc_ideal": 14178.519,
+        "ipc_real": 0.771,
+        "cycles_by_sem": {
+          "mac": 832480,
+          "load_data": 787400,
+          "store_data": 44480,
+          "addr": 42470,
+          "loop_ctrl": 20920.0,
+          "requant": 233550.0,
+          "other": 24640
+        },
+        "share_by_sem": {
+          "mac": 41.92,
+          "load_data": 39.65,
+          "store_data": 2.24,
+          "addr": 2.14,
+          "loop_ctrl": 1.05,
+          "requant": 11.76,
+          "other": 1.24
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.72,
+          "load_data": 1.66,
+          "store_data": 1.02,
+          "addr": 1.02,
+          "loop_ctrl": 1.01,
+          "requant": 1.13,
+          "other": 1.01
+        },
+        "loops": [
+          {
+            "backedge": "0xce4->0x6f0",
+            "trips": 10,
+            "body_instr_static": 162,
+            "body_instr_dynamic": 1531270,
+            "cycles_in_body": 1985930
+          },
+          {
+            "backedge": "0x938->0x750",
+            "trips": 100,
+            "body_instr_static": 122,
+            "body_instr_dynamic": 1530870,
+            "cycles_in_body": 1985280
+          },
+          {
+            "backedge": "0x918->0x764",
+            "trips": 1100,
+            "body_instr_static": 109,
+            "body_instr_dynamic": 1529440,
+            "cycles_in_body": 1983190
+          }
+        ],
+        "dlp": {
+          "n_strided": 387180,
+          "share_stride_1_pct": 5.0,
+          "share_stride_4_pct": 4.7,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 12519,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 125009,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 81,
+        "ipc_ideal": 1295.42,
+        "ipc_real": 0.84,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.66,
+          "store_data": 6.46,
+          "addr": 10.01,
+          "loop_ctrl": 23.18,
+          "requant": 0.0,
+          "other": 34.68
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.35,
+          "store_data": 1.07,
+          "addr": 1.11,
+          "loop_ctrl": 1.3,
+          "requant": 1.0,
+          "other": 1.53
+        },
+        "loops": [
+          {
+            "backedge": "0xcfc->0x23c",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 124999
+          },
+          {
+            "backedge": "0x324->0x278",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 124689
+          },
+          {
+            "backedge": "0x310->0x288",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 124239
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 7615,
+        "instret": 5595,
+        "mac": 4000,
+        "cycles_per_mac": 1.904,
+        "mac_per_cycle": 0.5253,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 76150,
+        "cycles_by_sem_sum10": {
+          "mac": 20000,
+          "load_data": 40200,
+          "store_data": 200,
+          "addr": 10420,
+          "loop_ctrl": 5130.0,
+          "requant": 0,
+          "other": 200
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.9901,
+        "dist_to_roof_x": 1.88,
+        "bound": "compute/issue",
+        "crit_path": 68,
+        "ipc_ideal": 822.794,
+        "ipc_real": 0.735,
+        "cycles_by_sem": {
+          "mac": 20000,
+          "load_data": 40200,
+          "store_data": 200,
+          "addr": 10420,
+          "loop_ctrl": 5130.0,
+          "requant": 0,
+          "other": 200
+        },
+        "share_by_sem": {
+          "mac": 26.26,
+          "load_data": 52.79,
+          "store_data": 0.26,
+          "addr": 13.68,
+          "loop_ctrl": 6.74,
+          "requant": 0.0,
+          "other": 0.26
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.36,
+          "load_data": 2.12,
+          "store_data": 1.0,
+          "addr": 1.16,
+          "loop_ctrl": 1.07,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xd14->0x340",
+            "trips": 10,
+            "body_instr_static": 33,
+            "body_instr_dynamic": 55940,
+            "cycles_in_body": 76140
+          },
+          {
+            "backedge": "0x3b4->0x36c",
+            "trips": 90,
+            "body_instr_static": 19,
+            "body_instr_dynamic": 55800,
+            "cycles_in_body": 76000
+          },
+          {
+            "backedge": "0x3a0->0x378",
+            "trips": 4900,
+            "body_instr_static": 11,
+            "body_instr_dynamic": 55000,
+            "cycles_in_body": 75000
+          }
+        ],
+        "dlp": {
+          "n_strided": 20194,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.9,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  },
+  "B-V3": {
+    "target": "B-V3",
+    "core": "mycore",
+    "total_cycles": 365992,
+    "ms_27mhz": 13.6,
+    "cycles_per_mac_total": 1.906,
+    "mem_bytes_per_cycle_available": 2.0,
+    "lambda_load": 2,
+    "share_by_sem_total": {
+      "mac": 28.46,
+      "load_data": 37.02,
+      "store_data": 7.15,
+      "addr": 8.91,
+      "loop_ctrl": 8.85,
+      "requant": 4.01,
+      "other": 5.59
+    },
+    "cycles_by_sem_total": {
+      "mac": 104144.0,
+      "load_data": 135484.0,
+      "store_data": 26166.0,
+      "addr": 32611.0,
+      "loop_ctrl": 32373.0,
+      "requant": 14688.0,
+      "other": 20460.7
+    },
+    "cycles_by_sem_sum10": {
+      "mac": 1041440,
+      "load_data": 1354840,
+      "store_data": 261660,
+      "addr": 326110,
+      "loop_ctrl": 323730.0,
+      "requant": 146880,
+      "other": 204607.0
+    },
+    "cycles_sum10": 3659267,
+    "sum_check_ok": true,
+    "amdahl_max_speedup_total": {
+      "mac": 1.4,
+      "load_data": 1.59,
+      "store_data": 1.08,
+      "addr": 1.1,
+      "loop_ctrl": 1.1,
+      "requant": 1.04,
+      "other": 1.06
+    },
+    "layers": {
+      "conv1": {
+        "cycles": 138213,
+        "instret": 104228,
+        "mac": 48672,
+        "cycles_per_mac": 2.84,
+        "mac_per_cycle": 0.3522,
+        "bytes_per_image": 77420.0,
+        "byte_per_mac": 1.591,
+        "cycles_sum10": 1382130,
+        "cycles_by_sem_sum10": {
+          "mac": 324480,
+          "load_data": 389540,
+          "store_data": 182000,
+          "addr": 196190,
+          "loop_ctrl": 168320.0,
+          "requant": 108160,
+          "other": 13440.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 1.2573,
+        "dist_to_roof_x": 3.57,
+        "bound": "compute/issue",
+        "crit_path": 134,
+        "ipc_ideal": 7778.209,
+        "ipc_real": 0.754,
+        "cycles_by_sem": {
+          "mac": 324480,
+          "load_data": 389540,
+          "store_data": 182000,
+          "addr": 196190,
+          "loop_ctrl": 168320.0,
+          "requant": 108160,
+          "other": 13440.0
+        },
+        "share_by_sem": {
+          "mac": 23.48,
+          "load_data": 28.18,
+          "store_data": 13.17,
+          "addr": 14.19,
+          "loop_ctrl": 12.18,
+          "requant": 7.83,
+          "other": 0.97
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.31,
+          "load_data": 1.39,
+          "store_data": 1.15,
+          "addr": 1.17,
+          "loop_ctrl": 1.14,
+          "requant": 1.08,
+          "other": 1.01
+        },
+        "loops": [
+          {
+            "backedge": "0xaf8->0x128",
+            "trips": 10,
+            "body_instr_static": 89,
+            "body_instr_dynamic": 857120,
+            "cycles_in_body": 1128090
+          },
+          {
+            "backedge": "0x244->0x1a4",
+            "trips": 70,
+            "body_instr_static": 41,
+            "body_instr_dynamic": 856640,
+            "cycles_in_body": 1127360
+          },
+          {
+            "backedge": "0x234->0x1c4",
+            "trips": 240,
+            "body_instr_static": 29,
+            "body_instr_dynamic": 855680,
+            "cycles_in_body": 1126080
+          }
+        ],
+        "dlp": {
+          "n_strided": 284906,
+          "share_stride_1_pct": 22.5,
+          "share_stride_4_pct": 48.5,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool1": {
+        "cycles": 42472,
+        "instret": 35702,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 6800.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 424468,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 77,
+        "ipc_ideal": 4633.351,
+        "ipc_real": 0.841,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 108260,
+          "store_data": 27140,
+          "addr": 43950,
+          "loop_ctrl": 100260.0,
+          "requant": 0,
+          "other": 144858.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.5,
+          "store_data": 6.39,
+          "addr": 10.35,
+          "loop_ctrl": 23.62,
+          "requant": 0.0,
+          "other": 34.13
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.34,
+          "store_data": 1.07,
+          "addr": 1.12,
+          "loop_ctrl": 1.31,
+          "requant": 1.0,
+          "other": 1.52
+        },
+        "loops": [
+          {
+            "backedge": "0xb10->0x280",
+            "trips": 10,
+            "body_instr_static": 71,
+            "body_instr_dynamic": 356758,
+            "cycles_in_body": 424458
+          },
+          {
+            "backedge": "0x374->0x2c4",
+            "trips": 120,
+            "body_instr_static": 45,
+            "body_instr_dynamic": 356498,
+            "cycles_in_body": 424098
+          },
+          {
+            "backedge": "0x364->0x2d8",
+            "trips": 1560,
+            "body_instr_static": 36,
+            "body_instr_dynamic": 355328,
+            "cycles_in_body": 422928
+          }
+        ],
+        "dlp": {
+          "n_strided": 67685,
+          "share_stride_1_pct": 89.9,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "conv2": {
+        "cycles": 165152,
+        "instret": 121766,
+        "mac": 139392,
+        "cycles_per_mac": 1.185,
+        "mac_per_cycle": 0.844,
+        "bytes_per_image": 159992.0,
+        "byte_per_mac": 1.148,
+        "cycles_sum10": 1651520,
+        "cycles_by_sem_sum10": {
+          "mac": 696960,
+          "load_data": 784760,
+          "store_data": 44240,
+          "addr": 63040,
+          "loop_ctrl": 21040.0,
+          "requant": 38720,
+          "other": 2760
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 1.7425,
+        "dist_to_roof_x": 2.06,
+        "bound": "compute/issue",
+        "crit_path": 99,
+        "ipc_ideal": 12299.596,
+        "ipc_real": 0.737,
+        "cycles_by_sem": {
+          "mac": 696960,
+          "load_data": 784760,
+          "store_data": 44240,
+          "addr": 63040,
+          "loop_ctrl": 21040.0,
+          "requant": 38720,
+          "other": 2760
+        },
+        "share_by_sem": {
+          "mac": 42.2,
+          "load_data": 47.52,
+          "store_data": 2.68,
+          "addr": 3.82,
+          "loop_ctrl": 1.27,
+          "requant": 2.34,
+          "other": 0.17
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.73,
+          "load_data": 1.91,
+          "store_data": 1.03,
+          "addr": 1.04,
+          "loop_ctrl": 1.01,
+          "requant": 1.02,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xb28->0x394",
+            "trips": 10,
+            "body_instr_static": 140,
+            "body_instr_dynamic": 1217650,
+            "cycles_in_body": 1651510
+          },
+          {
+            "backedge": "0x580->0x3f0",
+            "trips": 100,
+            "body_instr_static": 101,
+            "body_instr_dynamic": 1217260,
+            "cycles_in_body": 1650880
+          },
+          {
+            "backedge": "0x564->0x400",
+            "trips": 1100,
+            "body_instr_static": 90,
+            "body_instr_dynamic": 1216050,
+            "cycles_in_body": 1649230
+          }
+        ],
+        "dlp": {
+          "n_strided": 387180,
+          "share_stride_1_pct": 5.0,
+          "share_stride_4_pct": 4.7,
+          "lanes_possible_8bit": null
+        }
+      },
+      "pool2": {
+        "cycles": 12519,
+        "instret": 10511,
+        "mac": 0,
+        "cycles_per_mac": null,
+        "mac_per_cycle": null,
+        "bytes_per_image": 2032.0,
+        "byte_per_mac": null,
+        "cycles_sum10": 125009,
+        "cycles_by_sem_sum10": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": null,
+        "dist_to_roof_x": null,
+        "bound": null,
+        "crit_path": 81,
+        "ipc_ideal": 1295.42,
+        "ipc_real": 0.84,
+        "cycles_by_sem": {
+          "mac": 0,
+          "load_data": 32080,
+          "store_data": 8080,
+          "addr": 12510,
+          "loop_ctrl": 28980.0,
+          "requant": 0,
+          "other": 43359.0
+        },
+        "share_by_sem": {
+          "mac": 0.0,
+          "load_data": 25.66,
+          "store_data": 6.46,
+          "addr": 10.01,
+          "loop_ctrl": 23.18,
+          "requant": 0.0,
+          "other": 34.68
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.0,
+          "load_data": 1.35,
+          "store_data": 1.07,
+          "addr": 1.11,
+          "loop_ctrl": 1.3,
+          "requant": 1.0,
+          "other": 1.53
+        },
+        "loops": [
+          {
+            "backedge": "0xb40->0x5bc",
+            "trips": 10,
+            "body_instr_static": 67,
+            "body_instr_dynamic": 104919,
+            "cycles_in_body": 124999
+          },
+          {
+            "backedge": "0x6a4->0x5f8",
+            "trips": 40,
+            "body_instr_static": 44,
+            "body_instr_dynamic": 104689,
+            "cycles_in_body": 124689
+          },
+          {
+            "backedge": "0x690->0x608",
+            "trips": 200,
+            "body_instr_static": 35,
+            "body_instr_dynamic": 104239,
+            "cycles_in_body": 124239
+          }
+        ],
+        "dlp": {
+          "n_strided": 20067,
+          "share_stride_1_pct": 94.6,
+          "share_stride_4_pct": 0.0,
+          "lanes_possible_8bit": 4
+        }
+      },
+      "dense": {
+        "cycles": 7614,
+        "instret": 5594,
+        "mac": 4000,
+        "cycles_per_mac": 1.903,
+        "mac_per_cycle": 0.5253,
+        "bytes_per_image": 8080.0,
+        "byte_per_mac": 2.02,
+        "cycles_sum10": 76140,
+        "cycles_by_sem_sum10": {
+          "mac": 20000,
+          "load_data": 40200,
+          "store_data": 200,
+          "addr": 10420,
+          "loop_ctrl": 5130.0,
+          "requant": 0,
+          "other": 190
+        },
+        "sum_check_ok": true,
+        "roof_mac_per_cycle": 0.9901,
+        "dist_to_roof_x": 1.88,
+        "bound": "compute/issue",
+        "crit_path": 68,
+        "ipc_ideal": 822.647,
+        "ipc_real": 0.735,
+        "cycles_by_sem": {
+          "mac": 20000,
+          "load_data": 40200,
+          "store_data": 200,
+          "addr": 10420,
+          "loop_ctrl": 5130.0,
+          "requant": 0,
+          "other": 190
+        },
+        "share_by_sem": {
+          "mac": 26.27,
+          "load_data": 52.8,
+          "store_data": 0.26,
+          "addr": 13.69,
+          "loop_ctrl": 6.74,
+          "requant": 0.0,
+          "other": 0.25
+        },
+        "amdahl_max_speedup": {
+          "mac": 1.36,
+          "load_data": 2.12,
+          "store_data": 1.0,
+          "addr": 1.16,
+          "loop_ctrl": 1.07,
+          "requant": 1.0,
+          "other": 1.0
+        },
+        "loops": [
+          {
+            "backedge": "0xb58->0x6c0",
+            "trips": 10,
+            "body_instr_static": 32,
+            "body_instr_dynamic": 55930,
+            "cycles_in_body": 76130
+          },
+          {
+            "backedge": "0x730->0x6e8",
+            "trips": 90,
+            "body_instr_static": 19,
+            "body_instr_dynamic": 55800,
+            "cycles_in_body": 76000
+          },
+          {
+            "backedge": "0x71c->0x6f4",
+            "trips": 4900,
+            "body_instr_static": 11,
+            "body_instr_dynamic": 55000,
+            "cycles_in_body": 75000
+          }
+        ],
+        "dlp": {
+          "n_strided": 20194,
+          "share_stride_1_pct": 0.0,
+          "share_stride_4_pct": 0.9,
+          "lanes_possible_8bit": null
+        }
+      }
+    }
+  }
+}
