@@ -68,20 +68,27 @@ Hai lớp pooling: 54.991 → 6.899 chu kỳ. Giá phần cứng **+148 LUT4** (
 **Vì sao chưa vào bảng trên.** Tiêu chí ghi nhận đòi **đồng thời** 2/2 lần đọc **và** chốt `SRC_HASH`
 trong **một** phép đo. Đã có **ba** run, mọi tiêu chí đều có bằng chứng nhưng **rải ra**:
 
-| run | nội dung (CRC, dự đoán, kit=Verilator) | 2/2 lần đọc | chốt `SRC_HASH` |
-|---|---|---|---|
-| `190740` | ĐẠT | **2/2** | không |
-| `190840` | ĐẠT ở lần đọc 1 | 1/2 | **có** |
-| `214915` | ĐẠT ở lần đọc 1 | 1/2 | **có** |
+| run | nội dung (CRC, dự đoán, kit=Verilator) | 2/2 lần đọc | chốt `SRC_HASH` | ghi chú |
+|---|---|---|---|---|
+| `190740` | ĐẠT | **2/2** | không | |
+| `190840` | ĐẠT ở lần đọc 1 | 1/2 | **có** | chết ở lần đọc 2 |
+| `214915` | ĐẠT ở lần đọc 1 | 1/2 | **có** | chết ở lần đọc 2 |
+| `220038` | ĐẠT ở lần đọc 1 | 1/2 | **có** | chết ở lần đọc 2, **dù đo ngay sau khi cắm cáp** |
 
-Cả ba nạp **cùng một tệp nhị phân giống từng bit**. Hai run sau chết ở lần đọc 2 vì **UART của kit
+Cả bốn nạp **cùng một tệp nhị phân giống từng bit**. Ba run sau chết ở lần đọc 2 vì **UART của kit
 chết** (đối chứng sau cho 0 byte ở cả hai cổng, JTAG vẫn nạp được).
 
-**Quy luật đã thấy được** (ghi trong `results/pipeline/S6/kit/README.md`): sau mỗi lần cắm lại cáp
-USB, kênh UART chịu được khoảng **ba lần truyền dài** (~5–9 KB mỗi lần) rồi chết; chuỗi ngắn không
-làm nó chết. Phiên 2026-10-18 kiểm chứng đúng điều này: đo B-V4 **trước** thì B-V4 đạt 2/2 trọn vẹn,
-còn PMAX4 đo ngay sau đó chết đúng ở lần đọc 2. **Cách làm từ nay**: mỗi lần cắm lại cáp chỉ đo
-**một** cấu hình. Dòng 15 vào bảng chính sau một lần cắm lại cáp mà **PMAX4 được đo trước tiên**.
+**Một giả thuyết đã bị bác bỏ.** Sau run `214915` tôi cho rằng kênh UART chịu được khoảng ba lần
+truyền dài sau mỗi lần cắm cáp rồi mới chết, và rằng đo PMAX4 **trước tiên** sẽ qua. Run `220038`
+đo PMAX4 ngay sau khi cắm lại cáp, là lần truyền dài **đầu tiên** — vẫn chết đúng ở lần đọc 2.
+Giả thuyết sai; chưa biết cơ chế thật.
+
+**Điều quan sát được còn đứng vững**: lần đọc 1 luôn ĐẠT, lần đọc 2 luôn mất sạch (0 dòng thô), và
+riêng B-V4 thì qua được cả hai. Một nghi can ở phía phần mềm: `scripts/m1s_check.py` **đóng cổng
+serial sau mỗi lần đọc rồi mở lại** cho lần sau (`read_kit()` có `finally: ser.close()`), trong khi
+kit vẫn phát liên tục — kênh FT2232 có thể kẹt ở đúng nhịp đó. Chưa kiểm chứng.
+
+Dòng 15 chỉ vào bảng chính khi có một run duy nhất đạt 2/2 **và** chốt hash.
 
 Chi tiết và log thô: `results/pipeline/S6/kit/README.md`.
 

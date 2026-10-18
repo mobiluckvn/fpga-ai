@@ -64,6 +64,7 @@ golden · chu kỳ kit = Verilator bằng tuyệt đối · **2/2 lần đọc �
 | B-V3+PMAX4, run `190740` | ĐẠT | **2/2** | không chốt | thiếu chốt hash |
 | B-V3+PMAX4, run `190840` | ĐẠT ở lần đọc 1 | **1/2** | **có** (`a7dca19c8cec`) | UART chết ở lần đọc 2 |
 | B-V3+PMAX4, run `214915` | ĐẠT ở lần đọc 1 | **1/2** | **có** (`a7dca19c8cec`) | UART chết ở lần đọc 2 (**y hệt**) |
+| B-V3+PMAX4, run `220038` | ĐẠT ở lần đọc 1 | **1/2** | **có** (`a7dca19c8cec`) | chết ở lần đọc 2 **dù là lần truyền dài ĐẦU TIÊN sau khi cắm cáp** |
 
 Hai run PMAX4 nạp **cùng một tệp nhị phân, giống từng bit**:
 `firmware.hex sha256 = e477ee612247d892abc3c82cf34f0bb1490acbd3d34c6cfaf2e4bbcca7bfd3f7`
@@ -91,17 +92,35 @@ Xếp theo thứ tự thời gian của phiên, quy luật hiện ra rõ:
 | 5 | PMAX4 lần đọc 1 | **dài** (~9,4 KB tồn) | ĐẠT |
 | 6 | PMAX4 lần đọc 2 | **dài** | **0 byte — chết** |
 
-Kênh UART chịu được khoảng **ba lần truyền dài** sau mỗi lần cắm lại cáp, rồi chết; chuỗi ngắn
-không làm nó chết. Lần trước (run `190740` → `190840`) cũng đúng mẫu này: 2/2 ở run đầu, rồi
-chết ở lần đọc 2 của run sau.
+Từ đó tôi rút ra: kênh UART chịu được khoảng **ba lần truyền dài** sau mỗi lần cắm lại cáp rồi
+chết, nên cứ đo cấu hình quan trọng nhất trước là xong.
 
-**Hệ quả cho cách làm**: sau mỗi lần cắm lại cáp, chỉ nên chạy **một** cấu hình — cấu hình quan
-trọng nhất — rồi cắm lại cáp trước khi chạy cấu hình tiếp theo. Lần này tôi đã vô tình kiểm chứng
-đúng điều đó: cấu hình đo đầu tiên (B-V4) ĐẠT trọn vẹn, cấu hình thứ hai (PMAX4) chết.
+### Lần thử 4 (run `220038`) — GIẢ THUYẾT TRÊN BỊ BÁC BỎ
 
-PMAX4 nay có **ba** run với lần đọc 1 đạt đủ nội dung và **hai** run đạt 2/2 (một không chốt hash),
-tất cả trên cùng một tệp nhị phân giống từng bit. Thiếu duy nhất là một run gộp cả hai điều kiện.
-Việc này cần người dùng cắm lại cáp **rồi đo PMAX4 TRƯỚC**, trước mọi cấu hình khác.
+Người dùng cắm lại cáp. Tôi đo **PMAX4 trước tiên**, không chạy gì khác trước nó — tức lần truyền
+dài **đầu tiên** sau khi cắm cáp. Kết quả: đối chứng trước ĐẠT ("MIN" 8 lần), **lần đọc 1 ĐẠT**
+(xả 4.548 byte tồn, CRC 10/10, chu kỳ = Verilator), **lần đọc 2 nhận 0 dòng thô**, đối chứng sau
+0 byte cả hai cổng.
+
+**Giả thuyết "ba lần truyền dài" là SAI.** Nó dự đoán lần thử 4 sẽ qua; nó không qua.
+
+### Điều còn đứng vững, và nghi can tiếp theo
+
+Qua bốn run PMAX4: **lần đọc 1 luôn ĐẠT, lần đọc 2 hoặc ĐẠT (run `190740`) hoặc mất sạch**
+(0 dòng thô, không phải dữ liệu sai). Riêng B-V4 qua được cả hai lần đọc.
+
+Nghi can ở phía phần mềm, chưa kiểm chứng: `scripts/m1s_check.py` **đóng cổng serial sau mỗi lần
+đọc rồi mở lại** cho lần sau — `read_kit()` kết thúc bằng `finally: ser.close()`, rồi vòng lặp
+`for attempt in range(1, args.repeat+1)` gọi lại `read_kit()`. Trong khoảng cổng đóng, kit **vẫn
+phát liên tục**, nên bộ đệm của FT2232 đầy và kênh có thể kẹt ở đúng nhịp mở lại.
+
+Cách kiểm giả thuyết này mà **không** nới tiêu chí: thêm tuỳ chọn **giữ cổng mở** xuyên suốt hai
+lần đọc (đọc hai khối báo cáo liên tiếp từ cùng một luồng, thay vì đóng/mở giữa chừng). Hai lần
+đọc vẫn độc lập về nội dung — thậm chí chặt hơn, vì không có gì bị khởi động lại ở giữa. Tuỳ chọn
+phải **mặc định tắt** để mọi số đã ghi nhận trước đây giữ nguyên cách đo.
+
+PMAX4 nay có **bốn** run với lần đọc 1 đạt đủ nội dung và **một** run đạt 2/2 (không chốt hash),
+tất cả trên cùng một tệp nhị phân giống từng bit. Thiếu duy nhất vẫn là một run gộp cả hai điều kiện.
 
 ## 5. Phân loại nguyên nhân thất bại — và hai lỗi của tôi
 

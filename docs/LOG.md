@@ -2,6 +2,60 @@
 
 Mỗi phiên một mục, mới nhất ở trên cùng:
 
+## 2026-10-18 — PMAX4 lần thử 4: giả thuyết của tôi bị bác bỏ, dừng theo quy tắc 3 lần
+
+Người dùng cắm lại cáp USB. Tôi đo **PMAX4 trước tiên**, không chạy gì khác trước nó —
+đúng như điều tôi đã kết luận ở mục trên. Run `20261018-220038-kit`:
+
+| bước | kết quả |
+|---|---|
+| đối chứng TRƯỚC | ĐẠT — "MIN" 8 lần |
+| lần đọc 1/2 | **ĐẠT** — xả 4.548 byte tồn, CRC 10/10, chu kỳ = Verilator |
+| lần đọc 2/2 | **0 dòng thô** |
+| đối chứng SAU | 0 byte cả hai cổng |
+
+**Giả thuyết "kênh UART chịu được ba lần truyền dài sau mỗi lần cắm cáp" là SAI.** Nó dự
+đoán lần này sẽ qua, vì đây là lần truyền dài đầu tiên sau khi cắm cáp. Nó không qua. Tôi
+đã sửa lại chỗ đã viết trong `docs/KET_QUA_TONG_HOP.md` và `results/pipeline/S6/kit/README.md`
+— không để một kết luận sai nằm lại trong báo cáo.
+
+### Điều còn đứng vững sau bốn run
+
+Lần đọc 1 **luôn** ĐẠT. Lần đọc 2 hoặc ĐẠT (run `190740`) hoặc **mất sạch** — 0 dòng thô, chứ
+không phải dữ liệu sai. Riêng B-V4 qua được cả hai lần đọc. Bốn run PMAX4 dùng cùng một tệp nhị
+phân giống từng bit, nên khác biệt không nằm ở firmware.
+
+### Nghi can tiếp theo, chưa kiểm chứng
+
+`scripts/m1s_check.py` **đóng cổng serial sau mỗi lần đọc rồi mở lại** cho lần kế: `read_kit()`
+kết thúc bằng `finally: ser.close()`, vòng lặp `for attempt in range(1, args.repeat+1)` gọi lại
+nó. Trong lúc cổng đóng, kit **vẫn phát liên tục**, nên bộ đệm FT2232 đầy và kênh có thể kẹt
+đúng ở nhịp mở lại. Điều này khớp với việc lần đọc 1 luôn sống và lần đọc 2 mất sạch.
+
+Cách kiểm mà **không nới tiêu chí**: thêm tuỳ chọn **giữ cổng mở** xuyên hai lần đọc — đọc hai
+khối báo cáo liên tiếp từ cùng một luồng. Hai lần đọc vẫn độc lập về nội dung, thậm chí chặt hơn
+vì không có gì khởi động lại ở giữa. Tuỳ chọn **mặc định tắt** để mọi số đã ghi nhận giữ nguyên
+cách đo. Tôi **chưa làm** việc này — sửa script đo là chạm vào hạ tầng đã sinh ra mọi số đã công
+bố, nên cần người dùng đồng ý trước.
+
+### Dừng ở đây (quy tắc 2)
+
+Bốn lần thử cho cùng một mục tiêu nhỏ, mỗi lần tốn của người dùng một thao tác vật lý. Không thử
+tiếp trên kit cho tới khi có hướng mới. **B-V4 (mục tiêu chính của S7) đã ĐẠT trọn vẹn và đã vào
+bảng chính** — việc còn thiếu chỉ là con số 317.878 của dòng 15, vốn đã có bằng chứng rải trên
+bốn run.
+
+### Việc tiếp theo / cần người dùng quyết
+
+Ba lựa chọn, tôi nghiêng về (1):
+
+1. **Thêm tuỳ chọn `--keep-open` cho `m1s_check.py`** (mặc định tắt, không đổi hành vi cũ), rồi
+   đo lại PMAX4 một lần. Nếu đúng là lỗi đóng/mở cổng thì xong, và còn biết thêm nguyên nhân thật.
+2. **Chấp nhận bằng chứng rải trên bốn run** cho dòng 15 và ghi rõ điều đó trong báo cáo — mọi
+   tiêu chí đều có bằng chứng, chỉ không nằm trong cùng một run.
+3. **Để nguyên**, đi tiếp sang S8; dòng 15 vẫn ở ngoài bảng chính.
+
+
 ## 2026-10-18 — S7 ĐẠT: B-V4 đo trên kit 243.641 chu kỳ, dự báo mức A sai 0,00 %
 
 Người dùng rút/cắm lại cáp USB. UART sống lại (`...171`, "MIN" 10 lần). Đo lại và **ĐẠT**.
