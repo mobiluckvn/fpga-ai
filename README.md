@@ -1,6 +1,6 @@
 # Chạy mạng học sâu nén 8 bit trên lõi RISC-V tự dựng, đo trên FPGA Tang Nano 20K
 
-**Người làm:** Vũ Trí Công · TS. Nguyễn Trung Hiếu
+**Người làm:** Vũ Trí Công · **Người hướng dẫn:** TS. Nguyễn Trung Hiếu
 
 Công việc này đo xem một mạng nơ-ron tích chập nén xuống số nguyên 8 bit chạy nhanh chậm thế nào
 trên một lõi RISC-V nằm trong FPGA, rồi đo tiếp xem mỗi cách làm nhanh hơn đóng góp bao nhiêu:
@@ -227,6 +227,7 @@ Ba điều bắt buộc khi dựng mạch, tìm ra trong lúc làm:
 | `docs/KET_QUA_M1S.md` | số đo chi tiết của lõi có sẵn |
 | `docs/KET_QUA_NHANH_B.md` | số đo chi tiết của lõi tự dựng, và cảnh báo về số ô logic |
 | `docs/HUONG_DAN.md` | từng câu lệnh để chạy lại |
+| `docs/bao-cao/` | các bản báo cáo và tài liệu kiến trúc dạng `.docx` |
 | `docs/LOG.md` | nhật ký từng buổi làm, mới nhất ở trên |
 | `rtl/mycore/` | lõi RISC-V tự dựng, mạch quanh lõi, bộ bài thử |
 | `rtl/ext/` | lệnh tự thêm `DOT4` và `REQ` gắn vào lõi có sẵn |

@@ -1,7 +1,7 @@
 # Người làm
 
-- **Vũ Trí Công**
-- **TS. Nguyễn Trung Hiếu**
+- **Vũ Trí Công** — người thực hiện
+- **TS. Nguyễn Trung Hiếu** — người hướng dẫn
 
 ## Nguồn ngoài dùng trong công việc này
 
